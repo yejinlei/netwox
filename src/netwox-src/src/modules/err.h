@@ -1,0 +1,64 @@
+
+/*-------------------------------------------------------------*/
+typedef enum {
+  /* general */
+  NETWOX_ERR_INTERNALERROR = NETWIB_ERRZONE_USER_BEGIN,
+#define NETWOX_ERR_INTERNALERROR (netwib_err)NETWOX_ERR_INTERNALERROR
+  NETWOX_ERR_NOTIMPLEMENTED,
+#define NETWOX_ERR_NOTIMPLEMENTED (netwib_err)NETWOX_ERR_NOTIMPLEMENTED
+  NETWOX_ERR_NOTSUPPORTED,
+#define NETWOX_ERR_NOTSUPPORTED (netwib_err)NETWOX_ERR_NOTSUPPORTED
+  NETWOX_ERR_NOTALLOWED,
+#define NETWOX_ERR_NOTALLOWED (netwib_err)NETWOX_ERR_NOTALLOWED
+  NETWOX_ERR_TIMEOUT,
+#define NETWOX_ERR_TIMEOUT (netwib_err)NETWOX_ERR_TIMEOUT
+  NETWOX_ERR_PROTOCOL,
+#define NETWOX_ERR_PROTOCOL (netwib_err)NETWOX_ERR_PROTOCOL
+  NETWOX_ERR_AUTHNEEDED,
+#define NETWOX_ERR_AUTHNEEDED (netwib_err)NETWOX_ERR_AUTHNEEDED
+  NETWOX_ERR_AUTHERROR,
+#define NETWOX_ERR_AUTHERROR (netwib_err)NETWOX_ERR_AUTHERROR
+  NETWOX_ERR_BADVALUE,
+#define NETWOX_ERR_BADVALUE (netwib_err)NETWOX_ERR_BADVALUE
+  NETWOX_ERR_BADSIZE,
+#define NETWOX_ERR_BADSIZE (netwib_err)NETWOX_ERR_BADSIZE
+  /* tool */
+  NETWOX_ERR_TOOL_NOTREGISTERED,
+#define NETWOX_ERR_TOOL_NOTREGISTERED (netwib_err)NETWOX_ERR_TOOL_NOTREGISTERED
+  NETWOX_ERR_TOOLARG_NOTDECODED,
+#define NETWOX_ERR_TOOLARG_NOTDECODED (netwib_err)NETWOX_ERR_TOOLARG_NOTDECODED
+  NETWOX_ERR_TOOLARG_HELP,
+#define NETWOX_ERR_TOOLARG_HELP (netwib_err)NETWOX_ERR_TOOLARG_HELP
+  NETWOX_ERR_TOOLARG_NOERRDISPLAY,
+#define NETWOX_ERR_TOOLARG_NOERRDISPLAY (netwib_err)NETWOX_ERR_TOOLARG_NOERRDISPLAY
+  NETWOX_ERR_TOOLARG_INVALID,
+#define NETWOX_ERR_TOOLARG_INVALID (netwib_err)NETWOX_ERR_TOOLARG_INVALID
+  NETWOX_ERR_TOOLTREE_INIT,
+#define NETWOX_ERR_TOOLTREE_INIT (netwib_err)NETWOX_ERR_TOOLTREE_INIT
+  NETWOX_ERR_TOOLTREE_HELPMODE_END,
+#define NETWOX_ERR_TOOLTREE_HELPMODE_END (netwib_err)NETWOX_ERR_TOOLTREE_HELPMODE_END
+  /* sniff */
+  NETWOX_ERR_SNIFF_INVALIDDLT,
+#define NETWOX_ERR_SNIFF_INVALIDDLT (netwib_err)NETWOX_ERR_SNIFF_INVALIDDLT
+  /* spoof */
+  NETWOX_ERR_SPOOF_INVALIDDLT,
+#define NETWOX_ERR_SPOOF_INVALIDDLT (netwib_err)NETWOX_ERR_SPOOF_INVALIDDLT
+  /* virtual socket */
+  NETWOX_ERR_SOCKVTCP_NOSYNACK,
+#define NETWOX_ERR_SOCKVTCP_NOSYNACK (netwib_err)NETWOX_ERR_SOCKVTCP_NOSYNACK
+  NETWOX_ERR_SOCKVTCP_RST,
+#define NETWOX_ERR_SOCKVTCP_RST (netwib_err)NETWOX_ERR_SOCKVTCP_RST
+  /* SNMP */
+  NETWOX_ERR_SNMP_BADREPLY
+#define NETWOX_ERR_SNMP_BADREPLY (netwib_err)NETWOX_ERR_SNMP_BADREPLY
+} netwox_err;
+
+/*-------------------------------------------------------------*/
+netwib_err netwox_buf_append_err(netwib_err error,
+                                 netwib_err_encodetype encodetype,
+                                 netwib_buf *buf);
+
+/*-------------------------------------------------------------*/
+/* always skip line at end */
+netwib_err netwox_err_display(netwib_err error,
+                              netwib_err_encodetype encodetype);

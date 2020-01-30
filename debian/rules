@@ -1,0 +1,168 @@
+#!/usr/bin/make -f
+# rules file for netwib library (July 2004)
+
+# Uncomment this to turn on verbose mode.
+#export DH_VERBOSE=1
+
+DEB_HOST_ARCH ?= $(shell dpkg-architecture -qDEB_HOST_ARCH)
+
+CFLAGS = -Wall -g
+
+ifneq (,$(findstring noopt,$(DEB_BUILD_OPTIONS)))
+	CFLAGS += -O0
+else
+	CFLAGS += -O2
+endif
+ifeq (,$(findstring nostrip,$(DEB_BUILD_OPTIONS)))
+	INSTALL_PROGRAM += -s
+endif
+
+build: build-arch build-indep
+build-arch: build-stamp 
+build-indep: build-stamp 
+build-stamp: 
+	dh_testdir
+	dh_installdirs
+	dh_prep  
+
+# Temporary directory for some files.
+	mkdir $(CURDIR)/debian/tmp
+
+	-cp src/netwib-src/src/config.dat $(CURDIR)/debian/tmp/netwib.dat
+
+# Change default prefix for netwib.
+	sed -i \
+	-e 's|NETWIBDEF_INSTPREFIX=.*$$|NETWIBDEF_INSTPREFIX=/usr|g' \
+	src/netwib-src/src/config.dat
+
+# Building netwib/
+	cd src/netwib-src/src && ./genemake && cd ../../..
+	cd src/netwib-src/src && $(MAKE) libnetwib.so && cd ../../..
+	cd src/netwib-src/src && $(MAKE) installso DESTDIR=$(CURDIR)/debian/tmp/netwib && cd ../../..
+
+	-cp src/netwox-src/src/config.dat $(CURDIR)/debian/tmp/netwox.dat
+
+# Change prefixes for netwox.
+	sed -i \
+	-e 's|NETWIBDEF_INSTPREFIX=.*$$|NETWIBDEF_INSTPREFIX=/usr|g' \
+	-e 's|NETWIBDEF_INSTDESTDIR=.*$$|NETWIBDEF_INSTDESTDIR=${CURDIR}/debian/tmp/netwib|g' \
+	-e 's|NETWOXDEF_INSTPREFIX=.*$$|NETWOXDEF_INSTPREFIX=/usr|g' \
+	src/netwox-src/src/config.dat
+	
+# Building netwox.
+	cd src/netwox-src/src && ./genemake && cd ../../..
+
+# Sorry folks, we have to use rpath cause our library isn't public.
+	sed -i \
+	-e 's|GCCOPT=.*$$|GCCOPT=-O2 -Wall -fno-strict-aliasing -Wl,-rpath,/usr/lib/netwib|g' \
+	src/netwox-src/src/Makefile
+	
+	cd src/netwox-src/src && $(MAKE) && cd ../../..
+	cd src/netwox-src/src && $(MAKE) install DESTDIR=$(CURDIR)/debian/tmp/netwox && cd ../../..
+
+# Overrides for above rpath stuff
+	dh_installdirs -pnetwox usr/share/lintian/overrides
+	cp $(CURDIR)/debian/netwox.lintian $(CURDIR)/debian/netwox/usr/share/lintian/overrides/netwox
+
+	-cp src/netwag-src/src/config.dat $(CURDIR)/debian/tmp/netwag.dat
+
+# Change prefixes for netwag.
+	sed -i \
+	-e 's|NETWAGDEF_INSTPREFIX=.*$$|NETWAGDEF_INSTPREFIX=/usr|g' \
+	-e 's|NETWOXDEF_INSTPREFIX=.*$$|NETWOXDEF_INSTPREFIX=/usr|g' \
+	-e 's|NETWIBDEF_INSTPREFIX=.*$$|NETWIBDEF_INSTPREFIX=/usr|g' \
+	-e 's|NETWIBDEF_INSTDESTDIR=.*$$|NETWIBDEF_INSTDESTDIR=$(CURDIR)/debian/tmp/netwib|g' \
+	-e 's|NETWOXDEF_INSTPREFIX=.*$$|NETWOXDEF_INSTPREFIX=/usr|g' \
+	-e 's|NETWOXDEF_INSTDESTDIR=.*$$|NETWOXDEF_INSTDESTDIR=$(CURDIR)/debian/tmp/netwox|g' \
+	src/netwag-src/src/config.dat
+
+# Using explicit x-term path instead of detection.
+	sed -i \
+	-e 's|#bin_term="/usr/X11R6/bin/xterm"|bin_term="/usr/bin/x-terminal-emulator"|g' \
+	-e 's|#bin_term_param="-e"|bin_term_param="-e"|g' \
+	src/netwag-src/src/config.dat
+
+# Building netwag.
+	cd src/netwag-src/src/ && ./genemake && cd ../../..
+	cd src/netwag-src/src && $(MAKE) && cd ../../..
+	cd src/netwag-src/src && $(MAKE) install DESTDIR=$(CURDIR)/debian/tmp/netwag && cd ../../..
+	cp src/netwag-src/misc/unix/ico/ico_netw-32x32.xpm $(CURDIR)/netwag.xpm
+	cp src/netwib-src/doc/credits.txt $(CURDIR)/netwib_credits.txt
+
+# Making netwib version independent.
+
+	-rm $(CURDIR)/debian/tmp/netwib/usr/lib/libnetwib.so
+
+# Making netwox version independent.
+	-rm $(CURDIR)/debian/tmp/netwox/usr/bin/netwox
+	-mv $(CURDIR)/debian/tmp/netwox/usr/bin/netwox* debian/tmp/netwox/usr/bin/netwox
+	-rm $(CURDIR)/debian/tmp/netwox/usr/man/man1/netwox.1
+	-mv $(CURDIR)/debian/tmp/netwox/usr/man/man1/netwox* debian/tmp/netwox/usr/man/man1/netwox.1
+
+# Making netwag version independent.
+	-rm $(CURDIR)/debian/tmp/netwag/usr/bin/netwag
+	-mv $(CURDIR)/debian/tmp/netwag/usr/bin/netwag* $(CURDIR)/debian/tmp/netwag/usr/bin/netwag
+	-rm $(CURDIR)/debian/tmp/netwag/usr/man/man1/netwag.1
+	-mv $(CURDIR)/debian/tmp/netwag/usr/man/man1/netwag* $(CURDIR)/debian/tmp/netwag/usr/man/man1/netwag.1
+
+	sed -i -e 's|set netwag_glo_bin_netwox "/usr/bin/netwox.*|set netwag_glo_bin_netwox "/usr/bin/netwox"|g' $(CURDIR)/debian/tmp/netwag/usr/bin/netwag
+
+	touch build-stamp
+
+clean: 
+	dh_testdir
+	dh_testroot
+
+	if test -f $(CURDIR)/debian/tmp/netwib.dat; \
+	then -cp $(CURDIR)/debian/tmp/netwib.dat src/netwib-src/src/config.dat; \
+	fi
+	if test -f $(CURDIR)/debian/tmp/netwox.dat; \
+	then -cp $(CURDIR)/debian/tmp/netwox.dat src/netwox-src/src/config.dat; \
+	fi
+	if test -f $(CURDIR)/debian/tmp/netwag.dat; \
+	then -cp $(CURDIR)/debian/tmp/netwag.dat src/netwag-src/src/config.dat; \
+	fi
+
+	-cd src/netwib-src/src && $(MAKE) clean && cd ../../../
+	-cd src/netwox-src/src && $(MAKE) clean && cd ../../../
+	-cd src/netwag-src/src && $(MAKE) clean && cd ../../../
+	dh_clean netwag.xpm netwib_credits.txt
+
+binary-indep: build
+
+	dh_testdir -i
+	dh_testroot -i
+	dh_install -i
+	dh_installchangelogs src/netwag-src/doc/changelog.txt -i
+	dh_installdocs -i
+	dh_installman -i
+	dh_link -i
+	dh_compress -i -Xcredits.txt
+	dh_fixperms -i
+	dh_installdeb -i
+	dh_shlibdeps -i
+	dh_gencontrol -i
+	dh_md5sums -i
+	dh_builddeb -i
+
+binary-arch: build 
+
+	dh_testdir -a
+	dh_testroot -a
+	dh_install -a
+	dh_installchangelogs src/netwox-src/doc/changelog.txt -a
+	dh_installdocs -a
+	dh_installmenu -a
+	dh_installman -a
+	dh_strip -a
+	dh_compress -a -Xcredits.txt -Xnetwib_credits.txt
+	dh_fixperms -a
+	dh_installdeb -a
+	dh_shlibdeps -a
+	dh_gencontrol -a
+	dh_md5sums -a
+	dh_builddeb -a
+
+
+binary: binary-indep binary-arch
+.PHONY: build clean binary-indep binary-arch binary 

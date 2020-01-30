@@ -1,0 +1,283 @@
+:
+
+set -u
+
+########################################################################
+# Those parameters are used in test mode
+argone=${1-notset}
+argtwo=${2-notset}
+if [ $argone = "notset" ] ; then
+  envone=${NETWENVONE-notset}
+  if [ $envone != "notset" ] ; then
+    argone=$envone
+  fi
+fi
+if [ $argtwo = "notset" ] ; then
+  envtwo=${NETWENVTWO-notset}
+  if [ $envtwo != "notset" ] ; then
+    argtwo=$envtwo
+  fi
+fi
+
+
+########################################################################
+. ./compil/unix/version.sh
+echo "Netwag version ${NETWAGDEF_VERSION} (${NETWAGDEF_VERSIONMAJOR} ${NETWAGDEF_VERSIONMINOR} ${NETWAGDEF_VERSIONMICRO})"
+netwv="${NETWAGDEF_VERSIONMAJOR}${NETWAGDEF_VERSIONMINOR}"
+
+
+########################################################################
+echo "Loading config.dat"
+bin_wish=""
+bin_term=""
+bin_term_param=""
+. ./config.dat
+
+
+########################################################################
+echo "Checking programs"
+
+# compute path where netwox will_be|is_currently installed
+netwox="${NETWOXDEF_INSTBIN}/netwox${netwv}"
+netwoxd="${NETWOXDEF_INSTDBIN}/netwox${netwv}"
+# special test detection
+if [ $argone = "test" ] ; then
+  if [ -f ../../../test/netwox/netwox ] ; then
+    netwoxd=../../../test/netwox/netwox
+  else
+    # a fake command for "make cleanall"
+    netwoxd=ls
+  fi
+  netwox=netwox
+fi
+
+progcheck ()
+{ progname=$1
+  progdesc="$2"
+
+  type $progname 2> /dev/null 1> /dev/null
+  if [ "$?Z" != "0Z" ] ; then
+    echo "Error: the $progdesc '$progname' wasn't found"
+    exit 1
+  else
+    echo " $progname yes"
+  fi
+}
+
+progcheck $netwoxd "netwox toolbox"
+
+
+########################################################################
+echo "Checking directories"
+
+dircheck ()
+{ dirname=$1
+  dirdesc="$2"
+
+  if [ ! -d $dirname ] ; then
+    echo "Warning: the $dirdesc directory '$dirname' wasn't found"
+  else
+    echo " $dirname yes"
+  fi
+}
+
+dircheck $NETWAGDEF_INSTBIN "binary"
+dircheck $NETWAGDEF_INSTMAN "man"
+dircheck $NETWAGDEF_INSTMAN1 "man1"
+
+
+########################################################################
+echo "Checking Tcl/Tk"
+
+# Note: We no more check if wish works (and its version) because it
+# perturbs automatic package creation. So, we check for wish in last
+# position, in case it is a version 7.
+
+if [ "Z$bin_wish" = "Z" ] ; then
+  echo " bin_wish not forced, so try to find it"
+  bin_wish=`./findpath.sh wish8`
+fi
+if [ "Z$bin_wish" = "Z" ] ; then
+  echo " wish8 not found"
+  bin_wish=`./findpath.sh wish8.6`
+fi
+if [ "Z$bin_wish" = "Z" ] ; then
+  echo " wish8.6 not found"
+  bin_wish=`./findpath.sh wish8.5`
+fi
+if [ "Z$bin_wish" = "Z" ] ; then
+  echo " wish8.5 not found"
+  bin_wish=`./findpath.sh wish8.4`
+fi
+if [ "Z$bin_wish" = "Z" ] ; then
+  echo " wish8.4 not found"
+  bin_wish=`./findpath.sh wish8.3`
+fi
+if [ "Z$bin_wish" = "Z" ] ; then
+  echo " wish8.3 not found"
+  bin_wish=`./findpath.sh wish8.2`
+fi
+if [ "Z$bin_wish" = "Z" ] ; then
+  echo " wish8.2 not found"
+  bin_wish=`./findpath.sh wish8.1`
+fi
+if [ "Z$bin_wish" = "Z" ] ; then
+  echo " wish8.1 not found"
+  bin_wish=`./findpath.sh wish8.0`
+fi
+if [ "Z$bin_wish" = "Z" ] ; then
+  echo " wish8.0 not found"
+  bin_wish=`./findpath.sh wish`
+fi
+if [ "Z$bin_wish" = "Z" ] ; then
+  echo " wish not found"
+  echo "Error: wish wasn't found in the PATH($PATH). Did you install Tcl/Tk ?"
+  exit 1
+else
+  echo " Tcl/Tk interpreter found at $bin_wish"
+fi
+
+
+########################################################################
+echo "Searching terminal emulators"
+
+if [ "Z$bin_term" = "Z" ] ; then
+  echo " bin_term not forced, so try to find it"
+  bin_term=`./findpath.sh xterm`
+  bin_term_param="-e"
+else
+  if [ "Z$bin_term_param" = "Z" ] ; then
+    echo " bin_term forced, but bin_term_param unset"
+    exit 1
+  fi
+fi
+if [ "Z$bin_term" = "Z" ] ; then
+  echo " xterm not found"
+  bin_term=`./findpath.sh nxterm`
+  bin_term_param="-e"
+fi
+if [ "Z$bin_term" = "Z" ] ; then
+  echo " nxterm not found"
+  bin_term=`./findpath.sh eterm`
+  bin_term_param="-e"
+fi
+if [ "Z$bin_term" = "Z" ] ; then
+  echo " eterm not found"
+  bin_term=`./findpath.sh rxvt`
+  bin_term_param="-e"
+fi
+if [ "Z$bin_term" = "Z" ] ; then
+  echo " rxvt not found"
+  bin_term=`./findpath.sh gnome-terminal`
+  bin_term_param="-x"
+fi
+if [ "Z$bin_term" = "Z" ] ; then
+  echo " gnome-terminal not found"
+  bin_term=`./findpath.sh konsole`
+  bin_term_param="-e"
+fi
+if [ "Z$bin_term" = "Z" ] ; then
+  echo " konsole not found"
+  bin_term=`./findpath.sh dtterm`
+  bin_term_param="-e"
+fi
+if [ "Z$bin_term" = "Z" ] ; then
+  echo " dtterm not found"
+  bin_term=`./findpath.sh cmdtool`
+  bin_term_param=" "
+fi
+if [ "Z$bin_term" = "Z" ] ; then
+  echo " cmdtool not found"
+  echo "Error: No terminal emulator found in the PATH($PATH)."
+  exit 1
+else
+  echo " Terminal emulator found at $bin_term"
+fi
+
+
+########################################################################
+echo "Creation of netwag_vars1v_unix.tcl"
+echo "set netwag_glo_dir_tmp \"/tmp\"" > netwag_vars1v_unix.tcl
+echo "set netwag_glo_file_session \"\$env(HOME)/.netwag.ses\"" >> netwag_vars1v_unix.tcl
+if [ $argone = "test" ] ; then
+  echo "set netwag_glo_bin_netwox \"../../../test/netwox/netwox\"" >> netwag_vars1v_unix.tcl
+else 
+  echo "set netwag_glo_bin_netwox \"$netwox\"" >> netwag_vars1v_unix.tcl
+fi
+
+
+########################################################################
+echo "Creation of netwag_vars2v_unix.tcl"
+echo "set netwag_glo_bin_term \"$bin_term\"" > netwag_vars2v_unix.tcl
+echo "set netwag_glo_bin_term_param \"$bin_term_param\"" >> netwag_vars2v_unix.tcl
+echo "" >> netwag_vars2v_unix.tcl
+
+
+########################################################################
+echo "Creation of makefile"
+
+cat > ./Makefile <<EOF
+#----------------------------------------------------------------------
+# This file was generated with ./genemake
+
+#----------------------------------------------------------------------
+# variables
+DESTDIR=$NETWAGDEF_INSTDESTDIR
+INSTBIN=\$(DESTDIR)$NETWAGDEF_INSTBIN
+INSTMAN1=\$(DESTDIR)$NETWAGDEF_INSTMAN1
+
+
+#----------------------------------------------------------------------
+# we want only netwag
+all: netwag
+
+netwag: netwag_vars1v_unix.tcl netwag_vars2v_unix.tcl
+	./concat.sh unix $bin_wish > netwag
+	chmod 755 netwag
+	@echo ""
+	@echo "OK - You may want to edit netwag to change variables declared"
+	@echo "     at the top of the file."
+	@echo "     Then install netwag with 'make install'"
+
+# installation : when everything is ok
+install: netwag
+	[ -d \$(INSTBIN) ] || mkdir -m 0755 -p \$(INSTBIN)
+	cp netwag \$(INSTBIN)/netwag$netwv
+	chmod 755 \$(INSTBIN)/netwag$netwv
+	rm -f \$(INSTBIN)/netwag
+	ln -s netwag$netwv \$(INSTBIN)/netwag
+	[ -d \$(INSTMAN1) ] || mkdir -m 0755 -p \$(INSTMAN1)
+	cp ../doc/netwag.1 \$(INSTMAN1)/netwag$netwv.1
+	chmod 644 \$(INSTMAN1)/netwag$netwv.1
+	rm -f \$(INSTMAN1)/netwag.1
+	ln -s netwag$netwv.1 \$(INSTMAN1)/netwag.1
+	@echo ""
+	@echo "OK - You can now run netwag with 'netwag' or '\$(INSTBIN)/netwag'"
+
+# desinstallation
+uninstall:
+	@echo "Several versions of netwag can be installed on the same system."
+	@echo "I left you remove exactly the version you want to remove :"
+	@echo "  \$(INSTBIN)/netwag*"
+	@echo "  \$(INSTMAN1)/netwag*.1"
+	@echo "If you are SURE about what you do, you can for example enter :"
+	@echo "  rm -rf \$(INSTBIN)/netwag*"
+	@echo "  rm -rf \$(INSTMAN1)/netwag*.1"
+
+# cleaning
+clean:
+	rm -f netwag
+cleanall: clean
+	rm -f Makefile
+	rm -f netwag_vars1v_unix.tcl netwag_vars2v_unix.tcl
+
+EOF
+
+
+########################################################################
+########################################################################
+echo "End of genemake"
+
+###########
+echo ""
+echo "OK - You can now compile with 'make'"

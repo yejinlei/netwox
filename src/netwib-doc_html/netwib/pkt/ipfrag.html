@@ -1,0 +1,51 @@
+<HTML><HEAD>
+<TITLE>netwib doc_html (version 5.39.0)</TITLE>
+</HEAD><BODY BGCOLOR="#FFFFFF" TEXT="#000000">
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../pkt.html">section index</A></H2><HR><BR>
+<PRE>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+typedef <FONT COLOR="#000088">netwib_err</FONT> (*netwib_ip_frag_pf)(<FONT COLOR="#000088">netwib_constbuf</FONT> *pfrag,
+                                        <FONT COLOR="#000088">netwib_ptr</FONT> infos);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_ip_frag
+   Description :
+     Fragment an IP packet
+   Input parameter(s) :
+     *pippkt : IP packet (containing IP header)
+     fragdatasize : data size to send in each fragment in bytes.
+                    It is rounded to 8 : 1-&gt;8bytes, 7-&gt;8bytes,
+                    8-&gt;8, 9-&gt;16, etc.
+                    The first fragment may be bigger than
+                    the others because it contains more IPv4
+                    options, or IPv6 extensions.
+                    If fragdatasize == 0, this limit is not used.
+     fragtotalsize : maximum total size of the packet in bytes.
+                     If fragtotalsize == 0, this limit is not used.
+     pfunc : memory address of the function which will
+             be called for each fragment
+             For each call, the first parameter ('infos')
+             will be set with the optional parameter below.
+   Input/output parameter(s) :
+     infos : optional parameter (can be NULL) which will be
+             used as the first parameter for *pfunc.
+             This may be used to send information to *pfunc.
+   Output parameter(s) :
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_ip_frag</B>(<FONT COLOR="#000088">netwib_constbuf</FONT> *pippkt,
+                          <FONT COLOR="#000088">netwib_uint32</FONT> fragdatasize,
+                          <FONT COLOR="#000088">netwib_uint32</FONT> fragtotalsize,
+                          <FONT COLOR="#000088">netwib_ip_frag_pf</FONT> pfunc,
+                          <FONT COLOR="#000088">netwib_ptr</FONT> infos);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#008800">#define <FONT COLOR="#000044">NETWIB_MTU_MIN_IP4</FONT> 576 <FONT COLOR="#880000">/* rfc 791 */</FONT></FONT>
+<FONT COLOR="#008800">#define <FONT COLOR="#000044">NETWIB_MTU_MIN_IP6</FONT> 1280 <FONT COLOR="#880000">/* rfc 2460 */</FONT></FONT>
+</PRE><BR><BR><HR><BR>
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../pkt.html">section index</A></H2>
+</BODY></HTML>

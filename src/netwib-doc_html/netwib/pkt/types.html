@@ -1,0 +1,80 @@
+<HTML><HEAD>
+<TITLE>netwib doc_html (version 5.39.0)</TITLE>
+</HEAD><BODY BGCOLOR="#FFFFFF" TEXT="#000000">
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../pkt.html">section index</A></H2><HR><BR>
+<PRE>
+
+<FONT COLOR="#008800">#ifndef <FONT COLOR="#000044">NETWIB_PKT_TYPES_INCLUDED</FONT></FONT>
+<FONT COLOR="#008800">#define <FONT COLOR="#000044">NETWIB_PKT_TYPES_INCLUDED</FONT> 1</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Protocol values */</FONT>
+typedef enum {
+  <FONT COLOR="#000044">NETWIB_IPPROTO_IP</FONT> = 0,        <FONT COLOR="#880000">/* Dummy protocol for TCP */</FONT>
+  <FONT COLOR="#000044">NETWIB_IPPROTO_HOPOPTS</FONT> = 0,   <FONT COLOR="#880000">/* IPv6 Hop-by-Hop options */</FONT>
+  <FONT COLOR="#000044">NETWIB_IPPROTO_ICMP4</FONT> = 1,     <FONT COLOR="#880000">/* Internet Control Message Protocol */</FONT>
+  <FONT COLOR="#000044">NETWIB_IPPROTO_IGMP</FONT> = 2,      <FONT COLOR="#880000">/* Internet Group Management Protocol */</FONT>
+  <FONT COLOR="#000044">NETWIB_IPPROTO_IPIP</FONT> = 4,      <FONT COLOR="#880000">/* IPIP tunnels */</FONT>
+  <FONT COLOR="#000044">NETWIB_IPPROTO_TCP</FONT> = 6,       <FONT COLOR="#880000">/* Transmission Control Protocol */</FONT>
+  <FONT COLOR="#000044">NETWIB_IPPROTO_EGP</FONT> = 8,       <FONT COLOR="#880000">/* Exterior Gateway Protocol */</FONT>
+  <FONT COLOR="#000044">NETWIB_IPPROTO_PUP</FONT> = 12,      <FONT COLOR="#880000">/* PUP protocol */</FONT>
+  <FONT COLOR="#000044">NETWIB_IPPROTO_UDP</FONT> = 17,      <FONT COLOR="#880000">/* User Datagram Protocol */</FONT>
+  <FONT COLOR="#000044">NETWIB_IPPROTO_IDP</FONT> = 22,      <FONT COLOR="#880000">/* XNS IDP protocol */</FONT>
+  <FONT COLOR="#000044">NETWIB_IPPROTO_TP</FONT> = 29,       <FONT COLOR="#880000">/* SO Transport Protocol Class 4 */</FONT>
+  <FONT COLOR="#000044">NETWIB_IPPROTO_IP6</FONT> = 41,      <FONT COLOR="#880000">/* IPv6 header */</FONT>
+  <FONT COLOR="#000044">NETWIB_IPPROTO_ROUTING</FONT> = 43,  <FONT COLOR="#880000">/* IPv6 routing header */</FONT>
+  <FONT COLOR="#000044">NETWIB_IPPROTO_FRAGMENT</FONT> = 44, <FONT COLOR="#880000">/* IPv6 fragmentation header */</FONT>
+  <FONT COLOR="#000044">NETWIB_IPPROTO_RSVP</FONT> = 46,     <FONT COLOR="#880000">/* Reservation Protocol */</FONT>
+  <FONT COLOR="#000044">NETWIB_IPPROTO_GRE</FONT> = 47,      <FONT COLOR="#880000">/* General Routing Encapsulation */</FONT>
+  <FONT COLOR="#000044">NETWIB_IPPROTO_ESP</FONT> = 50,      <FONT COLOR="#880000">/* encapsulating security payload */</FONT>
+  <FONT COLOR="#000044">NETWIB_IPPROTO_AH</FONT> = 51,       <FONT COLOR="#880000">/* authentication header */</FONT>
+  <FONT COLOR="#000044">NETWIB_IPPROTO_ICMP6</FONT> = 58,    <FONT COLOR="#880000">/* ICMPv6 */</FONT>
+  <FONT COLOR="#000044">NETWIB_IPPROTO_NONE</FONT> = 59,     <FONT COLOR="#880000">/* IPv6 no next header */</FONT>
+  <FONT COLOR="#000044">NETWIB_IPPROTO_DSTOPTS</FONT> = 60,  <FONT COLOR="#880000">/* IPv6 destination options */</FONT>
+  <FONT COLOR="#000044">NETWIB_IPPROTO_MTP</FONT> = 92,      <FONT COLOR="#880000">/* Multicast Transport Protocol */</FONT>
+  <FONT COLOR="#000044">NETWIB_IPPROTO_ENCAP</FONT> = 98,    <FONT COLOR="#880000">/* Encapsulation Header */</FONT>
+  <FONT COLOR="#000044">NETWIB_IPPROTO_PIM</FONT> = 103,     <FONT COLOR="#880000">/* Protocol Independent Multicast */</FONT>
+  <FONT COLOR="#000044">NETWIB_IPPROTO_COMP</FONT> = 108,    <FONT COLOR="#880000">/* Compression Header Protocol */</FONT>
+  <FONT COLOR="#000044">NETWIB_IPPROTO_RAW</FONT> = 255      <FONT COLOR="#880000">/* Raw IP packets */</FONT>
+} <FONT COLOR="#000088">netwib_ipproto</FONT>;
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#008800">#define <B>netwib__data_append_uint8</B>(data,u) *(data)++=(netwib_byte)(u)</FONT>
+<FONT COLOR="#008800">#define <B>netwib__data_append_uint16</B>(data,u) *(data)++=<B>netwib_c2_uint16_0</B>(u);*(data)++=<B>netwib_c2_uint16_1</B>(u)</FONT>
+<FONT COLOR="#008800">#define <B>netwib__data_append_uint32</B>(data,u) *(data)++=<B>netwib_c2_uint32_0</B>(u);*(data)++=<B>netwib_c2_uint32_1</B>(u);*(data)++=<B>netwib_c2_uint32_2</B>(u);*(data)++=<B>netwib_c2_uint32_3</B>(u)</FONT>
+<FONT COLOR="#008800">#define <B>netwib__data_append_uint64</B>(data,u) *(data)++=<B>netwib_c2_uint64_0</B>(u);*(data)++=<B>netwib_c2_uint64_1</B>(u);*(data)++=<B>netwib_c2_uint64_2</B>(u);*(data)++=<B>netwib_c2_uint64_3</B>(u);*(data)++=<B>netwib_c2_uint64_4</B>(u);*(data)++=<B>netwib_c2_uint64_5</B>(u);*(data)++=<B>netwib_c2_uint64_6</B>(u);*(data)++=<B>netwib_c2_uint64_7</B>(u)</FONT>
+<FONT COLOR="#880000">/* for structures created with little endian processors */</FONT>
+<FONT COLOR="#008800">#define <B>netwib__data_append_uint8_le</B>(data,u) <B>netwib__data_append_uint8</B>(data,u)</FONT>
+<FONT COLOR="#008800">#define <B>netwib__data_append_uint16_le</B>(data,u) *(data)++=<B>netwib_c2_uint16_1</B>(u);*(data)++=<B>netwib_c2_uint16_0</B>(u)</FONT>
+<FONT COLOR="#008800">#define <B>netwib__data_append_uint32_le</B>(data,u) *(data)++=<B>netwib_c2_uint32_3</B>(u);*(data)++=<B>netwib_c2_uint32_2</B>(u);*(data)++=<B>netwib_c2_uint32_1</B>(u);*(data)++=<B>netwib_c2_uint32_0</B>(u)</FONT>
+<FONT COLOR="#008800">#define <B>netwib__data_append_uint64_le</B>(data,u) *(data)++=<B>netwib_c2_uint64_7</B>(u);*(data)++=<B>netwib_c2_uint64_6</B>(u);*(data)++=<B>netwib_c2_uint64_5</B>(u);*(data)++=<B>netwib_c2_uint64_4</B>(u);*(data)++=<B>netwib_c2_uint64_3</B>(u);*(data)++=<B>netwib_c2_uint64_2</B>(u);*(data)++=<B>netwib_c2_uint64_1</B>(u);*(data)++=<B>netwib_c2_uint64_0</B>(u)</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#008800">#define <B>netwib__data_decode_uint8t</B>(data,u,type) u=(type)(*(data)++)</FONT>
+<FONT COLOR="#008800">#define <B>netwib__data_decode_uint8t_le</B>(data,u,type) <B>netwib__data_decode_uint8t</B>(data,u,type)</FONT>
+<FONT COLOR="#008800">#define <B>netwib__data_decode_uint16t</B>(data,u,type) u=(type)((*(data)++)&lt;&lt;8);u=(type)((u)|*(data)++)</FONT>
+<FONT COLOR="#008800">#define <B>netwib__data_decode_uint16t_le</B>(data,u,type) u=(type)(*(data)++);u=(type)(((*(data)++)&lt;&lt;8)|(u))</FONT>
+<FONT COLOR="#008800">#define <B>netwib__data_decode_uint32t</B>(data,u,type) u=(type)((*(data)++)&lt;&lt;24);u=(type)((u)|((*(data)++)&lt;&lt;16));u=(type)((u)|((*(data)++)&lt;&lt;8));u=(type)((u)|*(data)++)</FONT>
+<FONT COLOR="#008800">#define <B>netwib__data_decode_uint32t_le</B>(data,u,type) u=(type)(*(data)++);u=(type)(((*(data)++)&lt;&lt;8)|(u));u=(type)(((*(data)++)&lt;&lt;16)|(u));u=(type)(((*(data)++)&lt;&lt;24)|(u))</FONT>
+<FONT COLOR="#008800">#if <FONT COLOR="#000044">NETWIB_INT64_FAKE</FONT> == 0</FONT>
+<FONT COLOR="#008800"> #define <B>netwib__data_decode_uint64t</B>(data,u,type) u=(type)((netwib_uint64)(*(data)++)&lt;&lt;56);u=(type)((u)|((netwib_uint64)(*(data)++)&lt;&lt;48));u=(type)((u)|((netwib_uint64)(*(data)++)&lt;&lt;40));u=(type)((u)|((netwib_uint64)(*(data)++)&lt;&lt;32));u=(type)((u)|((netwib_uint64)(*(data)++)&lt;&lt;24));u=(type)((u)|((netwib_uint64)(*(data)++)&lt;&lt;16));u=(type)((u)|((netwib_uint64)(*(data)++)&lt;&lt;8));u=(type)((u)|(netwib_uint64)(*(data)++))</FONT>
+<FONT COLOR="#008800"> #define <B>netwib__data_decode_uint64t_le</B>(data,u,type) u=(type)(netwib_uint64)(*(data)++);u=(type)(((netwib_uint64)(*(data)++)&lt;&lt;8)|(u));u=(type)(((netwib_uint64)(*(data)++)&lt;&lt;16)|(u));u=(type)(((netwib_uint64)(*(data)++)&lt;&lt;24)|(u));u=(type)(((netwib_uint64)(*(data)++)&lt;&lt;32)|(u));u=(type)(((netwib_uint64)(*(data)++)&lt;&lt;40)|(u));u=(type)(((netwib_uint64)(*(data)++)&lt;&lt;48)|(u));u=(type)(((netwib_uint64)(*(data)++)&lt;&lt;56)|(u))</FONT>
+<FONT COLOR="#008800">#else</FONT>
+<FONT COLOR="#008800"> #define <B>netwib__data_decode_uint64t</B>(data,u,type) <B>netwib__data_decode_uint32</B>(data,(u).high);<B>netwib__data_decode_uint32</B>(data,(u).low)</FONT>
+<FONT COLOR="#008800"> #define <B>netwib__data_decode_uint64t_le</B>(data,u,type) <B>netwib__data_decode_uint32_le</B>(data,(u).low);<B>netwib__data_decode_uint32_le</B>(data,(u).high)</FONT>
+<FONT COLOR="#008800">#endif</FONT>
+<FONT COLOR="#008800">#define <B>netwib__data_decode_uint8</B>(data,u) <B>netwib__data_decode_uint8t</B>(data,u,netwib_uint8)</FONT>
+<FONT COLOR="#008800">#define <B>netwib__data_decode_uint8_le</B>(data,u) <B>netwib__data_decode_uint8</B>(data,u)</FONT>
+<FONT COLOR="#008800">#define <B>netwib__data_decode_uint16</B>(data,u) <B>netwib__data_decode_uint16t</B>(data,u,netwib_uint16)</FONT>
+<FONT COLOR="#008800">#define <B>netwib__data_decode_uint16_le</B>(data,u) <B>netwib__data_decode_uint16t_le</B>(data,u,netwib_uint16)</FONT>
+<FONT COLOR="#008800">#define <B>netwib__data_decode_uint32</B>(data,u) <B>netwib__data_decode_uint32t</B>(data,u,netwib_uint32)</FONT>
+<FONT COLOR="#008800">#define <B>netwib__data_decode_uint32_le</B>(data,u) <B>netwib__data_decode_uint32t_le</B>(data,u,netwib_uint32)</FONT>
+<FONT COLOR="#008800">#define <B>netwib__data_decode_uint64</B>(data,u) <B>netwib__data_decode_uint64t</B>(data,u,netwib_uint64)</FONT>
+<FONT COLOR="#008800">#define <B>netwib__data_decode_uint64_le</B>(data,u) <B>netwib__data_decode_uint64t_le</B>(data,u,netwib_uint64)</FONT>
+
+<FONT COLOR="#008800">#endif</FONT>
+</PRE><BR><BR><HR><BR>
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../pkt.html">section index</A></H2>
+</BODY></HTML>

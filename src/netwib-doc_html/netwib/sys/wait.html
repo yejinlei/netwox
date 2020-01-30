@@ -1,0 +1,171 @@
+<HTML><HEAD>
+<TITLE>netwib doc_html (version 5.39.0)</TITLE>
+</HEAD><BODY BGCOLOR="#FFFFFF" TEXT="#000000">
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../sys.html">section index</A></H2><HR><BR>
+<PRE>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000"><B>/***************************************************************
+ * A <FONT COLOR="#000088">netwib_wait</FONT> permits to wait for an event during a user    *
+ * defined duration.                                           *
+ ***************************************************************/</B></FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+typedef struct <FONT COLOR="#000088">netwib_wait</FONT> <FONT COLOR="#000088">netwib_wait</FONT>;
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_wait_init
+   Description :
+     Initialize a <FONT COLOR="#000088">netwib_wait</FONT> : wait for an event decided by a
+     function.
+   Input parameter(s) :
+     pfuncevent : memory address of the function which will
+                  be called to check for an event
+                  For each call, the first parameter ('infos')
+                  will be set with the optional parameter below.
+     pfuncclose : optional parameter (can be NULL) which
+                  contain the function to call to free
+                  resources allocated by infos (when
+                  <FONT COLOR="#000088">netwib_wait_close</FONT> will be called)
+   Input/output parameter(s) :
+     infos : optional parameter (can be NULL) which will be
+             used as the first parameter for *pfunc.
+             This may be used to send information to *pfunc.
+   Output parameter(s) :
+     **ppwait : <FONT COLOR="#000088">netwib_wait</FONT> associated to function
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+typedef <FONT COLOR="#000088">netwib_err</FONT> (*netwib_wait_event_pf)(<FONT COLOR="#000088">netwib_ptr</FONT> infos,
+                                           <FONT COLOR="#000088">netwib_consttime</FONT> *pabstime,
+                                           <FONT COLOR="#000088">netwib_bool</FONT> *pevent);
+typedef <FONT COLOR="#000088">netwib_err</FONT> (*netwib_wait_close_pf)(<FONT COLOR="#000088">netwib_ptr</FONT> infos);
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_wait_init</B>(<FONT COLOR="#000088">netwib_wait_event_pf</FONT> pfuncevent,
+                            <FONT COLOR="#000088">netwib_ptr</FONT> infos,
+                            <FONT COLOR="#000088">netwib_wait_close_pf</FONT> pfuncclose,
+                            <FONT COLOR="#000088">netwib_wait</FONT> **ppwait);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_wait_close
+   Description :
+     Close a netwib_wait.
+   Input parameter(s) :
+   Input/output parameter(s) :
+     **ppwait : <FONT COLOR="#000088">netwib_wait</FONT> to close
+   Output parameter(s) :
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_wait_close</B>(<FONT COLOR="#000088">netwib_wait</FONT> **ppwait);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_wait_init_io
+   Description :
+     Initialize a <FONT COLOR="#000088">netwib_wait</FONT> : wait for data from the netwib_io.
+   Input parameter(s) :
+     *pio : <FONT COLOR="#000088">netwib_io</FONT> where to wait for data
+   Input/output parameter(s) :
+   Output parameter(s) :
+     **ppwait : <FONT COLOR="#000088">netwib_wait</FONT> associated to *pio
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_wait_init_io</B>(<FONT COLOR="#000088">netwib_io</FONT> *pio,
+                               <FONT COLOR="#000088">netwib_io_waytype</FONT> way,
+                               <FONT COLOR="#000088">netwib_wait</FONT> **ppwait);
+<FONT COLOR="#880000">/* <FONT COLOR="#000088">netwib_err</FONT> f(<FONT COLOR="#000088">netwib_io</FONT> *pio, <FONT COLOR="#000088">netwib_wait</FONT> **ppwait); */</FONT>
+<FONT COLOR="#008800">#define <B>netwib_wait_init_io_read</B>(pio,ppwait) <B>netwib_wait_init_io</B>(pio,<FONT COLOR="#000044">NETWIB_IO_WAYTYPE_READ</FONT>,ppwait)</FONT>
+<FONT COLOR="#008800">#define <B>netwib_wait_init_io_write</B>(pio,ppwait) <B>netwib_wait_init_io</B>(pio,<FONT COLOR="#000044">NETWIB_IO_WAYTYPE_WRITE</FONT>,ppwait)</FONT>
+<FONT COLOR="#008800">#define <B>netwib_wait_init_io_rdwr</B>(pio,ppwait) <B>netwib_wait_init_io</B>(pio,<FONT COLOR="#000044">NETWIB_IO_WAYTYPE_RDWR</FONT>,ppwait)</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_wait_init_thread_end
+   Description :
+     Initialize a <FONT COLOR="#000088">netwib_wait</FONT> : wait for the end of a thread.
+   Input parameter(s) :
+     *pthread : thread to wait for
+   Input/output parameter(s) :
+     preturnederror : address of a variable which will contain
+                      returned error
+     pinfosout : address of a variable which will contain
+                 output information
+   Output parameter(s) :
+     *ppwait : <FONT COLOR="#000088">netwib_wait</FONT> associated to *pthread
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_wait_init_thread_end</B>(<FONT COLOR="#000088">netwib_thread</FONT> *pthread,
+                                       <FONT COLOR="#000088">netwib_err</FONT> *preturnederror,
+                                       <FONT COLOR="#000088">netwib_ptr</FONT> *pinfosout,
+                                       <FONT COLOR="#000088">netwib_wait</FONT> **ppwait);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_wait_init_thread_cond
+   Description :
+     Initialize a <FONT COLOR="#000088">netwib_wait</FONT> : wait for a condition
+   Input parameter(s) :
+     *pcond : condition to wait for
+   Input/output parameter(s) :
+     *pvalue : address of a variable which will contain
+               condition value
+   Output parameter(s) :
+     *ppwait : <FONT COLOR="#000088">netwib_wait</FONT> associated to *pcond
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_wait_init_thread_cond</B>(<FONT COLOR="#000088">netwib_thread_cond</FONT> *pcond,
+                                        <FONT COLOR="#000088">netwib_uint32</FONT> *pvalue,
+                                        <FONT COLOR="#000088">netwib_wait</FONT> **ppwait);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_wait_wait1
+   Description :
+     Wait for 1 event.
+   Input parameter(s) :
+     *pwait : <FONT COLOR="#000088">netwib_wait</FONT> to wait for
+     *pabstime : end time
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pevent : an event occurred on *pwait. If *pabstime is
+               reached *pevent is set to <FONT COLOR="#000044">NETWIB_FALSE</FONT>.
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_wait_wait1</B>(<FONT COLOR="#000088">netwib_wait</FONT> *pwait,
+                             <FONT COLOR="#000088">netwib_consttime</FONT> *pabstime,
+                             <FONT COLOR="#000088">netwib_bool</FONT> *pevent);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_wait_wait5
+   Description :
+     Wait for 1 event amongst 5 netwib_wait.
+   Input parameter(s) :
+     *pwait1..5 : <FONT COLOR="#000088">netwib_wait</FONT> to wait for
+     *pabstime : end time
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pevent1..5 : an event occurred on *pwait1..5
+                   If abstime is reached *pevent is set
+                   to <FONT COLOR="#000044">NETWIB_FALSE</FONT>.
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_wait_wait5</B>(<FONT COLOR="#000088">netwib_wait</FONT> *pwait1,
+                             <FONT COLOR="#000088">netwib_wait</FONT> *pwait2,
+                             <FONT COLOR="#000088">netwib_wait</FONT> *pwait3,
+                             <FONT COLOR="#000088">netwib_wait</FONT> *pwait4,
+                             <FONT COLOR="#000088">netwib_wait</FONT> *pwait5,
+                             <FONT COLOR="#000088">netwib_consttime</FONT> *pabstime,
+                             <FONT COLOR="#000088">netwib_bool</FONT> *pevent1,
+                             <FONT COLOR="#000088">netwib_bool</FONT> *pevent2,
+                             <FONT COLOR="#000088">netwib_bool</FONT> *pevent3,
+                             <FONT COLOR="#000088">netwib_bool</FONT> *pevent4,
+                             <FONT COLOR="#000088">netwib_bool</FONT> *pevent5);
+<FONT COLOR="#008800">#define <B>netwib_wait_wait4</B>(pwait1,pwait2,pwait3,pwait4,pabstime,pevent1,pevent2,pevent3,pevent4) <B>netwib_wait_wait5</B>(pwait1,pwait2,pwait3,pwait4,NULL,pabstime,pevent1,pevent2,pevent3,pevent4,NULL)</FONT>
+<FONT COLOR="#008800">#define <B>netwib_wait_wait3</B>(pwait1,pwait2,pwait3,pabstime,pevent1,pevent2,pevent3) <B>netwib_wait_wait5</B>(pwait1,pwait2,pwait3,NULL,NULL,pabstime,pevent1,pevent2,pevent3,NULL,NULL)</FONT>
+<FONT COLOR="#008800">#define <B>netwib_wait_wait2</B>(pwait1,pwait2,pabstime,pevent1,pevent2) <B>netwib_wait_wait5</B>(pwait1,pwait2,NULL,NULL,NULL,pabstime,pevent1,pevent2,NULL,NULL,NULL)</FONT>
+</PRE><BR><BR><HR><BR>
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../sys.html">section index</A></H2>
+</BODY></HTML>

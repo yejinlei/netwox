@@ -1,0 +1,52 @@
+<HTML><HEAD>
+<TITLE>netwib doc_html (version 5.39.0)</TITLE>
+</HEAD><BODY BGCOLOR="#FFFFFF" TEXT="#000000">
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../sys.html">section index</A></H2><HR><BR>
+<PRE>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_uint32_init_rand
+   Description :
+     Generate a random number
+   Input parameter(s) :
+     min : minimum value
+     max : maximum value
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pnumber : random number generated
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_uint32_init_rand</B>(<FONT COLOR="#000088">netwib_uint32</FONT> min,
+                                   <FONT COLOR="#000088">netwib_uint32</FONT> max,
+                                   <FONT COLOR="#000088">netwib_uint32</FONT> *pnumber);
+<FONT COLOR="#008800">#define <B>netwib_uint32_init_rand_all</B>(pnumber) <B>netwib_uint32_init_rand</B>(0,0xFFFFFFFFu,pnumber)</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_uint64_init_rand</B>(<FONT COLOR="#000088">netwib_uint64</FONT> min,
+                                   <FONT COLOR="#000088">netwib_uint64</FONT> max,
+                                   <FONT COLOR="#000088">netwib_uint64</FONT> *pnumber);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_buf_append_rand
+   Description :
+     Generate a random buffer
+   Input parameter(s) :
+     size : wanted buffer size
+     min : minimal value
+     max : maximal value
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pbuf : random buffer generated
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+   This function sets <FONT COLOR="#000044">NETWIB_BUF_FLAGS_SENSITIVE</FONT>.
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_buf_append_rand</B>(<FONT COLOR="#000088">netwib_uint32</FONT> size,
+                                  <FONT COLOR="#000088">netwib_byte</FONT> min,
+                                  <FONT COLOR="#000088">netwib_byte</FONT> max,
+                                  <FONT COLOR="#000088">netwib_buf</FONT> *pbuf);
+<FONT COLOR="#008800">#define <B>netwib_buf_append_rand_all</B>(size,pbuf) <B>netwib_buf_append_rand</B>(size,0,255,pbuf)</FONT>
+</PRE><BR><BR><HR><BR>
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../sys.html">section index</A></H2>
+</BODY></HTML>

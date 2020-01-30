@@ -1,0 +1,258 @@
+<HTML><HEAD>
+<TITLE>netwib doc_html (version 5.39.0)</TITLE>
+</HEAD><BODY BGCOLOR="#FFFFFF" TEXT="#000000">
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../sys.html">section index</A></H2><HR><BR>
+<PRE>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000"><B>/***************************************************************
+ * Under Windows, '/' and '\' are recognized as directory      *
+ * separator. However, under Unix, only '/' is valid.          *
+ * So, if you want your code to be portable, use '/'.          *
+ ***************************************************************/</B></FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_path_canon
+   Description :
+     Clean a filename ("//"-&gt;"/", "/./"-&gt;"/", "/aa/../"-&gt;"/", etc.).
+   Input parameter(s) :
+     pathname : filename (ex : "/tmp/dir/..//./file")
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pcanonizedpathname : cleaned filename (ex : "/tmp/file")
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+   Examples of canonical paths :
+     file          dir          dir/file          dir/dir
+     /file         /dir         /dir/file         /dir/dir
+     ../file       ../dir       ../dir/file       ../dir/dir
+     /             .            ..
+    Windows using a drive letter :
+     c:file        c:dir        c:dir/file        c:dir/dir
+     c:/file       c:/dir       c:/dir/file       c:/dir/dir
+     c:../file     c:../dir     c:../dir/file     c:../dir/dir
+     c:/           c:           c:..
+    Windows using a smb or cifs share :
+     //server/share/
+     //s/sh/file   //s/sh/dir   //s/sh/dir/file   //s/sh/dir/dir
+    Note : a Window share is very similar to an absolute path
+           with two leading '/'. To ensure they are not mixed,
+           you have to ensure an absolute path does not start
+           with '//'.
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_path_canon</B>(<FONT COLOR="#000088">netwib_constbuf</FONT> *ppathname,
+                             <FONT COLOR="#000088">netwib_buf</FONT> *pcanonizedpathname);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000"><B>/***************************************************************
+ * netwib functions :                                          *
+ *  - always work with :                                       *
+ *     + canonized path                                        *
+ *  - generally work with :                                    *
+ *     + relative path with leading "./"                       *
+ *     + "c:." instead of "c:" (only under Windows)            *
+ *     + path with "\" instead of "/" (only under Windows)     *
+ *  - might work with :                                        *
+ *     + directory name ending with "/" (not under Windows)    *
+ *     + path such as "/dir/../dir2/file"                      *
+ *                                                             *
+ * So, user should canonize paths before using netwib          *
+ * functions. However, functions in this module accept         *
+ * un-canonized paths and produce canonized paths. So,         *
+ * functions in this module are safe for use.                  *
+ ***************************************************************/</B></FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000"><B>/***************************************************************
+ * Empty string ("") is not a valid path. If functions of this *
+ * module have an empty parameter, error                       *
+ * <FONT COLOR="#000044">NETWIB_ERR_PAPATHNOTCANON</FONT> occurs.                           *
+ ***************************************************************/</B></FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_pathtype_init
+   Description :
+     Obtain type of a path.
+   Input parameter(s) :
+     *ppathname : pathname to obtain info for (do not need to be canonized).
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *ppathtype : type as a bitfield
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+   Examples :
+     pathname     absolute  root   unix  windrive  winshare
+      file         0=no       0      1      0         0
+      /file        1=yes      0      1      0         0
+      ../file        0        0      1      0         0
+      /              1        1      1      0         0
+      .              0        0      1      0         0
+      ..             0        0      1      0         0
+      c:file         0        0      0      1         0
+      c:/file        1        0      0      1         0
+      c:../file      0        0      0      1         0
+      c:/            1        1      0      1         0
+      c:             0        0      0      1         0
+      c:..           0        0      0      1         0
+      //s/sh/file    1        0      0      0         1
+      //s/sh/        1        1      0      0         1
+*/</FONT>
+<FONT COLOR="#008800">#define <FONT COLOR="#000044">NETWIB_PATHTYPE_ABSOLUTE</FONT> 0x01 <FONT COLOR="#880000">/* absolute: path is fully specified */</FONT></FONT>
+<FONT COLOR="#008800">#define <FONT COLOR="#000044">NETWIB_PATHTYPE_ROOT</FONT>     0x02 <FONT COLOR="#880000">/* root: can't go up */</FONT></FONT>
+<FONT COLOR="#008800">#define <FONT COLOR="#000044">NETWIB_PATHTYPE_UNIX</FONT>     0x04 <FONT COLOR="#880000">/* unix (or windows simple path) */</FONT></FONT>
+<FONT COLOR="#008800">#define <FONT COLOR="#000044">NETWIB_PATHTYPE_WINDRIVE</FONT> 0x08 <FONT COLOR="#880000">/* windows drive: c:, d: */</FONT></FONT>
+<FONT COLOR="#008800">#define <FONT COLOR="#000044">NETWIB_PATHTYPE_WINSHARE</FONT> 0x10 <FONT COLOR="#880000">/* windows smb share: //server/share/ */</FONT></FONT>
+typedef <FONT COLOR="#000088">netwib_uint32</FONT> <FONT COLOR="#000088">netwib_pathtype</FONT>;
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_pathtype_init</B>(<FONT COLOR="#000088">netwib_constbuf</FONT> *ppathname,
+                                <FONT COLOR="#000088">netwib_pathtype</FONT> *ppathtype);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_path_decode_xyz
+   Description :
+     Separate a path.
+   Input parameter(s) :
+     ppathname : filename (ex : "/tmp/file") (do not need to be canonized)
+   Input/output parameter(s) :
+     type : type of information to extract
+   Output parameter(s) :
+     *pout : output buffer (canonized, even if ppathname is not)
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+   Examples :
+     pathname     begin   core      parent   child
+      file        .       file      .        file
+      d/f         .       d/f       d        f
+      /file       /       /file     /        file
+      /d/f        /       /d/f      /d       f
+      ../file     .       ../file   ..       file
+      ../d/f      .       ../d/f    ../d     f
+      /           /       /         Error1   /
+      .           .       .         ..       .
+      ..          .       ..        ../..    ..
+      c:file      c:      file      c:       file
+      c:d/f       c:      d/f       c:d      f
+      c:/file     c:/     /file     c:/      file
+      c:/d/f      c:/     /d/f      c:/d     f
+      c:../file   c:      ../file   c:..     file
+      c:../d/f    c:      ../d/f    c:../d   f
+      c:/         c:/     /         Error1   /
+      c:          c:      .         c:..     .
+      c:..        c:      ..        c:../..  ..
+      //s/t/file  //s/t/  /file     //s/t/   file
+      //s/t/d/f   //s/t/  /d/f      //s/t/d  f
+      //s/t/      //s/t/  /         Error1   /
+   Errors are :
+     Error1 : <FONT COLOR="#000044">NETWIB_ERR_PAPATHROOTDOTDOT</FONT>
+*/</FONT>
+typedef enum {
+  <FONT COLOR="#000044">NETWIB_PATH_DECODETYPE_BEGIN</FONT> = 1, <FONT COLOR="#880000">/* root directory or . */</FONT>
+  <FONT COLOR="#000044">NETWIB_PATH_DECODETYPE_CORE</FONT>,      <FONT COLOR="#880000">/* path starting at begin */</FONT>
+  <FONT COLOR="#000044">NETWIB_PATH_DECODETYPE_PARENT</FONT>,    <FONT COLOR="#880000">/* parent directory */</FONT>
+  <FONT COLOR="#000044">NETWIB_PATH_DECODETYPE_CHILD</FONT>,     <FONT COLOR="#880000">/* last item */</FONT>
+  <FONT COLOR="#000044">NETWIB_PATH_DECODETYPE_EXTENSION</FONT>  <FONT COLOR="#880000">/* file extension without the dot
+                                       (empty if no extension) ; pout is
+                                       a <FONT COLOR="#000088">netwib_bufext</FONT> */</FONT>
+  <FONT COLOR="#880000">/* note : pathname == begin+core or parent+child */</FONT>
+} <FONT COLOR="#000088">netwib_path_decodetype</FONT>;
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_path_decode</B>(<FONT COLOR="#000088">netwib_constbuf</FONT> *ppathname,
+                              <FONT COLOR="#000088">netwib_path_decodetype</FONT> type,
+                              <FONT COLOR="#000088">netwib_buf</FONT> *pout);
+<FONT COLOR="#008800">#define <B>netwib_path_decode_begin</B>(pathname,pout) <B>netwib_path_decode</B>(pathname,<FONT COLOR="#000044">NETWIB_PATH_DECODETYPE_BEGIN</FONT>,pout)</FONT>
+<FONT COLOR="#008800">#define <B>netwib_path_decode_core</B>(pathname,pout) <B>netwib_path_decode</B>(pathname,<FONT COLOR="#000044">NETWIB_PATH_DECODETYPE_CORE</FONT>,pout)</FONT>
+<FONT COLOR="#008800">#define <B>netwib_path_decode_parent</B>(pathname,pout) <B>netwib_path_decode</B>(pathname,<FONT COLOR="#000044">NETWIB_PATH_DECODETYPE_PARENT</FONT>,pout)</FONT>
+<FONT COLOR="#008800">#define <B>netwib_path_decode_child</B>(pathname,pout) <B>netwib_path_decode</B>(pathname,<FONT COLOR="#000044">NETWIB_PATH_DECODETYPE_CHILD</FONT>,pout)</FONT>
+<FONT COLOR="#008800">#define <B>netwib_path_decode_extension</B>(pathname,pout) <B>netwib_path_decode</B>(pathname,<FONT COLOR="#000044">NETWIB_PATH_DECODETYPE_EXTENSION</FONT>,pout)</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_path_init_xyz
+   Description :
+     Initialize a path.
+   Input parameter(s) :
+     See below (do not need to be canonized)
+   Input/output parameter(s) :
+     pout : path initialized (canonized, even if input is not)
+   Output parameter(s) :
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+typedef enum {
+  <FONT COLOR="#000044">NETWIB_PATH_INITTYPE_CONCAT</FONT> = 1,
+  <FONT COLOR="#000044">NETWIB_PATH_INITTYPE_JAIL</FONT>,
+  <FONT COLOR="#000044">NETWIB_PATH_INITTYPE_ABS</FONT>,
+  <FONT COLOR="#000044">NETWIB_PATH_INITTYPE_RELA</FONT>,
+  <FONT COLOR="#000044">NETWIB_PATH_INITTYPE_RELB</FONT>,
+} <FONT COLOR="#000088">netwib_path_inittype</FONT>;
+<FONT COLOR="#880000">/*
+   Definitions :
+     concat : path from the beginning of dirname1 to pathname2
+                 [dirname1]-[pathname2]
+                 X--------------------&gt;
+              If pathname2 is absolute, an error occurs (except if
+              dirname1 is a root).
+     jail : same as concat except pathname2 is considered as an
+            absolute path inside dirname1. It's a kind of chroot
+            or jail with a rootdir of dirname1. Resulting filename
+            cannot escape from dirname1.
+     abs : absolute path to pathname2 (pathname2 is in a
+           file located in dirname1 directory)
+              root
+                [dirname1]-[pathname2]
+              X----------------------&gt;
+           If pathname2 is absolute, result is pathname2.
+           If dirname1 is not absolute, an error occurs.
+     rela : relative path to go to pathname2 from a file
+            in dirname1 directory (pathname2 is in a
+            file located in dirname1 directory)
+               [dirname1]-[pathname2]
+                        X-----------&gt;
+            If pathname2 is relative, result is pathname2.
+            If pathname2 is absolute, dirname1 must be absolute.
+     relb : relative path to go to pathname2 from a file
+            in dirname1 directory (pathname1 and pathname2
+            are located in the same directory)
+               [dirname1]
+               [  pathname2   ]
+                        X-----&gt;
+            If pathname2 is absolute, dirname1 must be absolute.
+            If pathname2 is relative, dirname1 must be relative.
+   Examples of concat, jail and abs :
+     dirname1   pathname2  concat       jail         abs
+     d1         d2/f2      d1/d2/f2     d1/d2/f2     Error
+     d1         ../d2/f2   d2/f2        Error        Error
+     d1         /d2/f2     Error        d1/d2/f2     /d2/f2
+     ../d1      d2/f2      ../d1/d2/f2  ../d1/d2/f2  Error
+     ../d1      ../d2/f2   ../d2/f2     Error        Error
+     ../d1      /d2/f2     Error        ../d1/d2/f2  /d2/f2
+     /d1        d2/f2      /d1/d2/f2    /d1/d2/f2    /d1/d2/f2
+     /d1        ../d2/f2   /d2/f2       Error        /d2/f2
+     /d1        /d2/f2     Error        /d1/d2/f2    /d2/f2
+     isroot     /d2/f2     x/d2/f2      x/d2/f2      /d2/f2
+   Examples of rela and relb :
+     dirname1   pathname2  rela         relb
+     d1         d2/f2      d2/f2        ../d2/f2
+     d1         ../d2/f2   ../d2/f2     ../../d2/f2
+     d1         /d2/f2     Error        Error
+     ../d1      d2/f2      d2/f2        Error
+     ../d1      ../d2/f2   ../d2/f2     ../d2/f2
+     ../d1      /d2/f2     Error        Error
+     /d1        d2/f2      d2/f2        Error
+     /d1        ../d2/f2   ../d2/f2     Error
+     /d1        /d2/f2     ../d2/f2     ../d2/f2
+     d1         d1         d1           . (because pathname2 is like ...)
+     /d1        /d1        .            . (dirname1, so it's a directory)
+   The errors have the code : <FONT COLOR="#000044">NETWIB_ERR_PAPATHCANTINIT</FONT>.
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_path_init</B>(<FONT COLOR="#000088">netwib_constbuf</FONT> *pdirname1,
+                            <FONT COLOR="#000088">netwib_constbuf</FONT> *ppathname2,
+                            <FONT COLOR="#000088">netwib_path_inittype</FONT> type,
+                            <FONT COLOR="#000088">netwib_buf</FONT> *pout);
+<FONT COLOR="#008800">#define <B>netwib_path_init_concat</B>(dirname1,pathname2,pout) <B>netwib_path_init</B>(dirname1,pathname2,<FONT COLOR="#000044">NETWIB_PATH_INITTYPE_CONCAT</FONT>,pout)</FONT>
+<FONT COLOR="#008800">#define <B>netwib_path_init_jail</B>(dirname1,pathname2,pout) <B>netwib_path_init</B>(dirname1,pathname2,<FONT COLOR="#000044">NETWIB_PATH_INITTYPE_JAIL</FONT>,pout)</FONT>
+<FONT COLOR="#008800">#define <B>netwib_path_init_abs</B>(dirname1,pathname2,pout) <B>netwib_path_init</B>(dirname1,pathname2,<FONT COLOR="#000044">NETWIB_PATH_INITTYPE_ABS</FONT>,pout)</FONT>
+<FONT COLOR="#008800">#define <B>netwib_path_init_rela</B>(dirname1,pathname2,pout) <B>netwib_path_init</B>(dirname1,pathname2,<FONT COLOR="#000044">NETWIB_PATH_INITTYPE_RELA</FONT>,pout)</FONT>
+<FONT COLOR="#008800">#define <B>netwib_path_init_relb</B>(dirname1,pathname2,pout) <B>netwib_path_init</B>(dirname1,pathname2,<FONT COLOR="#000044">NETWIB_PATH_INITTYPE_RELB</FONT>,pout)</FONT>
+</PRE><BR><BR><HR><BR>
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../sys.html">section index</A></H2>
+</BODY></HTML>

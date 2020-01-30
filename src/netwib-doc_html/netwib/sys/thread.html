@@ -1,0 +1,74 @@
+<HTML><HEAD>
+<TITLE>netwib doc_html (version 5.39.0)</TITLE>
+</HEAD><BODY BGCOLOR="#FFFFFF" TEXT="#000000">
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../sys.html">section index</A></H2><HR><BR>
+<PRE>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+typedef struct <FONT COLOR="#000088">netwib_thread</FONT> <FONT COLOR="#000088">netwib_thread</FONT>;
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* thread ends when this function returns */</FONT>
+typedef <FONT COLOR="#000088">netwib_err</FONT> (*netwib_thread_pf)(<FONT COLOR="#000088">netwib_ptr</FONT> infosin,
+                                       <FONT COLOR="#000088">netwib_ptr</FONT> *pinfosout);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_thread_init
+   Description :
+     Create a new thread, which will execute *pfunc and exit.
+   Input parameter(s) :
+     *pfunc : function executed by the new thread :
+              infosin : set with infosin
+              pinfosout : eventually set by user
+     infosin : data to pass to the thread
+   Input/output parameter(s) :
+   Output parameter(s) :
+     **ppthread : thread created
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_thread_init</B>(<FONT COLOR="#000088">netwib_thread_pf</FONT> pfunc,
+                              <FONT COLOR="#000088">netwib_ptr</FONT> infosin,
+                              <FONT COLOR="#000088">netwib_thread</FONT> **ppthread);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_thread_close
+   Description :
+     Free memory allocated by a netwib_thread.
+     Note : this function does not terminate the thread.
+            function <FONT COLOR="#000088">netwib_thread_wait</FONT> must be called before
+   Input parameter(s) :
+   Input/output parameter(s) :
+     **ppthread : thread to free
+   Output parameter(s) :
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_thread_close</B>(<FONT COLOR="#000088">netwib_thread</FONT> **ppthead);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_thread_wait
+   Description :
+     Wait for the end of the thread.
+   Input parameter(s) :
+     *pthread : thread to wait for
+     *pabstime : end time. If *pabstime is reached, function
+                 returns (*pevent set to <FONT COLOR="#000044">NETWIB_FALSE</FONT>).
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pevent : true if thread ended
+     *preturnederror : value returned by the thread
+     *pinfosout : info eventually set by thread
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_thread_wait</B>(<FONT COLOR="#000088">netwib_thread</FONT> *pthread,
+                              <FONT COLOR="#000088">netwib_consttime</FONT> *pabstime,
+                              <FONT COLOR="#000088">netwib_bool</FONT> *pevent,
+                              <FONT COLOR="#000088">netwib_err</FONT> *preturnederror,
+                              <FONT COLOR="#000088">netwib_ptr</FONT> *pinfosout);
+</PRE><BR><BR><HR><BR>
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../sys.html">section index</A></H2>
+</BODY></HTML>

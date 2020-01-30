@@ -1,0 +1,36 @@
+<HTML><HEAD>
+<TITLE>netwib doc_html (version 5.39.0)</TITLE>
+</HEAD><BODY BGCOLOR="#FFFFFF" TEXT="#000000">
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../dat.html">section index</A></H2><HR><BR>
+<PRE>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_checksum_buf
+   Description :
+     Compute the checksum of a buffer.
+   Input parameter(s) :
+     *pbuf : buffer input data
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pchecksum : checksum of data stored in *pbuf.
+                  Note : this checksum is in host byte order
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_checksum_buf</B>(<FONT COLOR="#000088">netwib_constbuf</FONT> *pbuf,
+                               <FONT COLOR="#000088">netwib_uint16</FONT> *pchecksum);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_checksum_init</B>(<FONT COLOR="#000088">netwib_uint32</FONT> *ptmpchecksum);
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_checksum_update_buf</B>(<FONT COLOR="#000088">netwib_constbuf</FONT> *pbuf,
+                                      <FONT COLOR="#000088">netwib_uint32</FONT> *ptmpchecksum);
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_checksum_update_data</B>(<FONT COLOR="#000088">netwib_constdata</FONT> data,
+                                       <FONT COLOR="#000088">netwib_uint32</FONT> datasize,
+                                       <FONT COLOR="#000088">netwib_uint32</FONT> *ptmpchecksum);
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_checksum_close</B>(<FONT COLOR="#000088">netwib_uint32</FONT> tmpchecksum,
+                                 <FONT COLOR="#000088">netwib_uint16</FONT> *pchecksum);
+</PRE><BR><BR><HR><BR>
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../dat.html">section index</A></H2>
+</BODY></HTML>

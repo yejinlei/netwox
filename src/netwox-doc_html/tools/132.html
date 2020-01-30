@@ -1,0 +1,92 @@
+<HTML>
+ <HEAD>
+ <TITLE>Tool 132: Brute force http client (proxy password)</TITLE>
+ </HEAD>
+ <BODY BGCOLOR="#FFFFFF">
+  <CENTER>   <H3>Tool 132: Brute force http client (proxy password)</H3>
+  </CENTER>
+
+  <P><H3>Description:</H3>
+   <PRE>
+  This tool successively tries couples of login and passwords in order
+  to find matching authentication credentials.
+  This tool tries to find password of web proxy (basic authentication).
+  
+  Parameter --uri is the uri/url requested.
+  Parameter --user-agent defines the client name to send. For example
+  'Mozilla/5.0'.
+  Parameter --login defines the logins to try. To check several logins,
+  parameter --login-file is the file containing logins (one per line).
+  Parameter --password-file is the file containing passwords (1/line).
+  Parameter --stopatfirst indicates to stop when first match is found.
+  Parameter --numthread defines the number of threads (simultaneous
+  running checks) to use.
+  Parameter --dst-ip is the address of remote host/server.
+  Parameter --dst-port is the port number where to connect.
+  Optional parameter --src-ip defines the local IP address to use.
+  Optional parameter --src-port defines the local port number to use.
+  Optional parameter --ip4opts permits to add IP4 options encoded as
+  mixed.
+  Optional parameter --ip6exts permits to add IP6 options encoded as
+  mixed (first byte is the next header number).
+  Optional parameters --device, --src-eth and --dst-eth permits to
+  create a virtual client using fake addresses (in this case, tool have
+  to be run with admin privilege in order to sniff and spoof at
+  Ethernet level).
+   </PRE>
+
+  <P><H3>Synonyms:</H3>
+  &nbsp;&nbsp;web<BR>
+
+  <P><H3>Usage:</H3>
+  &nbsp;&nbsp;netwox 132 -u uri -p ip [-P port] [-L login] -w file [-l file] [-U useragent] [-T uint32] [-s|+s] [-n uint32] [-v|+v]<BR>
+
+  <P><H3>Parameters:</H3>
+<TABLE BORDER=1 CELLPADDING=4>
+ <TR>
+  <TD ALIGN=middle><I>parameter</I></TD>
+  <TD ALIGN=middle><I>description</I></TD>
+  <TD ALIGN=middle><I>example</I></TD>
+ </TR>
+ <TR><TD><TT>-u|--uri uri</TD>
+<TD>url/uri to download</TD>
+<TD>http://server/private/</TD></TR>
+<TR><TD><TT>-p|--proxy-ip ip</TD>
+<TD>IP address of proxy</TD>
+<TD>5.6.7.8</TD></TR>
+<TR><TD><TT>-P|--proxy-port port</TD>
+<TD>port of proxy</TD>
+<TD>3128</TD></TR>
+<TR><TD><TT>-L|--login login</TD>
+<TD>login</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-w|--password-file file</TD>
+<TD>password file</TD>
+<TD>passwordfile.txt</TD></TR>
+<TR><TD><TT>-l|--login-file file</TD>
+<TD>login file</TD>
+<TD>loginfile.txt</TD></TR>
+<TR><TD><TT>-U|--user-agent useragent</TD>
+<TD>user agent</TD>
+<TD>Mozilla/5.0</TD></TR>
+<TR><TD><TT>-T|--timeout uint32</TD>
+<TD>timeout in milliseconds</TD>
+<TD>60000</TD></TR>
+<TR><TD><TT>-s|--stopatfirst|+s|--no-stopatfirst</TD>
+<TD>stop at first valid login found</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-n|--numthread uint32</TD>
+<TD>number of threads to launch</TD>
+<TD>5</TD></TR>
+<TR><TD><TT>-v|--verbose|+v|--no-verbose</TD>
+<TD>be verbose</TD>
+<TD><I>This boolean is set.<BR>Use + or --no- to unset it.</I> </TD></TR>
+</TABLE>
+
+  <P><H3>Examples:</H3>
+  &nbsp;&nbsp;netwox 132 -u "http://server/private/" -p "5.6.7.8" -w "passwordfile.txt"<BR>
+<BR>
+  &nbsp;&nbsp;netwox 132 --uri "http://server/private/" --proxy-ip "5.6.7.8" --password-file "passwordfile.txt"<BR>
+<BR>
+ </BODY>
+ </HTML>

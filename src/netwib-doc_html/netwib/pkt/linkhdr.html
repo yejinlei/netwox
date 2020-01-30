@@ -1,0 +1,195 @@
+<HTML><HEAD>
+<TITLE>netwib doc_html (version 5.39.0)</TITLE>
+</HEAD><BODY BGCOLOR="#FFFFFF" TEXT="#000000">
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../pkt.html">section index</A></H2><HR><BR>
+<PRE>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Ethernet header (<FONT COLOR="#000044">NETWIB_DEVICE_DLTTYPE_EN10MB</FONT>) */</FONT>
+typedef enum {
+  <FONT COLOR="#000044">NETWIB_ETHERHDRTYPE_IP4</FONT> =    0x0800,
+  <FONT COLOR="#000044">NETWIB_ETHERHDRTYPE_ARP</FONT> =    0x0806,
+  <FONT COLOR="#000044">NETWIB_ETHERHDRTYPE_VINES</FONT> =  0x0bad,
+  <FONT COLOR="#000044">NETWIB_ETHERHDRTYPE_TRAIN</FONT> =  0x1984,
+  <FONT COLOR="#000044">NETWIB_ETHERHDRTYPE_CDP</FONT> =    0x2000,
+  <FONT COLOR="#000044">NETWIB_ETHERHDRTYPE_RARP</FONT> =   0x8035,
+  <FONT COLOR="#000044">NETWIB_ETHERHDRTYPE_ATALK</FONT> =  0x809b,
+  <FONT COLOR="#000044">NETWIB_ETHERHDRTYPE_AARP</FONT> =   0x80f3,
+  <FONT COLOR="#000044">NETWIB_ETHERHDRTYPE_VLAN</FONT> =   0x8100,
+  <FONT COLOR="#000044">NETWIB_ETHERHDRTYPE_IPX</FONT> =    0x8137,
+  <FONT COLOR="#000044">NETWIB_ETHERHDRTYPE_IP6</FONT> =    0x86DD,
+  <FONT COLOR="#000044">NETWIB_ETHERHDRTYPE_PPPOED</FONT> = 0x8863,
+  <FONT COLOR="#000044">NETWIB_ETHERHDRTYPE_PPPOES</FONT> = 0x8864,
+  <FONT COLOR="#000044">NETWIB_ETHERHDRTYPE_LOOP</FONT> =   0x9000
+} <FONT COLOR="#000088">netwib_etherhdrtype</FONT>;
+typedef struct {
+  <FONT COLOR="#000088">netwib_eth</FONT> dst;
+  <FONT COLOR="#000088">netwib_eth</FONT> src;
+  <FONT COLOR="#000088">netwib_etherhdrtype</FONT> type;
+} <FONT COLOR="#000088">netwib_etherhdr</FONT>;
+typedef const <FONT COLOR="#000088">netwib_etherhdr</FONT> <FONT COLOR="#000088">netwib_constetherhdr</FONT>;
+<FONT COLOR="#008800">#define <FONT COLOR="#000044">NETWIB_ETHERHDR_LEN</FONT> 14</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* NULL header (<FONT COLOR="#000044">NETWIB_DEVICE_DLTTYPE_NULL</FONT>) */</FONT>
+typedef struct {
+  <FONT COLOR="#000088">netwib_etherhdrtype</FONT> type;
+} <FONT COLOR="#000088">netwib_nullhdr</FONT>;
+typedef const <FONT COLOR="#000088">netwib_nullhdr</FONT> <FONT COLOR="#000088">netwib_constnullhdr</FONT>;
+<FONT COLOR="#008800">#define <FONT COLOR="#000044">NETWIB_NULLHDR_LEN</FONT> 4</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* LOOP header (<FONT COLOR="#000044">NETWIB_DEVICE_DLTTYPE_LOOP</FONT>) */</FONT>
+typedef struct {
+  <FONT COLOR="#000088">netwib_etherhdrtype</FONT> type;
+} <FONT COLOR="#000088">netwib_loophdr</FONT>;
+typedef const <FONT COLOR="#000088">netwib_loophdr</FONT> <FONT COLOR="#000088">netwib_constloophdr</FONT>;
+<FONT COLOR="#008800">#define <FONT COLOR="#000044">NETWIB_LOOPHDR_LEN</FONT> 4</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* RAW header (<FONT COLOR="#000044">NETWIB_DEVICE_DLTTYPE_RAW</FONT>) */</FONT>
+<FONT COLOR="#008800">#define <FONT COLOR="#000044">NETWIB_RAWHDR_LEN</FONT> 0</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* PPP header (<FONT COLOR="#000044">NETWIB_DEVICE_DLTTYPE_PPP</FONT>) */</FONT>
+typedef enum {
+  <FONT COLOR="#000044">NETWIB_PPPHDRPROTO_IP4</FONT> =     0x0021, <FONT COLOR="#880000">/* Internet Protocol */</FONT>
+  <FONT COLOR="#000044">NETWIB_PPPHDRPROTO_AT</FONT> =      0x0029, <FONT COLOR="#880000">/* AppleTalk Protocol */</FONT>
+  <FONT COLOR="#000044">NETWIB_PPPHDRPROTO_IPX</FONT> =     0x002b, <FONT COLOR="#880000">/* IPX protocol */</FONT>
+  <FONT COLOR="#000044">NETWIB_PPPHDRPROTO_VJC_COMP</FONT> =   0x002d, <FONT COLOR="#880000">/* VJ compressed TCP */</FONT>
+  <FONT COLOR="#000044">NETWIB_PPPHDRPROTO_VJC_UNCOMP</FONT> = 0x002f, <FONT COLOR="#880000">/* VJ uncompressed TCP */</FONT>
+  <FONT COLOR="#000044">NETWIB_PPPHDRPROTO_IP6</FONT> =     0x0057, <FONT COLOR="#880000">/* Internet Protocol Version 6 */</FONT>
+  <FONT COLOR="#000044">NETWIB_PPPHDRPROTO_COMP</FONT> =    0x00fd, <FONT COLOR="#880000">/* compressed packet */</FONT>
+  <FONT COLOR="#000044">NETWIB_PPPHDRPROTO_IPCP</FONT> =    0x8021, <FONT COLOR="#880000">/* IP Control Protocol */</FONT>
+  <FONT COLOR="#000044">NETWIB_PPPHDRPROTO_ATCP</FONT> =    0x8029, <FONT COLOR="#880000">/* AppleTalk Control Protocol */</FONT>
+  <FONT COLOR="#000044">NETWIB_PPPHDRPROTO_IPXCP</FONT> =   0x802b, <FONT COLOR="#880000">/* IPX Control Protocol */</FONT>
+  <FONT COLOR="#000044">NETWIB_PPPHDRPROTO_IP6CP</FONT> =   0x8057, <FONT COLOR="#880000">/* IPv6 Control Protocol */</FONT>
+  <FONT COLOR="#000044">NETWIB_PPPHDRPROTO_CCP</FONT> =     0x80fd, <FONT COLOR="#880000">/* Compression Control Protocol */</FONT>
+  <FONT COLOR="#000044">NETWIB_PPPHDRPROTO_LCP</FONT> =     0xc021, <FONT COLOR="#880000">/* Link Control Protocol */</FONT>
+  <FONT COLOR="#000044">NETWIB_PPPHDRPROTO_PAP</FONT> =     0xc023, <FONT COLOR="#880000">/* Password Authentication Proto */</FONT>
+  <FONT COLOR="#000044">NETWIB_PPPHDRPROTO_LQR</FONT> =     0xc025, <FONT COLOR="#880000">/* Link Quality Report protocol */</FONT>
+  <FONT COLOR="#000044">NETWIB_PPPHDRPROTO_CHAP</FONT> =    0xc223, <FONT COLOR="#880000">/* Crypto. Handshake Auth. P. */</FONT>
+  <FONT COLOR="#000044">NETWIB_PPPHDRPROTO_CBCP</FONT> =    0xc029  <FONT COLOR="#880000">/* Callback Control Protocol */</FONT>
+} <FONT COLOR="#000088">netwib_ppphdrproto</FONT>;
+typedef struct {
+  <FONT COLOR="#000088">netwib_byte</FONT> address;
+  <FONT COLOR="#000088">netwib_byte</FONT> control;
+  <FONT COLOR="#000088">netwib_ppphdrproto</FONT> protocol;
+} <FONT COLOR="#000088">netwib_ppphdr</FONT>;
+typedef const <FONT COLOR="#000088">netwib_ppphdr</FONT> <FONT COLOR="#000088">netwib_constppphdr</FONT>;
+<FONT COLOR="#008800">#define <FONT COLOR="#000044">NETWIB_PPPHDR_LEN</FONT> 4</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* LINUX_SLL header (<FONT COLOR="#000044">NETWIB_DEVICE_DLTTYPE_LINUX_SLL</FONT>) */</FONT>
+typedef enum {
+  <FONT COLOR="#000044">NETWIB_LINUXSLLHDRPKTTYPE_HOST</FONT> = 0,
+  <FONT COLOR="#000044">NETWIB_LINUXSLLHDRPKTTYPE_BROADCAST</FONT> = 1,
+  <FONT COLOR="#000044">NETWIB_LINUXSLLHDRPKTTYPE_MULTICAST</FONT> = 2,
+  <FONT COLOR="#000044">NETWIB_LINUXSLLHDRPKTTYPE_OTHERHOST</FONT> = 3,
+  <FONT COLOR="#000044">NETWIB_LINUXSLLHDRPKTTYPE_OUTGOING</FONT> = 4
+} <FONT COLOR="#000088">netwib_linuxsllhdrpkttype</FONT>;
+typedef enum {
+  <FONT COLOR="#000044">NETWIB_LINUXSLLHDRHATYPE_NETROM</FONT> = 0,
+  <FONT COLOR="#000044">NETWIB_LINUXSLLHDRHATYPE_ETHER</FONT> = 1
+} <FONT COLOR="#000088">netwib_linuxsllhdrhatype</FONT>;
+typedef struct {
+  <FONT COLOR="#000088">netwib_linuxsllhdrpkttype</FONT> pkttype;   <FONT COLOR="#880000">/* packet type */</FONT>
+  <FONT COLOR="#000088">netwib_linuxsllhdrhatype</FONT> hatype;     <FONT COLOR="#880000">/* link-layer address type */</FONT>
+  <FONT COLOR="#000088">netwib_uint16</FONT> halen;                 <FONT COLOR="#880000">/* link-layer address length */</FONT>
+  <FONT COLOR="#000088">netwib_byte</FONT> srcaddr[8];              <FONT COLOR="#880000">/* link-layer address */</FONT>
+  <FONT COLOR="#000088">netwib_etherhdrtype</FONT> protocol;        <FONT COLOR="#880000">/* protocol */</FONT>
+} <FONT COLOR="#000088">netwib_linuxsllhdr</FONT>;
+typedef const <FONT COLOR="#000088">netwib_linuxsllhdr</FONT> <FONT COLOR="#000088">netwib_constlinuxsllhdr</FONT>;
+<FONT COLOR="#008800">#define <FONT COLOR="#000044">NETWIB_LINUXSLLHDR_LEN</FONT> 16</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Link header */</FONT>
+typedef struct {
+  <FONT COLOR="#000088">netwib_device_dlttype</FONT> type;
+  union {
+    <FONT COLOR="#000088">netwib_etherhdr</FONT>    ether;
+    <FONT COLOR="#000088">netwib_nullhdr</FONT>     null;
+    <FONT COLOR="#000088">netwib_loophdr</FONT>     loop;
+    <FONT COLOR="#880000">/* no <FONT COLOR="#000088">netwib_rawhdr</FONT> needed */</FONT>
+    <FONT COLOR="#000088">netwib_ppphdr</FONT>      ppp;
+    <FONT COLOR="#000088">netwib_linuxsllhdr</FONT> linuxsll;
+  } hdr;
+} <FONT COLOR="#000088">netwib_linkhdr</FONT>;
+typedef const <FONT COLOR="#000088">netwib_linkhdr</FONT> <FONT COLOR="#000088">netwib_constlinkhdr</FONT>;
+<FONT COLOR="#008800">#define <FONT COLOR="#000044">NETWIB_LINKHDR_MAXLEN</FONT> <FONT COLOR="#000044">NETWIB_LINUXSLLHDR_LEN</FONT></FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_linkhdr_initdefault
+   Description :
+     Initialize a <FONT COLOR="#000088">netwib_linkhdr</FONT> with default values.
+   Input parameter(s) :
+     type : header type
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *plinkhdr : <FONT COLOR="#000088">netwib_linkhdr</FONT> to initialize
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_linkhdr_initdefault</B>(<FONT COLOR="#000088">netwib_device_dlttype</FONT> type,
+                                      <FONT COLOR="#000088">netwib_linkhdr</FONT> *plinkhdr);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_pkt_append_linkhdr
+   Description :
+     Initialize physical data from a netwib_linkhdr.
+   Input parameter(s) :
+     linkhdr : netwib_linkhdr
+   Input/output parameter(s) :
+     *ppht : buffer to initialize
+   Output parameter(s) :
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_pkt_append_linkhdr</B>(<FONT COLOR="#000088">netwib_constlinkhdr</FONT> *plinkhdr,
+                                     <FONT COLOR="#000088">netwib_buf</FONT> *ppkt);
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_pkt_prepend_linkhdr</B>(<FONT COLOR="#000088">netwib_constlinkhdr</FONT> *plinkhdr,
+                                      <FONT COLOR="#000088">netwib_buf</FONT> *ppkt);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_pkt_decode_linkhdr
+   Description :
+     Decode a <FONT COLOR="#000088">netwib_linkhdr</FONT> from data coming from wire.
+   Input parameter(s) :
+     dlttype : DLT type of packet
+     *ppkt : buffer containing physical data
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *plinkhdr : <FONT COLOR="#000088">netwib_linkhdr</FONT> to initialize
+     *pskipsize : size to skip this header
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_pkt_decode_linkhdr</B>(<FONT COLOR="#000088">netwib_device_dlttype</FONT> dlttype,
+                                     <FONT COLOR="#000088">netwib_constbuf</FONT> *ppkt,
+                                     <FONT COLOR="#000088">netwib_linkhdr</FONT> *plinkhdr,
+                                     <FONT COLOR="#000088">netwib_uint32</FONT> *pskipsize);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000"><B>/***************************************************************
+ * Link headers are horribly incompatible. The only field      *
+ * which can be considered as compatible is the type/protocol. *
+ * Following functions permit to set/get it from header.       *
+ * Type <FONT COLOR="#000088">netwib_linkhdrproto</FONT> is the generic type.               *
+ ***************************************************************/</B></FONT>
+typedef enum {
+  <FONT COLOR="#000044">NETWIB_LINKHDRPROTO_UNKNOWN</FONT> = 0,
+  <FONT COLOR="#000044">NETWIB_LINKHDRPROTO_IP4</FONT>,
+  <FONT COLOR="#000044">NETWIB_LINKHDRPROTO_IP6</FONT>,
+  <FONT COLOR="#000044">NETWIB_LINKHDRPROTO_ARP</FONT>,
+  <FONT COLOR="#000044">NETWIB_LINKHDRPROTO_RARP</FONT>,
+  <FONT COLOR="#000044">NETWIB_LINKHDRPROTO_IPX</FONT>
+} <FONT COLOR="#000088">netwib_linkhdrproto</FONT>;
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_linkhdr_set_proto</B>(<FONT COLOR="#000088">netwib_linkhdr</FONT> *plinkhdr,
+                                    <FONT COLOR="#000088">netwib_linkhdrproto</FONT> linkhdrproto);
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_linkhdr_get_proto</B>(<FONT COLOR="#000088">netwib_constlinkhdr</FONT> *plinkhdr,
+                                    <FONT COLOR="#000088">netwib_linkhdrproto</FONT> *plinkhdrproto);
+</PRE><BR><BR><HR><BR>
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../pkt.html">section index</A></H2>
+</BODY></HTML>

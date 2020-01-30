@@ -1,0 +1,106 @@
+<HTML><HEAD>
+<TITLE>netwib doc_html (version 5.39.0)</TITLE>
+</HEAD><BODY BGCOLOR="#FFFFFF" TEXT="#000000">
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../dat.html">section index</A></H2><HR><BR>
+<PRE>
+<FONT COLOR="#880000">/* non standard functions */</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* CHARACTER FUNCTIONS */</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* warning : param is called several times. Use those functions with care.
+   For example, they are not suitable for "<B>netwib_c2_isalnum</B>(c++)". */</FONT>
+<FONT COLOR="#008800">#define <B>netwib_c2_isalnum</B>(c) ( <B>netwib_c2_isalpha</B>(c) || <B>netwib_c2_isdigit</B>(c) )</FONT>
+<FONT COLOR="#008800">#define <B>netwib_c2_isalpha</B>(c) ( <B>netwib_c2_islower</B>(c) || <B>netwib_c2_isupper</B>(c) )</FONT>
+<FONT COLOR="#008800">#define <B>netwib_c2_isdigit</B>(c) ( ((c)&gt;='0') &amp;&amp; ((c)&lt;='9') )</FONT>
+<FONT COLOR="#008800">#define <B>netwib_c2_islower</B>(c) ( ((c)&gt;='a') &amp;&amp; ((c)&lt;='z') )</FONT>
+<FONT COLOR="#008800">#define <B>netwib_c2_isupper</B>(c) ( ((c)&gt;='A') &amp;&amp; ((c)&lt;='Z') )</FONT>
+<FONT COLOR="#008800">#define <B>netwib_c2_isxdigit</B>(c) ( <B>netwib_c2_isdigit</B>(c) || ( ((c)&gt;='a') &amp;&amp; ((c)&lt;='f') ) || ( ((c)&gt;='A') &amp;&amp; ((c)&lt;='F') ) )</FONT>
+<FONT COLOR="#008800">#define <B>netwib_c2_isprint</B>(c) ( (c)&gt;=32 &amp;&amp; (c)&lt;=126 )</FONT>
+<FONT COLOR="#008800">#define <B>netwib_c2_isprint2</B>(c) ( <B>netwib_c2_isprint</B>(c) || (c)=='\t' || (c)=='\r' || (c)=='\n' )</FONT>
+<FONT COLOR="#008800">#define <B>netwib_c2_isspace</B>(c) ( (c)==' ' || (c)=='\t' || (c)=='\n' || (c)=='\r' || (c)=='\f' || (c)=='\v')</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Warning : first 2 functions change the parameter */</FONT>
+<FONT COLOR="#008800">#define <B>netwib_c2_lower</B>(c) if (<B>netwib_c2_isupper</B>(c)) { c += 'a' - 'A'; }</FONT>
+<FONT COLOR="#008800">#define <B>netwib_c2_upper</B>(c) if (<B>netwib_c2_islower</B>(c)) { c -= 'a' - 'A'; }</FONT>
+<FONT COLOR="#880000">/* Warning : param is called several times */</FONT>
+<FONT COLOR="#008800">#define <B>netwib_c2_lc</B>(c) ((netwib_char)(<B>netwib_c2_isupper</B>(c)?((c)+'a'-'A'):(c)))</FONT>
+<FONT COLOR="#008800">#define <B>netwib_c2_uc</B>(c) ((netwib_char)(<B>netwib_c2_islower</B>(c)?((c)-'a'+'A'):(c)))</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* 0-&gt;16 to '0'-&gt;'F' without error checking */</FONT>
+<FONT COLOR="#008800">#define <B>netwib_c2_16toc</B>(x) (char)(((x)&lt;=9)?('0'+(x)):('a'+(x)-10))</FONT>
+<FONT COLOR="#008800">#define netwib_c2_16toC(x) (char)(((x)&lt;=9)?('0'+(x)):('A'+(x)-10))</FONT>
+<FONT COLOR="#880000">/* '0'-&gt;'F' to 0-&gt;16 without error checking */</FONT>
+<FONT COLOR="#008800">#define <B>netwib_c2_cto16</B>(x) (((x)&gt;='0'&amp;&amp;(x)&lt;='9')?((x)-'0'):(((x)&gt;='a'&amp;&amp;(x)&lt;='f')?(10+(x)-'a'):(10+(x)-'A')))</FONT>
+<FONT COLOR="#880000">/* 0-&gt;9 to '0'-&gt;'9' without error checking */</FONT>
+<FONT COLOR="#008800">#define <B>netwib_c2_9toc</B>(x) (char)('0'+(x))</FONT>
+<FONT COLOR="#880000">/* '0'-&gt;'9' to 0-&gt;9 without error checking */</FONT>
+<FONT COLOR="#008800">#define <B>netwib_c2_cto9</B>(x) ((x)-'0')</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* '0'-&gt;'F' to 0-&gt;16 with error checking */</FONT>
+<FONT COLOR="#008800">#define <B>netwib_c2_cto16_if</B>(c,quartet) if ((c) &gt;= '0' &amp;&amp; (c) &lt;= '9') { quartet = (c) - '0'; } else if ((c) &gt;= 'a' &amp;&amp; (c) &lt;= 'f') { quartet = 10 + (c) - 'a'; } else if ((c) &gt;= 'A' &amp;&amp; (c) &lt;= 'F') { quartet = 10 + (c) - 'A'; }</FONT>
+<FONT COLOR="#880000">/* '0'-&gt;'9' to 0-&gt;9 with error checking */</FONT>
+<FONT COLOR="#008800">#define <B>netwib_c2_cto9_if</B>(c,digit) if ((c) &gt;= '0' &amp;&amp; (c) &lt;= '9') { digit = (c) - '0'; }</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* INTEGER FUNCTIONS */</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* byte extract from uint16, uint32 or uint64 */</FONT>
+<FONT COLOR="#008800">#define <B>netwib_c2_uint16_0</B>(x) (netwib_byte)(((x)&gt;&gt;8)&amp;0xFF)</FONT>
+<FONT COLOR="#008800">#define <B>netwib_c2_uint16_1</B>(x) (netwib_byte)((x)&amp;0xFF)</FONT>
+<FONT COLOR="#008800">#define <B>netwib_c2_uint32_0</B>(x) (netwib_byte)(((x)&gt;&gt;24)&amp;0xFF)</FONT>
+<FONT COLOR="#008800">#define <B>netwib_c2_uint32_1</B>(x) (netwib_byte)(((x)&gt;&gt;16)&amp;0xFF)</FONT>
+<FONT COLOR="#008800">#define <B>netwib_c2_uint32_2</B>(x) (netwib_byte)(((x)&gt;&gt;8)&amp;0xFF)</FONT>
+<FONT COLOR="#008800">#define <B>netwib_c2_uint32_3</B>(x) (netwib_byte)((x)&amp;0xFF)</FONT>
+<FONT COLOR="#008800">#if <FONT COLOR="#000044">NETWIB_INT64_FAKE</FONT> == 0</FONT>
+<FONT COLOR="#008800"> #define <B>netwib_c2_uint64_0</B>(x) (netwib_byte)(((x)&gt;&gt;56)&amp;0xFF)</FONT>
+<FONT COLOR="#008800"> #define <B>netwib_c2_uint64_1</B>(x) (netwib_byte)(((x)&gt;&gt;48)&amp;0xFF)</FONT>
+<FONT COLOR="#008800"> #define <B>netwib_c2_uint64_2</B>(x) (netwib_byte)(((x)&gt;&gt;40)&amp;0xFF)</FONT>
+<FONT COLOR="#008800"> #define <B>netwib_c2_uint64_3</B>(x) (netwib_byte)(((x)&gt;&gt;32)&amp;0xFF)</FONT>
+<FONT COLOR="#008800"> #define <B>netwib_c2_uint64_4</B>(x) (netwib_byte)(((x)&gt;&gt;24)&amp;0xFF)</FONT>
+<FONT COLOR="#008800"> #define <B>netwib_c2_uint64_5</B>(x) (netwib_byte)(((x)&gt;&gt;16)&amp;0xFF)</FONT>
+<FONT COLOR="#008800"> #define <B>netwib_c2_uint64_6</B>(x) (netwib_byte)(((x)&gt;&gt;8)&amp;0xFF)</FONT>
+<FONT COLOR="#008800"> #define <B>netwib_c2_uint64_7</B>(x) (netwib_byte)((x)&amp;0xFF)</FONT>
+<FONT COLOR="#008800"> #define <B>netwib_c2_uint64_32high</B>(x) (netwib_uint32)((x)&gt;&gt;32)</FONT>
+<FONT COLOR="#008800"> #define <B>netwib_c2_uint64_32low</B>(x) (netwib_uint32)((x)&amp;0xFFFFFFFFu)</FONT>
+<FONT COLOR="#008800">#else</FONT>
+<FONT COLOR="#008800"> #define <B>netwib_c2_uint64_0</B>(x) <B>netwib_c2_uint32_0</B>((x).high)</FONT>
+<FONT COLOR="#008800"> #define <B>netwib_c2_uint64_1</B>(x) <B>netwib_c2_uint32_1</B>((x).high)</FONT>
+<FONT COLOR="#008800"> #define <B>netwib_c2_uint64_2</B>(x) <B>netwib_c2_uint32_2</B>((x).high)</FONT>
+<FONT COLOR="#008800"> #define <B>netwib_c2_uint64_3</B>(x) <B>netwib_c2_uint32_3</B>((x).high)</FONT>
+<FONT COLOR="#008800"> #define <B>netwib_c2_uint64_4</B>(x) <B>netwib_c2_uint32_0</B>((x).low)</FONT>
+<FONT COLOR="#008800"> #define <B>netwib_c2_uint64_5</B>(x) <B>netwib_c2_uint32_1</B>((x).low)</FONT>
+<FONT COLOR="#008800"> #define <B>netwib_c2_uint64_6</B>(x) <B>netwib_c2_uint32_2</B>((x).low)</FONT>
+<FONT COLOR="#008800"> #define <B>netwib_c2_uint64_7</B>(x) <B>netwib_c2_uint32_3</B>((x).low)</FONT>
+<FONT COLOR="#008800"> #define <B>netwib_c2_uint64_32high</B>(x) ((x).high)</FONT>
+<FONT COLOR="#008800"> #define <B>netwib_c2_uint64_32low</B>(x) ((x).low)</FONT>
+<FONT COLOR="#008800">#endif</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* recomposition of uint16 or uint32 */</FONT>
+<FONT COLOR="#008800">#define <B>netwib_c2_uint16_2</B>(a,b) (netwib_uint16)((((netwib_byte)(a))&lt;&lt;8)|((netwib_byte)(b)))</FONT>
+<FONT COLOR="#008800">#define <B>netwib_c2_uint32_4</B>(a,b,c,d) (netwib_uint32)((((netwib_byte)(a))&lt;&lt;24)|(((netwib_byte)(b))&lt;&lt;16)|(((netwib_byte)(c))&lt;&lt;8)|((netwib_byte)(d)))</FONT>
+<FONT COLOR="#008800">#if <FONT COLOR="#000044">NETWIB_INT64_FAKE</FONT> == 0</FONT>
+<FONT COLOR="#008800"> #define <B>netwib_c2_uint64_8</B>(a,b,c,d,e,f,g,h) (netwib_uint64)((((netwib_uint64)((netwib_byte)(a)))&lt;&lt;56)|(((netwib_uint64)((netwib_byte)(b)))&lt;&lt;48)|(((netwib_uint64)((netwib_byte)(c)))&lt;&lt;40)|(((netwib_uint64)((netwib_byte)(d)))&lt;&lt;32)|(((netwib_uint64)((netwib_byte)(e)))&lt;&lt;24)|(((netwib_uint64)((netwib_byte)(f)))&lt;&lt;16)|(((netwib_uint64)((netwib_byte)(g)))&lt;&lt;8)|((netwib_uint64)((netwib_byte)(h))))</FONT>
+<FONT COLOR="#008800">#endif</FONT>
+<FONT COLOR="#880000">/* other 64 bit version defines are in uint64.h */</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* left and right rotation */</FONT>
+<FONT COLOR="#008800">#define <B>netwib_c2_uint8_ror</B>(x,n) ((netwib_uint8)( (netwib_uint8)((x)&gt;&gt;(n)) | (netwib_uint8)((x)&lt;&lt;(8-(n))) ))</FONT>
+<FONT COLOR="#008800">#define <B>netwib_c2_uint8_rol</B>(x,n) ((netwib_uint8)( (netwib_uint8)((x)&lt;&lt;(n)) | (netwib_uint8)((x)&gt;&gt;(8-(n))) ))</FONT>
+<FONT COLOR="#008800">#define <B>netwib_c2_uint16_ror</B>(x,n) ((netwib_uint16)( (netwib_uint16)((x)&gt;&gt;(n)) | (netwib_uint16)((x)&lt;&lt;(16-(n))) ))</FONT>
+<FONT COLOR="#008800">#define <B>netwib_c2_uint16_rol</B>(x,n) ((netwib_uint16)( (netwib_uint16)((x)&lt;&lt;(n)) | (netwib_uint16)((x)&gt;&gt;(16-(n))) ))</FONT>
+<FONT COLOR="#008800">#define <B>netwib_c2_uint32_ror</B>(x,n) ((netwib_uint32)( (netwib_uint32)((x)&gt;&gt;(n)) | (netwib_uint32)((x)&lt;&lt;(32-(n))) ))</FONT>
+<FONT COLOR="#008800">#define <B>netwib_c2_uint32_rol</B>(x,n) ((netwib_uint32)( (netwib_uint32)((x)&lt;&lt;(n)) | (netwib_uint32)((x)&gt;&gt;(32-(n))) ))</FONT>
+<FONT COLOR="#880000">/* 64 bit version defines are in uint64.h */</FONT>
+</PRE><BR><BR><HR><BR>
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../dat.html">section index</A></H2>
+</BODY></HTML>

@@ -1,0 +1,96 @@
+                 -------------------------------
+                 |        INTRODUCTION         |
+                 -------------------------------
+
+This package permits to COMPILE netwib539.dll. If you seek a 
+pre-compiled version, download netwib-5.39.0-bin_windows.tgz.
+
+Note : if you encounter problems, read ./doc/probleminstallwindows.txt
+
+There are 2 steps :
+ - install winpcap version >= 3.0
+ - compile and install netwib539.dll
+
+
+                 -------------------------------
+                 |       STEP 1 : winpcap      |
+                 -------------------------------
+
+If winpcap isn't installed on your system, download it from :
+  http://winpcap.polito.it/
+Version 3.0, or superior, is needed.
+Follow the given instructions in order to install it.
+
+After installing winpcap, you should test if it is working properly.
+If you do not want to bother testing, you can directly go to step 2.
+To test winpcap's installation, you need to download windump :
+  http://windump.polito.it/
+Then, in a console window, if you enter "\directory...\windump",
+network packet will be displayed (for example, you can ping another
+computer and see the packets).
+Once windump displays network packets, you can go to step2.
+
+If you have a problem downloading, installing winpcap, or running 
+windump, read the faq at :
+  http://winpcap.polito.it/
+  http://windump.polito.it/
+If you still have a problem, contact Winpcap's developers.
+I cannot help you, because I do not maintain this code.
+
+Note: If winpcap is not installed, netwib will work, but without
+      sniffing or spoofing features.
+
+
+                 ------------------------------
+                 |    STEP 2 : netwib539.dll   |
+                 ------------------------------
+
+You need a compiler :
+ - Visual C++ (tested with version 6)
+ - Dev-C++/Mingw32 (tested with version 5 beta)
+
+Rename "src/netwib/def_windows.h" to "src/netwib/def.h".
+
+Visual C++ procedure :
+ - Open the Workspace file "src/compil/windows/netwib/netwib.dsw".
+ - Select Release (instead of Debug) as "Active Configuration" under Build.
+ - Press F7 key, to build everything.
+ - The following files should be generated :
+     src/compil/windows/netwib/Release/netwib539.lib
+     src/compil/windows/netwib/Release/netwib539.dll
+   So, we obtain netwib539.lib and netwib539.dll.
+
+Dev-C++ procedure :
+ - Open the project file "src/compil/devcpp/netwib.dev".
+ - Press Ctrl-F9 key, to build everything.
+ - The following files should be generated :
+     src/compil/devcpp/out/libnetwib539.a
+     src/compil/devcpp/out/netwib539.dll
+   So, we obtain libnetwib539.a and netwib539.dll.
+
+Copy netwib539.dll to
+ - "c:\Windows\System\netwib539.dll"   [under Windows 95, 98, Me]
+ - "c:\winnt\System32\netwib539.dll"   [under Windows NT, 2000]
+ - "c:\windows\System32\netwib539.dll" [under Windows XP]
+
+Create a directory which will contain material for building 
+projects using netwib (for example "c:\netwib539\").
+
+Copy netwib539.lib (Visual C++) or libnetwib539.a (Dev-C++) to 
+"c:\netwib539\lib\".
+
+Copy "src\*.h" to "c:\netwib539\include\*.h".
+
+
+                 ------------------------------
+                 |          NEXT STEP         |
+                 ------------------------------
+
+If you want to compile a program needing netwib library, that's all.
+
+If you want to create your own program using netwib library :
+ - Download netw-ib-ox-ag-5.39.0.tgz which shows how to use each function (directory test/netwib).
+ - Read ./doc/compilwindows.txt.
+ - Download and read netwib-5.39.0-doc_html.tgz to obtain information
+   about netwib.
+

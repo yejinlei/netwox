@@ -1,0 +1,84 @@
+<HTML>
+ <HEAD>
+ <TITLE>Tool 191: Generate a password (English, French, Spanish)</TITLE>
+ </HEAD>
+ <BODY BGCOLOR="#FFFFFF">
+  <CENTER>   <H3>Tool 191: Generate a password (English, French, Spanish)</H3>
+  </CENTER>
+
+  <P><H3>Description:</H3>
+   <PRE>
+  This tool generates one or several passwords.
+  
+  Choosing a password is a complex task: it has to be random, but also
+  easy to remember (otherwise people write it down).
+  When choosing one password, we can use a mnemotechnic sentence (tiap =
+  this is a password) or mix words (house + 2,E: = h2o,uEs:e).
+  When a program has to generate passwords (for example for all users of
+  an enterprise), the main problem is where to find/store sentences and
+  words. An attacker knowing those lists will find passwords using a
+  brute force attack.
+  
+  This password generator uses another method. It generates passwords
+  composed of the two first letters of images. An image is an easy to
+  remember word. For example:
+    netwox 191 --numimages 5 --lang-english
+      password: soasprsivo
+      images: SOap AStronaut PRofessor SIx VOlcano
+  So, user only have to remember those 5 images: soap, astronaut,
+  professor, 6 and volcano. Those images are easy to draw or represent
+  ideas easy to draw. For higher security, choose 5 or more images.
+  
+  In order to provide complex passwords, variations of generated
+  password are proposed. With the last example:
+    variation1: soaspr2ivo. In this case, one letter has changed
+                            (s replaced by 2)
+    variation2: soAsprs1vo. In this case, two letters have changed
+                            (a replaced by A, and i by 1)
+  So, you can use soAsprs1vo instead of soasprsivo.
+  
+  Finally, parameter --pronounceable generates pronounceable passwords.
+  For example: netwox 191 --pronounceable --maxsyllables 3
+   </PRE>
+
+  <P><H3>Usage:</H3>
+  &nbsp;&nbsp;netwox 191 [-n uint32] [-i uint32] [-E|+E] [-F|+F] [-S|+S] [-p|+p] [-m uint32] [-a data]<BR>
+
+  <P><H3>Parameters:</H3>
+<TABLE BORDER=1 CELLPADDING=4>
+ <TR>
+  <TD ALIGN=middle><I>parameter</I></TD>
+  <TD ALIGN=middle><I>description</I></TD>
+  <TD ALIGN=middle><I>example</I></TD>
+ </TR>
+ <TR><TD><TT>-n|--numpassword uint32</TD>
+<TD>number of passwords to generate</TD>
+<TD>1</TD></TR>
+<TR><TD><TT>-i|--numimages uint32</TD>
+<TD>number of images in passwords</TD>
+<TD>5</TD></TR>
+<TR><TD><TT>-E|--lang-english|+E|--no-lang-english</TD>
+<TD>use English words</TD>
+<TD><I>This boolean is set.<BR>Use + or --no- to unset it.</I></TD></TR>
+<TR><TD><TT>-F|--lang-french|+F|--no-lang-french</TD>
+<TD>use French words</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-S|--lang-spanish|+S|--no-lang-spanish</TD>
+<TD>use Spanish words</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-p|--pronounceable|+p|--no-pronounceable</TD>
+<TD>generate pronounceable passwords</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-m|--maxsyllables uint32</TD>
+<TD>max syllables in pronounceable passwords</TD>
+<TD>0</TD></TR>
+<TR><TD><TT>-a|--allowedcharvar data</TD>
+<TD>allowed characters for variations</TD>
+<TD>ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@|!()[]{}/$+&^* </TD></TR>
+</TABLE>
+
+  <P><H3>Example:</H3>
+  &nbsp;&nbsp;netwox 191<BR>
+<BR>
+ </BODY>
+ </HTML>

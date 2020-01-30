@@ -1,0 +1,2639 @@
+.TH NETWIB_NET 3 "08/07/2012"
+.SH NAME
+\fBnetwib\fR - section \fBnet\fR
+
+.SH HTML DOC
+If you have a browser, read netwib-5.39.0-doc_html.tgz
+which is easier to read than this manpage.
+
+.SH PRESENTATION
+This manpage contains a concatenation of includes for section
+NET.
+.SH MODULE TYPES
+.nf
+
+#ifndef \fBNETWIB_NET_TYPES_INCLUDED\fP
+\fI#define\fP \fBNETWIB_NET_TYPES_INCLUDED\fP 1
+
+/*-------------------------------------------------------------*/
+/* to store an Ethernet address */
+\fI#define\fP \fBNETWIB_ETH_LEN\fP 6
+\fItypedef\fP struct {
+  \fBnetwib_byte\fP b[\fBNETWIB_ETH_LEN\fP];
+} \fBnetwib_eth\fP;
+\fItypedef\fP const \fBnetwib_eth\fP \fBnetwib_consteth\fP;
+
+/*-------------------------------------------------------------*/
+/* to store an IPv4 address */
+\fI#define\fP \fBNETWIB_IP4_LEN\fP 4
+\fItypedef\fP \fBnetwib_uint32\fP \fBnetwib_ip4\fP;
+
+/* to store an IPv6 address */
+\fI#define\fP \fBNETWIB_IP6_LEN\fP 16
+\fItypedef\fP struct {
+  \fBnetwib_byte\fP b[\fBNETWIB_IP6_LEN\fP];
+} \fBnetwib_ip6\fP;
+\fItypedef\fP const \fBnetwib_ip6\fP \fBnetwib_constip6\fP;
+
+/* to store an IP address */
+\fItypedef\fP enum {
+  \fBNETWIB_IPTYPE_UNKNOWN\fP = 0,
+  \fBNETWIB_IPTYPE_IP4\fP,
+  \fBNETWIB_IPTYPE_IP6\fP
+} \fBnetwib_iptype\fP;
+\fItypedef\fP struct {
+  \fBnetwib_iptype\fP iptype;
+  union {
+    \fBnetwib_ip4\fP ip4;
+    \fBnetwib_ip6\fP ip6;
+  } ipvalue;
+} \fBnetwib_ip\fP;
+\fItypedef\fP const \fBnetwib_ip\fP \fBnetwib_constip\fP;
+
+/*-------------------------------------------------------------*/
+/* to store a port */
+\fItypedef\fP \fBnetwib_uint32\fP \fBnetwib_port\fP;
+
+#endif
+.fi
+.SH MODULE DEVICE
+.nf
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_device_init_kbd\fP
+   Description :
+     Initialize a device by the keyboard
+   Input parameter(s) :
+     message : message to print before
+     defaultdevice : default device to use if user enters nothing
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pdevice : device set with user's string
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_device_init_kbd\fP(\fBnetwib_constbuf\fP *pmessage,
+                                  \fBnetwib_constbuf\fP *pdefaultdevice,
+                                  \fBnetwib_buf\fP *pdevice);
+\fI#define\fP \fBNETWIB_DEVICE_INIT_KBD_NODEF\fP NULL
+
+/*-------------------------------------------------------------*/
+/* Hardware types */
+\fItypedef\fP enum {
+  \fBNETWIB_DEVICE_HWTYPE_UNKNOWN\fP = 1,
+  \fBNETWIB_DEVICE_HWTYPE_ETHER\fP, /* or Wifi (too late now to add a new type) */
+  \fBNETWIB_DEVICE_HWTYPE_LOOPBACK\fP,
+  \fBNETWIB_DEVICE_HWTYPE_PPP\fP,
+  \fBNETWIB_DEVICE_HWTYPE_PLIP\fP, /* Parallel - obsolete */
+  \fBNETWIB_DEVICE_HWTYPE_SLIP\fP /* Serial - obsolete */
+} \fBnetwib_device_hwtype\fP;
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_buf_append_device_hwtype\fP
+   Description :
+     Obtains the buf string corresponding to a hwtype.
+   Input parameter(s) :
+     type : type
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pbuf : \fBnetwib_buf\fP set with the buf string
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_buf_append_device_hwtype\fP(\fBnetwib_device_hwtype\fP type,
+                                           \fBnetwib_buf\fP *pbuf);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_device_hwtype_init_kbd\fP
+   Description :
+     Initialize a \fBnetwib_device_hwtype\fP with data entered
+     through keyboard.
+   Input parameter(s) :
+     *pmessage : message to print before
+     defaulthwtype : default hwtype to use if user enters
+                      nothing (if \fBNETWIB_DEVICE_HWTYPE_UNKNOWN\fP,
+                      means no default)
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *phwtype : \fBnetwib_hwtype\fP initialized
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_device_hwtype_init_kbd\fP(\fBnetwib_constbuf\fP *pmessage,
+                                         \fBnetwib_device_hwtype\fP defaulthwtype,
+                                         \fBnetwib_device_hwtype\fP *phwtype);
+\fI#define\fP \fBNETWIB_DEVICE_HWTYPE_INIT_KBD_NODEF\fP \fBNETWIB_DEVICE_HWTYPE_UNKNOWN\fP
+
+/*-------------------------------------------------------------*/
+/***************************************************************
+ * Sniffed data is represented as specified by the DLT         *
+ * associated to packets.                                      *
+ * Spoofed data (at link level) also has to be represented as  *
+ * DLT expects.                                                *
+ ***************************************************************/
+/* Data-link level type codes (names from net/bpf.h). */
+\fItypedef\fP enum {
+  \fBNETWIB_DEVICE_DLTTYPE_UNKNOWN\fP = 1, /* not listed below */
+  \fBNETWIB_DEVICE_DLTTYPE_NULL\fP,        /* no link-layer encapsulation */
+  \fBNETWIB_DEVICE_DLTTYPE_EN10MB\fP,      /* Ethernet (10Mb) */
+  \fBNETWIB_DEVICE_DLTTYPE_ETHER\fP = \fBNETWIB_DEVICE_DLTTYPE_EN10MB\fP,
+  \fBNETWIB_DEVICE_DLTTYPE_EN3MB\fP,       /* Experimental Ethernet (3Mb) */
+  \fBNETWIB_DEVICE_DLTTYPE_AX25\fP,        /* Amateur Radio AX.25 */
+  \fBNETWIB_DEVICE_DLTTYPE_PRONET\fP,      /* Proteon ProNET Token Ring */
+  \fBNETWIB_DEVICE_DLTTYPE_CHAOS\fP,       /* Chaos */
+  \fBNETWIB_DEVICE_DLTTYPE_IEEE802\fP,     /* IEEE 802 Networks */
+  \fBNETWIB_DEVICE_DLTTYPE_ARCNET\fP,      /* ARCNET */
+  \fBNETWIB_DEVICE_DLTTYPE_SLIP\fP,        /* Serial Line IP */
+  \fBNETWIB_DEVICE_DLTTYPE_PPP\fP,         /* Point-to-point Protocol */
+  \fBNETWIB_DEVICE_DLTTYPE_FDDI\fP,        /* FDDI */
+  \fBNETWIB_DEVICE_DLTTYPE_ATM_RFC1483\fP, /* LLC/SNAP encapsulated atm */
+  \fBNETWIB_DEVICE_DLTTYPE_RAW\fP,         /* raw IPv4 or IPv6 */
+  \fBNETWIB_DEVICE_DLTTYPE_RAW4\fP,        /* raw IPv4 */
+  \fBNETWIB_DEVICE_DLTTYPE_RAW6\fP,        /* raw IPv6 */
+  \fBNETWIB_DEVICE_DLTTYPE_SLIP_BSDOS\fP,  /* BSD/OS Serial Line IP */
+  \fBNETWIB_DEVICE_DLTTYPE_PPP_BSDOS\fP,   /* BSD/OS Point-to-point Protocol */
+  \fBNETWIB_DEVICE_DLTTYPE_ATM_CLIP\fP,    /* Linux Classical-IP over ATM */
+  \fBNETWIB_DEVICE_DLTTYPE_PPP_SERIAL\fP,  /* PPP over serial with HDLC enc. */
+  \fBNETWIB_DEVICE_DLTTYPE_PPP_ETHER\fP,   /* PPP over Ethernet */
+  \fBNETWIB_DEVICE_DLTTYPE_C_HDLC\fP,      /* Cisco HDLC */
+  \fBNETWIB_DEVICE_DLTTYPE_IEEE802_11\fP,  /* IEEE 802.11 wireless */
+  \fBNETWIB_DEVICE_DLTTYPE_LOOP\fP,
+  \fBNETWIB_DEVICE_DLTTYPE_LINUX_SLL\fP,
+  \fBNETWIB_DEVICE_DLTTYPE_LTALK\fP,
+  \fBNETWIB_DEVICE_DLTTYPE_ECONET\fP,
+  \fBNETWIB_DEVICE_DLTTYPE_PRISM_HEADER\fP,
+  \fBNETWIB_DEVICE_DLTTYPE_AIRONET_HEADER\fP,
+  \fBNETWIB_DEVICE_DLTTYPE_USER_BEGIN\fP = \fBNETWIB_ENUM_USER_BEGIN\fP
+} \fBnetwib_device_dlttype\fP;
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_buf_append_device_dlttype\fP
+   Description :
+     Obtains the buf string corresponding to a hwtype.
+   Input parameter(s) :
+     type : type
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pbuf : \fBnetwib_buf\fP set with the buf string
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_buf_append_device_dlttype\fP(\fBnetwib_device_dlttype\fP type,
+                                            \fBnetwib_buf\fP *pbuf);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_device_dlttype_init_kbd\fP
+   Description :
+     Initialize a \fBnetwib_device_dlttype\fP with data entered
+     through keyboard.
+   Input parameter(s) :
+     *pmessage : message to print before
+     defaultdlttype : default dlttype to use if user enters
+                      nothing (if \fBNETWIB_DEVICE_DLTTYPE_UNKNOWN\fP,
+                      means no default)
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pdlttype : \fBnetwib_dlttype\fP initialized
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_device_dlttype_init_kbd\fP(\fBnetwib_constbuf\fP *pmessage,
+                                          \fBnetwib_device_dlttype\fP defaultdlttype,
+                                          \fBnetwib_device_dlttype\fP *pdlttype);
+\fI#define\fP \fBNETWIB_DEVICE_DLTTYPE_INIT_KBD_NODEF\fP \fBNETWIB_DEVICE_DLTTYPE_UNKNOWN\fP
+.fi
+.SH MODULE IP
+.nf
+
+/*-------------------------------------------------------------*/
+/***************************************************************
+ * A \fBnetwib_ip\fP represents an IP address.                       *
+ ***************************************************************/
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_ip_init_ip4_fields\fP
+   Description :
+     Initialize an \fBnetwib_ip\fP address.
+   Input parameter(s) :
+     a,b,c,d : bytes of the IP address
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pip : \fBnetwib_ip\fP set with a.b.c.d
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_ip_init_ip4_fields\fP(\fBnetwib_byte\fP a,
+                                     \fBnetwib_byte\fP b,
+                                     \fBnetwib_byte\fP c,
+                                     \fBnetwib_byte\fP d,
+                                     \fBnetwib_ip\fP *pip);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_ip_init_ip4\fP
+   Description :
+     Initialize an \fBnetwib_ip\fP address from an \fBnetwib_ip4\fP.
+   Input parameter(s) :
+     ip4 : \fBnetwib_ip4\fP address
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pip : \fBnetwib_ip\fP set
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_ip_init_ip4\fP(\fBnetwib_ip4\fP ip4,
+                              \fBnetwib_ip\fP *pip);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_ip4_init_ip\fP
+   Description :
+     Initialize an \fBnetwib_ip4\fP address from an \fBnetwib_ip\fP.
+   Input parameter(s) :
+     ip : \fBnetwib_ip\fP address
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pip4 : \fBnetwib_ip4\fP set
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+     \fBNETWIB_ERR_NOTCONVERTED\fP : the address could not be represented
+*/
+\fBnetwib_err\fP \fBnetwib_ip4_init_ip\fP(\fBnetwib_constip\fP *pip,
+                              \fBnetwib_ip4\fP *pip4);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_ip_init_ip6_fields\fP
+   Description :
+     Initialize an \fBnetwib_ip\fP address.
+   Input parameter(s) :
+     a,b,c,d : "aaaa:aaaa:bbbb:bbbb:cccc:cccc:dddd:dddd"
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pip : \fBnetwib_ip\fP set with "aaaa:aaaa:bbbb:b..."
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_ip_init_ip6_fields\fP(\fBnetwib_uint32\fP a,
+                                     \fBnetwib_uint32\fP b,
+                                     \fBnetwib_uint32\fP c,
+                                     \fBnetwib_uint32\fP d,
+                                     \fBnetwib_ip\fP *pip);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_ip_init_ip6\fP
+   Description :
+     Initialize an \fBnetwib_ip\fP address from an \fBnetwib_ip6\fP.
+   Input parameter(s) :
+     ip6 : \fBnetwib_ip6\fP address
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pip : \fBnetwib_ip\fP set
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_ip_init_ip6\fP(\fBnetwib_constip6\fP *pip6,
+                              \fBnetwib_ip\fP *pip);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_ip6_init_ip\fP
+   Description :
+     Initialize an \fBnetwib_ip6\fP address from an \fBnetwib_ip\fP.
+   Input parameter(s) :
+     ip : \fBnetwib_ip\fP address
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pip6 : \fBnetwib_ip6\fP set
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_ip6_init_ip\fP(\fBnetwib_constip\fP *pip,
+                              \fBnetwib_ip6\fP *pip6);
+
+/*-------------------------------------------------------------*/
+\fItypedef\fP enum {
+  \fBNETWIB_IP_DECODETYPE_IP4\fP = 1, /* "1.2.3.4" only */
+  \fBNETWIB_IP_DECODETYPE_IP6\fP,     /* "aaaa:bbbb:..." only */
+  \fBNETWIB_IP_DECODETYPE_IP\fP,      /* try IP4 then IP6 */
+  \fBNETWIB_IP_DECODETYPE_HN4\fP,     /* server.example.com->IPv4 only */
+  \fBNETWIB_IP_DECODETYPE_HN6\fP,     /* server.example.com->IPv4 only */
+  \fBNETWIB_IP_DECODETYPE_HN\fP,      /* try HN4 then HN6 */
+  \fBNETWIB_IP_DECODETYPE_IP4HN4\fP,  /* if IP4 does not work, use HN4 */
+  \fBNETWIB_IP_DECODETYPE_IP6HN6\fP,  /* if IP6 does not work, use HN6 */
+  \fBNETWIB_IP_DECODETYPE_IPHN\fP,    /* try IP, then HN */
+  \fBNETWIB_IP_DECODETYPE_BEST\fP = \fBNETWIB_IP_DECODETYPE_IPHN\fP  /* best */
+} \fBnetwib_ip_decodetype\fP;
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_ip_init_buf\fP
+   Description :
+     Convert a string "1.2.3.4", "aaaa:bbbb:..." or a
+     hostname to a \fBnetwib_ip\fP. To convert a hostname resolving
+     to several IP addresses, function \fBnetwib_ips_add_buf\fP
+     has to be used instead.
+   Input parameter(s) :
+     *pbuf : string to convert
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pip : \fBnetwib_ip\fP set
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+     \fBNETWIB_ERR_NOTCONVERTED\fP : the address could not be resolved
+*/
+\fBnetwib_err\fP \fBnetwib_ip_init_buf\fP(\fBnetwib_constbuf\fP *pbuf,
+                              \fBnetwib_ip_decodetype\fP decodetype,
+                              \fBnetwib_ip\fP *pip);
+\fI#define\fP \fBnetwib_ip_init_buf_best\fP(pbuf,pip) \fBnetwib_ip_init_buf\fP(pbuf,\fBNETWIB_IP_DECODETYPE_BEST\fP,pip)
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_ip_init_eth\fP
+   Description :
+     Convert a \fBnetwib_eth\fP to a \fBnetwib_ip\fP.
+   Input parameter(s) :
+     eth : \fBnetwib_eth\fP to convert
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pip : \fBnetwib_ip\fP set with eth value
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+     \fBNETWIB_ERR_NOTCONVERTED\fP : the address could not be resolved
+   Note :
+     This function does not currently support IPv6. It have
+     to be finished.
+*/
+\fBnetwib_err\fP \fBnetwib_ip_init_eth\fP(\fBnetwib_consteth\fP *peth,
+                              \fBnetwib_ip\fP *pip);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_ip_init_kbd\fP
+   Description :
+     Initialize an \fBnetwib_ip\fP with the address entered by the
+     user through the keyboard
+   Input parameter(s) :
+     message : message to print before
+     defaulthn : default hostname or ip address to use if
+                 user enters nothing. If NULL, there is no default
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pip : \fBnetwib_ip\fP set with user's string
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_ip_init_kbd\fP(\fBnetwib_constbuf\fP *pmessage,
+                              \fBnetwib_constbuf\fP *pdefaulthn,
+                              \fBnetwib_ip\fP *pip);
+\fI#define\fP \fBNETWIB_IP_INIT_KBD_NODEF\fP NULL
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_ip_cmp\fP
+   Description :
+     Compare two \fBnetwib_ip\fP.
+   Input parameter(s) :
+     ip1 : \fBnetwib_ip\fP to compare with ip2
+     ip2 : \fBnetwib_ip\fP to compare with ip1
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pcmp :
+       \fBNETWIB_CMP_LT\fP : ip1<ip2
+       \fBNETWIB_CMP_EQ\fP : if ip1 and ip2 are equal
+       \fBNETWIB_CMP_GT\fP : ip1>ip2
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_ip_cmp\fP(\fBnetwib_constip\fP *pip1,
+                         \fBnetwib_constip\fP *pip2,
+                         \fBnetwib_cmp\fP *pcmp);
+
+/*-------------------------------------------------------------*/
+\fItypedef\fP enum {
+  \fBNETWIB_IP_ENCODETYPE_IP\fP = 1,   /* "1.2.3.4" */
+  \fBNETWIB_IP_ENCODETYPE_HN\fP,       /* server.example.com */
+  \fBNETWIB_IP_ENCODETYPE_HNIP\fP,     /* if HN does not work, use IP */
+  \fBNETWIB_IP_ENCODETYPE_HNS\fP,      /* "host1,host2,etc." */
+  \fBNETWIB_IP_ENCODETYPE_BEST\fP = \fBNETWIB_IP_ENCODETYPE_HNIP\fP /* best */
+} \fBnetwib_ip_encodetype\fP;
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_buf_append_ip\fP
+   Description :
+     Append a string representing a \fBnetwib_ip\fP.
+   Input parameter(s) :
+     ip : \fBnetwib_ip\fP to append
+     encodetype : encodetype to use
+   Input/output parameter(s) :
+     pbuf : buffer updated
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+     \fBNETWIB_ERR_NOTCONVERTED\fP : the address could not be resolved
+*/
+\fBnetwib_err\fP \fBnetwib_buf_append_ip\fP(\fBnetwib_constip\fP *pip,
+                                \fBnetwib_ip_encodetype\fP encodetype,
+                                \fBnetwib_buf\fP *pbuf);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_buf_append_iptype\fP
+   Description :
+     Obtains the buf string corresponding to a type.
+   Input parameter(s) :
+     type : type
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pbuf : \fBnetwib_buf\fP set with the buf string
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_buf_append_iptype\fP(\fBnetwib_iptype\fP type,
+                                    \fBnetwib_buf\fP *pbuf);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_iptype_init_kbd\fP
+   Description :
+     Initialize a \fBnetwib_iptype\fP with data entered
+     through keyboard.
+   Input parameter(s) :
+     *pmessage : message to print before
+     defaulttype : default type to use if user enters
+                   nothing (if \fBNETWIB_IPTYPE_UNKNOWN\fP means
+                   no default)
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *phwtype : \fBnetwib_hwtype\fP initialized
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_iptype_init_kbd\fP(\fBnetwib_constbuf\fP *pmessage,
+                                  \fBnetwib_iptype\fP defaulttype,
+                                  \fBnetwib_iptype\fP *ptype);
+\fI#define\fP \fBNETWIB_IPTYPE_INIT_KBD_NODEF\fP \fBNETWIB_IPTYPE_UNKNOWN\fP
+.fi
+.SH MODULE ETH
+.nf
+
+/*-------------------------------------------------------------*/
+/***************************************************************
+ * A \fBnetwib_eth\fP represents an Ethernet address.                *
+ * You can init it with a \fBnetwib_eth_init_xyz\fP function or with:*
+ *   \fBnetwib_eth\fP eth, eth2;                                     *
+ *   eth.b[0] = 0x01; eth.b[1] = 0x02; eth.b[2] = 0x03; ...    *
+ *   \fBnetwib_c_memcpy\fP(eth.b, array, \fBNETWIB_ETH_LEN\fP);            *
+ *   \fBnetwib_c_memset\fP(eth.b, 0, \fBNETWIB_ETH_LEN\fP);                *
+ *   eth2 = eth1;                                              *
+ ***************************************************************/
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_eth_init_fields\fP
+   Description :
+     Initialize an \fBnetwib_eth\fP address.
+   Input parameter(s) :
+     a,b,c,d,e,f : bytes of the Ethernet address
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *peth : \fBnetwib_eth\fP set with a:b:c:d:e:f
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_eth_init_fields\fP(\fBnetwib_byte\fP a,
+                                  \fBnetwib_byte\fP b,
+                                  \fBnetwib_byte\fP c,
+                                  \fBnetwib_byte\fP d,
+                                  \fBnetwib_byte\fP e,
+                                  \fBnetwib_byte\fP f,
+                                  \fBnetwib_eth\fP *peth);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_eth_init_buf\fP
+   Description :
+     Convert the string "aa:bb:cc:dd:ee:ff" to a \fBnetwib_eth\fP.
+   Input parameter(s) :
+     *pbuf : string
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *peth : \fBnetwib_eth\fP set
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+     \fBNETWIB_ERR_NOTCONVERTED\fP : format is not "aa:bb:cc:dd:ee:ff"
+*/
+\fBnetwib_err\fP \fBnetwib_eth_init_buf\fP(\fBnetwib_constbuf\fP *pbuf,
+                               \fBnetwib_eth\fP *peth);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_eth_init_ip\fP
+   Description :
+     Convert a \fBnetwib_ip\fP address to a \fBnetwib_eth\fP.
+   Input parameter(s) :
+     ip : IP address
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *peth : \fBnetwib_eth\fP set with ip
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+     \fBNETWIB_ERR_OKUNRESOLVED\fP : the address could not be resolved
+*/
+\fBnetwib_err\fP \fBnetwib_eth_init_ip\fP(\fBnetwib_constip\fP *pip,
+                              \fBnetwib_eth\fP *peth);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_eth_init_kbd\fP
+   Description :
+     Initialize an \fBnetwib_eth\fP with the address entered by the
+     user through the keyboard
+   Input parameter(s) :
+     message : message to print before
+     *pdefaulteth : default eth to use if user enters nothing
+                    if NULL, there is no default
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *peth : \fBnetwib_eth\fP set with user's string
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_eth_init_kbd\fP(\fBnetwib_constbuf\fP *pmessage,
+                               \fBnetwib_consteth\fP *pdefaulteth,
+                               \fBnetwib_eth\fP *peth);
+\fI#define\fP \fBNETWIB_ETH_INIT_KBD_NODEF\fP NULL
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_eth_cmp\fP
+   Description :
+     Compare two \fBnetwib_eth\fP.
+   Input parameter(s) :
+     eth1 : \fBnetwib_eth\fP to compare with eth2
+     eth2 : \fBnetwib_eth\fP to compare with eth1
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pcmp :
+       \fBNETWIB_CMP_LT\fP : eth1<eth2
+       \fBNETWIB_CMP_EQ\fP : if eth1 and eth2 are equal
+       \fBNETWIB_CMP_GT\fP : eth1>eth2
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_eth_cmp\fP(\fBnetwib_consteth\fP *peth1,
+                          \fBnetwib_consteth\fP *peth2,
+                          \fBnetwib_cmp\fP *pcmp);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_buf_append_eth\fP
+   Description :
+     Append a string representing a \fBnetwib_eth\fP.
+   Input parameter(s) :
+     eth : \fBnetwib_eth\fP to append
+   Input/output parameter(s) :
+     pbuf : buffer updated
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_buf_append_eth\fP(\fBnetwib_consteth\fP *peth,
+                                 \fBnetwib_buf\fP *pbuf);
+
+.fi
+.SH MODULE PORT
+.nf
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_port_init_kbd\fP
+   Description :
+     Initialize a \fBnetwib_port\fP with data entered through keyboard.
+   Input parameter(s) :
+     *pmessage : message to print before
+     min : minvalue which can be entered (if 0 no min)
+     max : maxvalue which can be entered (if 0xFFFFFFFFu no max)
+     defaultport : default port to use if user enters nothing
+                   if 0xFFFFFFFFu, there is no default
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pport : \fBnetwib_port\fP initialized
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_port_init_kbd\fP(\fBnetwib_constbuf\fP *pmessage,
+                                \fBnetwib_port\fP min,
+                                \fBnetwib_port\fP max,
+                                \fBnetwib_port\fP defaultport,
+                                \fBnetwib_port\fP *pport);
+\fI#define\fP \fBNETWIB_PORT_INIT_KBD_NOMIN\fP 0
+\fI#define\fP \fBNETWIB_PORT_INIT_KBD_NOMAX\fP 0xFFFFFFFFu
+\fI#define\fP \fBNETWIB_PORT_INIT_KBD_NODEF\fP 0xFFFFFFFFu
+
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_port_init_buf\fP
+   Description :
+     Convert a string "123" to a \fBnetwib_port\fP.
+   Input parameter(s) :
+     *pbuf : string to convert
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pport : \fBnetwib_port\fP set
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_port_init_buf\fP(\fBnetwib_constbuf\fP *pbuf,
+                                \fBnetwib_port\fP *pport);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_buf_append_port\fP
+   Description :
+     Append a string representing a \fBnetwib_port\fP.
+   Input parameter(s) :
+     port : \fBnetwib_port\fP to append
+   Input/output parameter(s) :
+     pbuf : buffer updated
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_buf_append_port\fP(\fBnetwib_port\fP port,
+                                  \fBnetwib_buf\fP *pbuf);
+.fi
+.SH MODULE IPS
+.nf
+
+/*-------------------------------------------------------------*/
+/***************************************************************
+ * An IP range is of the form :                                *
+ *                                   ip4inf     ip4sup         *
+ *   1.2.3.4                  :     1.2.3.4     1.2.3.4        *
+ *   1.2.3.4-5.6.7.8          :     1.2.3.4     5.6.7.8        *
+ *   1.2.3.0/255.255.255.0    :     1.2.3.0   1.2.3.255        *
+ *   1.2.3.0/24               :     1.2.3.0   1.2.3.255        *
+ *   1.2.3/255.255.255.0      :     1.2.3.0   1.2.3.255        *
+ *   1.2.3/24                 :     1.2.3.0   1.2.3.255        *
+ *   1.2.3.0%255.255.255.O    :     1.2.3.1   1.2.3.254        *
+ *   1.2.3.0%24               :     1.2.3.1   1.2.3.254        *
+ *   1.2.3%255.255.255.O      :     1.2.3.1   1.2.3.254        *
+ *   1.2.3%24                 :     1.2.3.1   1.2.3.254        *
+ *   fec0:0:0:1::1            :  fec0:0:0:1::1 fec0:0:0:1::1   *
+ * Notes :                                                     *
+ *  - '%' has the same meaning as '/', except that the         *
+ *    broadcast addresses are excluded from range.             *
+ *  - It is possible to use a hostname range as input. In this *
+ *    case the separator is '=' (because '-' is a valid        *
+ *    hostname separator).                                     *
+ *                                                             *
+ * An \fBnetwib_ips\fP is of the form :                              *
+ *   ip,ip,iprange,iprange                                     *
+ *   all,!ip,!iprange                                          *
+ *                                                             *
+ * Complete examples :                                         *
+ *   1.2.3.4                                                   *
+ *   1.2.3.4-1.2.3.5                                           *
+ *   1.2.3.4,5.6.7.8                                           *
+ *   1.2.3.4,1.2.3.56-1.2.3.58                                 *
+ *   all,!1.2.3.4,!1.2.4.4-1.2.4.6                             *
+ *   hostname                                                  *
+ *   host1=host2                                               *
+ *   host1,host2                                               *
+ ***************************************************************/
+
+/*-------------------------------------------------------------*/
+/***************************************************************
+ * Those functions ignores following error cases :             *
+ *  - if we try to add a value already in the list             *
+ *  - if we try to remove a value not in the list              *
+ ***************************************************************/
+
+/*-------------------------------------------------------------*/
+\fItypedef\fP struct \fBnetwib_ips\fP \fBnetwib_ips\fP;
+\fItypedef\fP const \fBnetwib_ips\fP \fBnetwib_constips\fP;
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_ips_init\fP
+   Description :
+     Initialize a \fBnetwib_ips\fP used to store IP list.
+   Input parameter(s) :
+     inittype : if future added items will be sorted and/or unique
+   Input/output parameter(s) :
+   Output parameter(s) :
+     **ppips : \fBnetwib_ips\fP allocated and initialized
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fItypedef\fP enum {
+  \fBNETWIB_IPS_INITTYPE_SORTUNIQ\fP = 1, /* sorted and unique */
+  \fBNETWIB_IPS_INITTYPE_NOTSORTUNIQ\fP = 2, /* not sorted and unique */
+  \fBNETWIB_IPS_INITTYPE_NOTSORTNOTUNIQ\fP = 3 /* not sorted and not
+                                            unique (duplicates
+                                            are not removed) */
+} \fBnetwib_ips_inittype\fP;
+\fBnetwib_err\fP \fBnetwib_ips_init\fP(\fBnetwib_ips_inittype\fP inittype,
+                           \fBnetwib_ips\fP **ppips);
+\fI#define\fP \fBnetwib_ips_initdefault\fP(ppips) \fBnetwib_ips_init\fP(\fBNETWIB_IPS_INITTYPE_SORTUNIQ\fP,ppips)
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_ips_close\fP
+   Description :
+     Close a \fBnetwib_ips\fP.
+   Input parameter(s) :
+   Input/output parameter(s) :
+     **ppips : \fBnetwib_ips\fP closed
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_ips_close\fP(\fBnetwib_ips\fP **ppips);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_ips_add_ip\fP
+   Description :
+     Add an address to the \fBnetwib_ips\fP.
+   Input parameter(s) :
+     ip : address to add
+   Input/output parameter(s) :
+     *pips : \fBnetwib_ips\fP where to work
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_ips_add_ip\fP(\fBnetwib_ips\fP *pips,
+                             \fBnetwib_constip\fP *pip);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_ips_add_iprange\fP
+   Description :
+     Add a range of addresses to the \fBnetwib_ips\fP.
+   Input parameter(s) :
+     infip : inferior ip
+     supip : superior ip
+   Input/output parameter(s) :
+     *pips : \fBnetwib_ips\fP where to work
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_ips_add_iprange\fP(\fBnetwib_ips\fP *pips,
+                                  \fBnetwib_constip\fP *pinfip,
+                                  \fBnetwib_constip\fP *psupip);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_ips_add_ips\fP
+   Description :
+     Add a list of addresses to the \fBnetwib_ips\fP.
+   Input parameter(s) :
+     *pipstoadd : \fBnetwib_ips\fP to add
+   Input/output parameter(s) :
+     *pips : \fBnetwib_ips\fP where to work
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_ips_add_ips\fP(\fBnetwib_ips\fP *pips,
+                              \fBnetwib_constips\fP *pipstoadd);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_ips_add_buf\fP
+   Description :
+     Update a \fBnetwib_ips\fP with a string like "1.2.3.4-1.2.3.5".
+   Input parameter(s) :
+     pbuf : buffer containing string
+   Input/output parameter(s) :
+     *pips : \fBnetwib_ips\fP updated
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+   Note :
+     If an error occurs during insertion, result will only
+     contain partial data. It's developer's job to use a
+     temporary \fBnetwib_ips\fP to deal with such errors.
+*/
+\fBnetwib_err\fP \fBnetwib_ips_add_buf\fP(\fBnetwib_ips\fP *pips,
+                              \fBnetwib_constbuf\fP *pbuf);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_ips_add_kbd\fP
+   Description :
+     Update a \fBnetwib_ips\fP with data entered through keyboard.
+   Input parameter(s) :
+     *pmessage : message to print before
+     *pdefaultlist : default list to use if user enters nothing
+                     if NULL, there is no default
+   Input/output parameter(s) :
+     *pips : \fBnetwib_ips\fP updated
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_ips_add_kbd\fP(\fBnetwib_ips\fP *pips,
+                              \fBnetwib_constbuf\fP *pmessage,
+                              \fBnetwib_constbuf\fP *pdefaultlist);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_ips_del_ip\fP
+   Description :
+     Del an address to the \fBnetwib_ips\fP.
+   Input parameter(s) :
+     ip : address to delete
+   Input/output parameter(s) :
+     *pips : \fBnetwib_ips\fP where to work
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_ips_del_ip\fP(\fBnetwib_ips\fP *pips,
+                             \fBnetwib_constip\fP *pip);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_ips_del_iprange\fP
+   Description :
+     Del a range of addresses to the \fBnetwib_ips\fP.
+   Input parameter(s) :
+     infip : inferior ip
+     supip : superior ip
+   Input/output parameter(s) :
+     *pips : \fBnetwib_ips\fP where to work
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_ips_del_iprange\fP(\fBnetwib_ips\fP *pips,
+                                  \fBnetwib_constip\fP *pinfip,
+                                  \fBnetwib_constip\fP *psupip);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_ips_del_ips\fP
+   Description :
+     Remove a list of addresses to the \fBnetwib_ips\fP.
+   Input parameter(s) :
+     *pipstodel : \fBnetwib_ips\fP to remove
+   Input/output parameter(s) :
+     *pips : \fBnetwib_ips\fP where to work
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_ips_del_ips\fP(\fBnetwib_ips\fP *pips,
+                              \fBnetwib_constips\fP *pipstodel);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_ips_contains_xyz\fP
+   Description :
+     Check if a \fBnetwib_ip\fP is in the list.
+   Input parameter(s) :
+     ip : \fBnetwib_ip\fP to find
+   Input/output parameter(s) :
+     *pips : \fBnetwib_ips\fP containing the list of addresses
+   Output parameter(s) :
+     *pyes : true if \fBnetwib_ip\fP is found
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_ips_contains_ip\fP(\fBnetwib_constips\fP *pips,
+                                  \fBnetwib_constip\fP *pip,
+                                  \fBnetwib_bool\fP *pyes);
+\fBnetwib_err\fP \fBnetwib_ips_contains_iprange\fP(\fBnetwib_constips\fP *pips,
+                                       \fBnetwib_constip\fP *pinfip,
+                                       \fBnetwib_constip\fP *psupip,
+                                       \fBnetwib_bool\fP *pyes);
+
+/*-------------------------------------------------------------*/
+\fItypedef\fP enum {
+  \fBNETWIB_IPS_ENCODETYPE_HNRANGE\fP = 1,/* "host1=host2,etc." */
+  \fBNETWIB_IPS_ENCODETYPE_IPRANGE\fP,    /* "1.2.3.4-1.2.3.5,etc." */
+  \fBNETWIB_IPS_ENCODETYPE_IPNUMBER\fP,   /* "1.1.1.0/24,etc." */
+  \fBNETWIB_IPS_ENCODETYPE_IPMASK\fP,     /* "1.1.1.0/255.255.255.255" */
+  \fBNETWIB_IPS_ENCODETYPE_HNBEST\fP = \fBNETWIB_IPS_ENCODETYPE_HNRANGE\fP,
+  \fBNETWIB_IPS_ENCODETYPE_IPBEST\fP = \fBNETWIB_IPS_ENCODETYPE_IPRANGE\fP,
+  \fBNETWIB_IPS_ENCODETYPE_BEST\fP = \fBNETWIB_IPS_ENCODETYPE_IPBEST\fP
+} \fBnetwib_ips_encodetype\fP;
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_buf_append_ips\fP
+   Description :
+     Append a string representing a \fBnetwib_ips\fP.
+   Input parameter(s) :
+     *pips : \fBnetwib_ips\fP to append
+   Input/output parameter(s) :
+     pbuf : buffer updated
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_buf_append_ips\fP(\fBnetwib_constips\fP *pips,
+                                 \fBnetwib_ips_encodetype\fP encodetype,
+                                 \fBnetwib_buf\fP *pbuf);
+
+.fi
+.SH MODULE IPSI
+.nf
+
+/*-------------------------------------------------------------*/
+\fItypedef\fP struct \fBnetwib_ips_index\fP \fBnetwib_ips_index\fP;
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_ips_index_init\fP
+   Description :
+     Initialize a \fBnetwib_ips_index\fP used to loop through
+     a \fBnetwib_ips\fP.
+   Input parameter(s) :
+   Input/output parameter(s) :
+   Output parameter(s) :
+     **ppipsindex : \fBnetwib_ips_index\fP allocated and initialized
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_ips_index_init\fP(\fBnetwib_constips\fP *pips,
+                                 \fBnetwib_ips_index\fP **ppipsindex);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_ips_index_close\fP
+   Description :
+     Close a \fBnetwib_ipsindex\fP.
+   Input parameter(s) :
+   Input/output parameter(s) :
+     **ppipsindex : \fBnetwib_ips_index\fP closed
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_ips_index_close\fP(\fBnetwib_ips_index\fP **ppipsindex);
+
+/*-------------------------------------------------------------*/
+/* Types to control a \fBnetwib_ips_index\fP */
+\fItypedef\fP enum {
+  \fBNETWIB_IPS_INDEX_CTLTYPE_REWIND\fP = 1,  /* position at beginning */
+  \fBNETWIB_IPS_INDEX_CTLTYPE_INDEX\fP        /* reset with index pos */
+} \fBnetwib_ips_index_ctltype\fP;
+/* Those functions permit to set/get parameters (pointer and
+   integer) about a \fBnetwib_ips_index\fP. It should not be used directly,
+   but by the defines.
+*/
+\fBnetwib_err\fP \fBnetwib_ips_index_ctl_set\fP(\fBnetwib_ips_index\fP *pipsindex,
+                                    \fBnetwib_ips_index_ctltype\fP type,
+                                    \fBnetwib_ptr\fP p,
+                                    \fBnetwib_uint32\fP ui);
+\fBnetwib_err\fP \fBnetwib_ips_index_ctl_get\fP(\fBnetwib_ips_index\fP *pipsindex,
+                                    \fBnetwib_ips_index_ctltype\fP type,
+                                    \fBnetwib_ptr\fP p,
+                                    \fBnetwib_uint32\fP *pui);
+
+/*-------------------------------------------------------------*/
+/* \fBnetwib_err\fP f(\fBnetwib_ips_index\fP *pipsindex); */
+\fI#define\fP \fBnetwib_ips_index_ctl_set_rewind\fP(pipsindex) \fBnetwib_ips_index_ctl_set\fP(pipsindex,\fBNETWIB_IPS_INDEX_CTLTYPE_REWIND\fP,NULL,0)
+/* \fBnetwib_err\fP f(\fBnetwib_ips_index\fP *pipsindex,\fBnetwib_ips_index\fP *pipsindexref);*/
+\fI#define\fP \fBnetwib_ips_index_ctl_set_index\fP(pipsindex,pipsindexref) \fBnetwib_ips_index_ctl_set\fP(pipsindex,\fBNETWIB_IPS_INDEX_CTLTYPE_INDEX\fP,pipsindexref,0)
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_ips_index_next_ip\fP
+   Description :
+     Get the next \fBnetwib_ip\fP in the list.
+   Input parameter(s) :
+   Input/output parameter(s) :
+     *pipsindex : \fBnetwib_ips_index\fP
+   Output parameter(s) :
+     *pip : next \fBnetwib_ip\fP
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+     \fBNETWIB_ERR_DATAEND\fP : end of the list reached
+   Note :
+     If one thread changes the \fBnetwib_ips\fP between two calls,
+     the next result might be incorrect. Developer have to
+     lock the entire loop (going through each item), or to
+     copy the \fBnetwib_ips\fP and to loop on the copy.
+*/
+\fBnetwib_err\fP \fBnetwib_ips_index_next_ip\fP(\fBnetwib_ips_index\fP *pipsindex,
+                                    \fBnetwib_ip\fP *pip);
+\fBnetwib_err\fP \fBnetwib_ips_index_next_iprange\fP(\fBnetwib_ips_index\fP *pipsindex,
+                                         \fBnetwib_ip\fP *pinfip,
+                                         \fBnetwib_ip\fP *psupip);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_ips_index_this_ip\fP
+   Description :
+     Re-give the last \fBnetwib_ip\fP in the list.
+   Input parameter(s) :
+   Input/output parameter(s) :
+     *pipsindex : \fBnetwib_ips_index\fP
+   Output parameter(s) :
+     *pip : next \fBnetwib_ip\fP
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_ips_index_this_ip\fP(\fBnetwib_ips_index\fP *pipsindex,
+                                    \fBnetwib_ip\fP *pip);
+\fBnetwib_err\fP \fBnetwib_ips_index_this_iprange\fP(\fBnetwib_ips_index\fP *pipsindex,
+                                         \fBnetwib_ip\fP *pinfip,
+                                         \fBnetwib_ip\fP *psupip);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_ips_index_this_del\fP
+   Description :
+     Delete the last given value by a \fBnetwib_ips_index_next\fP
+     function.
+   Input parameter(s) :
+   Input/output parameter(s) :
+     *pipsindex : \fBnetwib_ips_index\fP
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_ips_index_this_del\fP(\fBnetwib_ips_index\fP *pipsindex);
+.fi
+.SH MODULE ETHS
+.nf
+
+/*-------------------------------------------------------------*/
+/***************************************************************
+ * An Ethernet range is of the form :                          *
+ *                                    ethinf       ethsup      *
+ *   a:b:c:d:e:f                  : a:b:c:d:e:f  a:b:c:d:e:f   *
+ *   a:b:c:d:e:f-a:b:c:d:f:f      : a:b:c:d:e:f  a:b:c:d:f:f   *
+ *   a:b:c:d:e:0/40               : a:b:c:d:e:0  a:b:c:d:e:f   *
+ *   a:b:c:d:e:0%40               : a:b:c:d:e:1  a:b:c:d:e:e   *
+ *   a:b:c:d:e:0/ff:ff:ff:ff:ff:0 : a:b:c:d:e:0  a:b:c:d:e:f   *
+ * Notes :                                                     *
+ *  - '%' has the same meaning as '/', except that the         *
+ *    broadcast addresses are excluded from range.             *
+ *                                                             *
+ * A \fBnetwib_eths\fP is of the form :                              *
+ *   eth,eth,ethrange,ethrange                                 *
+ *   all,!eth,!ethrange                                        *
+ *                                                             *
+ * Complete examples :                                         *
+ *   a:b:c:d:e:f                                               *
+ *   a:b:c:d:e:f-a:b:c:d:f:f                                   *
+ *   a:b:c:d:e:f,a:b:c:d:f:f                                   *
+ *   1:2:3:4:5:6,a:b:c:d:e:f-a:b:c:d:f:f                       *
+ *   all,!1:2:3:4:5:6,!a:b:c:d:e:f-a:b:c:d:f:f                 *
+ ***************************************************************/
+
+/*-------------------------------------------------------------*/
+/***************************************************************
+ * Those functions ignores following error cases :             *
+ *  - if we try to add a value already in the list             *
+ *  - if we try to remove a value not in the list              *
+ ***************************************************************/
+
+/*-------------------------------------------------------------*/
+\fItypedef\fP struct \fBnetwib_eths\fP \fBnetwib_eths\fP;
+\fItypedef\fP const \fBnetwib_eths\fP \fBnetwib_consteths\fP;
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_eths_init\fP
+   Description :
+     Initialize a \fBnetwib_eths\fP used to store several Ethernet
+     addresses.
+   Input parameter(s) :
+     inittype : if future added items will be sorted and/or unique
+   Input/output parameter(s) :
+   Output parameter(s) :
+     **ppeths : \fBnetwib_eths\fP allocated and initialized
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fItypedef\fP enum {
+  \fBNETWIB_ETHS_INITTYPE_SORTUNIQ\fP = 1, /* sorted and unique */
+  \fBNETWIB_ETHS_INITTYPE_NOTSORTUNIQ\fP = 2, /* not sorted and unique */
+  \fBNETWIB_ETHS_INITTYPE_NOTSORTNOTUNIQ\fP = 3 /* not sorted and not
+                                             unique (duplicates
+                                             are not removed) */
+} \fBnetwib_eths_inittype\fP;
+\fBnetwib_err\fP \fBnetwib_eths_init\fP(\fBnetwib_eths_inittype\fP inittype,
+                            \fBnetwib_eths\fP **ppeths);
+\fI#define\fP \fBnetwib_eths_initdefault\fP(ppeths) \fBnetwib_eths_init\fP(\fBNETWIB_ETHS_INITTYPE_SORTUNIQ\fP,ppeths)
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_eths_close\fP
+   Description :
+     Close a \fBnetwib_eths\fP.
+   Input parameter(s) :
+   Input/output parameter(s) :
+     **ppeths : \fBnetwib_eths\fP closed
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_eths_close\fP(\fBnetwib_eths\fP **ppeths);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_eths_add_eth\fP
+   Description :
+     Add an address to the \fBnetwib_eths\fP.
+   Input parameter(s) :
+     eth : address to add
+   Input/output parameter(s) :
+     *peths : \fBnetwib_eths\fP where to work
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_eths_add_eth\fP(\fBnetwib_eths\fP *peths,
+                               \fBnetwib_consteth\fP *peth);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_eths_add_ethrange\fP
+   Description :
+     Add a range of addresses to the \fBnetwib_eths\fP.
+   Input parameter(s) :
+     infeth : inferior eth
+     supeth : superior eth
+   Input/output parameter(s) :
+     *peths : \fBnetwib_eths\fP where to work
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_eths_add_ethrange\fP(\fBnetwib_eths\fP *peths,
+                                    \fBnetwib_consteth\fP *pinfeth,
+                                    \fBnetwib_consteth\fP *psupeth);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_eths_add_eths\fP
+   Description :
+     Add a list of addresses to the \fBnetwib_eths\fP.
+   Input parameter(s) :
+     *pethstoadd : \fBnetwib_eths\fP to add
+   Input/output parameter(s) :
+     *peths : \fBnetwib_eths\fP where to work
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+   Note :
+     If an error occurs during insertion, result will only
+     contain partial data. It's developer's job to use a
+     temporary \fBnetwib_eths\fP to deal with such errors.
+*/
+\fBnetwib_err\fP \fBnetwib_eths_add_eths\fP(\fBnetwib_eths\fP *peths,
+                                \fBnetwib_consteths\fP *pethstoadd);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_eths_add_buf\fP
+   Description :
+     Add a list represented as a string like
+     "aa:bb:cc:dd:ee:ff-aa:bb:cc:dd:ff:ff".
+   Input parameter(s) :
+     *pbuf : an Ethernet string
+   Input/output parameter(s) :
+     *peths : \fBnetwib_eths\fP updated
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_eths_add_buf\fP(\fBnetwib_eths\fP *peths,
+                               \fBnetwib_constbuf\fP *pbuf);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_eths_add_kbd\fP
+   Description :
+     Update a list with data entered through keyboard.
+   Input parameter(s) :
+     message : message to print before
+    defaultlist : default list to use if user enters nothing
+                  if NULL, there is no default
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *peths : \fBnetwib_eths\fP updated
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_eths_add_kbd\fP(\fBnetwib_eths\fP *peths,
+                               \fBnetwib_constbuf\fP *pmessage,
+                               \fBnetwib_constbuf\fP *pdefaultlist);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_eths_del_eth\fP
+   Description :
+     Del an address to the \fBnetwib_eths\fP.
+   Input parameter(s) :
+     eth : address to delete
+   Input/output parameter(s) :
+     *peths : \fBnetwib_eths\fP where to work
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_eths_del_eth\fP(\fBnetwib_eths\fP *peths,
+                               \fBnetwib_consteth\fP *peth);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_eths_del_ethrange\fP
+   Description :
+     Del a range of addresses to the \fBnetwib_eths\fP.
+   Input parameter(s) :
+     infeth : inferior eth
+     supeth : superior eth
+   Input/output parameter(s) :
+     *peths : \fBnetwib_eths\fP where to work
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_eths_del_ethrange\fP(\fBnetwib_eths\fP *peths,
+                                    \fBnetwib_consteth\fP *pinfeth,
+                                    \fBnetwib_consteth\fP *psupeth);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_eths_del_eths\fP
+   Description :
+     Remove a list of addresses to the \fBnetwib_eths\fP.
+   Input parameter(s) :
+     *pethstoadd : \fBnetwib_eths\fP to remove
+   Input/output parameter(s) :
+     *peths : \fBnetwib_eths\fP where to work
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_eths_del_eths\fP(\fBnetwib_eths\fP *peths,
+                                \fBnetwib_consteths\fP *pethstodel);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_eths_contains_xyz\fP
+   Description :
+     Check if a \fBnetwib_eth\fP is in the list.
+   Input parameter(s) :
+     eth : \fBnetwib_eth\fP to find
+   Input/output parameter(s) :
+     *peths : \fBnetwib_eths\fP containing the list of addresses
+   Output parameter(s) :
+     *pyes : true if \fBnetwib_eth\fP is found
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_eths_contains_eth\fP(\fBnetwib_consteths\fP *peths,
+                                    \fBnetwib_consteth\fP *peth,
+                                    \fBnetwib_bool\fP *pyes);
+\fBnetwib_err\fP \fBnetwib_eths_contains_ethrange\fP(\fBnetwib_consteths\fP *peths,
+                                         \fBnetwib_consteth\fP *pinfeth,
+                                         \fBnetwib_consteth\fP *psupeth,
+                                         \fBnetwib_bool\fP *pyes);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_buf_append_eths\fP
+   Description :
+     Append a string representing a \fBnetwib_eths\fP.
+   Input parameter(s) :
+     *peths : \fBnetwib_eths\fP to append
+   Input/output parameter(s) :
+     pbuf : buffer updated
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_buf_append_eths\fP(\fBnetwib_consteths\fP *peths,
+                                  \fBnetwib_buf\fP *pbuf);
+.fi
+.SH MODULE ETHSI
+.nf
+
+/*-------------------------------------------------------------*/
+\fItypedef\fP struct \fBnetwib_eths_index\fP \fBnetwib_eths_index\fP;
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_eths_index_init\fP
+   Description :
+     Initialize a \fBnetwib_eths_index\fP used to loop through
+     a \fBnetwib_eths\fP.
+   Input parameter(s) :
+   Input/output parameter(s) :
+   Output parameter(s) :
+     **ppethsindex : \fBnetwib_eths_index\fP allocated and initialized
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_eths_index_init\fP(\fBnetwib_consteths\fP *peths,
+                                  \fBnetwib_eths_index\fP **ppethsindex);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_eths_index_close\fP
+   Description :
+     Close a \fBnetwib_ethsindex\fP.
+   Input parameter(s) :
+   Input/output parameter(s) :
+     **ppethsindex : \fBnetwib_eths_index\fP closed
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_eths_index_close\fP(\fBnetwib_eths_index\fP **ppethsindex);
+
+/*-------------------------------------------------------------*/
+/* Types to control a \fBnetwib_eths_index\fP */
+\fItypedef\fP enum {
+  \fBNETWIB_ETHS_INDEX_CTLTYPE_REWIND\fP = 1,  /* position at beginning */
+  \fBNETWIB_ETHS_INDEX_CTLTYPE_INDEX\fP        /* reset with index pos */
+} \fBnetwib_eths_index_ctltype\fP;
+/* Those functions permit to set/get parameters (pointer and
+   integer) about a \fBnetwib_eths_index\fP. It should not be used directly,
+   but by the defines.
+*/
+\fBnetwib_err\fP \fBnetwib_eths_index_ctl_set\fP(\fBnetwib_eths_index\fP *pethsindex,
+                                     \fBnetwib_eths_index_ctltype\fP type,
+                                     \fBnetwib_ptr\fP p,
+                                     \fBnetwib_uint32\fP ui);
+\fBnetwib_err\fP \fBnetwib_eths_index_ctl_get\fP(\fBnetwib_eths_index\fP *pethsindex,
+                                     \fBnetwib_eths_index_ctltype\fP type,
+                                     \fBnetwib_ptr\fP p,
+                                     \fBnetwib_uint32\fP *pui);
+
+/*-------------------------------------------------------------*/
+/* \fBnetwib_err\fP f(\fBnetwib_eths_index\fP *pethsindex); */
+\fI#define\fP \fBnetwib_eths_index_ctl_set_rewind\fP(pethsindex) \fBnetwib_eths_index_ctl_set\fP(pethsindex,\fBNETWIB_ETHS_INDEX_CTLTYPE_REWIND\fP,NULL,0)
+/* \fBnetwib_err\fP f(\fBnetwib_eths_index\fP *pethsindex,\fBnetwib_eths_index\fP *pethsindexref);*/
+\fI#define\fP \fBnetwib_eths_index_ctl_set_index\fP(pethsindex,pethsindexref) \fBnetwib_eths_index_ctl_set\fP(pethsindex,\fBNETWIB_ETHS_INDEX_CTLTYPE_INDEX\fP,pethsindexref,0)
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_eths_index_next_eth\fP
+   Description :
+     Get the next \fBnetwib_eth\fP in the list.
+   Input parameter(s) :
+   Input/output parameter(s) :
+     *pethsindex : \fBnetwib_eths_index\fP
+   Output parameter(s) :
+     *peth : next \fBnetwib_eth\fP
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+     \fBNETWIB_ERR_DATAEND\fP : end of the list reached
+   Note :
+     If one thread changes the \fBnetwib_eths\fP between two calls,
+     the next result might be incorrect. Developer have to
+     lock the entire loop (going through each item), or to
+     copy the \fBnetwib_eths\fP and to loop on the copy.
+*/
+\fBnetwib_err\fP \fBnetwib_eths_index_next_eth\fP(\fBnetwib_eths_index\fP *pethsindex,
+                                      \fBnetwib_eth\fP *peth);
+\fBnetwib_err\fP \fBnetwib_eths_index_next_ethrange\fP(\fBnetwib_eths_index\fP *pethsindex,
+                                           \fBnetwib_eth\fP *pinfeth,
+                                           \fBnetwib_eth\fP *psupeth);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_eths_index_this_eth\fP
+   Description :
+     Re-give the last \fBnetwib_eth\fP in the list.
+   Input parameter(s) :
+   Input/output parameter(s) :
+     *pethsindex : \fBnetwib_eths_index\fP
+   Output parameter(s) :
+     *peth : next \fBnetwib_eth\fP
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_eths_index_this_eth\fP(\fBnetwib_eths_index\fP *pethsindex,
+                                      \fBnetwib_eth\fP *peth);
+\fBnetwib_err\fP \fBnetwib_eths_index_this_ethrange\fP(\fBnetwib_eths_index\fP *pethsindex,
+                                           \fBnetwib_eth\fP *pinfeth,
+                                           \fBnetwib_eth\fP *psupeth);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_eths_index_this_del\fP
+   Description :
+     Delete the last given value by a \fBnetwib_eths_index_next\fP
+     function.
+   Input parameter(s) :
+   Input/output parameter(s) :
+     *pethsindex : \fBnetwib_eths_index\fP
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_eths_index_this_del\fP(\fBnetwib_eths_index\fP *pethsindex);
+.fi
+.SH MODULE PORTS
+.nf
+
+/*-------------------------------------------------------------*/
+/***************************************************************
+ * An port range is of the form :                              *
+ *                                   portinf     portsup       *
+ *   123                      :        123         123         *
+ *   123-124                  :        123         124         *
+ *                                                             *
+ * An \fBnetwib_ports\fP is of the form :                            *
+ *   port,port,portrange,portrange                             *
+ *   all,!port,!portrange                                      *
+ *                                                             *
+ * Complete examples :                                         *
+ *   123                                                       *
+ *   123-125                                                   *
+ *   1234,5678                                                 *
+ *   1234,12356-12358                                          *
+ *   all,!1234,!1244-1246                                      *
+ ***************************************************************/
+
+/*-------------------------------------------------------------*/
+/***************************************************************
+ * Those functions ignores following error cases :             *
+ *  - if we try to add a value already in the list             *
+ *  - if we try to remove a value not in the list              *
+ ***************************************************************/
+
+/*-------------------------------------------------------------*/
+\fItypedef\fP struct \fBnetwib_ports\fP \fBnetwib_ports\fP;
+\fItypedef\fP const \fBnetwib_ports\fP \fBnetwib_constports\fP;
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_ports_init\fP
+   Description :
+     Initialize a \fBnetwib_ports\fP used to store port list.
+   Input parameter(s) :
+     inittype : if future added items will be sorted and/or unique
+   Input/output parameter(s) :
+   Output parameter(s) :
+     **ppports : \fBnetwib_ports\fP allocated and initialized
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fItypedef\fP enum {
+  \fBNETWIB_PORTS_INITTYPE_SORTUNIQ\fP = 1, /* sorted and unique */
+  \fBNETWIB_PORTS_INITTYPE_NOTSORTUNIQ\fP = 2, /* not sorted and unique */
+  \fBNETWIB_PORTS_INITTYPE_NOTSORTNOTUNIQ\fP = 3 /* not sorted and not
+                                              unique (duplicates
+                                              are not removed) */
+} \fBnetwib_ports_inittype\fP;
+\fBnetwib_err\fP \fBnetwib_ports_init\fP(\fBnetwib_ports_inittype\fP inittype,
+                             \fBnetwib_ports\fP **ppports);
+\fI#define\fP \fBnetwib_ports_initdefault\fP(ppports) \fBnetwib_ports_init\fP(\fBNETWIB_PORTS_INITTYPE_SORTUNIQ\fP,ppports)
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_ports_close\fP
+   Description :
+     Close a \fBnetwib_ports\fP.
+   Input parameter(s) :
+   Input/output parameter(s) :
+     **ppports : \fBnetwib_ports\fP closed
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_ports_close\fP(\fBnetwib_ports\fP **ppports);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_ports_add_port\fP
+   Description :
+     Add a port to the \fBnetwib_ports\fP.
+   Input parameter(s) :
+     port : address to add
+   Input/output parameter(s) :
+     *pports : \fBnetwib_ports\fP where to work
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_ports_add_port\fP(\fBnetwib_ports\fP *pports,
+                                 \fBnetwib_port\fP port);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_ports_add_portrange\fP
+   Description :
+     Add a range of ports to the \fBnetwib_ports\fP.
+   Input parameter(s) :
+     infport : inferior port
+     support : superior port
+   Input/output parameter(s) :
+     *pports : \fBnetwib_ports\fP where to work
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_ports_add_portrange\fP(\fBnetwib_ports\fP *pports,
+                                      \fBnetwib_port\fP infport,
+                                      \fBnetwib_port\fP support);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_ports_add_ports\fP
+   Description :
+     Add a list of port to the \fBnetwib_ports\fP.
+   Input parameter(s) :
+     *pportstoadd : \fBnetwib_ports\fP to add
+   Input/output parameter(s) :
+     *pports : \fBnetwib_ports\fP where to work
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_ports_add_ports\fP(\fBnetwib_ports\fP *pports,
+                                  \fBnetwib_constports\fP *pportstoadd);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_ports_add_buf\fP
+   Description :
+     Update a \fBnetwib_ports\fP with a string like "1234-1235".
+   Input parameter(s) :
+     *pbuf : buffer containing string
+   Input/output parameter(s) :
+     *pports : \fBnetwib_ports\fP updated
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+   Note :
+     If an error occurs during insertion, result will only
+     contain partial data. It's developer's job to use a
+     temporary \fBnetwib_ports\fP to deal with such errors.
+*/
+\fBnetwib_err\fP \fBnetwib_ports_add_buf\fP(\fBnetwib_ports\fP *pports,
+                                \fBnetwib_constbuf\fP *pbuf);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_ports_add_kbd\fP
+   Description :
+     Update a \fBnetwib_ports\fP with data entered through keyboard.
+   Input parameter(s) :
+     message : message to print before
+     defaultlist : default list to use if user enters nothing
+                   if NULL, there is no default
+   Input/output parameter(s) :
+     *pports : \fBnetwib_ports\fP updated
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_ports_add_kbd\fP(\fBnetwib_ports\fP *pports,
+                                \fBnetwib_constbuf\fP *pmessage,
+                                \fBnetwib_constbuf\fP *pdefaultlist);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_ports_del_port\fP
+   Description :
+     Del a port from the \fBnetwib_ports\fP.
+   Input parameter(s) :
+     port : address to delete
+   Input/output parameter(s) :
+     *pports : \fBnetwib_ports\fP where to work
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_ports_del_port\fP(\fBnetwib_ports\fP *pports,
+                                 \fBnetwib_port\fP port);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_ports_del_portrange\fP
+   Description :
+     Del a range of ports to the \fBnetwib_ports\fP.
+   Input parameter(s) :
+     infport : inferior port
+     support : superior port
+   Input/output parameter(s) :
+     *pports : \fBnetwib_ports\fP where to work
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_ports_del_portrange\fP(\fBnetwib_ports\fP *pports,
+                                      \fBnetwib_port\fP infport,
+                                      \fBnetwib_port\fP support);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_ports_del_ports\fP
+   Description :
+     Remove a list of port to the \fBnetwib_ports\fP.
+   Input parameter(s) :
+     *pportstodel : \fBnetwib_ports\fP to remove
+   Input/output parameter(s) :
+     *pports : \fBnetwib_ports\fP where to work
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_ports_del_ports\fP(\fBnetwib_ports\fP *pports,
+                                  \fBnetwib_constports\fP *pportstodel);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_ports_contains_xyz\fP
+   Description :
+     Check if a \fBnetwib_port\fP is in the list.
+   Input parameter(s) :
+     port : \fBnetwib_port\fP to find
+   Input/output parameter(s) :
+     *pports : \fBnetwib_ports\fP containing the list of addresses
+   Output parameter(s) :
+     *pyes : true if \fBnetwib_port\fP is found
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_ports_contains_port\fP(\fBnetwib_constports\fP *pports,
+                                      \fBnetwib_port\fP port,
+                                      \fBnetwib_bool\fP *pyes);
+\fBnetwib_err\fP \fBnetwib_ports_contains_portrange\fP(\fBnetwib_constports\fP *pports,
+                                           \fBnetwib_port\fP infport,
+                                           \fBnetwib_port\fP support,
+                                           \fBnetwib_bool\fP *pyes);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_buf_append_ports\fP
+   Description :
+     Append a string representing a \fBnetwib_ports\fP.
+   Input parameter(s) :
+     *pports : \fBnetwib_ports\fP to append
+   Input/output parameter(s) :
+     pbuf : buffer updated
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_buf_append_ports\fP(\fBnetwib_constports\fP *pports,
+                                   \fBnetwib_buf\fP *pbuf);
+.fi
+.SH MODULE PORTSI
+.nf
+
+/*-------------------------------------------------------------*/
+\fItypedef\fP struct \fBnetwib_ports_index\fP \fBnetwib_ports_index\fP;
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_ports_index_init\fP
+   Description :
+     Initialize a \fBnetwib_ports_index\fP used to loop through
+     a \fBnetwib_ports\fP.
+   Input parameter(s) :
+   Input/output parameter(s) :
+   Output parameter(s) :
+     **ppportsindex : \fBnetwib_ports_index\fP allocated and initialized
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_ports_index_init\fP(\fBnetwib_constports\fP *pports,
+                                   \fBnetwib_ports_index\fP **ppportsindex);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_ports_index_close\fP
+   Description :
+     Close a \fBnetwib_portsindex\fP.
+   Input parameter(s) :
+   Input/output parameter(s) :
+     **ppportsindex : \fBnetwib_ports_index\fP closed
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_ports_index_close\fP(\fBnetwib_ports_index\fP **ppportsindex);
+
+/*-------------------------------------------------------------*/
+/* Types to control a \fBnetwib_ports_index\fP */
+\fItypedef\fP enum {
+  \fBNETWIB_PORTS_INDEX_CTLTYPE_REWIND\fP = 1,  /* position at beginning */
+  \fBNETWIB_PORTS_INDEX_CTLTYPE_INDEX\fP        /* reset with index pos */
+} \fBnetwib_ports_index_ctltype\fP;
+/* Those functions permit to set/get parameters (pointer and
+   integer) about a \fBnetwib_ports_index\fP. It should not be used directly,
+   but by the defines.
+*/
+\fBnetwib_err\fP \fBnetwib_ports_index_ctl_set\fP(\fBnetwib_ports_index\fP *pportsindex,
+                                      \fBnetwib_ports_index_ctltype\fP type,
+                                      \fBnetwib_ptr\fP p,
+                                      \fBnetwib_uint32\fP ui);
+\fBnetwib_err\fP \fBnetwib_ports_index_ctl_get\fP(\fBnetwib_ports_index\fP *pportsindex,
+                                      \fBnetwib_ports_index_ctltype\fP type,
+                                      \fBnetwib_ptr\fP p,
+                                      \fBnetwib_uint32\fP *pui);
+
+/*-------------------------------------------------------------*/
+/* \fBnetwib_err\fP f(\fBnetwib_ports_index\fP *pportsindex); */
+\fI#define\fP \fBnetwib_ports_index_ctl_set_rewind\fP(pportsindex) \fBnetwib_ports_index_ctl_set\fP(pportsindex,\fBNETWIB_PORTS_INDEX_CTLTYPE_REWIND\fP,NULL,0)
+/* \fBnetwib_err\fP f(\fBnetwib_ports_index\fP *pportsindex,\fBnetwib_ports_index\fP *pportsindexref);*/
+\fI#define\fP \fBnetwib_ports_index_ctl_set_index\fP(pportsindex,pportsindexref) \fBnetwib_ports_index_ctl_set\fP(pportsindex,\fBNETWIB_PORTS_INDEX_CTLTYPE_INDEX\fP,pportsindexref,0)
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_ports_index_next_port\fP
+   Description :
+     Get the next \fBnetwib_port\fP in the list.
+   Input parameter(s) :
+   Input/output parameter(s) :
+     *pportsindex : \fBnetwib_ports_index\fP
+   Output parameter(s) :
+     *pport : next \fBnetwib_port\fP
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+     \fBNETWIB_ERR_DATAEND\fP : end of the list reached
+   Note :
+     If one thread changes the \fBnetwib_ports\fP between two calls,
+     the next result might be incorrect. Developer have to
+     lock the entire loop (going through each item), or to
+     copy the \fBnetwib_ports\fP and to loop on the copy.
+*/
+\fBnetwib_err\fP \fBnetwib_ports_index_next_port\fP(\fBnetwib_ports_index\fP *pportsindex,
+                                        \fBnetwib_port\fP *pport);
+\fBnetwib_err\fP \fBnetwib_ports_index_next_portrange\fP(\fBnetwib_ports_index\fP *pportsindex,
+                                             \fBnetwib_port\fP *pinfport,
+                                             \fBnetwib_port\fP *psupport);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_ports_index_this_port\fP
+   Description :
+     Re-give the last \fBnetwib_port\fP in the list.
+   Input parameter(s) :
+   Input/output parameter(s) :
+     *pportsindex : \fBnetwib_ports_index\fP
+   Output parameter(s) :
+     *pport : next \fBnetwib_port\fP
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_ports_index_this_port\fP(\fBnetwib_ports_index\fP *pportsindex,
+                                        \fBnetwib_port\fP *pport);
+\fBnetwib_err\fP \fBnetwib_ports_index_this_portrange\fP(\fBnetwib_ports_index\fP *pportsindex,
+                                             \fBnetwib_port\fP *pinfport,
+                                             \fBnetwib_port\fP *psupport);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_ports_index_this_del\fP
+   Description :
+     Delete the last given value by a \fBnetwib_ports_index_next\fP
+     function.
+   Input parameter(s) :
+   Input/output parameter(s) :
+     *pportsindex : \fBnetwib_ports_index\fP
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_ports_index_this_del\fP(\fBnetwib_ports_index\fP *pportsindex);
+.fi
+.SH MODULE CONF
+.nf
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_conf_display\fP
+   Description :
+     Print devices/arp/routes configuration.
+   Input parameter(s) :
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pbuf : \fBnetwib_buf\fP receiving data
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_conf_display\fP(void);
+\fBnetwib_err\fP \fBnetwib_buf_append_conf\fP(\fBnetwib_buf\fP *pbuf);
+
+/*-------------------------------------------------------------*/
+/* For debugging purposes only */
+\fBnetwib_err\fP \fBnetwib_conf_debug_display\fP(void);
+\fBnetwib_err\fP \fBnetwib_buf_append_conf_debug\fP(\fBnetwib_buf\fP *pbuf);
+.fi
+.SH MODULE CONFDEV
+.nf
+
+/*-------------------------------------------------------------*/
+\fItypedef\fP struct \fBnetwib_conf_devices_index\fP \fBnetwib_conf_devices_index\fP;
+
+/*-------------------------------------------------------------*/
+\fItypedef\fP struct {
+  \fBnetwib_uint32\fP devnum;
+  \fBnetwib_buf\fP device;
+  \fBnetwib_buf\fP deviceeasy;
+  \fBnetwib_uint32\fP mtu;
+  \fBnetwib_device_hwtype\fP hwtype;
+  \fBnetwib_eth\fP eth;
+} \fBnetwib_conf_devices\fP;
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_conf_devices_index_init\fP
+   Description :
+     Initialize a \fBnetwib_conf_devices_index\fP used to loop through
+     a \fBnetwib_conf_devices\fP.
+   Input parameter(s) :
+     pitem : address of \fBnetwib_conf_devices\fP which will be set
+             on each call of \fBnetwib_conf_devices_next\fP
+   Input/output parameter(s) :
+   Output parameter(s) :
+     **ppindex : \fBnetwib_conf_devices_index\fP allocated and initialized
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_conf_devices_index_init\fP(\fBnetwib_conf_devices\fP *pitem,
+                                          \fBnetwib_conf_devices_index\fP **ppindex);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_conf_devices_index_close\fP
+   Description :
+     Close a \fBnetwib_conf_devices_index\fP.
+   Input parameter(s) :
+   Input/output parameter(s) :
+     **ppindex : \fBnetwib_conf_devices_index\fP to close
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_conf_devices_index_close\fP(\fBnetwib_conf_devices_index\fP **ppindex);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_conf_devices_index_next\fP
+   Description :
+     Get next entry.
+   Input parameter(s) :
+   Input/output parameter(s) :
+     *pindex : \fBnetwib_conf_devices_index\fP to work on
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+     \fBNETWIB_ERR_DATAEND\fP : end reached
+*/
+\fBnetwib_err\fP \fBnetwib_conf_devices_index_next\fP(\fBnetwib_conf_devices_index\fP *pindex);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_conf_devices_display\fP
+   Description :
+     Print devices configuration.
+   Input parameter(s) :
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pbuf : \fBnetwib_buf\fP receiving data
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_conf_devices_display\fP(void);
+\fBnetwib_err\fP \fBnetwib_buf_append_conf_devices\fP(\fBnetwib_buf\fP *pbuf);
+.fi
+.SH MODULE CONFIP
+.nf
+
+/*-------------------------------------------------------------*/
+\fItypedef\fP struct \fBnetwib_conf_ip_index\fP \fBnetwib_conf_ip_index\fP;
+
+/*-------------------------------------------------------------*/
+\fItypedef\fP struct {
+  \fBnetwib_uint32\fP devnum;
+  /* ip configuration */
+  \fBnetwib_ip\fP ip;
+  \fBnetwib_ip\fP mask; /* set for IPv4 */
+  \fBnetwib_uint32\fP prefix; /* set for IPv6 */
+  /* point to point configuration */
+  \fBnetwib_bool\fP ispointtopoint;
+  \fBnetwib_ip\fP pointtopointip;
+} \fBnetwib_conf_ip\fP;
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_conf_ip_index_init\fP
+   Description :
+     Initialize a \fBnetwib_conf_ip_index\fP used to loop through
+     a \fBnetwib_conf_ip\fP.
+   Input parameter(s) :
+     pitem : address of \fBnetwib_conf_ip\fP which will be set
+             on each call of \fBnetwib_conf_ip_next\fP
+   Input/output parameter(s) :
+   Output parameter(s) :
+     **ppindex : \fBnetwib_conf_ip_index\fP allocated and initialized
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_conf_ip_index_init\fP(\fBnetwib_conf_ip\fP *pitem,
+                                     \fBnetwib_conf_ip_index\fP **ppindex);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_conf_ip_index_close\fP
+   Description :
+     Close a \fBnetwib_conf_ip_index\fP.
+   Input parameter(s) :
+   Input/output parameter(s) :
+     **ppindex : \fBnetwib_conf_ip_index\fP to close
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_conf_ip_index_close\fP(\fBnetwib_conf_ip_index\fP **ppindex);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_conf_ip_index_next\fP
+   Description :
+     Get next entry.
+   Input parameter(s) :
+   Input/output parameter(s) :
+     *pindex : \fBnetwib_conf_ip_index\fP to work on
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+     \fBNETWIB_ERR_DATAEND\fP : end reached
+*/
+\fBnetwib_err\fP \fBnetwib_conf_ip_index_next\fP(\fBnetwib_conf_ip_index\fP *pindex);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_conf_ip_display\fP
+   Description :
+     Print ip configuration.
+   Input parameter(s) :
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pbuf : \fBnetwib_buf\fP receiving data
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_conf_ip_display\fP(void);
+\fBnetwib_err\fP \fBnetwib_buf_append_conf_ip\fP(\fBnetwib_buf\fP *pbuf);
+.fi
+.SH MODULE CONFARP
+.nf
+
+/*-------------------------------------------------------------*/
+\fItypedef\fP struct \fBnetwib_conf_arpcache_index\fP \fBnetwib_conf_arpcache_index\fP;
+
+/*-------------------------------------------------------------*/
+/***************************************************************
+ * This structure stores :                                     *
+ *  - ARP cache for IPv4                                       *
+ *  - neighbors for IPv6                                       *
+ ***************************************************************/
+
+/*-------------------------------------------------------------*/
+\fItypedef\fP struct {
+  \fBnetwib_uint32\fP devnum;
+  \fBnetwib_eth\fP eth;
+  \fBnetwib_ip\fP ip;
+} \fBnetwib_conf_arpcache\fP;
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_conf_arpcache_index_init\fP
+   Description :
+     Initialize a \fBnetwib_conf_arpcache_index\fP used to loop through
+     a \fBnetwib_conf_arpcache\fP.
+   Input parameter(s) :
+     pitem : address of \fBnetwib_conf_arpcache\fP which will be set
+             on each call of \fBnetwib_conf_arpcache_next\fP
+   Input/output parameter(s) :
+   Output parameter(s) :
+     **ppindex : \fBnetwib_conf_arpcache_index\fP allocated and initialized
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_conf_arpcache_index_init\fP(\fBnetwib_conf_arpcache\fP *pitem,
+                                           \fBnetwib_conf_arpcache_index\fP **ppindex);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_conf_arpcache_index_close\fP
+   Description :
+     Close a \fBnetwib_conf_arpcache_index\fP.
+   Input parameter(s) :
+   Input/output parameter(s) :
+     **ppindex : \fBnetwib_conf_arpcache_index\fP to close
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_conf_arpcache_index_close\fP(\fBnetwib_conf_arpcache_index\fP **ppindex);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_conf_arpcache_index_next\fP
+   Description :
+     Get next entry.
+   Input parameter(s) :
+   Input/output parameter(s) :
+     *pindex : \fBnetwib_conf_arpcache_index\fP to work on
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+     \fBNETWIB_ERR_DATAEND\fP : end reached
+*/
+\fBnetwib_err\fP \fBnetwib_conf_arpcache_index_next\fP(\fBnetwib_conf_arpcache_index\fP *pindex);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_conf_arpcache_display\fP
+   Description :
+     Print arp configuration.
+   Input parameter(s) :
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pbuf : \fBnetwib_buf\fP receiving data
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_conf_arpcache_display\fP(void);
+\fBnetwib_err\fP \fBnetwib_buf_append_conf_arpcache\fP(\fBnetwib_buf\fP *pbuf);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_conf_arpcache_add\fP
+   Description :
+     Add an entry in the cache. Then resolving functions
+     can find the value.
+   Input parameter(s) :
+     *pdevice : can be NULL if unknown
+     *peth : Ethernet address
+     *pip : IP address
+   Input/output parameter(s) :
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_conf_arpcache_add\fP(\fBnetwib_constbuf\fP *pdevice,
+                                    \fBnetwib_consteth\fP *peth,
+                                    \fBnetwib_constip\fP *pip);
+.fi
+.SH MODULE CONFROUT
+.nf
+
+/*-------------------------------------------------------------*/
+\fItypedef\fP struct \fBnetwib_conf_routes_index\fP \fBnetwib_conf_routes_index\fP;
+
+/*-------------------------------------------------------------*/
+\fItypedef\fP struct {
+  \fBnetwib_uint32\fP devnum;
+  \fBnetwib_ip\fP dst;
+  \fBnetwib_ip\fP mask; /* set for IPv4 */
+  \fBnetwib_uint32\fP prefix; /* set for IPv6 */
+  \fBnetwib_bool\fP srcset;
+  \fBnetwib_ip\fP src;
+  \fBnetwib_bool\fP gwset;
+  \fBnetwib_ip\fP gw;
+  \fBnetwib_uint32\fP metric;
+} \fBnetwib_conf_routes\fP;
+/*
+  srcunset and gwunset : dst is a local device
+  srcset and gwunset   : dst in on LAN
+  srcunset and gwset   : error
+  srcset and gwset     : dst is through gw
+*/
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_conf_routes_index_init\fP
+   Description :
+     Initialize a \fBnetwib_conf_routes_index\fP used to loop through
+     a \fBnetwib_conf_routes\fP.
+   Input parameter(s) :
+     pitem : address of \fBnetwib_conf_routes\fP which will be set
+             on each call of \fBnetwib_conf_routes_next\fP
+   Input/output parameter(s) :
+   Output parameter(s) :
+     **ppindex : \fBnetwib_conf_routes_index\fP allocated and initialized
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_conf_routes_index_init\fP(\fBnetwib_conf_routes\fP *pitem,
+                                         \fBnetwib_conf_routes_index\fP **ppindex);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_conf_routes_index_close\fP
+   Description :
+     Close a \fBnetwib_conf_routes_index\fP.
+   Input parameter(s) :
+   Input/output parameter(s) :
+     **ppindex : \fBnetwib_conf_routes_index\fP to close
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_conf_routes_index_close\fP(\fBnetwib_conf_routes_index\fP **ppindex);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_conf_routes_index_next\fP
+   Description :
+     Get next entry.
+   Input parameter(s) :
+   Input/output parameter(s) :
+     *pindex : \fBnetwib_conf_routes_index\fP to work on
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+     \fBNETWIB_ERR_DATAEND\fP : end reached
+*/
+\fBnetwib_err\fP \fBnetwib_conf_routes_index_next\fP(\fBnetwib_conf_routes_index\fP *pindex);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_conf_routes_display\fP
+   Description :
+     Print routes configuration.
+   Input parameter(s) :
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pbuf : \fBnetwib_buf\fP receiving data
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_conf_routes_display\fP(void);
+\fBnetwib_err\fP \fBnetwib_buf_append_conf_routes\fP(\fBnetwib_buf\fP *pbuf);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_conf_routes_reach_eth\fP
+   Description :
+     Determine device, sources addresses and destination Ethernet
+     address to use to send an IP packet to a host.
+   Input parameter(s) :
+     dstip : host to reach
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pdevice : device to use
+     *psrceth : Ethernet source address to use
+     *pdsteth : Ethernet destination address to use
+     *psrcip : IP source address to use
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok (set: all)
+     \fBNETWIB_ERR_ROUTELOCALDEV\fP : hostip is the address of a
+                                 local device (set : device)
+     \fBNETWIB_ERR_ROUTENOTETHER\fP : Ethernet is not used to reach
+                                 destination (set : none)
+     \fBNETWIB_ERR_ROUTENOTFOUND\fP : the routing table doesn't contain
+                                 a route to hostip (set : none)
+*/
+\fBnetwib_err\fP \fBnetwib_conf_routes_reach_eth\fP(\fBnetwib_constip\fP *pdstip,
+                                        \fBnetwib_buf\fP *pdevice,
+                                        \fBnetwib_eth\fP *psrceth,
+                                        \fBnetwib_eth\fP *pdsteth,
+                                        \fBnetwib_ip\fP *psrcip);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_conf_routes_reach_ip\fP
+   Description :
+     Determine device and addresses to use to send an IP packet
+     to a host.
+   Input parameter(s) :
+     dstip : host to reach
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pdevice : device to use (for example to sniff)
+     *psrcip : IP source address to use
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok (set: all)
+     \fBNETWIB_ERR_ROUTELOCALDEV\fP : hostip is the address of a
+                                 local device (set : *pdevice)
+     \fBNETWIB_ERR_ROUTENOTFOUND\fP : the routing table doesn't contain
+                                 a route to hostip (set : none)
+*/
+\fBnetwib_err\fP \fBnetwib_conf_routes_reach_ip\fP(\fBnetwib_constip\fP *pdstip,
+                                       \fBnetwib_buf\fP *pdevice,
+                                       \fBnetwib_ip\fP *psrcip);
+
+.fi
+.SH MODULE SOCK
+.nf
+
+/*-------------------------------------------------------------*/
+/* We need a forward declaration for \fBnetwib_ipproto\fP.
+*/
+#include "../pkt/types.h"
+
+/*-------------------------------------------------------------*/
+/***************************************************************
+ * Parameter pip6exts permits to specify IP6 extensions (rfc   *
+ * 3542). However, this is not yet implemented.                *
+ ***************************************************************/
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_io_init_sock_xyz\fP
+   Description :
+     Initialize a socket connection.
+   Input parameter(s) :
+     localip : local IP
+     remoteip : remote IP
+     iptype : iptype to use
+     localport : local port
+     remoteport : remote port
+     *pip4opts : optional IP options to add
+   Input/output parameter(s) :
+   Output parameter(s) :
+     **ppio : \fBnetwib_io\fP initialized
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_io_init_sock_udp_cli_full\fP(\fBnetwib_constip\fP *plocalip,
+                                            \fBnetwib_constip\fP *premoteip,
+                                            \fBnetwib_port\fP localport,
+                                            \fBnetwib_port\fP remoteport,
+                                            \fBnetwib_constbuf\fP *pip4opts,
+                                            \fBnetwib_ipproto\fP ip6extsproto,
+                                            \fBnetwib_constbuf\fP *pip6exts,
+                                            \fBnetwib_io\fP **ppio);
+\fI#define\fP \fBnetwib_io_init_sock_udp_cli\fP(plocalip,premoteip,localport,remoteport,ppio) \fBnetwib_io_init_sock_udp_cli_full\fP(plocalip,premoteip,localport,remoteport,NULL,\fBNETWIB_IPPROTO_NONE\fP,NULL,ppio)
+\fI#define\fP \fBnetwib_io_init_sock_udp_cli_easy\fP(premoteip,remoteport,ppio) \fBnetwib_io_init_sock_udp_cli\fP(NULL,premoteip,0,remoteport,ppio)
+
+\fBnetwib_err\fP \fBnetwib_io_init_sock_tcp_cli_full\fP(\fBnetwib_constip\fP *plocalip,
+                                            \fBnetwib_constip\fP *premoteip,
+                                            \fBnetwib_port\fP localport,
+                                            \fBnetwib_port\fP remoteport,
+                                            \fBnetwib_constbuf\fP *pip4opts,
+                                            \fBnetwib_ipproto\fP ip6extsproto,
+                                            \fBnetwib_constbuf\fP *pip6exts,
+                                            \fBnetwib_io\fP **ppio);
+\fI#define\fP \fBnetwib_io_init_sock_tcp_cli\fP(plocalip,premoteip,localport,remoteport,ppio) \fBnetwib_io_init_sock_tcp_cli_full\fP(plocalip,premoteip,localport,remoteport,NULL,\fBNETWIB_IPPROTO_NONE\fP,NULL,ppio)
+\fI#define\fP \fBnetwib_io_init_sock_tcp_cli_easy\fP(premoteip,remoteport,ppio) \fBnetwib_io_init_sock_tcp_cli\fP(NULL,premoteip,0,remoteport,ppio)
+
+\fBnetwib_err\fP \fBnetwib_io_init_sock_udp_ser_full\fP(\fBnetwib_constip\fP *plocalip,
+                                            \fBnetwib_port\fP localport,
+                                            \fBnetwib_constbuf\fP *pip4opts,
+                                            \fBnetwib_ipproto\fP ip6extsproto,
+                                            \fBnetwib_constbuf\fP *pip6exts,
+                                            \fBnetwib_io\fP **ppio);
+\fI#define\fP \fBnetwib_io_init_sock_udp_ser\fP(plocalip,localport,ppio) \fBnetwib_io_init_sock_udp_ser_full\fP(plocalip,localport,NULL,\fBNETWIB_IPPROTO_NONE\fP,NULL,ppio)
+\fBnetwib_err\fP \fBnetwib_io_init_sock_udp_ser_easy\fP(\fBnetwib_iptype\fP iptype,
+                                            \fBnetwib_port\fP localport,
+                                            \fBnetwib_io\fP **ppio);
+
+\fBnetwib_err\fP \fBnetwib_io_init_sock_tcp_ser_full\fP(\fBnetwib_constip\fP *plocalip,
+                                            \fBnetwib_port\fP localport,
+                                            \fBnetwib_constbuf\fP *pip4opts,
+                                            \fBnetwib_ipproto\fP ip6extsproto,
+                                            \fBnetwib_constbuf\fP *pip6exts,
+                                            \fBnetwib_io\fP **ppio);
+\fI#define\fP \fBnetwib_io_init_sock_tcp_ser\fP(plocalip,localport,ppio) \fBnetwib_io_init_sock_tcp_ser_full\fP(plocalip,localport,NULL,\fBNETWIB_IPPROTO_NONE\fP,NULL,ppio)
+\fBnetwib_err\fP \fBnetwib_io_init_sock_tcp_ser_easy\fP(\fBnetwib_iptype\fP iptype,
+                                            \fBnetwib_port\fP localport,
+                                            \fBnetwib_io\fP **ppio);
+
+\fBnetwib_err\fP \fBnetwib_io_init_sock_udp_mulser_full\fP(\fBnetwib_constip\fP *plocalip,
+                                               \fBnetwib_port\fP localport,
+                                               \fBnetwib_constbuf\fP *pip4opts,
+                                               \fBnetwib_ipproto\fP ip6extsproto,
+                                               \fBnetwib_constbuf\fP *pip6exts,
+                                               \fBnetwib_io\fP **ppio);
+\fI#define\fP \fBnetwib_io_init_sock_udp_mulser\fP(plocalip,localport,ppio) \fBnetwib_io_init_sock_udp_mulser_full\fP(plocalip,localport,NULL,\fBNETWIB_IPPROTO_NONE\fP,NULL,ppio)
+\fBnetwib_err\fP \fBnetwib_io_init_sock_udp_mulser_easy\fP(\fBnetwib_iptype\fP iptype,
+                                               \fBnetwib_port\fP localport,
+                                               \fBnetwib_io\fP **ppio);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_sock_tcp_mulser_full\fP
+   Description :
+     Deal with a tcp multi-client server.
+     Note : we never exit from this function.
+   Input parameter(s) :
+     localip : listening IP address
+     localport : listening port
+     ip4opts : IP options to add
+     pfunc : memory address of the function which will be
+             called for each client. For each call, the first
+             parameter ('pio') will be set with socket,
+             and the second parameter ('pinfos')
+             will be set with the optional parameter below.
+             Note : at the end, this function must not close pio
+   Input/output parameter(s) :
+     pinfos : optional parameter (can be NULL) which will be
+              used as the second parameter for *pfunc. This
+              may be used to send information to *pfunc.
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fItypedef\fP \fBnetwib_err\fP (*\fBnetwib_sock_tcp_mulser_pf\fP)(\fBnetwib_io\fP *pio,
+                                                \fBnetwib_ptr\fP pinfos);
+\fBnetwib_err\fP \fBnetwib_sock_tcp_mulser_full\fP(\fBnetwib_constip\fP *plocalip,
+                                       \fBnetwib_port\fP localport,
+                                       \fBnetwib_constbuf\fP *pip4opts,
+                                       \fBnetwib_ipproto\fP ip6extsproto,
+                                       \fBnetwib_constbuf\fP *pip6exts,
+                                       \fBnetwib_sock_tcp_mulser_pf\fP pfunc,
+                                       \fBnetwib_ptr\fP pinfos);
+\fI#define\fP \fBnetwib_sock_tcp_mulser\fP(plocalip,localport,pfunc,pinfos) \fBnetwib_sock_tcp_mulser_full\fP(plocalip,localport,NULL,\fBNETWIB_IPPROTO_NONE\fP,NULL,pfunc,pinfos)
+\fBnetwib_err\fP \fBnetwib_sock_tcp_mulser_easy\fP(\fBnetwib_iptype\fP iptype,
+                                       \fBnetwib_port\fP localport,
+                                       \fBnetwib_sock_tcp_mulser_pf\fP pfunc,
+                                       \fBnetwib_ptr\fP pinfos);
+
+/*-------------------------------------------------------------*/
+/* Set/get IP4 options */
+/* \fBnetwib_err\fP f(\fBnetwib_io\fP *pio, \fBnetwib_constbuf\fP *pip4opts); */
+\fI#define\fP \fBnetwib_sock_ctl_set_ip4opts\fP(pio,pip4opts) \fBnetwib_io_ctl_set\fP(pio,\fBNETWIB_IO_WAYTYPE_SUPPORTED\fP,\fBNETWIB_IO_CTLTYPE_SOCK_IP4OPTS\fP,pip4opts,0)
+/* \fBnetwib_err\fP f(\fBnetwib_io\fP *pio, \fBnetwib_buf\fP *pip4opts); */
+\fI#define\fP \fBnetwib_sock_ctl_get_ip4opts\fP(pio,pip4opts) \fBnetwib_io_ctl_get\fP(pio,\fBNETWIB_IO_WAYTYPE_SUPPORTED\fP,\fBNETWIB_IO_CTLTYPE_SOCK_IP4OPTS\fP,pip4opts,NULL)
+
+/*-------------------------------------------------------------*/
+/* Set/get IP6 extensions */
+/* \fBnetwib_err\fP f(\fBnetwib_io\fP *pio, \fBnetwib_ipproto\fP ip6extsproto,
+                \fBnetwib_constbuf\fP *pip6exts); */
+\fI#define\fP \fBnetwib_sock_ctl_set_ip6exts\fP(pio,ip6extsproto,pip6exts) \fBnetwib_io_ctl_set\fP(pio,\fBNETWIB_IO_WAYTYPE_SUPPORTED\fP,\fBNETWIB_IO_CTLTYPE_SOCK_IP6EXTS\fP,pip6exts,ip6extsproto)
+/* \fBnetwib_err\fP f(\fBnetwib_io\fP *pio, \fBnetwib_ipproto\fP *pip6extsproto,
+                \fBnetwib_buf\fP *pip6exts); */
+\fI#define\fP \fBnetwib_sock_ctl_get_ip6exts\fP(pio,pip6extsproto,pip6exts) \fBnetwib_io_ctl_get\fP(pio,\fBNETWIB_IO_WAYTYPE_SUPPORTED\fP,\fBNETWIB_IO_CTLTYPE_SOCK_IP6EXTS\fP,pip6exts,pip6extsproto)
+
+/*-------------------------------------------------------------*/
+/* Obtain local IP address and port */
+/* \fBnetwib_err\fP f(\fBnetwib_io\fP *pio, \fBnetwib_ip\fP *pip, \fBnetwib_port\fP *pport); */
+\fI#define\fP \fBnetwib_sock_ctl_get_local\fP(pio,pip,pport) \fBnetwib_io_ctl_get\fP(pio,\fBNETWIB_IO_WAYTYPE_SUPPORTED\fP,\fBNETWIB_IO_CTLTYPE_SOCK_LOCAL\fP,pip,pport)
+/* Obtain remote IP address and port */
+/* \fBnetwib_err\fP f(\fBnetwib_io\fP *pio, \fBnetwib_ip\fP *pip, \fBnetwib_port\fP *pport); */
+\fI#define\fP \fBnetwib_sock_ctl_get_remote\fP(pio,pip,pport) \fBnetwib_io_ctl_get\fP(pio,\fBNETWIB_IO_WAYTYPE_SUPPORTED\fP,\fBNETWIB_IO_CTLTYPE_SOCK_REMOTE\fP,pip,pport)
+
+/*-------------------------------------------------------------*/
+/* Change multicast TTL */
+/* \fBnetwib_err\fP f(\fBnetwib_io\fP *pio, \fBnetwib_uin32\fP ttl); */
+\fI#define\fP \fBnetwib_sock_ctl_set_multicastttl\fP(pio,ttl) \fBnetwib_io_ctl_set\fP(pio,\fBNETWIB_IO_WAYTYPE_SUPPORTED\fP,\fBNETWIB_IO_CTLTYPE_SOCK_MULTICASTTTL\fP,NULL,ttl)
+
+/*-------------------------------------------------------------*/
+\fItypedef\fP enum {
+  \fBNETWIB_IO_SOCKTYPE_UDP_CLI\fP = 1,
+  \fBNETWIB_IO_SOCKTYPE_TCP_CLI\fP,
+  \fBNETWIB_IO_SOCKTYPE_UDP_SER\fP,
+  \fBNETWIB_IO_SOCKTYPE_TCP_SER\fP,
+  \fBNETWIB_IO_SOCKTYPE_UDP_MULSER\fP,
+  \fBNETWIB_IO_SOCKTYPE_TCP_MULSER\fP
+} \fBnetwib_io_socktype\fP;
+/* Get socket type */
+/* \fBnetwib_err\fP f(\fBnetwib_io\fP *pio, \fBnetwib_io_socktype\fP *psocktype); */
+\fI#define\fP \fBnetwib_sock_ctl_get_socktype\fP(pio,psocktype) \fBnetwib_io_ctl_get\fP(pio,\fBNETWIB_IO_WAYTYPE_SUPPORTED\fP,\fBNETWIB_IO_CTLTYPE_SOCK_SOCKTYPE\fP,psocktype,NULL)
+.fi
+.SH MODULE SNIFF
+.nf
+
+/*-------------------------------------------------------------*/
+/***************************************************************
+ * Netwib supports Ethernet cards(\fBnetwib_device_hwtype\fP=ETHER), *
+ * Loopback(LOOPBACK) and Serial Modems(PPP).                  *
+ * Unfortunately, these are not supported on every system as   *
+ * described in this table.                                    *
+ *                                                             *
+ *            Device_hwtype       Supported?  Returned_DLT     *
+ *  FreeBSD :                                                  *
+ *            ETHER               yes         ETHER            *
+ *            LOOPBACK            yes         NULL             *
+ *            PPP                 yes         ?[7]             *
+ *  Linux :                                                    *
+ *            ETHER               yes         ETHER            *
+ *            LOOPBACK            yes         NULL             *
+ *            PPP                 yes         ?[7]             *
+ *  OpenBSD :                                                  *
+ *            ETHER               yes         ETHER            *
+ *            LOOPBACK            yes         LOOP             *
+ *            PPP                 yes         ?[7]             *
+ *  Solaris :                                                  *
+ *            ETHER               yes         ETHER            *
+ *            LOOPBACK            no          -                *
+ *            PPP                 yes[1]      ?[7]             *
+ *  Windows 95 :                                               *
+ *            ETHER               yes         ETHER            *
+ *            LOOPBACK            no          -                *
+ *            PPP                 yes[1][2]   ETHER            *
+ *  Windows 98 :                                               *
+ *            ETHER               yes         ETHER            *
+ *            LOOPBACK            no          -                *
+ *            PPP                 yes[1]      ETHER            *
+ *  Windows Me :                                               *
+ *            ETHER               yes         ETHER            *
+ *            LOOPBACK            no          -                *
+ *            PPP                 ?[3]        ETHER            *
+ *  Windows NT4 :                                              *
+ *            ETHER               yes         ETHER            *
+ *            LOOPBACK            no          -                *
+ *            PPP                 y/n[1][4]   ETHER            *
+ *  Windows 2000 :                                             *
+ *            ETHER               yes         ETHER            *
+ *            LOOPBACK            no          -                *
+ *            PPP                 no[5]       ETHER            *
+ *  Windows XP :                                               *
+ *            ETHER               yes         ETHER            *
+ *            LOOPBACK            no          -                *
+ *            PPP                 no[6]       -                *
+ *                                                             *
+ * Notes :                                                     *
+ *  1 : System adds a fake Ethernet header                     *
+ *  2 : Windows Sockets 2 and Dialup Networking 1.3 have to    *
+ *      be installed (urls are in problemusagewindows_en.txt)  *
+ *  3 : Not tested                                             *
+ *  4 : As described in WinPCAP FAQ, it doesn't work (but, it  *
+ *      works on my computer)                                  *
+ *  5 : As described in WinPCAP FAQ, it doesn't work (on my    *
+ *      computer, when packets are sniffed, we can't spoof)    *
+ *  6 : As described in WinPCAP FAQ, it doesn't work (a        *
+ *      contributor confirmed that it doesn't work on its      *
+ *      computer)                                              *
+ *  7 : I'll summarize this info later...                      *
+ ***************************************************************/
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_io_init_sniff\fP
+   Description :
+     Open a sniff session.
+     Returned packets will start at Link header.
+   Input parameter(s) :
+     *pdevice : device where we sniff
+     *pfilter : sniff filter (NULL to sniff everything)
+   Input/output parameter(s) :
+   Output parameter(s) :
+     **ppio : io created
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_io_init_sniff\fP(\fBnetwib_constbuf\fP *pdevice,
+                                \fBnetwib_constbuf\fP *pfilter,
+                                \fBnetwib_io\fP **ppio);
+
+/*-------------------------------------------------------------*/
+/***************************************************************
+ * Note about sniff filters :                                  *
+ * Filters permit to select network packets we sniff.          *
+ * Basic elements of a bpf filter are :                        *
+ *    host 1.2.3.4                                             *
+ *    net 192.168.10                                           *
+ *    net 192.168.10.0 mask 255.255.255.0                      *
+ *    net 192.168.10.0/24                                      *
+ *    port 21                                                  *
+ *    dst host 1.2.3.4                                         *
+ *    src port 2345                                            *
+ *    ether host a:b:c:d:e:f ("ether a:b:c:d:e:f" is not working)
+ *    ether src aa:bb:cc:dd:ee:ff                              *
+ *    ip                                                       *
+ *    arp                                                      *
+ *    rarp                                                     *
+ *    tcp                                                      *
+ *    icmp                                                     *
+ *    udp                                                      *
+ * Here are filter examples :                                  *
+ *    host 1.2.3.4                                             *
+ *    net 192.168 and icmp                                     *
+ *    host 1.2.3.4 or dst port 80                              *
+ *    (udp or tcp) and not host 1.2.3.4                        *
+ ***************************************************************/
+
+/* change the filter */
+/* \fBnetwib_err\fP f(\fBnetwib_io\fP *pio, \fBnetwib_constbuf\fP *pfilter); */
+\fI#define\fP \fBnetwib_sniff_ctl_set_filter\fP(pio,pfilter) \fBnetwib_io_ctl_set\fP(pio,\fBNETWIB_IO_WAYTYPE_SUPPORTED\fP,\fBNETWIB_IO_CTLTYPE_SNIFF_FILTER\fP,pfilter,0)
+/* \fBnetwib_err\fP f(\fBnetwib_io\fP *pio, \fBnetwib_buf\fP *pfilter); */
+\fI#define\fP \fBnetwib_sniff_ctl_get_filter\fP(pio,pfilter) \fBnetwib_io_ctl_get\fP(pio,\fBNETWIB_IO_WAYTYPE_SUPPORTED\fP,\fBNETWIB_IO_CTLTYPE_SNIFF_FILTER\fP,pfilter,NULL)
+
+/*-------------------------------------------------------------*/
+/* obtain the DLT of returned packets */
+/* \fBnetwib_err\fP f(\fBnetwib_io\fP *pio, \fBnetwib_device_dlttype\fP *pdlt); */
+\fI#define\fP \fBnetwib_sniff_ctl_get_dlt\fP(pio,pdlt) \fBnetwib_io_ctl_get\fP(pio,\fBNETWIB_IO_WAYTYPE_SUPPORTED\fP,\fBNETWIB_IO_CTLTYPE_SNIFF_DLT\fP,NULL,(\fBnetwib_uint32\fP*)pdlt)
+
+/*-------------------------------------------------------------*/
+/***************************************************************
+ * This io link :                                              *
+ *  - has to be plugged on \fBnetwib_io_init_sniff\fP                *
+ *  - reassemble fragmented IP packets                         *
+ *  - do nothing with other packets                            *
+ ***************************************************************/
+\fBnetwib_err\fP \fBnetwib_io_init_sniff_ipreas\fP(\fBnetwib_io\fP **ppio);
+
+/*-------------------------------------------------------------*/
+/***************************************************************
+ * This io link :                                              *
+ *  - has to be plugged on \fBnetwib_io_init_sniff_ipreas\fP         *
+ *  - reorder sequences of TCP packets                         *
+ *  - remove duplicate TCP packets                             *
+ *  - do nothing with other packets                            *
+ ***************************************************************/
+\fBnetwib_err\fP \fBnetwib_io_init_sniff_tcpreord\fP(\fBnetwib_io\fP **ppio);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_io_init_sniff_ip\fP
+   Description :
+     Open a sniff session, and return only IP packets.
+     Returned packets will start at IP header (DLTTYPE_RAW).
+   Input parameter(s) :
+     *pdevice : device where we sniff
+     *pfilter : sniff filter (NULL to sniff everything)
+     ipreas : if \fBnetwib_io_init_sniff_ipreas\fP has to
+              be used
+     tcpreord : if \fBnetwib_io_init_sniff_tcpreord\fP has to
+                be used
+   Input/output parameter(s) :
+   Output parameter(s) :
+     **ppio : io created
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_io_init_sniff_ip\fP(\fBnetwib_constbuf\fP *pdevice,
+                                   \fBnetwib_constbuf\fP *pfilter,
+                                   \fBnetwib_bool\fP ipreas,
+                                   \fBnetwib_bool\fP tcpreord,
+                                   \fBnetwib_io\fP **ppio);
+.fi
+.SH MODULE SPOOF
+.nf
+
+/*-------------------------------------------------------------*/
+/***************************************************************
+ * Netwib supports Ethernet cards(\fBnetwib_device_hwtype\fP=ETHER), *
+ * Loopback(LOOPBACK) and Serial Modems(PPP).                  *
+ * Unfortunately, these are not supported on every system as   *
+ * described in this table.                                    *
+ *                                                             *
+ *       Device    LINK       LINK_dlt   IP4        IP6        *
+ *       hwtype    supported? to_use     supported? supported? *
+ *  FreeBSD :                                                  *
+ *       ETHER     yes        ETHER      yes        ?[3]       *
+ *       LOOPBACK  yes        NULL       yes        ?[3]       *
+ *       PPP       ?[3]       ?[3]       yes        ?[3]       *
+ *  Linux :                                                    *
+ *       ETHER     yes        ETHER      yes        yes[4]     *
+ *       LOOPBACK  no         -          yes        yes[4]     *
+ *       PPP       ?[3]       ?[3]       yes        yes[4]     *
+ *  OpenBSD :                                                  *
+ *       ETHER     yes        ETHER      yes        ?[3]       *
+ *       LOOPBACK  no         -          yes        ?[3]       *
+ *       PPP       ?[3]       ?[3]       yes        ?[3]       *
+ *  Solaris :                                                  *
+ *       ETHER     yes        ETHER      yes        ?[3]       *
+ *       LOOPBACK  no         -          no[1]      no[1]      *
+ *       PPP       ?[3]       ?[3]       yes        ?[3]       *
+ *  Windows 95 :                                               *
+ *       ETHER     yes        ETHER      no         no         *
+ *       LOOPBACK  no         -          no         no         *
+ *       PPP       no         no         no         no         *
+ *  Windows 98 :                                               *
+ *       ETHER     yes        ETHER      no         no         *
+ *       LOOPBACK  no         -          no         no         *
+ *       PPP       no         no         no         no         *
+ *  Windows Me :                                               *
+ *       ETHER     yes        ETHER      no         no         *
+ *       LOOPBACK  no         -          no         no         *
+ *       PPP       ?[3]       ?[3]       no         no         *
+ *  Windows NT4 :                                              *
+ *       ETHER     yes        ETHER      no         no         *
+ *       LOOPBACK  no         -          no         no         *
+ *       PPP       no         no         no         no         *
+ *  Windows 2000 :                                             *
+ *       ETHER     yes        ETHER      yes        ?[3]       *
+ *       LOOPBACK  no         -          no         no         *
+ *       PPP       ?[3]       ?[3]       yes        ?[3]       *
+ *  Windows XP :                                               *
+ *       ETHER     yes        ETHER      yes        yes[4]     *
+ *       LOOPBACK  no         -          no         no         *
+ *       PPP       ?[3]       ?[3]       ?[2]       ?[3]       *
+ *                                                             *
+ * Notes :                                                     *
+ *  1 : not sure                                               *
+ *  2 : not tested                                             *
+ *  3 : I'll summarize this info later...                      *
+ *  4 : on systems where IPv6 is supported                     *
+ ***************************************************************/
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_io_init_spoof\fP
+   Description :
+     Open a spoof session.
+   Input parameter(s) :
+     *pdevice : device where we spoof
+   Input/output parameter(s) :
+   Output parameter(s) :
+     **ppio : io created
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fItypedef\fP enum {
+  \fBNETWIB_SPOOF_INITTYPE_LINK\fP = 1,    /* spoof at link level */
+  \fBNETWIB_SPOOF_INITTYPE_IP4\fP,         /* spoof at IP4 level */
+  \fBNETWIB_SPOOF_INITTYPE_IP6\fP          /* spoof at IP6 level */
+} \fBnetwib_spoof_inittype\fP;
+\fBnetwib_err\fP \fBnetwib_io_init_spoof\fP(\fBnetwib_spoof_inittype\fP inittype,
+                                \fBnetwib_constbuf\fP *pdevice,
+                                \fBnetwib_io\fP **ppio);
+\fI#define\fP \fBnetwib_io_init_spoof_link\fP(device,ppio) \fBnetwib_io_init_spoof\fP(\fBNETWIB_SPOOF_INITTYPE_LINK\fP,device,ppio)
+\fI#define\fP \fBnetwib_io_init_spoof_ip4\fP(ppio) \fBnetwib_io_init_spoof\fP(\fBNETWIB_SPOOF_INITTYPE_IP4\fP,NULL,ppio)
+\fI#define\fP \fBnetwib_io_init_spoof_ip6\fP(ppio) \fBnetwib_io_init_spoof\fP(\fBNETWIB_SPOOF_INITTYPE_IP6\fP,NULL,ppio)
+
+/*-------------------------------------------------------------*/
+/* obtain the DLT needed to spoof at link level */
+/* \fBnetwib_err\fP f(\fBnetwib_io\fP *pio, \fBnetwib_device_dlttype\fP *pdlt); */
+\fI#define\fP \fBnetwib_spoof_ctl_get_dlt\fP(pio,pdlt) \fBnetwib_io_ctl_get\fP(pio,\fBNETWIB_IO_WAYTYPE_SUPPORTED\fP,\fBNETWIB_IO_CTLTYPE_SPOOF_DLT\fP,NULL,(\fBnetwib_uint32\fP*)pdlt)
+
+/*-------------------------------------------------------------*/
+/***************************************************************
+ * This io permits to spoof at IP4/6 level (DLTTYPE_RAW).      *
+ ***************************************************************/
+\fItypedef\fP enum {
+  \fBNETWIB_SPOOF_IP_INITTYPE_UNKNOWN\fP = 0,
+  \fBNETWIB_SPOOF_IP_INITTYPE_RAW\fP,   /* use only IP4/6 level */
+  \fBNETWIB_SPOOF_IP_INITTYPE_LINKF\fP, /* add a link header and spoof
+                                     at link level (source ad
+                                     is filled) */
+  \fBNETWIB_SPOOF_IP_INITTYPE_LINKB\fP, /* add a link header and spoof
+                                     at link level (source ad
+                                     is blank (0:0:0:0:0:0)) */
+  \fBNETWIB_SPOOF_IP_INITTYPE_LINKFB\fP, /* add a link header and spoof
+                                      at link level (source ad
+                                      can be blank) */
+  \fBNETWIB_SPOOF_IP_INITTYPE_RAWLINKF\fP, /* try IP4/6 level. If doesn't
+                                        work, use link */
+  \fBNETWIB_SPOOF_IP_INITTYPE_RAWLINKB\fP,
+  \fBNETWIB_SPOOF_IP_INITTYPE_RAWLINKFB\fP,
+  \fBNETWIB_SPOOF_IP_INITTYPE_LINKFRAW\fP, /* try link level. If doesn't
+                                        work, use IP4/6 */
+  \fBNETWIB_SPOOF_IP_INITTYPE_LINKBRAW\fP,
+  \fBNETWIB_SPOOF_IP_INITTYPE_LINKFBRAW\fP,
+  \fBNETWIB_SPOOF_IP_INITTYPE_LINK\fP = \fBNETWIB_SPOOF_IP_INITTYPE_LINKFB\fP,
+  \fBNETWIB_SPOOF_IP_INITTYPE_RAWLINK\fP = \fBNETWIB_SPOOF_IP_INITTYPE_RAWLINKFB\fP,
+  \fBNETWIB_SPOOF_IP_INITTYPE_LINKRAW\fP = \fBNETWIB_SPOOF_IP_INITTYPE_LINKFBRAW\fP,
+  \fBNETWIB_SPOOF_IP_INITTYPE_BEST\fP = \fBNETWIB_SPOOF_IP_INITTYPE_LINKRAW\fP
+} \fBnetwib_spoof_ip_inittype\fP;
+\fBnetwib_err\fP \fBnetwib_io_init_spoof_ip\fP(\fBnetwib_spoof_ip_inittype\fP inittype,
+                                   \fBnetwib_io\fP **ppio);
+\fI#define\fP \fBnetwib_io_init_spoof_ip_best\fP(ppio) \fBnetwib_io_init_spoof_ip\fP(\fBNETWIB_SPOOF_IP_INITTYPE_BEST\fP,\fBNETWIB_PKT_FIELDTYPE_BEST\fP,ppio)
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_buf_append_spoof_ip_inittype\fP
+   Description :
+     Obtains the buf string corresponding to a type.
+   Input parameter(s) :
+     type : type
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pbuf : \fBnetwib_buf\fP set with the buf string
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_buf_append_spoof_ip_inittype\fP(\fBnetwib_spoof_ip_inittype\fP type,
+                                               \fBnetwib_buf\fP *pbuf);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_spoof_ip_inittype_init_kbd\fP
+   Description :
+     Initialize a \fBnetwib_spoof_ip_inittype\fP with data entered
+     through keyboard.
+   Input parameter(s) :
+     *pmessage : message to print before
+     defaulttype : default type to use if user enters
+                   nothing (if \fBNETWIB_SPOOF_IP_INITTYPE_UNKNOWN\fP,
+                   means no default)
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *phwtype : \fBnetwib_hwtype\fP initialized
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_spoof_ip_inittype_init_kbd\fP(\fBnetwib_constbuf\fP *pmessage,
+                                             \fBnetwib_spoof_ip_inittype\fP defaulttype,
+                                             \fBnetwib_spoof_ip_inittype\fP *ptype);
+\fI#define\fP \fBNETWIB_SPOOF_IP_INITTYPE_INIT_KBD_NODEF\fP \fBNETWIB_SPOOF_IP_INITTYPE_UNKNOWN\fP
+.fi
+.SH SEE ALSO
+.IR netwib (3),
+.IR netwib_dat (3),
+.IR netwib_sys (3),
+.IR netwib_net (3),
+.IR netwib_pkt (3),
+.IR netwib_shw (3),
+.IR netwib_err (3)

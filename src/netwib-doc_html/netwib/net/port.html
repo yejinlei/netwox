@@ -1,0 +1,66 @@
+<HTML><HEAD>
+<TITLE>netwib doc_html (version 5.39.0)</TITLE>
+</HEAD><BODY BGCOLOR="#FFFFFF" TEXT="#000000">
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../net.html">section index</A></H2><HR><BR>
+<PRE>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_port_init_kbd
+   Description :
+     Initialize a <FONT COLOR="#000088">netwib_port</FONT> with data entered through keyboard.
+   Input parameter(s) :
+     *pmessage : message to print before
+     min : minvalue which can be entered (if 0 no min)
+     max : maxvalue which can be entered (if 0xFFFFFFFFu no max)
+     defaultport : default port to use if user enters nothing
+                   if 0xFFFFFFFFu, there is no default
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pport : <FONT COLOR="#000088">netwib_port</FONT> initialized
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_port_init_kbd</B>(<FONT COLOR="#000088">netwib_constbuf</FONT> *pmessage,
+                                <FONT COLOR="#000088">netwib_port</FONT> min,
+                                <FONT COLOR="#000088">netwib_port</FONT> max,
+                                <FONT COLOR="#000088">netwib_port</FONT> defaultport,
+                                <FONT COLOR="#000088">netwib_port</FONT> *pport);
+<FONT COLOR="#008800">#define <FONT COLOR="#000044">NETWIB_PORT_INIT_KBD_NOMIN</FONT> 0</FONT>
+<FONT COLOR="#008800">#define <FONT COLOR="#000044">NETWIB_PORT_INIT_KBD_NOMAX</FONT> 0xFFFFFFFFu</FONT>
+<FONT COLOR="#008800">#define <FONT COLOR="#000044">NETWIB_PORT_INIT_KBD_NODEF</FONT> 0xFFFFFFFFu</FONT>
+
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_port_init_buf
+   Description :
+     Convert a string "123" to a netwib_port.
+   Input parameter(s) :
+     *pbuf : string to convert
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pport : <FONT COLOR="#000088">netwib_port</FONT> set
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_port_init_buf</B>(<FONT COLOR="#000088">netwib_constbuf</FONT> *pbuf,
+                                <FONT COLOR="#000088">netwib_port</FONT> *pport);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_buf_append_port
+   Description :
+     Append a string representing a netwib_port.
+   Input parameter(s) :
+     port : <FONT COLOR="#000088">netwib_port</FONT> to append
+   Input/output parameter(s) :
+     pbuf : buffer updated
+   Output parameter(s) :
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_buf_append_port</B>(<FONT COLOR="#000088">netwib_port</FONT> port,
+                                  <FONT COLOR="#000088">netwib_buf</FONT> *pbuf);
+</PRE><BR><BR><HR><BR>
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../net.html">section index</A></H2>
+</BODY></HTML>

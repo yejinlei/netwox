@@ -1,0 +1,67 @@
+<HTML>
+ <HEAD>
+ <TITLE>Tool 175: Web download (http://... or ftp://...) and check its MD5</TITLE>
+ </HEAD>
+ <BODY BGCOLOR="#FFFFFF">
+  <CENTER>   <H3>Tool 175: Web download (http://... or ftp://...) and check its MD5</H3>
+  </CENTER>
+
+  <P><H3>Description:</H3>
+   <PRE>
+  This tool downloads a HTTP or FTP file and check its MD5.
+  It ensures the server is working properly.
+  
+  Parameter --uri is the uri/url requested.
+  Parameter --md5 is the expected md5sum.
+  Parameters --proxy-ip, --proxy-port, --proxy-login and
+  --proxy-password defines the web proxy and credentials.
+  Parameter --user-agent defines the client name to send. For example
+  'Mozilla/5.0'.
+   </PRE>
+
+  <P><H3>Usage:</H3>
+  &nbsp;&nbsp;netwox 175 -u uri -m md5 [-p ip] [-P port] [-l login] [-L password] [-U useragent] [-f|+f] [-T uint32]<BR>
+
+  <P><H3>Parameters:</H3>
+<TABLE BORDER=1 CELLPADDING=4>
+ <TR>
+  <TD ALIGN=middle><I>parameter</I></TD>
+  <TD ALIGN=middle><I>description</I></TD>
+  <TD ALIGN=middle><I>example</I></TD>
+ </TR>
+ <TR><TD><TT>-u|--uri uri</TD>
+<TD>url/uri to download</TD>
+<TD>http://www.example.com/</TD></TR>
+<TR><TD><TT>-m|--md5 md5</TD>
+<TD>wanted md5</TD>
+<TD>12345678901234567890123456789012</TD></TR>
+<TR><TD><TT>-p|--proxy-ip ip</TD>
+<TD>IP address of proxy</TD>
+<TD>5.6.7.8</TD></TR>
+<TR><TD><TT>-P|--proxy-port port</TD>
+<TD>port of proxy</TD>
+<TD>3128</TD></TR>
+<TR><TD><TT>-l|--proxy-login login</TD>
+<TD>login of proxy</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-L|--proxy-password password</TD>
+<TD>password of proxy</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-U|--user-agent useragent</TD>
+<TD>user agent</TD>
+<TD>Mozilla/5.0</TD></TR>
+<TR><TD><TT>-f|--ftp-passive|+f|--no-ftp-passive</TD>
+<TD>use passive FTP</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-T|--timeout uint32</TD>
+<TD>timeout in ms</TD>
+<TD>60000 </TD></TR>
+</TABLE>
+
+  <P><H3>Examples:</H3>
+  &nbsp;&nbsp;netwox 175 -u "http://www.example.com/" -m "12345678901234567890123456789012"<BR>
+<BR>
+  &nbsp;&nbsp;netwox 175 --uri "http://www.example.com/" --md5 "12345678901234567890123456789012"<BR>
+<BR>
+ </BODY>
+ </HTML>

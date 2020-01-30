@@ -1,0 +1,137 @@
+<HTML>
+ <HEAD>
+ <TITLE>Tool 7: Sniff</TITLE>
+ </HEAD>
+ <BODY BGCOLOR="#FFFFFF">
+  <CENTER>   <H3>Tool 7: Sniff</H3>
+  </CENTER>
+
+  <P><H3>Description:</H3>
+   <PRE>
+  This tool captures network packets. It can display them, or save them
+  in a file (named 'record' in netwox).
+  
+  Parameter --device indicates on which device to sniff. Please note
+  that under some systems, such as Windows, sniffing on some devices is
+  not supported.
+  Parameter --filter defines the sniff filter. It permits to restrict
+  captured packets. This kind of filter is named a BPF or pcap filter.
+  Basic elements of a filter are:
+    host 1.2.3.4
+    net 192.168.10
+    net 192.168.10.0 mask 255.255.255.0
+    net 192.168.10.0/24
+    port 21
+    dst host 1.2.3.4
+    src port 2345
+    ether host a:b:c:d:e:f ('ether a:b:c:d:e:f' is not working)
+    ether src aa:bb:cc:dd:ee:ff
+    ip
+    arp
+    rarp
+    tcp
+    icmp
+    udp
+  Here are filter examples:
+    "host 1.2.3.4"
+    "net 192.168 and icmp"
+    "host 1.2.3.4 or dst port 80"
+    "(udp or tcp) and not host 1.2.3.4"
+  Parameter --pause permits to press P (pause) or Q (quit) keys
+  to pause or stop capture.
+  Parameter --hdrencode and --dataencode defines how to display header
+  and data/payload. Common useful values are: array, dump, synth,
+  nothing, text. Full list is available through netwag or running tool
+  12.
+  Parameter --rawip indicates to ignore Ethernet/link layer, and start
+  displaying at IP header.
+  Parameter --extended indicates to try to decode other protocols such
+  as DNS or DHCP.
+  Parameter --ipreas tries to reassemble IP packets. This might miss
+  packets.
+  Parameter --tcpreord tries to reorder TCP flow (seqnum increments).
+  This might miss packets.
+  
+  A record is a capture file. It contains several packets captured
+  during a sniff. It can also be created by hand. There are 7 formats
+  for records: pcap (tcpdump compatible), bin (binary, unreadable by
+  humans but fast) and mixed/mixed_wrap/dump/hexa/hexa_wrap (easy to
+  read and edit). A record also has an associated DLT (Data Link Type),
+  indicating at which level a packet start: raw (start at IP header) and
+  ether (start at Ethernet header) are the 2 most common DLT. Tool 13
+  displays DLT of each device.
+  Parameter --outfile indicates the name of file where to store captured
+  packets. Parameter --recordencode defines how to encode data in this
+  file (suggested values: bin, pcap and mixed_wrap). Capture can
+  automatically swap file using parameters --split-size or --split-age.
+  The DLT (Data Link Type) of packets in this record will be 'raw' if
+  --rawip is set, otherwise the sniff DLT obtained by tool 13.
+  
+  This tool may need to be run with admin privilege in order to sniff.
+   </PRE>
+
+  <P><H3>Synonyms:</H3>
+  &nbsp;&nbsp;capture, ethereal, frame, pcap, snoop, tcpdump<BR>
+
+  <P><H3>Usage:</H3>
+  &nbsp;&nbsp;netwox 7 [-d device] [-f filter] [-p|+p] [-H encode] [-D encode] [-r|+r] [-x|+x] [-i|+i] [-t|+t] [-s|+s] [-o file] [-R recordencode] [-c uint32] [-C uint32] [-Q|+Q]<BR>
+
+  <P><H3>Parameters:</H3>
+<TABLE BORDER=1 CELLPADDING=4>
+ <TR>
+  <TD ALIGN=middle><I>parameter</I></TD>
+  <TD ALIGN=middle><I>description</I></TD>
+  <TD ALIGN=middle><I>example</I></TD>
+ </TR>
+ <TR><TD><TT>-d|--device device</TD>
+<TD>device name</TD>
+<TD>Eth0</TD></TR>
+<TR><TD><TT>-f|--filter filter</TD>
+<TD>pcap filter</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-p|--pause|+p|--no-pause</TD>
+<TD>can pause</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-H|--hdrencode encode</TD>
+<TD>header encoding type for screen</TD>
+<TD>array</TD></TR>
+<TR><TD><TT>-D|--dataencode encode</TD>
+<TD>data encoding type for screen</TD>
+<TD>dump</TD></TR>
+<TR><TD><TT>-r|--rawip|+r|--no-rawip</TD>
+<TD>sniff at IP level</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-x|--extended|+x|--no-extended</TD>
+<TD>display other protocols</TD>
+<TD><I>This boolean is set.<BR>Use + or --no- to unset it.</I></TD></TR>
+<TR><TD><TT>-i|--ipreas|+i|--no-ipreas</TD>
+<TD>reassemble IP packets</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-t|--tcpreord|+t|--no-tcpreord</TD>
+<TD>reorder TCP packets</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-s|--screen|+s|--no-screen</TD>
+<TD>display to screen</TD>
+<TD><I>This boolean is set.<BR>Use + or --no- to unset it.</I></TD></TR>
+<TR><TD><TT>-o|--outfile file</TD>
+<TD>save in record file</TD>
+<TD>dstfile.txt</TD></TR>
+<TR><TD><TT>-R|--recordencode recordencode</TD>
+<TD>encoding type for record file</TD>
+<TD>bin</TD></TR>
+<TR><TD><TT>-c|--split-size uint32</TD>
+<TD>maximum size of record in kb</TD>
+<TD>0</TD></TR>
+<TR><TD><TT>-C|--split-age uint32</TD>
+<TD>maximum age of record in seconds</TD>
+<TD>0</TD></TR>
+<TR><TD><TT>-Q|--losepriv|+Q|--no-losepriv</TD>
+<TD>lose privileges to nobody user under Linux</TD>
+<TD>&nbsp; </TD></TR>
+</TABLE>
+
+  <P><H3>Example:</H3>
+  &nbsp;&nbsp;netwox 7<BR>
+<BR>
+ </BODY>
+ </HTML>

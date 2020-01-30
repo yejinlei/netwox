@@ -1,0 +1,134 @@
+netw-ib-ox-ag (5.39.0-1.2build1) bionic; urgency=high
+
+  * No change rebuild to pick up -fPIE compiler default
+
+ -- Balint Reczey <rbalint@ubuntu.com>  Tue, 03 Apr 2018 12:36:38 +0000
+
+netw-ib-ox-ag (5.39.0-1.2) unstable; urgency=medium
+
+  * Non-maintainer upload.
+  * debian/patches:
+    - Add debian/patches/04-add-s390x-support to add platform
+      detection support for IBM S390 (64-bit).
+    - Add debian/patches/05-add-arm64-support to add platform
+      detection support for ARM (64-bit).
+    - Add debian/patches/06-add-kfreebsd-support to add platform
+      detection support for Debian GNU/kFreeBSD systems.
+
+ -- John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>  Wed, 18 Nov 2015 19:52:55 +0100
+
+netw-ib-ox-ag (5.39.0-1.1) unstable; urgency=medium
+
+  * Non-maintainer upload.
+  * debian/changelog:
+    - Remove trailing spaces in various lines.
+  * debian/patches:
+    - Add debian/patches/02-add-sh4-support to add platform
+      detection support for Renesas SH. (Closes: #703284)
+    - Add debian/patches/03-add-ppc64el-support to add platform
+      detection support for PowerPC64 LE. (Closes: 762580)
+
+ -- John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>  Wed, 18 Nov 2015 15:32:58 +0100
+
+netw-ib-ox-ag (5.39.0-1) unstable; urgency=low
+
+  * The Akamai Technologies paid volunteer days release.
+  * New upstream version.
+  * Uses Homepage header. (Closes: #615219, #615294, #615321, #615436, #645522)
+  * Bumped Standards-Version (no changes needed).
+  * Switch to dpkg-source 3.0 (quilt) format)
+  * Fixes FTBFS on s390x and sparc64 (Closes: #639493)
+  * Fixes 29 (sic!) lintian warnings/errors thus many small changes
+    in packaging scripts.
+
+ -- Bartosz Fenski <fenio@debian.org>  Fri, 21 Dec 2012 15:38:29 +0200
+
+netw-ib-ox-ag (5.36.0-1) unstable; urgency=low
+
+  * New upstream version.
+
+ -- Bartosz Fenski <fenio@debian.org>  Mon, 02 Feb 2009 22:42:24 +0100
+
+netw-ib-ox-ag (5.35.0-1) unstable; urgency=low
+
+  * New upstream version.
+  * Bumped Standards-Version to 3.7.2 (no changes needed).
+
+ -- Bartosz Fenski <fenio@debian.org>  Wed, 11 Oct 2006 13:10:56 +0200
+
+netw-ib-ox-ag (5.34.0-1) unstable; urgency=low
+
+  * New upstream version.
+
+ -- Bartosz Fenski <fenio@debian.org>  Thu,  6 Apr 2006 14:18:25 +0200
+
+netw-ib-ox-ag (5.33.0-1) unstable; urgency=low
+
+  * New upstream version.
+
+ -- Bartosz Fenski <fenio@debian.org>  Wed, 21 Dec 2005 09:27:37 +0100
+
+netw-ib-ox-ag (5.32.0-1) unstable; urgency=low
+
+  * New upstream version.
+
+ -- Bartosz Fenski <fenio@debian.org>  Mon, 28 Nov 2005 14:49:51 +0100
+
+netw-ib-ox-ag (5.31.0-1) unstable; urgency=low
+
+  * New upstream version.
+  * Bumped Standards-Version to 3.6.2 (no changes needed).
+
+ -- Bartosz Fenski <fenio@debian.org>  Fri, 14 Oct 2005 13:57:42 +0200
+
+netw-ib-ox-ag (5.30.0-2) unstable; urgency=low
+
+  * Fixed problems with doc-base installation (Closes: #302719, #302720)
+    Thanks to J G Miller for spotting this.
+
+ -- Bartosz Fenski <fenio@debian.org>  Sun,  3 Apr 2005 12:00:11 +0200
+
+netw-ib-ox-ag (5.30.0-1) unstable; urgency=low
+
+  * New upstream version.
+  * -doc packages don't depend on binary ones now (Closes: #302022)
+  * Documentation is now registered in doc-base database.
+
+ -- Bartosz Fenski <fenio@debian.org>  Thu, 31 Mar 2005 21:46:12 +0200
+
+netw-ib-ox-ag (5.29.0-3) unstable; urgency=low
+
+  * Incorporating upstream patches which should hopefully fix compilation
+    errors on arm/mips/s390 and warnings on 64bits archs.
+  * Added some tests in rules file to avoid warnings/errors.
+
+ -- Bartosz Fenski <fenio@debian.org>  Tue, 29 Mar 2005 19:21:11 +0200
+
+netw-ib-ox-ag (5.29.0-2) unstable; urgency=low
+
+  * Fixed problems with detection of available x-terminal-emulator.
+
+ -- Bartosz Fenski <fenio@debian.org>  Mon, 28 Mar 2005 16:11:12 +0200
+
+netw-ib-ox-ag (5.29.0-1) unstable; urgency=low
+
+  * New upstream version.
+  * Netwag is now shipped with some icons, so we used them for menu. 
+  * Added overrides files for linda/lintian about rpath in netwox.
+  * Copyright file has been extended and now mention about netwib library.
+
+ -- Bartosz Fenski <fenio@debian.org>  Tue,  1 Mar 2005 20:12:13 +0100
+
+netw-ib-ox-ag (5.28.0-1) unstable; urgency=low
+
+  * New upstream version.
+  * Some fixes in description.
+
+ -- Bartosz Fenski <fenio@debian.org>  Sun,  9 Jan 2005 00:38:53 +0100
+
+netw-ib-ox-ag (5.27.0-1) unstable; urgency=low
+
+  * Initial Release. (Closes: #241722, #236090, #241723)
+
+ -- Bartosz Fenski <fenio@debian.org>  Wed, 21 Jul 2004 12:45:56 +0200
+

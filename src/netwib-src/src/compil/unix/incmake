@@ -1,0 +1,1229 @@
+
+# object list
+INCMAKEOBJ0A0=netwib/dat/priv.o
+INCMAKEOBJ0A1=$(INCMAKEOBJ0A0) netwib/dat/debug.o
+INCMAKEOBJ0A2=$(INCMAKEOBJ0A1) netwib/dat/c.o
+INCMAKEOBJ0A3=$(INCMAKEOBJ0A2) netwib/dat/c2.o
+INCMAKEOBJ0A4=$(INCMAKEOBJ0A3) netwib/dat/ptr.o
+INCMAKEOBJ0A5=$(INCMAKEOBJ0A4) netwib/dat/buf.o
+INCMAKEOBJ0A6=$(INCMAKEOBJ0A5) netwib/dat/bufpool.o
+INCMAKEOBJ0A7=$(INCMAKEOBJ0A6) netwib/dat/bufenc.o
+INCMAKEOBJ0A8=$(INCMAKEOBJ0A7) netwib/dat/bufdec.o
+INCMAKEOBJ0A9=$(INCMAKEOBJ0A8) netwib/dat/fmt.o
+INCMAKEOBJ0A10=$(INCMAKEOBJ0A9) netwib/dat/checksum.o
+INCMAKEOBJ0A11=$(INCMAKEOBJ0A10) netwib/dat/regexp.o
+INCMAKEOBJ0A12=$(INCMAKEOBJ0A11) netwib/dat/ring.o
+INCMAKEOBJ0A13=$(INCMAKEOBJ0A12) netwib/dat/ringi.o
+INCMAKEOBJ1A0=netwib/dat/hash.o
+INCMAKEOBJ1A1=$(INCMAKEOBJ1A0) netwib/dat/hashi.o
+INCMAKEOBJ1A2=$(INCMAKEOBJ1A1) netwib/dat/tlv.o
+INCMAKEOBJ1A3=$(INCMAKEOBJ1A2) netwib/dat/array.o
+INCMAKEOBJ1A4=$(INCMAKEOBJ1A3) netwib/dat/uint64.o
+INCMAKEOBJ1A5=$(INCMAKEOBJ1A4) netwib/sys/priv.o
+INCMAKEOBJ1A6=$(INCMAKEOBJ1A5) netwib/sys/debug.o
+INCMAKEOBJ1A7=$(INCMAKEOBJ1A6) netwib/sys/time.o
+INCMAKEOBJ1A8=$(INCMAKEOBJ1A7) netwib/sys/rand.o
+INCMAKEOBJ1A9=$(INCMAKEOBJ1A8) netwib/sys/path.o
+INCMAKEOBJ1A10=$(INCMAKEOBJ1A9) netwib/sys/pathname.o
+INCMAKEOBJ1A11=$(INCMAKEOBJ1A10) netwib/sys/pathstat.o
+INCMAKEOBJ1A12=$(INCMAKEOBJ1A11) netwib/sys/dirname.o
+INCMAKEOBJ1A13=$(INCMAKEOBJ1A12) netwib/sys/filename.o
+INCMAKEOBJ2A0=netwib/sys/dir.o
+INCMAKEOBJ2A1=$(INCMAKEOBJ2A0) netwib/sys/thread.o
+INCMAKEOBJ2A2=$(INCMAKEOBJ2A1) netwib/sys/threadmut.o
+INCMAKEOBJ2A3=$(INCMAKEOBJ2A2) netwib/sys/threadrwl.o
+INCMAKEOBJ2A4=$(INCMAKEOBJ2A3) netwib/sys/threadcond.o
+INCMAKEOBJ2A5=$(INCMAKEOBJ2A4) netwib/sys/threadtsd.o
+INCMAKEOBJ2A6=$(INCMAKEOBJ2A5) netwib/sys/threadlist.o
+INCMAKEOBJ2A7=$(INCMAKEOBJ2A6) netwib/sys/io.o
+INCMAKEOBJ2A8=$(INCMAKEOBJ2A7) netwib/sys/ionew.o
+INCMAKEOBJ2A9=$(INCMAKEOBJ2A8) netwib/sys/iousual.o
+INCMAKEOBJ2A10=$(INCMAKEOBJ2A9) netwib/sys/wait.o
+INCMAKEOBJ2A11=$(INCMAKEOBJ2A10) netwib/sys/waitlist.o
+INCMAKEOBJ2A12=$(INCMAKEOBJ2A11) netwib/sys/file.o
+INCMAKEOBJ2A13=$(INCMAKEOBJ2A12) netwib/sys/fd.o
+INCMAKEOBJ3A0=netwib/sys/stream.o
+INCMAKEOBJ3A1=$(INCMAKEOBJ3A0) netwib/sys/kbd.o
+INCMAKEOBJ3A2=$(INCMAKEOBJ3A1) netwib/sys/kbdchar.o
+INCMAKEOBJ3A3=$(INCMAKEOBJ3A2) netwib/sys/kbdint.o
+INCMAKEOBJ3A4=$(INCMAKEOBJ3A3) netwib/sys/kbdbuf.o
+INCMAKEOBJ3A5=$(INCMAKEOBJ3A4) netwib/sys/kbdpress.o
+INCMAKEOBJ3A6=$(INCMAKEOBJ3A5) netwib/sys/screen.o
+INCMAKEOBJ3A7=$(INCMAKEOBJ3A6) netwib/sys/bufenc.o
+INCMAKEOBJ3A8=$(INCMAKEOBJ3A7) netwib/sys/bufdec.o
+INCMAKEOBJ3A9=$(INCMAKEOBJ3A8) netwib/sys/disp.o
+INCMAKEOBJ3A10=$(INCMAKEOBJ3A9) netwib/sys/record.o
+INCMAKEOBJ3A11=$(INCMAKEOBJ3A10) netwib/sys/beep.o
+INCMAKEOBJ3A12=$(INCMAKEOBJ3A11) netwib/sys/global.o
+INCMAKEOBJ3A13=$(INCMAKEOBJ3A12) netwib/sys/init.o
+INCMAKEOBJ4A0=netwib/sys/error.o
+INCMAKEOBJ4A1=$(INCMAKEOBJ4A0) netwib/sys/internal.o
+INCMAKEOBJ4A2=$(INCMAKEOBJ4A1) netwib/sys/unix.o
+INCMAKEOBJ4A3=$(INCMAKEOBJ4A2) netwib/sys/windows.o
+INCMAKEOBJ4A4=$(INCMAKEOBJ4A3) netwib/net/priv.o
+INCMAKEOBJ4A5=$(INCMAKEOBJ4A4) netwib/net/debug.o
+INCMAKEOBJ4A6=$(INCMAKEOBJ4A5) netwib/net/device.o
+INCMAKEOBJ4A7=$(INCMAKEOBJ4A6) netwib/net/ip.o
+INCMAKEOBJ4A8=$(INCMAKEOBJ4A7) netwib/net/eth.o
+INCMAKEOBJ4A9=$(INCMAKEOBJ4A8) netwib/net/port.o
+INCMAKEOBJ4A10=$(INCMAKEOBJ4A9) netwib/net/ips.o
+INCMAKEOBJ4A11=$(INCMAKEOBJ4A10) netwib/net/ipsi.o
+INCMAKEOBJ4A12=$(INCMAKEOBJ4A11) netwib/net/eths.o
+INCMAKEOBJ4A13=$(INCMAKEOBJ4A12) netwib/net/ethsi.o
+INCMAKEOBJ5A0=netwib/net/ports.o
+INCMAKEOBJ5A1=$(INCMAKEOBJ5A0) netwib/net/portsi.o
+INCMAKEOBJ5A2=$(INCMAKEOBJ5A1) netwib/net/conf.o
+INCMAKEOBJ5A3=$(INCMAKEOBJ5A2) netwib/net/confdev.o
+INCMAKEOBJ5A4=$(INCMAKEOBJ5A3) netwib/net/confip.o
+INCMAKEOBJ5A5=$(INCMAKEOBJ5A4) netwib/net/confarp.o
+INCMAKEOBJ5A6=$(INCMAKEOBJ5A5) netwib/net/confrout.o
+INCMAKEOBJ5A7=$(INCMAKEOBJ5A6) netwib/net/sock.o
+INCMAKEOBJ5A8=$(INCMAKEOBJ5A7) netwib/net/sniff.o
+INCMAKEOBJ5A9=$(INCMAKEOBJ5A8) netwib/net/spoof.o
+INCMAKEOBJ5A10=$(INCMAKEOBJ5A9) netwib/pkt/priv.o
+INCMAKEOBJ5A11=$(INCMAKEOBJ5A10) netwib/pkt/debug.o
+INCMAKEOBJ5A12=$(INCMAKEOBJ5A11) netwib/pkt/linkhdr.o
+INCMAKEOBJ5A13=$(INCMAKEOBJ5A12) netwib/pkt/iphdr.o
+INCMAKEOBJ6A0=netwib/pkt/ip4opt.o
+INCMAKEOBJ6A1=$(INCMAKEOBJ6A0) netwib/pkt/ip4opts.o
+INCMAKEOBJ6A2=$(INCMAKEOBJ6A1) netwib/pkt/ip6ext.o
+INCMAKEOBJ6A3=$(INCMAKEOBJ6A2) netwib/pkt/ip6exts.o
+INCMAKEOBJ6A4=$(INCMAKEOBJ6A3) netwib/pkt/arphdr.o
+INCMAKEOBJ6A5=$(INCMAKEOBJ6A4) netwib/pkt/tcphdr.o
+INCMAKEOBJ6A6=$(INCMAKEOBJ6A5) netwib/pkt/udphdr.o
+INCMAKEOBJ6A7=$(INCMAKEOBJ6A6) netwib/pkt/tcpopt.o
+INCMAKEOBJ6A8=$(INCMAKEOBJ6A7) netwib/pkt/tcpopts.o
+INCMAKEOBJ6A9=$(INCMAKEOBJ6A8) netwib/pkt/ip64bits.o
+INCMAKEOBJ6A10=$(INCMAKEOBJ6A9) netwib/pkt/icmp4.o
+INCMAKEOBJ6A11=$(INCMAKEOBJ6A10) netwib/pkt/icmp6.o
+INCMAKEOBJ6A12=$(INCMAKEOBJ6A11) netwib/pkt/icmp6nd.o
+INCMAKEOBJ6A13=$(INCMAKEOBJ6A12) netwib/pkt/layer.o
+INCMAKEOBJ7A0=netwib/pkt/packet.o
+INCMAKEOBJ7A1=$(INCMAKEOBJ7A0) netwib/pkt/conv.o
+INCMAKEOBJ7A2=$(INCMAKEOBJ7A1) netwib/pkt/ipfrag.o
+INCMAKEOBJ7A3=$(INCMAKEOBJ7A2) netwib/shw/priv.o
+INCMAKEOBJ7A4=$(INCMAKEOBJ7A3) netwib/shw/debug.o
+INCMAKEOBJ7A5=$(INCMAKEOBJ7A4) netwib/shw/array.o
+INCMAKEOBJ7A6=$(INCMAKEOBJ7A5) netwib/shw/linkhdr.o
+INCMAKEOBJ7A7=$(INCMAKEOBJ7A6) netwib/shw/iphdr.o
+INCMAKEOBJ7A8=$(INCMAKEOBJ7A7) netwib/shw/ip4opt.o
+INCMAKEOBJ7A9=$(INCMAKEOBJ7A8) netwib/shw/ip4opts.o
+INCMAKEOBJ7A10=$(INCMAKEOBJ7A9) netwib/shw/ip6ext.o
+INCMAKEOBJ7A11=$(INCMAKEOBJ7A10) netwib/shw/ip6exts.o
+INCMAKEOBJ7A12=$(INCMAKEOBJ7A11) netwib/shw/arphdr.o
+INCMAKEOBJ7A13=$(INCMAKEOBJ7A12) netwib/shw/tcphdr.o
+INCMAKEOBJ8A0=netwib/shw/udphdr.o
+INCMAKEOBJ8A1=$(INCMAKEOBJ8A0) netwib/shw/tcpopt.o
+INCMAKEOBJ8A2=$(INCMAKEOBJ8A1) netwib/shw/tcpopts.o
+INCMAKEOBJ8A3=$(INCMAKEOBJ8A2) netwib/shw/icmp4.o
+INCMAKEOBJ8A4=$(INCMAKEOBJ8A3) netwib/shw/icmp6.o
+INCMAKEOBJ8A5=$(INCMAKEOBJ8A4) netwib/shw/icmp6nd.o
+INCMAKEOBJ8A6=$(INCMAKEOBJ8A5) netwib/shw/packet.o
+INCMAKEOBJ= $(INCMAKEOBJ0A13) $(INCMAKEOBJ1A13) $(INCMAKEOBJ2A13) $(INCMAKEOBJ3A13) $(INCMAKEOBJ4A13) $(INCMAKEOBJ5A13) $(INCMAKEOBJ6A13) $(INCMAKEOBJ7A13) $(INCMAKEOBJ8A6)
+
+# shared object list
+INCMAKELOBJ0A0=netwib/dat/priv.lo
+INCMAKELOBJ0A1=$(INCMAKELOBJ0A0) netwib/dat/debug.lo
+INCMAKELOBJ0A2=$(INCMAKELOBJ0A1) netwib/dat/c.lo
+INCMAKELOBJ0A3=$(INCMAKELOBJ0A2) netwib/dat/c2.lo
+INCMAKELOBJ0A4=$(INCMAKELOBJ0A3) netwib/dat/ptr.lo
+INCMAKELOBJ0A5=$(INCMAKELOBJ0A4) netwib/dat/buf.lo
+INCMAKELOBJ0A6=$(INCMAKELOBJ0A5) netwib/dat/bufpool.lo
+INCMAKELOBJ0A7=$(INCMAKELOBJ0A6) netwib/dat/bufenc.lo
+INCMAKELOBJ0A8=$(INCMAKELOBJ0A7) netwib/dat/bufdec.lo
+INCMAKELOBJ0A9=$(INCMAKELOBJ0A8) netwib/dat/fmt.lo
+INCMAKELOBJ0A10=$(INCMAKELOBJ0A9) netwib/dat/checksum.lo
+INCMAKELOBJ0A11=$(INCMAKELOBJ0A10) netwib/dat/regexp.lo
+INCMAKELOBJ0A12=$(INCMAKELOBJ0A11) netwib/dat/ring.lo
+INCMAKELOBJ0A13=$(INCMAKELOBJ0A12) netwib/dat/ringi.lo
+INCMAKELOBJ1A0=netwib/dat/hash.lo
+INCMAKELOBJ1A1=$(INCMAKELOBJ1A0) netwib/dat/hashi.lo
+INCMAKELOBJ1A2=$(INCMAKELOBJ1A1) netwib/dat/tlv.lo
+INCMAKELOBJ1A3=$(INCMAKELOBJ1A2) netwib/dat/array.lo
+INCMAKELOBJ1A4=$(INCMAKELOBJ1A3) netwib/dat/uint64.lo
+INCMAKELOBJ1A5=$(INCMAKELOBJ1A4) netwib/sys/priv.lo
+INCMAKELOBJ1A6=$(INCMAKELOBJ1A5) netwib/sys/debug.lo
+INCMAKELOBJ1A7=$(INCMAKELOBJ1A6) netwib/sys/time.lo
+INCMAKELOBJ1A8=$(INCMAKELOBJ1A7) netwib/sys/rand.lo
+INCMAKELOBJ1A9=$(INCMAKELOBJ1A8) netwib/sys/path.lo
+INCMAKELOBJ1A10=$(INCMAKELOBJ1A9) netwib/sys/pathname.lo
+INCMAKELOBJ1A11=$(INCMAKELOBJ1A10) netwib/sys/pathstat.lo
+INCMAKELOBJ1A12=$(INCMAKELOBJ1A11) netwib/sys/dirname.lo
+INCMAKELOBJ1A13=$(INCMAKELOBJ1A12) netwib/sys/filename.lo
+INCMAKELOBJ2A0=netwib/sys/dir.lo
+INCMAKELOBJ2A1=$(INCMAKELOBJ2A0) netwib/sys/thread.lo
+INCMAKELOBJ2A2=$(INCMAKELOBJ2A1) netwib/sys/threadmut.lo
+INCMAKELOBJ2A3=$(INCMAKELOBJ2A2) netwib/sys/threadrwl.lo
+INCMAKELOBJ2A4=$(INCMAKELOBJ2A3) netwib/sys/threadcond.lo
+INCMAKELOBJ2A5=$(INCMAKELOBJ2A4) netwib/sys/threadtsd.lo
+INCMAKELOBJ2A6=$(INCMAKELOBJ2A5) netwib/sys/threadlist.lo
+INCMAKELOBJ2A7=$(INCMAKELOBJ2A6) netwib/sys/io.lo
+INCMAKELOBJ2A8=$(INCMAKELOBJ2A7) netwib/sys/ionew.lo
+INCMAKELOBJ2A9=$(INCMAKELOBJ2A8) netwib/sys/iousual.lo
+INCMAKELOBJ2A10=$(INCMAKELOBJ2A9) netwib/sys/wait.lo
+INCMAKELOBJ2A11=$(INCMAKELOBJ2A10) netwib/sys/waitlist.lo
+INCMAKELOBJ2A12=$(INCMAKELOBJ2A11) netwib/sys/file.lo
+INCMAKELOBJ2A13=$(INCMAKELOBJ2A12) netwib/sys/fd.lo
+INCMAKELOBJ3A0=netwib/sys/stream.lo
+INCMAKELOBJ3A1=$(INCMAKELOBJ3A0) netwib/sys/kbd.lo
+INCMAKELOBJ3A2=$(INCMAKELOBJ3A1) netwib/sys/kbdchar.lo
+INCMAKELOBJ3A3=$(INCMAKELOBJ3A2) netwib/sys/kbdint.lo
+INCMAKELOBJ3A4=$(INCMAKELOBJ3A3) netwib/sys/kbdbuf.lo
+INCMAKELOBJ3A5=$(INCMAKELOBJ3A4) netwib/sys/kbdpress.lo
+INCMAKELOBJ3A6=$(INCMAKELOBJ3A5) netwib/sys/screen.lo
+INCMAKELOBJ3A7=$(INCMAKELOBJ3A6) netwib/sys/bufenc.lo
+INCMAKELOBJ3A8=$(INCMAKELOBJ3A7) netwib/sys/bufdec.lo
+INCMAKELOBJ3A9=$(INCMAKELOBJ3A8) netwib/sys/disp.lo
+INCMAKELOBJ3A10=$(INCMAKELOBJ3A9) netwib/sys/record.lo
+INCMAKELOBJ3A11=$(INCMAKELOBJ3A10) netwib/sys/beep.lo
+INCMAKELOBJ3A12=$(INCMAKELOBJ3A11) netwib/sys/global.lo
+INCMAKELOBJ3A13=$(INCMAKELOBJ3A12) netwib/sys/init.lo
+INCMAKELOBJ4A0=netwib/sys/error.lo
+INCMAKELOBJ4A1=$(INCMAKELOBJ4A0) netwib/sys/internal.lo
+INCMAKELOBJ4A2=$(INCMAKELOBJ4A1) netwib/sys/unix.lo
+INCMAKELOBJ4A3=$(INCMAKELOBJ4A2) netwib/sys/windows.lo
+INCMAKELOBJ4A4=$(INCMAKELOBJ4A3) netwib/net/priv.lo
+INCMAKELOBJ4A5=$(INCMAKELOBJ4A4) netwib/net/debug.lo
+INCMAKELOBJ4A6=$(INCMAKELOBJ4A5) netwib/net/device.lo
+INCMAKELOBJ4A7=$(INCMAKELOBJ4A6) netwib/net/ip.lo
+INCMAKELOBJ4A8=$(INCMAKELOBJ4A7) netwib/net/eth.lo
+INCMAKELOBJ4A9=$(INCMAKELOBJ4A8) netwib/net/port.lo
+INCMAKELOBJ4A10=$(INCMAKELOBJ4A9) netwib/net/ips.lo
+INCMAKELOBJ4A11=$(INCMAKELOBJ4A10) netwib/net/ipsi.lo
+INCMAKELOBJ4A12=$(INCMAKELOBJ4A11) netwib/net/eths.lo
+INCMAKELOBJ4A13=$(INCMAKELOBJ4A12) netwib/net/ethsi.lo
+INCMAKELOBJ5A0=netwib/net/ports.lo
+INCMAKELOBJ5A1=$(INCMAKELOBJ5A0) netwib/net/portsi.lo
+INCMAKELOBJ5A2=$(INCMAKELOBJ5A1) netwib/net/conf.lo
+INCMAKELOBJ5A3=$(INCMAKELOBJ5A2) netwib/net/confdev.lo
+INCMAKELOBJ5A4=$(INCMAKELOBJ5A3) netwib/net/confip.lo
+INCMAKELOBJ5A5=$(INCMAKELOBJ5A4) netwib/net/confarp.lo
+INCMAKELOBJ5A6=$(INCMAKELOBJ5A5) netwib/net/confrout.lo
+INCMAKELOBJ5A7=$(INCMAKELOBJ5A6) netwib/net/sock.lo
+INCMAKELOBJ5A8=$(INCMAKELOBJ5A7) netwib/net/sniff.lo
+INCMAKELOBJ5A9=$(INCMAKELOBJ5A8) netwib/net/spoof.lo
+INCMAKELOBJ5A10=$(INCMAKELOBJ5A9) netwib/pkt/priv.lo
+INCMAKELOBJ5A11=$(INCMAKELOBJ5A10) netwib/pkt/debug.lo
+INCMAKELOBJ5A12=$(INCMAKELOBJ5A11) netwib/pkt/linkhdr.lo
+INCMAKELOBJ5A13=$(INCMAKELOBJ5A12) netwib/pkt/iphdr.lo
+INCMAKELOBJ6A0=netwib/pkt/ip4opt.lo
+INCMAKELOBJ6A1=$(INCMAKELOBJ6A0) netwib/pkt/ip4opts.lo
+INCMAKELOBJ6A2=$(INCMAKELOBJ6A1) netwib/pkt/ip6ext.lo
+INCMAKELOBJ6A3=$(INCMAKELOBJ6A2) netwib/pkt/ip6exts.lo
+INCMAKELOBJ6A4=$(INCMAKELOBJ6A3) netwib/pkt/arphdr.lo
+INCMAKELOBJ6A5=$(INCMAKELOBJ6A4) netwib/pkt/tcphdr.lo
+INCMAKELOBJ6A6=$(INCMAKELOBJ6A5) netwib/pkt/udphdr.lo
+INCMAKELOBJ6A7=$(INCMAKELOBJ6A6) netwib/pkt/tcpopt.lo
+INCMAKELOBJ6A8=$(INCMAKELOBJ6A7) netwib/pkt/tcpopts.lo
+INCMAKELOBJ6A9=$(INCMAKELOBJ6A8) netwib/pkt/ip64bits.lo
+INCMAKELOBJ6A10=$(INCMAKELOBJ6A9) netwib/pkt/icmp4.lo
+INCMAKELOBJ6A11=$(INCMAKELOBJ6A10) netwib/pkt/icmp6.lo
+INCMAKELOBJ6A12=$(INCMAKELOBJ6A11) netwib/pkt/icmp6nd.lo
+INCMAKELOBJ6A13=$(INCMAKELOBJ6A12) netwib/pkt/layer.lo
+INCMAKELOBJ7A0=netwib/pkt/packet.lo
+INCMAKELOBJ7A1=$(INCMAKELOBJ7A0) netwib/pkt/conv.lo
+INCMAKELOBJ7A2=$(INCMAKELOBJ7A1) netwib/pkt/ipfrag.lo
+INCMAKELOBJ7A3=$(INCMAKELOBJ7A2) netwib/shw/priv.lo
+INCMAKELOBJ7A4=$(INCMAKELOBJ7A3) netwib/shw/debug.lo
+INCMAKELOBJ7A5=$(INCMAKELOBJ7A4) netwib/shw/array.lo
+INCMAKELOBJ7A6=$(INCMAKELOBJ7A5) netwib/shw/linkhdr.lo
+INCMAKELOBJ7A7=$(INCMAKELOBJ7A6) netwib/shw/iphdr.lo
+INCMAKELOBJ7A8=$(INCMAKELOBJ7A7) netwib/shw/ip4opt.lo
+INCMAKELOBJ7A9=$(INCMAKELOBJ7A8) netwib/shw/ip4opts.lo
+INCMAKELOBJ7A10=$(INCMAKELOBJ7A9) netwib/shw/ip6ext.lo
+INCMAKELOBJ7A11=$(INCMAKELOBJ7A10) netwib/shw/ip6exts.lo
+INCMAKELOBJ7A12=$(INCMAKELOBJ7A11) netwib/shw/arphdr.lo
+INCMAKELOBJ7A13=$(INCMAKELOBJ7A12) netwib/shw/tcphdr.lo
+INCMAKELOBJ8A0=netwib/shw/udphdr.lo
+INCMAKELOBJ8A1=$(INCMAKELOBJ8A0) netwib/shw/tcpopt.lo
+INCMAKELOBJ8A2=$(INCMAKELOBJ8A1) netwib/shw/tcpopts.lo
+INCMAKELOBJ8A3=$(INCMAKELOBJ8A2) netwib/shw/icmp4.lo
+INCMAKELOBJ8A4=$(INCMAKELOBJ8A3) netwib/shw/icmp6.lo
+INCMAKELOBJ8A5=$(INCMAKELOBJ8A4) netwib/shw/icmp6nd.lo
+INCMAKELOBJ8A6=$(INCMAKELOBJ8A5) netwib/shw/packet.lo
+INCMAKELOBJ= $(INCMAKELOBJ0A13) $(INCMAKELOBJ1A13) $(INCMAKELOBJ2A13) $(INCMAKELOBJ3A13) $(INCMAKELOBJ4A13) $(INCMAKELOBJ5A13) $(INCMAKELOBJ6A13) $(INCMAKELOBJ7A13) $(INCMAKELOBJ8A6)
+
+# how to construct objects
+netwib/dat/priv.o: netwib/dat/priv.h netwib/dat/priv.c $(netwibdatprivh) $(netwibdatprivc)
+	$(CC) $(GCCOPT) -c netwib/dat/priv.c -I. $(GCCINC) -o netwib/dat/priv.o
+netwib/dat/debug.o: netwib/dat/debug.h netwib/dat/debug.c $(netwibdatdebugh) $(netwibdatdebugc)
+	$(CC) $(GCCOPT) -c netwib/dat/debug.c -I. $(GCCINC) -o netwib/dat/debug.o
+netwib/dat/c.o: netwib/dat/c.h netwib/dat/c.c $(netwibdatch) $(netwibdatcc)
+	$(CC) $(GCCOPT) -c netwib/dat/c.c -I. $(GCCINC) -o netwib/dat/c.o
+netwib/dat/c2.o: netwib/dat/c2.h netwib/dat/c2.c $(netwibdatc2h) $(netwibdatc2c)
+	$(CC) $(GCCOPT) -c netwib/dat/c2.c -I. $(GCCINC) -o netwib/dat/c2.o
+netwib/dat/ptr.o: netwib/dat/ptr.h netwib/dat/ptr.c $(netwibdatptrh) $(netwibdatptrc)
+	$(CC) $(GCCOPT) -c netwib/dat/ptr.c -I. $(GCCINC) -o netwib/dat/ptr.o
+netwib/dat/buf.o: netwib/dat/buf.h netwib/dat/buf.c $(netwibdatbufh) $(netwibdatbufc)
+	$(CC) $(GCCOPT) -c netwib/dat/buf.c -I. $(GCCINC) -o netwib/dat/buf.o
+netwib/dat/bufpool.o: netwib/dat/bufpool.h netwib/dat/bufpool.c $(netwibdatbufpoolh) $(netwibdatbufpoolc)
+	$(CC) $(GCCOPT) -c netwib/dat/bufpool.c -I. $(GCCINC) -o netwib/dat/bufpool.o
+netwib/dat/bufenc.o: netwib/dat/bufenc.h netwib/dat/bufenc.c $(netwibdatbufench) $(netwibdatbufencc)
+	$(CC) $(GCCOPT) -c netwib/dat/bufenc.c -I. $(GCCINC) -o netwib/dat/bufenc.o
+netwib/dat/bufdec.o: netwib/dat/bufdec.h netwib/dat/bufdec.c $(netwibdatbufdech) $(netwibdatbufdecc)
+	$(CC) $(GCCOPT) -c netwib/dat/bufdec.c -I. $(GCCINC) -o netwib/dat/bufdec.o
+netwib/dat/fmt.o: netwib/dat/fmt.h netwib/dat/fmt.c $(netwibdatfmth) $(netwibdatfmtc)
+	$(CC) $(GCCOPT) -c netwib/dat/fmt.c -I. $(GCCINC) -o netwib/dat/fmt.o
+netwib/dat/checksum.o: netwib/dat/checksum.h netwib/dat/checksum.c $(netwibdatchecksumh) $(netwibdatchecksumc)
+	$(CC) $(GCCOPT) -c netwib/dat/checksum.c -I. $(GCCINC) -o netwib/dat/checksum.o
+netwib/dat/regexp.o: netwib/dat/regexp.h netwib/dat/regexp.c $(netwibdatregexph) $(netwibdatregexpc)
+	$(CC) $(GCCOPT) -c netwib/dat/regexp.c -I. $(GCCINC) -o netwib/dat/regexp.o
+netwib/dat/ring.o: netwib/dat/ring.h netwib/dat/ring.c $(netwibdatringh) $(netwibdatringc)
+	$(CC) $(GCCOPT) -c netwib/dat/ring.c -I. $(GCCINC) -o netwib/dat/ring.o
+netwib/dat/ringi.o: netwib/dat/ringi.h netwib/dat/ringi.c $(netwibdatringih) $(netwibdatringic)
+	$(CC) $(GCCOPT) -c netwib/dat/ringi.c -I. $(GCCINC) -o netwib/dat/ringi.o
+netwib/dat/hash.o: netwib/dat/hash.h netwib/dat/hash.c $(netwibdathashh) $(netwibdathashc)
+	$(CC) $(GCCOPT) -c netwib/dat/hash.c -I. $(GCCINC) -o netwib/dat/hash.o
+netwib/dat/hashi.o: netwib/dat/hashi.h netwib/dat/hashi.c $(netwibdathashih) $(netwibdathashic)
+	$(CC) $(GCCOPT) -c netwib/dat/hashi.c -I. $(GCCINC) -o netwib/dat/hashi.o
+netwib/dat/tlv.o: netwib/dat/tlv.h netwib/dat/tlv.c $(netwibdattlvh) $(netwibdattlvc)
+	$(CC) $(GCCOPT) -c netwib/dat/tlv.c -I. $(GCCINC) -o netwib/dat/tlv.o
+netwib/dat/array.o: netwib/dat/array.h netwib/dat/array.c $(netwibdatarrayh) $(netwibdatarrayc)
+	$(CC) $(GCCOPT) -c netwib/dat/array.c -I. $(GCCINC) -o netwib/dat/array.o
+netwib/dat/uint64.o: netwib/dat/uint64.h netwib/dat/uint64.c $(netwibdatuint64h) $(netwibdatuint64c)
+	$(CC) $(GCCOPT) -c netwib/dat/uint64.c -I. $(GCCINC) -o netwib/dat/uint64.o
+netwib/sys/priv.o: netwib/sys/priv.h netwib/sys/priv.c $(netwibsysprivh) $(netwibsysprivc)
+	$(CC) $(GCCOPT) -c netwib/sys/priv.c -I. $(GCCINC) -o netwib/sys/priv.o
+netwib/sys/debug.o: netwib/sys/debug.h netwib/sys/debug.c $(netwibsysdebugh) $(netwibsysdebugc)
+	$(CC) $(GCCOPT) -c netwib/sys/debug.c -I. $(GCCINC) -o netwib/sys/debug.o
+netwib/sys/time.o: netwib/sys/time.h netwib/sys/time.c $(netwibsystimeh) $(netwibsystimec)
+	$(CC) $(GCCOPT) -c netwib/sys/time.c -I. $(GCCINC) -o netwib/sys/time.o
+netwib/sys/rand.o: netwib/sys/rand.h netwib/sys/rand.c $(netwibsysrandh) $(netwibsysrandc)
+	$(CC) $(GCCOPT) -c netwib/sys/rand.c -I. $(GCCINC) -o netwib/sys/rand.o
+netwib/sys/path.o: netwib/sys/path.h netwib/sys/path.c $(netwibsyspathh) $(netwibsyspathc)
+	$(CC) $(GCCOPT) -c netwib/sys/path.c -I. $(GCCINC) -o netwib/sys/path.o
+netwib/sys/pathname.o: netwib/sys/pathname.h netwib/sys/pathname.c $(netwibsyspathnameh) $(netwibsyspathnamec)
+	$(CC) $(GCCOPT) -c netwib/sys/pathname.c -I. $(GCCINC) -o netwib/sys/pathname.o
+netwib/sys/pathstat.o: netwib/sys/pathstat.h netwib/sys/pathstat.c $(netwibsyspathstath) $(netwibsyspathstatc)
+	$(CC) $(GCCOPT) -c netwib/sys/pathstat.c -I. $(GCCINC) -o netwib/sys/pathstat.o
+netwib/sys/dirname.o: netwib/sys/dirname.h netwib/sys/dirname.c $(netwibsysdirnameh) $(netwibsysdirnamec)
+	$(CC) $(GCCOPT) -c netwib/sys/dirname.c -I. $(GCCINC) -o netwib/sys/dirname.o
+netwib/sys/filename.o: netwib/sys/filename.h netwib/sys/filename.c $(netwibsysfilenameh) $(netwibsysfilenamec)
+	$(CC) $(GCCOPT) -c netwib/sys/filename.c -I. $(GCCINC) -o netwib/sys/filename.o
+netwib/sys/dir.o: netwib/sys/dir.h netwib/sys/dir.c $(netwibsysdirh) $(netwibsysdirc)
+	$(CC) $(GCCOPT) -c netwib/sys/dir.c -I. $(GCCINC) -o netwib/sys/dir.o
+netwib/sys/thread.o: netwib/sys/thread.h netwib/sys/thread.c $(netwibsysthreadh) $(netwibsysthreadc)
+	$(CC) $(GCCOPT) -c netwib/sys/thread.c -I. $(GCCINC) -o netwib/sys/thread.o
+netwib/sys/threadmut.o: netwib/sys/threadmut.h netwib/sys/threadmut.c $(netwibsysthreadmuth) $(netwibsysthreadmutc)
+	$(CC) $(GCCOPT) -c netwib/sys/threadmut.c -I. $(GCCINC) -o netwib/sys/threadmut.o
+netwib/sys/threadrwl.o: netwib/sys/threadrwl.h netwib/sys/threadrwl.c $(netwibsysthreadrwlh) $(netwibsysthreadrwlc)
+	$(CC) $(GCCOPT) -c netwib/sys/threadrwl.c -I. $(GCCINC) -o netwib/sys/threadrwl.o
+netwib/sys/threadcond.o: netwib/sys/threadcond.h netwib/sys/threadcond.c $(netwibsysthreadcondh) $(netwibsysthreadcondc)
+	$(CC) $(GCCOPT) -c netwib/sys/threadcond.c -I. $(GCCINC) -o netwib/sys/threadcond.o
+netwib/sys/threadtsd.o: netwib/sys/threadtsd.h netwib/sys/threadtsd.c $(netwibsysthreadtsdh) $(netwibsysthreadtsdc)
+	$(CC) $(GCCOPT) -c netwib/sys/threadtsd.c -I. $(GCCINC) -o netwib/sys/threadtsd.o
+netwib/sys/threadlist.o: netwib/sys/threadlist.h netwib/sys/threadlist.c $(netwibsysthreadlisth) $(netwibsysthreadlistc)
+	$(CC) $(GCCOPT) -c netwib/sys/threadlist.c -I. $(GCCINC) -o netwib/sys/threadlist.o
+netwib/sys/io.o: netwib/sys/io.h netwib/sys/io.c $(netwibsysioh) $(netwibsysioc)
+	$(CC) $(GCCOPT) -c netwib/sys/io.c -I. $(GCCINC) -o netwib/sys/io.o
+netwib/sys/ionew.o: netwib/sys/ionew.h netwib/sys/ionew.c $(netwibsysionewh) $(netwibsysionewc)
+	$(CC) $(GCCOPT) -c netwib/sys/ionew.c -I. $(GCCINC) -o netwib/sys/ionew.o
+netwib/sys/iousual.o: netwib/sys/iousual.h netwib/sys/iousual.c $(netwibsysiousualh) $(netwibsysiousualc)
+	$(CC) $(GCCOPT) -c netwib/sys/iousual.c -I. $(GCCINC) -o netwib/sys/iousual.o
+netwib/sys/wait.o: netwib/sys/wait.h netwib/sys/wait.c $(netwibsyswaith) $(netwibsyswaitc)
+	$(CC) $(GCCOPT) -c netwib/sys/wait.c -I. $(GCCINC) -o netwib/sys/wait.o
+netwib/sys/waitlist.o: netwib/sys/waitlist.h netwib/sys/waitlist.c $(netwibsyswaitlisth) $(netwibsyswaitlistc)
+	$(CC) $(GCCOPT) -c netwib/sys/waitlist.c -I. $(GCCINC) -o netwib/sys/waitlist.o
+netwib/sys/file.o: netwib/sys/file.h netwib/sys/file.c $(netwibsysfileh) $(netwibsysfilec)
+	$(CC) $(GCCOPT) -c netwib/sys/file.c -I. $(GCCINC) -o netwib/sys/file.o
+netwib/sys/fd.o: netwib/sys/fd.h netwib/sys/fd.c $(netwibsysfdh) $(netwibsysfdc)
+	$(CC) $(GCCOPT) -c netwib/sys/fd.c -I. $(GCCINC) -o netwib/sys/fd.o
+netwib/sys/stream.o: netwib/sys/stream.h netwib/sys/stream.c $(netwibsysstreamh) $(netwibsysstreamc)
+	$(CC) $(GCCOPT) -c netwib/sys/stream.c -I. $(GCCINC) -o netwib/sys/stream.o
+netwib/sys/kbd.o: netwib/sys/kbd.h netwib/sys/kbd.c $(netwibsyskbdh) $(netwibsyskbdc)
+	$(CC) $(GCCOPT) -c netwib/sys/kbd.c -I. $(GCCINC) -o netwib/sys/kbd.o
+netwib/sys/kbdchar.o: netwib/sys/kbdchar.h netwib/sys/kbdchar.c $(netwibsyskbdcharh) $(netwibsyskbdcharc)
+	$(CC) $(GCCOPT) -c netwib/sys/kbdchar.c -I. $(GCCINC) -o netwib/sys/kbdchar.o
+netwib/sys/kbdint.o: netwib/sys/kbdint.h netwib/sys/kbdint.c $(netwibsyskbdinth) $(netwibsyskbdintc)
+	$(CC) $(GCCOPT) -c netwib/sys/kbdint.c -I. $(GCCINC) -o netwib/sys/kbdint.o
+netwib/sys/kbdbuf.o: netwib/sys/kbdbuf.h netwib/sys/kbdbuf.c $(netwibsyskbdbufh) $(netwibsyskbdbufc)
+	$(CC) $(GCCOPT) -c netwib/sys/kbdbuf.c -I. $(GCCINC) -o netwib/sys/kbdbuf.o
+netwib/sys/kbdpress.o: netwib/sys/kbdpress.h netwib/sys/kbdpress.c $(netwibsyskbdpressh) $(netwibsyskbdpressc)
+	$(CC) $(GCCOPT) -c netwib/sys/kbdpress.c -I. $(GCCINC) -o netwib/sys/kbdpress.o
+netwib/sys/screen.o: netwib/sys/screen.h netwib/sys/screen.c $(netwibsysscreenh) $(netwibsysscreenc)
+	$(CC) $(GCCOPT) -c netwib/sys/screen.c -I. $(GCCINC) -o netwib/sys/screen.o
+netwib/sys/bufenc.o: netwib/sys/bufenc.h netwib/sys/bufenc.c $(netwibsysbufench) $(netwibsysbufencc)
+	$(CC) $(GCCOPT) -c netwib/sys/bufenc.c -I. $(GCCINC) -o netwib/sys/bufenc.o
+netwib/sys/bufdec.o: netwib/sys/bufdec.h netwib/sys/bufdec.c $(netwibsysbufdech) $(netwibsysbufdecc)
+	$(CC) $(GCCOPT) -c netwib/sys/bufdec.c -I. $(GCCINC) -o netwib/sys/bufdec.o
+netwib/sys/disp.o: netwib/sys/disp.h netwib/sys/disp.c $(netwibsysdisph) $(netwibsysdispc)
+	$(CC) $(GCCOPT) -c netwib/sys/disp.c -I. $(GCCINC) -o netwib/sys/disp.o
+netwib/sys/record.o: netwib/sys/record.h netwib/sys/record.c $(netwibsysrecordh) $(netwibsysrecordc)
+	$(CC) $(GCCOPT) -c netwib/sys/record.c -I. $(GCCINC) -o netwib/sys/record.o
+netwib/sys/beep.o: netwib/sys/beep.h netwib/sys/beep.c $(netwibsysbeeph) $(netwibsysbeepc)
+	$(CC) $(GCCOPT) -c netwib/sys/beep.c -I. $(GCCINC) -o netwib/sys/beep.o
+netwib/sys/global.o: netwib/sys/global.h netwib/sys/global.c $(netwibsysglobalh) $(netwibsysglobalc)
+	$(CC) $(GCCOPT) -c netwib/sys/global.c -I. $(GCCINC) -o netwib/sys/global.o
+netwib/sys/init.o: netwib/sys/init.h netwib/sys/init.c $(netwibsysinith) $(netwibsysinitc)
+	$(CC) $(GCCOPT) -c netwib/sys/init.c -I. $(GCCINC) -o netwib/sys/init.o
+netwib/sys/error.o: netwib/sys/error.h netwib/sys/error.c $(netwibsyserrorh) $(netwibsyserrorc)
+	$(CC) $(GCCOPT) -c netwib/sys/error.c -I. $(GCCINC) -o netwib/sys/error.o
+netwib/sys/internal.o: netwib/sys/internal.h netwib/sys/internal.c $(netwibsysinternalh) $(netwibsysinternalc)
+	$(CC) $(GCCOPT) -c netwib/sys/internal.c -I. $(GCCINC) -o netwib/sys/internal.o
+netwib/sys/unix.o: netwib/sys/unix.h netwib/sys/unix.c $(netwibsysunixh) $(netwibsysunixc)
+	$(CC) $(GCCOPT) -c netwib/sys/unix.c -I. $(GCCINC) -o netwib/sys/unix.o
+netwib/sys/windows.o: netwib/sys/windows.h netwib/sys/windows.c $(netwibsyswindowsh) $(netwibsyswindowsc)
+	$(CC) $(GCCOPT) -c netwib/sys/windows.c -I. $(GCCINC) -o netwib/sys/windows.o
+netwib/net/priv.o: netwib/net/priv.h netwib/net/priv.c $(netwibnetprivh) $(netwibnetprivc)
+	$(CC) $(GCCOPT) -c netwib/net/priv.c -I. $(GCCINC) -o netwib/net/priv.o
+netwib/net/debug.o: netwib/net/debug.h netwib/net/debug.c $(netwibnetdebugh) $(netwibnetdebugc)
+	$(CC) $(GCCOPT) -c netwib/net/debug.c -I. $(GCCINC) -o netwib/net/debug.o
+netwib/net/device.o: netwib/net/device.h netwib/net/device.c $(netwibnetdeviceh) $(netwibnetdevicec)
+	$(CC) $(GCCOPT) -c netwib/net/device.c -I. $(GCCINC) -o netwib/net/device.o
+netwib/net/ip.o: netwib/net/ip.h netwib/net/ip.c $(netwibnetiph) $(netwibnetipc)
+	$(CC) $(GCCOPT) -c netwib/net/ip.c -I. $(GCCINC) -o netwib/net/ip.o
+netwib/net/eth.o: netwib/net/eth.h netwib/net/eth.c $(netwibnetethh) $(netwibnetethc)
+	$(CC) $(GCCOPT) -c netwib/net/eth.c -I. $(GCCINC) -o netwib/net/eth.o
+netwib/net/port.o: netwib/net/port.h netwib/net/port.c $(netwibnetporth) $(netwibnetportc)
+	$(CC) $(GCCOPT) -c netwib/net/port.c -I. $(GCCINC) -o netwib/net/port.o
+netwib/net/ips.o: netwib/net/ips.h netwib/net/ips.c $(netwibnetipsh) $(netwibnetipsc)
+	$(CC) $(GCCOPT) -c netwib/net/ips.c -I. $(GCCINC) -o netwib/net/ips.o
+netwib/net/ipsi.o: netwib/net/ipsi.h netwib/net/ipsi.c $(netwibnetipsih) $(netwibnetipsic)
+	$(CC) $(GCCOPT) -c netwib/net/ipsi.c -I. $(GCCINC) -o netwib/net/ipsi.o
+netwib/net/eths.o: netwib/net/eths.h netwib/net/eths.c $(netwibnetethsh) $(netwibnetethsc)
+	$(CC) $(GCCOPT) -c netwib/net/eths.c -I. $(GCCINC) -o netwib/net/eths.o
+netwib/net/ethsi.o: netwib/net/ethsi.h netwib/net/ethsi.c $(netwibnetethsih) $(netwibnetethsic)
+	$(CC) $(GCCOPT) -c netwib/net/ethsi.c -I. $(GCCINC) -o netwib/net/ethsi.o
+netwib/net/ports.o: netwib/net/ports.h netwib/net/ports.c $(netwibnetportsh) $(netwibnetportsc)
+	$(CC) $(GCCOPT) -c netwib/net/ports.c -I. $(GCCINC) -o netwib/net/ports.o
+netwib/net/portsi.o: netwib/net/portsi.h netwib/net/portsi.c $(netwibnetportsih) $(netwibnetportsic)
+	$(CC) $(GCCOPT) -c netwib/net/portsi.c -I. $(GCCINC) -o netwib/net/portsi.o
+netwib/net/conf.o: netwib/net/conf.h netwib/net/conf.c $(netwibnetconfh) $(netwibnetconfc)
+	$(CC) $(GCCOPT) -c netwib/net/conf.c -I. $(GCCINC) -o netwib/net/conf.o
+netwib/net/confdev.o: netwib/net/confdev.h netwib/net/confdev.c $(netwibnetconfdevh) $(netwibnetconfdevc)
+	$(CC) $(GCCOPT) -c netwib/net/confdev.c -I. $(GCCINC) -o netwib/net/confdev.o
+netwib/net/confip.o: netwib/net/confip.h netwib/net/confip.c $(netwibnetconfiph) $(netwibnetconfipc)
+	$(CC) $(GCCOPT) -c netwib/net/confip.c -I. $(GCCINC) -o netwib/net/confip.o
+netwib/net/confarp.o: netwib/net/confarp.h netwib/net/confarp.c $(netwibnetconfarph) $(netwibnetconfarpc)
+	$(CC) $(GCCOPT) -c netwib/net/confarp.c -I. $(GCCINC) -o netwib/net/confarp.o
+netwib/net/confrout.o: netwib/net/confrout.h netwib/net/confrout.c $(netwibnetconfrouth) $(netwibnetconfroutc)
+	$(CC) $(GCCOPT) -c netwib/net/confrout.c -I. $(GCCINC) -o netwib/net/confrout.o
+netwib/net/sock.o: netwib/net/sock.h netwib/net/sock.c $(netwibnetsockh) $(netwibnetsockc)
+	$(CC) $(GCCOPT) -c netwib/net/sock.c -I. $(GCCINC) -o netwib/net/sock.o
+netwib/net/sniff.o: netwib/net/sniff.h netwib/net/sniff.c $(netwibnetsniffh) $(netwibnetsniffc)
+	$(CC) $(GCCOPT) -c netwib/net/sniff.c -I. $(GCCINC) -o netwib/net/sniff.o
+netwib/net/spoof.o: netwib/net/spoof.h netwib/net/spoof.c $(netwibnetspoofh) $(netwibnetspoofc)
+	$(CC) $(GCCOPT) -c netwib/net/spoof.c -I. $(GCCINC) -o netwib/net/spoof.o
+netwib/pkt/priv.o: netwib/pkt/priv.h netwib/pkt/priv.c $(netwibpktprivh) $(netwibpktprivc)
+	$(CC) $(GCCOPT) -c netwib/pkt/priv.c -I. $(GCCINC) -o netwib/pkt/priv.o
+netwib/pkt/debug.o: netwib/pkt/debug.h netwib/pkt/debug.c $(netwibpktdebugh) $(netwibpktdebugc)
+	$(CC) $(GCCOPT) -c netwib/pkt/debug.c -I. $(GCCINC) -o netwib/pkt/debug.o
+netwib/pkt/linkhdr.o: netwib/pkt/linkhdr.h netwib/pkt/linkhdr.c $(netwibpktlinkhdrh) $(netwibpktlinkhdrc)
+	$(CC) $(GCCOPT) -c netwib/pkt/linkhdr.c -I. $(GCCINC) -o netwib/pkt/linkhdr.o
+netwib/pkt/iphdr.o: netwib/pkt/iphdr.h netwib/pkt/iphdr.c $(netwibpktiphdrh) $(netwibpktiphdrc)
+	$(CC) $(GCCOPT) -c netwib/pkt/iphdr.c -I. $(GCCINC) -o netwib/pkt/iphdr.o
+netwib/pkt/ip4opt.o: netwib/pkt/ip4opt.h netwib/pkt/ip4opt.c $(netwibpktip4opth) $(netwibpktip4optc)
+	$(CC) $(GCCOPT) -c netwib/pkt/ip4opt.c -I. $(GCCINC) -o netwib/pkt/ip4opt.o
+netwib/pkt/ip4opts.o: netwib/pkt/ip4opts.h netwib/pkt/ip4opts.c $(netwibpktip4optsh) $(netwibpktip4optsc)
+	$(CC) $(GCCOPT) -c netwib/pkt/ip4opts.c -I. $(GCCINC) -o netwib/pkt/ip4opts.o
+netwib/pkt/ip6ext.o: netwib/pkt/ip6ext.h netwib/pkt/ip6ext.c $(netwibpktip6exth) $(netwibpktip6extc)
+	$(CC) $(GCCOPT) -c netwib/pkt/ip6ext.c -I. $(GCCINC) -o netwib/pkt/ip6ext.o
+netwib/pkt/ip6exts.o: netwib/pkt/ip6exts.h netwib/pkt/ip6exts.c $(netwibpktip6extsh) $(netwibpktip6extsc)
+	$(CC) $(GCCOPT) -c netwib/pkt/ip6exts.c -I. $(GCCINC) -o netwib/pkt/ip6exts.o
+netwib/pkt/arphdr.o: netwib/pkt/arphdr.h netwib/pkt/arphdr.c $(netwibpktarphdrh) $(netwibpktarphdrc)
+	$(CC) $(GCCOPT) -c netwib/pkt/arphdr.c -I. $(GCCINC) -o netwib/pkt/arphdr.o
+netwib/pkt/tcphdr.o: netwib/pkt/tcphdr.h netwib/pkt/tcphdr.c $(netwibpkttcphdrh) $(netwibpkttcphdrc)
+	$(CC) $(GCCOPT) -c netwib/pkt/tcphdr.c -I. $(GCCINC) -o netwib/pkt/tcphdr.o
+netwib/pkt/udphdr.o: netwib/pkt/udphdr.h netwib/pkt/udphdr.c $(netwibpktudphdrh) $(netwibpktudphdrc)
+	$(CC) $(GCCOPT) -c netwib/pkt/udphdr.c -I. $(GCCINC) -o netwib/pkt/udphdr.o
+netwib/pkt/tcpopt.o: netwib/pkt/tcpopt.h netwib/pkt/tcpopt.c $(netwibpkttcpopth) $(netwibpkttcpoptc)
+	$(CC) $(GCCOPT) -c netwib/pkt/tcpopt.c -I. $(GCCINC) -o netwib/pkt/tcpopt.o
+netwib/pkt/tcpopts.o: netwib/pkt/tcpopts.h netwib/pkt/tcpopts.c $(netwibpkttcpoptsh) $(netwibpkttcpoptsc)
+	$(CC) $(GCCOPT) -c netwib/pkt/tcpopts.c -I. $(GCCINC) -o netwib/pkt/tcpopts.o
+netwib/pkt/ip64bits.o: netwib/pkt/ip64bits.h netwib/pkt/ip64bits.c $(netwibpktip64bitsh) $(netwibpktip64bitsc)
+	$(CC) $(GCCOPT) -c netwib/pkt/ip64bits.c -I. $(GCCINC) -o netwib/pkt/ip64bits.o
+netwib/pkt/icmp4.o: netwib/pkt/icmp4.h netwib/pkt/icmp4.c $(netwibpkticmp4h) $(netwibpkticmp4c)
+	$(CC) $(GCCOPT) -c netwib/pkt/icmp4.c -I. $(GCCINC) -o netwib/pkt/icmp4.o
+netwib/pkt/icmp6.o: netwib/pkt/icmp6.h netwib/pkt/icmp6.c $(netwibpkticmp6h) $(netwibpkticmp6c)
+	$(CC) $(GCCOPT) -c netwib/pkt/icmp6.c -I. $(GCCINC) -o netwib/pkt/icmp6.o
+netwib/pkt/icmp6nd.o: netwib/pkt/icmp6nd.h netwib/pkt/icmp6nd.c $(netwibpkticmp6ndh) $(netwibpkticmp6ndc)
+	$(CC) $(GCCOPT) -c netwib/pkt/icmp6nd.c -I. $(GCCINC) -o netwib/pkt/icmp6nd.o
+netwib/pkt/layer.o: netwib/pkt/layer.h netwib/pkt/layer.c $(netwibpktlayerh) $(netwibpktlayerc)
+	$(CC) $(GCCOPT) -c netwib/pkt/layer.c -I. $(GCCINC) -o netwib/pkt/layer.o
+netwib/pkt/packet.o: netwib/pkt/packet.h netwib/pkt/packet.c $(netwibpktpacketh) $(netwibpktpacketc)
+	$(CC) $(GCCOPT) -c netwib/pkt/packet.c -I. $(GCCINC) -o netwib/pkt/packet.o
+netwib/pkt/conv.o: netwib/pkt/conv.h netwib/pkt/conv.c $(netwibpktconvh) $(netwibpktconvc)
+	$(CC) $(GCCOPT) -c netwib/pkt/conv.c -I. $(GCCINC) -o netwib/pkt/conv.o
+netwib/pkt/ipfrag.o: netwib/pkt/ipfrag.h netwib/pkt/ipfrag.c $(netwibpktipfragh) $(netwibpktipfragc)
+	$(CC) $(GCCOPT) -c netwib/pkt/ipfrag.c -I. $(GCCINC) -o netwib/pkt/ipfrag.o
+netwib/shw/priv.o: netwib/shw/priv.h netwib/shw/priv.c $(netwibshwprivh) $(netwibshwprivc)
+	$(CC) $(GCCOPT) -c netwib/shw/priv.c -I. $(GCCINC) -o netwib/shw/priv.o
+netwib/shw/debug.o: netwib/shw/debug.h netwib/shw/debug.c $(netwibshwdebugh) $(netwibshwdebugc)
+	$(CC) $(GCCOPT) -c netwib/shw/debug.c -I. $(GCCINC) -o netwib/shw/debug.o
+netwib/shw/array.o: netwib/shw/array.h netwib/shw/array.c $(netwibshwarrayh) $(netwibshwarrayc)
+	$(CC) $(GCCOPT) -c netwib/shw/array.c -I. $(GCCINC) -o netwib/shw/array.o
+netwib/shw/linkhdr.o: netwib/shw/linkhdr.h netwib/shw/linkhdr.c $(netwibshwlinkhdrh) $(netwibshwlinkhdrc)
+	$(CC) $(GCCOPT) -c netwib/shw/linkhdr.c -I. $(GCCINC) -o netwib/shw/linkhdr.o
+netwib/shw/iphdr.o: netwib/shw/iphdr.h netwib/shw/iphdr.c $(netwibshwiphdrh) $(netwibshwiphdrc)
+	$(CC) $(GCCOPT) -c netwib/shw/iphdr.c -I. $(GCCINC) -o netwib/shw/iphdr.o
+netwib/shw/ip4opt.o: netwib/shw/ip4opt.h netwib/shw/ip4opt.c $(netwibshwip4opth) $(netwibshwip4optc)
+	$(CC) $(GCCOPT) -c netwib/shw/ip4opt.c -I. $(GCCINC) -o netwib/shw/ip4opt.o
+netwib/shw/ip4opts.o: netwib/shw/ip4opts.h netwib/shw/ip4opts.c $(netwibshwip4optsh) $(netwibshwip4optsc)
+	$(CC) $(GCCOPT) -c netwib/shw/ip4opts.c -I. $(GCCINC) -o netwib/shw/ip4opts.o
+netwib/shw/ip6ext.o: netwib/shw/ip6ext.h netwib/shw/ip6ext.c $(netwibshwip6exth) $(netwibshwip6extc)
+	$(CC) $(GCCOPT) -c netwib/shw/ip6ext.c -I. $(GCCINC) -o netwib/shw/ip6ext.o
+netwib/shw/ip6exts.o: netwib/shw/ip6exts.h netwib/shw/ip6exts.c $(netwibshwip6extsh) $(netwibshwip6extsc)
+	$(CC) $(GCCOPT) -c netwib/shw/ip6exts.c -I. $(GCCINC) -o netwib/shw/ip6exts.o
+netwib/shw/arphdr.o: netwib/shw/arphdr.h netwib/shw/arphdr.c $(netwibshwarphdrh) $(netwibshwarphdrc)
+	$(CC) $(GCCOPT) -c netwib/shw/arphdr.c -I. $(GCCINC) -o netwib/shw/arphdr.o
+netwib/shw/tcphdr.o: netwib/shw/tcphdr.h netwib/shw/tcphdr.c $(netwibshwtcphdrh) $(netwibshwtcphdrc)
+	$(CC) $(GCCOPT) -c netwib/shw/tcphdr.c -I. $(GCCINC) -o netwib/shw/tcphdr.o
+netwib/shw/udphdr.o: netwib/shw/udphdr.h netwib/shw/udphdr.c $(netwibshwudphdrh) $(netwibshwudphdrc)
+	$(CC) $(GCCOPT) -c netwib/shw/udphdr.c -I. $(GCCINC) -o netwib/shw/udphdr.o
+netwib/shw/tcpopt.o: netwib/shw/tcpopt.h netwib/shw/tcpopt.c $(netwibshwtcpopth) $(netwibshwtcpoptc)
+	$(CC) $(GCCOPT) -c netwib/shw/tcpopt.c -I. $(GCCINC) -o netwib/shw/tcpopt.o
+netwib/shw/tcpopts.o: netwib/shw/tcpopts.h netwib/shw/tcpopts.c $(netwibshwtcpoptsh) $(netwibshwtcpoptsc)
+	$(CC) $(GCCOPT) -c netwib/shw/tcpopts.c -I. $(GCCINC) -o netwib/shw/tcpopts.o
+netwib/shw/icmp4.o: netwib/shw/icmp4.h netwib/shw/icmp4.c $(netwibshwicmp4h) $(netwibshwicmp4c)
+	$(CC) $(GCCOPT) -c netwib/shw/icmp4.c -I. $(GCCINC) -o netwib/shw/icmp4.o
+netwib/shw/icmp6.o: netwib/shw/icmp6.h netwib/shw/icmp6.c $(netwibshwicmp6h) $(netwibshwicmp6c)
+	$(CC) $(GCCOPT) -c netwib/shw/icmp6.c -I. $(GCCINC) -o netwib/shw/icmp6.o
+netwib/shw/icmp6nd.o: netwib/shw/icmp6nd.h netwib/shw/icmp6nd.c $(netwibshwicmp6ndh) $(netwibshwicmp6ndc)
+	$(CC) $(GCCOPT) -c netwib/shw/icmp6nd.c -I. $(GCCINC) -o netwib/shw/icmp6nd.o
+netwib/shw/packet.o: netwib/shw/packet.h netwib/shw/packet.c $(netwibshwpacketh) $(netwibshwpacketc)
+	$(CC) $(GCCOPT) -c netwib/shw/packet.c -I. $(GCCINC) -o netwib/shw/packet.o
+
+# how to construct shared objects
+netwib/dat/priv.lo: netwib/dat/priv.h netwib/dat/priv.c $(netwibdatprivh) $(netwibdatprivc)
+	$(CC) $(GCCOPT) $(GCCOPTPIC) -c netwib/dat/priv.c -I. $(GCCINC) -o netwib/dat/priv.lo
+netwib/dat/debug.lo: netwib/dat/debug.h netwib/dat/debug.c $(netwibdatdebugh) $(netwibdatdebugc)
+	$(CC) $(GCCOPT) $(GCCOPTPIC) -c netwib/dat/debug.c -I. $(GCCINC) -o netwib/dat/debug.lo
+netwib/dat/c.lo: netwib/dat/c.h netwib/dat/c.c $(netwibdatch) $(netwibdatcc)
+	$(CC) $(GCCOPT) $(GCCOPTPIC) -c netwib/dat/c.c -I. $(GCCINC) -o netwib/dat/c.lo
+netwib/dat/c2.lo: netwib/dat/c2.h netwib/dat/c2.c $(netwibdatc2h) $(netwibdatc2c)
+	$(CC) $(GCCOPT) $(GCCOPTPIC) -c netwib/dat/c2.c -I. $(GCCINC) -o netwib/dat/c2.lo
+netwib/dat/ptr.lo: netwib/dat/ptr.h netwib/dat/ptr.c $(netwibdatptrh) $(netwibdatptrc)
+	$(CC) $(GCCOPT) $(GCCOPTPIC) -c netwib/dat/ptr.c -I. $(GCCINC) -o netwib/dat/ptr.lo
+netwib/dat/buf.lo: netwib/dat/buf.h netwib/dat/buf.c $(netwibdatbufh) $(netwibdatbufc)
+	$(CC) $(GCCOPT) $(GCCOPTPIC) -c netwib/dat/buf.c -I. $(GCCINC) -o netwib/dat/buf.lo
+netwib/dat/bufpool.lo: netwib/dat/bufpool.h netwib/dat/bufpool.c $(netwibdatbufpoolh) $(netwibdatbufpoolc)
+	$(CC) $(GCCOPT) $(GCCOPTPIC) -c netwib/dat/bufpool.c -I. $(GCCINC) -o netwib/dat/bufpool.lo
+netwib/dat/bufenc.lo: netwib/dat/bufenc.h netwib/dat/bufenc.c $(netwibdatbufench) $(netwibdatbufencc)
+	$(CC) $(GCCOPT) $(GCCOPTPIC) -c netwib/dat/bufenc.c -I. $(GCCINC) -o netwib/dat/bufenc.lo
+netwib/dat/bufdec.lo: netwib/dat/bufdec.h netwib/dat/bufdec.c $(netwibdatbufdech) $(netwibdatbufdecc)
+	$(CC) $(GCCOPT) $(GCCOPTPIC) -c netwib/dat/bufdec.c -I. $(GCCINC) -o netwib/dat/bufdec.lo
+netwib/dat/fmt.lo: netwib/dat/fmt.h netwib/dat/fmt.c $(netwibdatfmth) $(netwibdatfmtc)
+	$(CC) $(GCCOPT) $(GCCOPTPIC) -c netwib/dat/fmt.c -I. $(GCCINC) -o netwib/dat/fmt.lo
+netwib/dat/checksum.lo: netwib/dat/checksum.h netwib/dat/checksum.c $(netwibdatchecksumh) $(netwibdatchecksumc)
+	$(CC) $(GCCOPT) $(GCCOPTPIC) -c netwib/dat/checksum.c -I. $(GCCINC) -o netwib/dat/checksum.lo
+netwib/dat/regexp.lo: netwib/dat/regexp.h netwib/dat/regexp.c $(netwibdatregexph) $(netwibdatregexpc)
+	$(CC) $(GCCOPT) $(GCCOPTPIC) -c netwib/dat/regexp.c -I. $(GCCINC) -o netwib/dat/regexp.lo
+netwib/dat/ring.lo: netwib/dat/ring.h netwib/dat/ring.c $(netwibdatringh) $(netwibdatringc)
+	$(CC) $(GCCOPT) $(GCCOPTPIC) -c netwib/dat/ring.c -I. $(GCCINC) -o netwib/dat/ring.lo
+netwib/dat/ringi.lo: netwib/dat/ringi.h netwib/dat/ringi.c $(netwibdatringih) $(netwibdatringic)
+	$(CC) $(GCCOPT) $(GCCOPTPIC) -c netwib/dat/ringi.c -I. $(GCCINC) -o netwib/dat/ringi.lo
+netwib/dat/hash.lo: netwib/dat/hash.h netwib/dat/hash.c $(netwibdathashh) $(netwibdathashc)
+	$(CC) $(GCCOPT) $(GCCOPTPIC) -c netwib/dat/hash.c -I. $(GCCINC) -o netwib/dat/hash.lo
+netwib/dat/hashi.lo: netwib/dat/hashi.h netwib/dat/hashi.c $(netwibdathashih) $(netwibdathashic)
+	$(CC) $(GCCOPT) $(GCCOPTPIC) -c netwib/dat/hashi.c -I. $(GCCINC) -o netwib/dat/hashi.lo
+netwib/dat/tlv.lo: netwib/dat/tlv.h netwib/dat/tlv.c $(netwibdattlvh) $(netwibdattlvc)
+	$(CC) $(GCCOPT) $(GCCOPTPIC) -c netwib/dat/tlv.c -I. $(GCCINC) -o netwib/dat/tlv.lo
+netwib/dat/array.lo: netwib/dat/array.h netwib/dat/array.c $(netwibdatarrayh) $(netwibdatarrayc)
+	$(CC) $(GCCOPT) $(GCCOPTPIC) -c netwib/dat/array.c -I. $(GCCINC) -o netwib/dat/array.lo
+netwib/dat/uint64.lo: netwib/dat/uint64.h netwib/dat/uint64.c $(netwibdatuint64h) $(netwibdatuint64c)
+	$(CC) $(GCCOPT) $(GCCOPTPIC) -c netwib/dat/uint64.c -I. $(GCCINC) -o netwib/dat/uint64.lo
+netwib/sys/priv.lo: netwib/sys/priv.h netwib/sys/priv.c $(netwibsysprivh) $(netwibsysprivc)
+	$(CC) $(GCCOPT) $(GCCOPTPIC) -c netwib/sys/priv.c -I. $(GCCINC) -o netwib/sys/priv.lo
+netwib/sys/debug.lo: netwib/sys/debug.h netwib/sys/debug.c $(netwibsysdebugh) $(netwibsysdebugc)
+	$(CC) $(GCCOPT) $(GCCOPTPIC) -c netwib/sys/debug.c -I. $(GCCINC) -o netwib/sys/debug.lo
+netwib/sys/time.lo: netwib/sys/time.h netwib/sys/time.c $(netwibsystimeh) $(netwibsystimec)
+	$(CC) $(GCCOPT) $(GCCOPTPIC) -c netwib/sys/time.c -I. $(GCCINC) -o netwib/sys/time.lo
+netwib/sys/rand.lo: netwib/sys/rand.h netwib/sys/rand.c $(netwibsysrandh) $(netwibsysrandc)
+	$(CC) $(GCCOPT) $(GCCOPTPIC) -c netwib/sys/rand.c -I. $(GCCINC) -o netwib/sys/rand.lo
+netwib/sys/path.lo: netwib/sys/path.h netwib/sys/path.c $(netwibsyspathh) $(netwibsyspathc)
+	$(CC) $(GCCOPT) $(GCCOPTPIC) -c netwib/sys/path.c -I. $(GCCINC) -o netwib/sys/path.lo
+netwib/sys/pathname.lo: netwib/sys/pathname.h netwib/sys/pathname.c $(netwibsyspathnameh) $(netwibsyspathnamec)
+	$(CC) $(GCCOPT) $(GCCOPTPIC) -c netwib/sys/pathname.c -I. $(GCCINC) -o netwib/sys/pathname.lo
+netwib/sys/pathstat.lo: netwib/sys/pathstat.h netwib/sys/pathstat.c $(netwibsyspathstath) $(netwibsyspathstatc)
+	$(CC) $(GCCOPT) $(GCCOPTPIC) -c netwib/sys/pathstat.c -I. $(GCCINC) -o netwib/sys/pathstat.lo
+netwib/sys/dirname.lo: netwib/sys/dirname.h netwib/sys/dirname.c $(netwibsysdirnameh) $(netwibsysdirnamec)
+	$(CC) $(GCCOPT) $(GCCOPTPIC) -c netwib/sys/dirname.c -I. $(GCCINC) -o netwib/sys/dirname.lo
+netwib/sys/filename.lo: netwib/sys/filename.h netwib/sys/filename.c $(netwibsysfilenameh) $(netwibsysfilenamec)
+	$(CC) $(GCCOPT) $(GCCOPTPIC) -c netwib/sys/filename.c -I. $(GCCINC) -o netwib/sys/filename.lo
+netwib/sys/dir.lo: netwib/sys/dir.h netwib/sys/dir.c $(netwibsysdirh) $(netwibsysdirc)
+	$(CC) $(GCCOPT) $(GCCOPTPIC) -c netwib/sys/dir.c -I. $(GCCINC) -o netwib/sys/dir.lo
+netwib/sys/thread.lo: netwib/sys/thread.h netwib/sys/thread.c $(netwibsysthreadh) $(netwibsysthreadc)
+	$(CC) $(GCCOPT) $(GCCOPTPIC) -c netwib/sys/thread.c -I. $(GCCINC) -o netwib/sys/thread.lo
+netwib/sys/threadmut.lo: netwib/sys/threadmut.h netwib/sys/threadmut.c $(netwibsysthreadmuth) $(netwibsysthreadmutc)
+	$(CC) $(GCCOPT) $(GCCOPTPIC) -c netwib/sys/threadmut.c -I. $(GCCINC) -o netwib/sys/threadmut.lo
+netwib/sys/threadrwl.lo: netwib/sys/threadrwl.h netwib/sys/threadrwl.c $(netwibsysthreadrwlh) $(netwibsysthreadrwlc)
+	$(CC) $(GCCOPT) $(GCCOPTPIC) -c netwib/sys/threadrwl.c -I. $(GCCINC) -o netwib/sys/threadrwl.lo
+netwib/sys/threadcond.lo: netwib/sys/threadcond.h netwib/sys/threadcond.c $(netwibsysthreadcondh) $(netwibsysthreadcondc)
+	$(CC) $(GCCOPT) $(GCCOPTPIC) -c netwib/sys/threadcond.c -I. $(GCCINC) -o netwib/sys/threadcond.lo
+netwib/sys/threadtsd.lo: netwib/sys/threadtsd.h netwib/sys/threadtsd.c $(netwibsysthreadtsdh) $(netwibsysthreadtsdc)
+	$(CC) $(GCCOPT) $(GCCOPTPIC) -c netwib/sys/threadtsd.c -I. $(GCCINC) -o netwib/sys/threadtsd.lo
+netwib/sys/threadlist.lo: netwib/sys/threadlist.h netwib/sys/threadlist.c $(netwibsysthreadlisth) $(netwibsysthreadlistc)
+	$(CC) $(GCCOPT) $(GCCOPTPIC) -c netwib/sys/threadlist.c -I. $(GCCINC) -o netwib/sys/threadlist.lo
+netwib/sys/io.lo: netwib/sys/io.h netwib/sys/io.c $(netwibsysioh) $(netwibsysioc)
+	$(CC) $(GCCOPT) $(GCCOPTPIC) -c netwib/sys/io.c -I. $(GCCINC) -o netwib/sys/io.lo
+netwib/sys/ionew.lo: netwib/sys/ionew.h netwib/sys/ionew.c $(netwibsysionewh) $(netwibsysionewc)
+	$(CC) $(GCCOPT) $(GCCOPTPIC) -c netwib/sys/ionew.c -I. $(GCCINC) -o netwib/sys/ionew.lo
+netwib/sys/iousual.lo: netwib/sys/iousual.h netwib/sys/iousual.c $(netwibsysiousualh) $(netwibsysiousualc)
+	$(CC) $(GCCOPT) $(GCCOPTPIC) -c netwib/sys/iousual.c -I. $(GCCINC) -o netwib/sys/iousual.lo
+netwib/sys/wait.lo: netwib/sys/wait.h netwib/sys/wait.c $(netwibsyswaith) $(netwibsyswaitc)
+	$(CC) $(GCCOPT) $(GCCOPTPIC) -c netwib/sys/wait.c -I. $(GCCINC) -o netwib/sys/wait.lo
+netwib/sys/waitlist.lo: netwib/sys/waitlist.h netwib/sys/waitlist.c $(netwibsyswaitlisth) $(netwibsyswaitlistc)
+	$(CC) $(GCCOPT) $(GCCOPTPIC) -c netwib/sys/waitlist.c -I. $(GCCINC) -o netwib/sys/waitlist.lo
+netwib/sys/file.lo: netwib/sys/file.h netwib/sys/file.c $(netwibsysfileh) $(netwibsysfilec)
+	$(CC) $(GCCOPT) $(GCCOPTPIC) -c netwib/sys/file.c -I. $(GCCINC) -o netwib/sys/file.lo
+netwib/sys/fd.lo: netwib/sys/fd.h netwib/sys/fd.c $(netwibsysfdh) $(netwibsysfdc)
+	$(CC) $(GCCOPT) $(GCCOPTPIC) -c netwib/sys/fd.c -I. $(GCCINC) -o netwib/sys/fd.lo
+netwib/sys/stream.lo: netwib/sys/stream.h netwib/sys/stream.c $(netwibsysstreamh) $(netwibsysstreamc)
+	$(CC) $(GCCOPT) $(GCCOPTPIC) -c netwib/sys/stream.c -I. $(GCCINC) -o netwib/sys/stream.lo
+netwib/sys/kbd.lo: netwib/sys/kbd.h netwib/sys/kbd.c $(netwibsyskbdh) $(netwibsyskbdc)
+	$(CC) $(GCCOPT) $(GCCOPTPIC) -c netwib/sys/kbd.c -I. $(GCCINC) -o netwib/sys/kbd.lo
+netwib/sys/kbdchar.lo: netwib/sys/kbdchar.h netwib/sys/kbdchar.c $(netwibsyskbdcharh) $(netwibsyskbdcharc)
+	$(CC) $(GCCOPT) $(GCCOPTPIC) -c netwib/sys/kbdchar.c -I. $(GCCINC) -o netwib/sys/kbdchar.lo
+netwib/sys/kbdint.lo: netwib/sys/kbdint.h netwib/sys/kbdint.c $(netwibsyskbdinth) $(netwibsyskbdintc)
+	$(CC) $(GCCOPT) $(GCCOPTPIC) -c netwib/sys/kbdint.c -I. $(GCCINC) -o netwib/sys/kbdint.lo
+netwib/sys/kbdbuf.lo: netwib/sys/kbdbuf.h netwib/sys/kbdbuf.c $(netwibsyskbdbufh) $(netwibsyskbdbufc)
+	$(CC) $(GCCOPT) $(GCCOPTPIC) -c netwib/sys/kbdbuf.c -I. $(GCCINC) -o netwib/sys/kbdbuf.lo
+netwib/sys/kbdpress.lo: netwib/sys/kbdpress.h netwib/sys/kbdpress.c $(netwibsyskbdpressh) $(netwibsyskbdpressc)
+	$(CC) $(GCCOPT) $(GCCOPTPIC) -c netwib/sys/kbdpress.c -I. $(GCCINC) -o netwib/sys/kbdpress.lo
+netwib/sys/screen.lo: netwib/sys/screen.h netwib/sys/screen.c $(netwibsysscreenh) $(netwibsysscreenc)
+	$(CC) $(GCCOPT) $(GCCOPTPIC) -c netwib/sys/screen.c -I. $(GCCINC) -o netwib/sys/screen.lo
+netwib/sys/bufenc.lo: netwib/sys/bufenc.h netwib/sys/bufenc.c $(netwibsysbufench) $(netwibsysbufencc)
+	$(CC) $(GCCOPT) $(GCCOPTPIC) -c netwib/sys/bufenc.c -I. $(GCCINC) -o netwib/sys/bufenc.lo
+netwib/sys/bufdec.lo: netwib/sys/bufdec.h netwib/sys/bufdec.c $(netwibsysbufdech) $(netwibsysbufdecc)
+	$(CC) $(GCCOPT) $(GCCOPTPIC) -c netwib/sys/bufdec.c -I. $(GCCINC) -o netwib/sys/bufdec.lo
+netwib/sys/disp.lo: netwib/sys/disp.h netwib/sys/disp.c $(netwibsysdisph) $(netwibsysdispc)
+	$(CC) $(GCCOPT) $(GCCOPTPIC) -c netwib/sys/disp.c -I. $(GCCINC) -o netwib/sys/disp.lo
+netwib/sys/record.lo: netwib/sys/record.h netwib/sys/record.c $(netwibsysrecordh) $(netwibsysrecordc)
+	$(CC) $(GCCOPT) $(GCCOPTPIC) -c netwib/sys/record.c -I. $(GCCINC) -o netwib/sys/record.lo
+netwib/sys/beep.lo: netwib/sys/beep.h netwib/sys/beep.c $(netwibsysbeeph) $(netwibsysbeepc)
+	$(CC) $(GCCOPT) $(GCCOPTPIC) -c netwib/sys/beep.c -I. $(GCCINC) -o netwib/sys/beep.lo
+netwib/sys/global.lo: netwib/sys/global.h netwib/sys/global.c $(netwibsysglobalh) $(netwibsysglobalc)
+	$(CC) $(GCCOPT) $(GCCOPTPIC) -c netwib/sys/global.c -I. $(GCCINC) -o netwib/sys/global.lo
+netwib/sys/init.lo: netwib/sys/init.h netwib/sys/init.c $(netwibsysinith) $(netwibsysinitc)
+	$(CC) $(GCCOPT) $(GCCOPTPIC) -c netwib/sys/init.c -I. $(GCCINC) -o netwib/sys/init.lo
+netwib/sys/error.lo: netwib/sys/error.h netwib/sys/error.c $(netwibsyserrorh) $(netwibsyserrorc)
+	$(CC) $(GCCOPT) $(GCCOPTPIC) -c netwib/sys/error.c -I. $(GCCINC) -o netwib/sys/error.lo
+netwib/sys/internal.lo: netwib/sys/internal.h netwib/sys/internal.c $(netwibsysinternalh) $(netwibsysinternalc)
+	$(CC) $(GCCOPT) $(GCCOPTPIC) -c netwib/sys/internal.c -I. $(GCCINC) -o netwib/sys/internal.lo
+netwib/sys/unix.lo: netwib/sys/unix.h netwib/sys/unix.c $(netwibsysunixh) $(netwibsysunixc)
+	$(CC) $(GCCOPT) $(GCCOPTPIC) -c netwib/sys/unix.c -I. $(GCCINC) -o netwib/sys/unix.lo
+netwib/sys/windows.lo: netwib/sys/windows.h netwib/sys/windows.c $(netwibsyswindowsh) $(netwibsyswindowsc)
+	$(CC) $(GCCOPT) $(GCCOPTPIC) -c netwib/sys/windows.c -I. $(GCCINC) -o netwib/sys/windows.lo
+netwib/net/priv.lo: netwib/net/priv.h netwib/net/priv.c $(netwibnetprivh) $(netwibnetprivc)
+	$(CC) $(GCCOPT) $(GCCOPTPIC) -c netwib/net/priv.c -I. $(GCCINC) -o netwib/net/priv.lo
+netwib/net/debug.lo: netwib/net/debug.h netwib/net/debug.c $(netwibnetdebugh) $(netwibnetdebugc)
+	$(CC) $(GCCOPT) $(GCCOPTPIC) -c netwib/net/debug.c -I. $(GCCINC) -o netwib/net/debug.lo
+netwib/net/device.lo: netwib/net/device.h netwib/net/device.c $(netwibnetdeviceh) $(netwibnetdevicec)
+	$(CC) $(GCCOPT) $(GCCOPTPIC) -c netwib/net/device.c -I. $(GCCINC) -o netwib/net/device.lo
+netwib/net/ip.lo: netwib/net/ip.h netwib/net/ip.c $(netwibnetiph) $(netwibnetipc)
+	$(CC) $(GCCOPT) $(GCCOPTPIC) -c netwib/net/ip.c -I. $(GCCINC) -o netwib/net/ip.lo
+netwib/net/eth.lo: netwib/net/eth.h netwib/net/eth.c $(netwibnetethh) $(netwibnetethc)
+	$(CC) $(GCCOPT) $(GCCOPTPIC) -c netwib/net/eth.c -I. $(GCCINC) -o netwib/net/eth.lo
+netwib/net/port.lo: netwib/net/port.h netwib/net/port.c $(netwibnetporth) $(netwibnetportc)
+	$(CC) $(GCCOPT) $(GCCOPTPIC) -c netwib/net/port.c -I. $(GCCINC) -o netwib/net/port.lo
+netwib/net/ips.lo: netwib/net/ips.h netwib/net/ips.c $(netwibnetipsh) $(netwibnetipsc)
+	$(CC) $(GCCOPT) $(GCCOPTPIC) -c netwib/net/ips.c -I. $(GCCINC) -o netwib/net/ips.lo
+netwib/net/ipsi.lo: netwib/net/ipsi.h netwib/net/ipsi.c $(netwibnetipsih) $(netwibnetipsic)
+	$(CC) $(GCCOPT) $(GCCOPTPIC) -c netwib/net/ipsi.c -I. $(GCCINC) -o netwib/net/ipsi.lo
+netwib/net/eths.lo: netwib/net/eths.h netwib/net/eths.c $(netwibnetethsh) $(netwibnetethsc)
+	$(CC) $(GCCOPT) $(GCCOPTPIC) -c netwib/net/eths.c -I. $(GCCINC) -o netwib/net/eths.lo
+netwib/net/ethsi.lo: netwib/net/ethsi.h netwib/net/ethsi.c $(netwibnetethsih) $(netwibnetethsic)
+	$(CC) $(GCCOPT) $(GCCOPTPIC) -c netwib/net/ethsi.c -I. $(GCCINC) -o netwib/net/ethsi.lo
+netwib/net/ports.lo: netwib/net/ports.h netwib/net/ports.c $(netwibnetportsh) $(netwibnetportsc)
+	$(CC) $(GCCOPT) $(GCCOPTPIC) -c netwib/net/ports.c -I. $(GCCINC) -o netwib/net/ports.lo
+netwib/net/portsi.lo: netwib/net/portsi.h netwib/net/portsi.c $(netwibnetportsih) $(netwibnetportsic)
+	$(CC) $(GCCOPT) $(GCCOPTPIC) -c netwib/net/portsi.c -I. $(GCCINC) -o netwib/net/portsi.lo
+netwib/net/conf.lo: netwib/net/conf.h netwib/net/conf.c $(netwibnetconfh) $(netwibnetconfc)
+	$(CC) $(GCCOPT) $(GCCOPTPIC) -c netwib/net/conf.c -I. $(GCCINC) -o netwib/net/conf.lo
+netwib/net/confdev.lo: netwib/net/confdev.h netwib/net/confdev.c $(netwibnetconfdevh) $(netwibnetconfdevc)
+	$(CC) $(GCCOPT) $(GCCOPTPIC) -c netwib/net/confdev.c -I. $(GCCINC) -o netwib/net/confdev.lo
+netwib/net/confip.lo: netwib/net/confip.h netwib/net/confip.c $(netwibnetconfiph) $(netwibnetconfipc)
+	$(CC) $(GCCOPT) $(GCCOPTPIC) -c netwib/net/confip.c -I. $(GCCINC) -o netwib/net/confip.lo
+netwib/net/confarp.lo: netwib/net/confarp.h netwib/net/confarp.c $(netwibnetconfarph) $(netwibnetconfarpc)
+	$(CC) $(GCCOPT) $(GCCOPTPIC) -c netwib/net/confarp.c -I. $(GCCINC) -o netwib/net/confarp.lo
+netwib/net/confrout.lo: netwib/net/confrout.h netwib/net/confrout.c $(netwibnetconfrouth) $(netwibnetconfroutc)
+	$(CC) $(GCCOPT) $(GCCOPTPIC) -c netwib/net/confrout.c -I. $(GCCINC) -o netwib/net/confrout.lo
+netwib/net/sock.lo: netwib/net/sock.h netwib/net/sock.c $(netwibnetsockh) $(netwibnetsockc)
+	$(CC) $(GCCOPT) $(GCCOPTPIC) -c netwib/net/sock.c -I. $(GCCINC) -o netwib/net/sock.lo
+netwib/net/sniff.lo: netwib/net/sniff.h netwib/net/sniff.c $(netwibnetsniffh) $(netwibnetsniffc)
+	$(CC) $(GCCOPT) $(GCCOPTPIC) -c netwib/net/sniff.c -I. $(GCCINC) -o netwib/net/sniff.lo
+netwib/net/spoof.lo: netwib/net/spoof.h netwib/net/spoof.c $(netwibnetspoofh) $(netwibnetspoofc)
+	$(CC) $(GCCOPT) $(GCCOPTPIC) -c netwib/net/spoof.c -I. $(GCCINC) -o netwib/net/spoof.lo
+netwib/pkt/priv.lo: netwib/pkt/priv.h netwib/pkt/priv.c $(netwibpktprivh) $(netwibpktprivc)
+	$(CC) $(GCCOPT) $(GCCOPTPIC) -c netwib/pkt/priv.c -I. $(GCCINC) -o netwib/pkt/priv.lo
+netwib/pkt/debug.lo: netwib/pkt/debug.h netwib/pkt/debug.c $(netwibpktdebugh) $(netwibpktdebugc)
+	$(CC) $(GCCOPT) $(GCCOPTPIC) -c netwib/pkt/debug.c -I. $(GCCINC) -o netwib/pkt/debug.lo
+netwib/pkt/linkhdr.lo: netwib/pkt/linkhdr.h netwib/pkt/linkhdr.c $(netwibpktlinkhdrh) $(netwibpktlinkhdrc)
+	$(CC) $(GCCOPT) $(GCCOPTPIC) -c netwib/pkt/linkhdr.c -I. $(GCCINC) -o netwib/pkt/linkhdr.lo
+netwib/pkt/iphdr.lo: netwib/pkt/iphdr.h netwib/pkt/iphdr.c $(netwibpktiphdrh) $(netwibpktiphdrc)
+	$(CC) $(GCCOPT) $(GCCOPTPIC) -c netwib/pkt/iphdr.c -I. $(GCCINC) -o netwib/pkt/iphdr.lo
+netwib/pkt/ip4opt.lo: netwib/pkt/ip4opt.h netwib/pkt/ip4opt.c $(netwibpktip4opth) $(netwibpktip4optc)
+	$(CC) $(GCCOPT) $(GCCOPTPIC) -c netwib/pkt/ip4opt.c -I. $(GCCINC) -o netwib/pkt/ip4opt.lo
+netwib/pkt/ip4opts.lo: netwib/pkt/ip4opts.h netwib/pkt/ip4opts.c $(netwibpktip4optsh) $(netwibpktip4optsc)
+	$(CC) $(GCCOPT) $(GCCOPTPIC) -c netwib/pkt/ip4opts.c -I. $(GCCINC) -o netwib/pkt/ip4opts.lo
+netwib/pkt/ip6ext.lo: netwib/pkt/ip6ext.h netwib/pkt/ip6ext.c $(netwibpktip6exth) $(netwibpktip6extc)
+	$(CC) $(GCCOPT) $(GCCOPTPIC) -c netwib/pkt/ip6ext.c -I. $(GCCINC) -o netwib/pkt/ip6ext.lo
+netwib/pkt/ip6exts.lo: netwib/pkt/ip6exts.h netwib/pkt/ip6exts.c $(netwibpktip6extsh) $(netwibpktip6extsc)
+	$(CC) $(GCCOPT) $(GCCOPTPIC) -c netwib/pkt/ip6exts.c -I. $(GCCINC) -o netwib/pkt/ip6exts.lo
+netwib/pkt/arphdr.lo: netwib/pkt/arphdr.h netwib/pkt/arphdr.c $(netwibpktarphdrh) $(netwibpktarphdrc)
+	$(CC) $(GCCOPT) $(GCCOPTPIC) -c netwib/pkt/arphdr.c -I. $(GCCINC) -o netwib/pkt/arphdr.lo
+netwib/pkt/tcphdr.lo: netwib/pkt/tcphdr.h netwib/pkt/tcphdr.c $(netwibpkttcphdrh) $(netwibpkttcphdrc)
+	$(CC) $(GCCOPT) $(GCCOPTPIC) -c netwib/pkt/tcphdr.c -I. $(GCCINC) -o netwib/pkt/tcphdr.lo
+netwib/pkt/udphdr.lo: netwib/pkt/udphdr.h netwib/pkt/udphdr.c $(netwibpktudphdrh) $(netwibpktudphdrc)
+	$(CC) $(GCCOPT) $(GCCOPTPIC) -c netwib/pkt/udphdr.c -I. $(GCCINC) -o netwib/pkt/udphdr.lo
+netwib/pkt/tcpopt.lo: netwib/pkt/tcpopt.h netwib/pkt/tcpopt.c $(netwibpkttcpopth) $(netwibpkttcpoptc)
+	$(CC) $(GCCOPT) $(GCCOPTPIC) -c netwib/pkt/tcpopt.c -I. $(GCCINC) -o netwib/pkt/tcpopt.lo
+netwib/pkt/tcpopts.lo: netwib/pkt/tcpopts.h netwib/pkt/tcpopts.c $(netwibpkttcpoptsh) $(netwibpkttcpoptsc)
+	$(CC) $(GCCOPT) $(GCCOPTPIC) -c netwib/pkt/tcpopts.c -I. $(GCCINC) -o netwib/pkt/tcpopts.lo
+netwib/pkt/ip64bits.lo: netwib/pkt/ip64bits.h netwib/pkt/ip64bits.c $(netwibpktip64bitsh) $(netwibpktip64bitsc)
+	$(CC) $(GCCOPT) $(GCCOPTPIC) -c netwib/pkt/ip64bits.c -I. $(GCCINC) -o netwib/pkt/ip64bits.lo
+netwib/pkt/icmp4.lo: netwib/pkt/icmp4.h netwib/pkt/icmp4.c $(netwibpkticmp4h) $(netwibpkticmp4c)
+	$(CC) $(GCCOPT) $(GCCOPTPIC) -c netwib/pkt/icmp4.c -I. $(GCCINC) -o netwib/pkt/icmp4.lo
+netwib/pkt/icmp6.lo: netwib/pkt/icmp6.h netwib/pkt/icmp6.c $(netwibpkticmp6h) $(netwibpkticmp6c)
+	$(CC) $(GCCOPT) $(GCCOPTPIC) -c netwib/pkt/icmp6.c -I. $(GCCINC) -o netwib/pkt/icmp6.lo
+netwib/pkt/icmp6nd.lo: netwib/pkt/icmp6nd.h netwib/pkt/icmp6nd.c $(netwibpkticmp6ndh) $(netwibpkticmp6ndc)
+	$(CC) $(GCCOPT) $(GCCOPTPIC) -c netwib/pkt/icmp6nd.c -I. $(GCCINC) -o netwib/pkt/icmp6nd.lo
+netwib/pkt/layer.lo: netwib/pkt/layer.h netwib/pkt/layer.c $(netwibpktlayerh) $(netwibpktlayerc)
+	$(CC) $(GCCOPT) $(GCCOPTPIC) -c netwib/pkt/layer.c -I. $(GCCINC) -o netwib/pkt/layer.lo
+netwib/pkt/packet.lo: netwib/pkt/packet.h netwib/pkt/packet.c $(netwibpktpacketh) $(netwibpktpacketc)
+	$(CC) $(GCCOPT) $(GCCOPTPIC) -c netwib/pkt/packet.c -I. $(GCCINC) -o netwib/pkt/packet.lo
+netwib/pkt/conv.lo: netwib/pkt/conv.h netwib/pkt/conv.c $(netwibpktconvh) $(netwibpktconvc)
+	$(CC) $(GCCOPT) $(GCCOPTPIC) -c netwib/pkt/conv.c -I. $(GCCINC) -o netwib/pkt/conv.lo
+netwib/pkt/ipfrag.lo: netwib/pkt/ipfrag.h netwib/pkt/ipfrag.c $(netwibpktipfragh) $(netwibpktipfragc)
+	$(CC) $(GCCOPT) $(GCCOPTPIC) -c netwib/pkt/ipfrag.c -I. $(GCCINC) -o netwib/pkt/ipfrag.lo
+netwib/shw/priv.lo: netwib/shw/priv.h netwib/shw/priv.c $(netwibshwprivh) $(netwibshwprivc)
+	$(CC) $(GCCOPT) $(GCCOPTPIC) -c netwib/shw/priv.c -I. $(GCCINC) -o netwib/shw/priv.lo
+netwib/shw/debug.lo: netwib/shw/debug.h netwib/shw/debug.c $(netwibshwdebugh) $(netwibshwdebugc)
+	$(CC) $(GCCOPT) $(GCCOPTPIC) -c netwib/shw/debug.c -I. $(GCCINC) -o netwib/shw/debug.lo
+netwib/shw/array.lo: netwib/shw/array.h netwib/shw/array.c $(netwibshwarrayh) $(netwibshwarrayc)
+	$(CC) $(GCCOPT) $(GCCOPTPIC) -c netwib/shw/array.c -I. $(GCCINC) -o netwib/shw/array.lo
+netwib/shw/linkhdr.lo: netwib/shw/linkhdr.h netwib/shw/linkhdr.c $(netwibshwlinkhdrh) $(netwibshwlinkhdrc)
+	$(CC) $(GCCOPT) $(GCCOPTPIC) -c netwib/shw/linkhdr.c -I. $(GCCINC) -o netwib/shw/linkhdr.lo
+netwib/shw/iphdr.lo: netwib/shw/iphdr.h netwib/shw/iphdr.c $(netwibshwiphdrh) $(netwibshwiphdrc)
+	$(CC) $(GCCOPT) $(GCCOPTPIC) -c netwib/shw/iphdr.c -I. $(GCCINC) -o netwib/shw/iphdr.lo
+netwib/shw/ip4opt.lo: netwib/shw/ip4opt.h netwib/shw/ip4opt.c $(netwibshwip4opth) $(netwibshwip4optc)
+	$(CC) $(GCCOPT) $(GCCOPTPIC) -c netwib/shw/ip4opt.c -I. $(GCCINC) -o netwib/shw/ip4opt.lo
+netwib/shw/ip4opts.lo: netwib/shw/ip4opts.h netwib/shw/ip4opts.c $(netwibshwip4optsh) $(netwibshwip4optsc)
+	$(CC) $(GCCOPT) $(GCCOPTPIC) -c netwib/shw/ip4opts.c -I. $(GCCINC) -o netwib/shw/ip4opts.lo
+netwib/shw/ip6ext.lo: netwib/shw/ip6ext.h netwib/shw/ip6ext.c $(netwibshwip6exth) $(netwibshwip6extc)
+	$(CC) $(GCCOPT) $(GCCOPTPIC) -c netwib/shw/ip6ext.c -I. $(GCCINC) -o netwib/shw/ip6ext.lo
+netwib/shw/ip6exts.lo: netwib/shw/ip6exts.h netwib/shw/ip6exts.c $(netwibshwip6extsh) $(netwibshwip6extsc)
+	$(CC) $(GCCOPT) $(GCCOPTPIC) -c netwib/shw/ip6exts.c -I. $(GCCINC) -o netwib/shw/ip6exts.lo
+netwib/shw/arphdr.lo: netwib/shw/arphdr.h netwib/shw/arphdr.c $(netwibshwarphdrh) $(netwibshwarphdrc)
+	$(CC) $(GCCOPT) $(GCCOPTPIC) -c netwib/shw/arphdr.c -I. $(GCCINC) -o netwib/shw/arphdr.lo
+netwib/shw/tcphdr.lo: netwib/shw/tcphdr.h netwib/shw/tcphdr.c $(netwibshwtcphdrh) $(netwibshwtcphdrc)
+	$(CC) $(GCCOPT) $(GCCOPTPIC) -c netwib/shw/tcphdr.c -I. $(GCCINC) -o netwib/shw/tcphdr.lo
+netwib/shw/udphdr.lo: netwib/shw/udphdr.h netwib/shw/udphdr.c $(netwibshwudphdrh) $(netwibshwudphdrc)
+	$(CC) $(GCCOPT) $(GCCOPTPIC) -c netwib/shw/udphdr.c -I. $(GCCINC) -o netwib/shw/udphdr.lo
+netwib/shw/tcpopt.lo: netwib/shw/tcpopt.h netwib/shw/tcpopt.c $(netwibshwtcpopth) $(netwibshwtcpoptc)
+	$(CC) $(GCCOPT) $(GCCOPTPIC) -c netwib/shw/tcpopt.c -I. $(GCCINC) -o netwib/shw/tcpopt.lo
+netwib/shw/tcpopts.lo: netwib/shw/tcpopts.h netwib/shw/tcpopts.c $(netwibshwtcpoptsh) $(netwibshwtcpoptsc)
+	$(CC) $(GCCOPT) $(GCCOPTPIC) -c netwib/shw/tcpopts.c -I. $(GCCINC) -o netwib/shw/tcpopts.lo
+netwib/shw/icmp4.lo: netwib/shw/icmp4.h netwib/shw/icmp4.c $(netwibshwicmp4h) $(netwibshwicmp4c)
+	$(CC) $(GCCOPT) $(GCCOPTPIC) -c netwib/shw/icmp4.c -I. $(GCCINC) -o netwib/shw/icmp4.lo
+netwib/shw/icmp6.lo: netwib/shw/icmp6.h netwib/shw/icmp6.c $(netwibshwicmp6h) $(netwibshwicmp6c)
+	$(CC) $(GCCOPT) $(GCCOPTPIC) -c netwib/shw/icmp6.c -I. $(GCCINC) -o netwib/shw/icmp6.lo
+netwib/shw/icmp6nd.lo: netwib/shw/icmp6nd.h netwib/shw/icmp6nd.c $(netwibshwicmp6ndh) $(netwibshwicmp6ndc)
+	$(CC) $(GCCOPT) $(GCCOPTPIC) -c netwib/shw/icmp6nd.c -I. $(GCCINC) -o netwib/shw/icmp6nd.lo
+netwib/shw/packet.lo: netwib/shw/packet.h netwib/shw/packet.c $(netwibshwpacketh) $(netwibshwpacketc)
+	$(CC) $(GCCOPT) $(GCCOPTPIC) -c netwib/shw/packet.c -I. $(GCCINC) -o netwib/shw/packet.lo
+
+# cleaning objects
+incmakecleanobj:
+	rm -f netwib/dat/priv.o
+	rm -f netwib/dat/debug.o
+	rm -f netwib/dat/c.o
+	rm -f netwib/dat/c2.o
+	rm -f netwib/dat/ptr.o
+	rm -f netwib/dat/buf.o
+	rm -f netwib/dat/bufpool.o
+	rm -f netwib/dat/bufenc.o
+	rm -f netwib/dat/bufdec.o
+	rm -f netwib/dat/fmt.o
+	rm -f netwib/dat/checksum.o
+	rm -f netwib/dat/regexp.o
+	rm -f netwib/dat/ring.o
+	rm -f netwib/dat/ringi.o
+	rm -f netwib/dat/hash.o
+	rm -f netwib/dat/hashi.o
+	rm -f netwib/dat/tlv.o
+	rm -f netwib/dat/array.o
+	rm -f netwib/dat/uint64.o
+	rm -f netwib/sys/priv.o
+	rm -f netwib/sys/debug.o
+	rm -f netwib/sys/time.o
+	rm -f netwib/sys/rand.o
+	rm -f netwib/sys/path.o
+	rm -f netwib/sys/pathname.o
+	rm -f netwib/sys/pathstat.o
+	rm -f netwib/sys/dirname.o
+	rm -f netwib/sys/filename.o
+	rm -f netwib/sys/dir.o
+	rm -f netwib/sys/thread.o
+	rm -f netwib/sys/threadmut.o
+	rm -f netwib/sys/threadrwl.o
+	rm -f netwib/sys/threadcond.o
+	rm -f netwib/sys/threadtsd.o
+	rm -f netwib/sys/threadlist.o
+	rm -f netwib/sys/io.o
+	rm -f netwib/sys/ionew.o
+	rm -f netwib/sys/iousual.o
+	rm -f netwib/sys/wait.o
+	rm -f netwib/sys/waitlist.o
+	rm -f netwib/sys/file.o
+	rm -f netwib/sys/fd.o
+	rm -f netwib/sys/stream.o
+	rm -f netwib/sys/kbd.o
+	rm -f netwib/sys/kbdchar.o
+	rm -f netwib/sys/kbdint.o
+	rm -f netwib/sys/kbdbuf.o
+	rm -f netwib/sys/kbdpress.o
+	rm -f netwib/sys/screen.o
+	rm -f netwib/sys/bufenc.o
+	rm -f netwib/sys/bufdec.o
+	rm -f netwib/sys/disp.o
+	rm -f netwib/sys/record.o
+	rm -f netwib/sys/beep.o
+	rm -f netwib/sys/global.o
+	rm -f netwib/sys/init.o
+	rm -f netwib/sys/error.o
+	rm -f netwib/sys/internal.o
+	rm -f netwib/sys/unix.o
+	rm -f netwib/sys/windows.o
+	rm -f netwib/net/priv.o
+	rm -f netwib/net/debug.o
+	rm -f netwib/net/device.o
+	rm -f netwib/net/ip.o
+	rm -f netwib/net/eth.o
+	rm -f netwib/net/port.o
+	rm -f netwib/net/ips.o
+	rm -f netwib/net/ipsi.o
+	rm -f netwib/net/eths.o
+	rm -f netwib/net/ethsi.o
+	rm -f netwib/net/ports.o
+	rm -f netwib/net/portsi.o
+	rm -f netwib/net/conf.o
+	rm -f netwib/net/confdev.o
+	rm -f netwib/net/confip.o
+	rm -f netwib/net/confarp.o
+	rm -f netwib/net/confrout.o
+	rm -f netwib/net/sock.o
+	rm -f netwib/net/sniff.o
+	rm -f netwib/net/spoof.o
+	rm -f netwib/pkt/priv.o
+	rm -f netwib/pkt/debug.o
+	rm -f netwib/pkt/linkhdr.o
+	rm -f netwib/pkt/iphdr.o
+	rm -f netwib/pkt/ip4opt.o
+	rm -f netwib/pkt/ip4opts.o
+	rm -f netwib/pkt/ip6ext.o
+	rm -f netwib/pkt/ip6exts.o
+	rm -f netwib/pkt/arphdr.o
+	rm -f netwib/pkt/tcphdr.o
+	rm -f netwib/pkt/udphdr.o
+	rm -f netwib/pkt/tcpopt.o
+	rm -f netwib/pkt/tcpopts.o
+	rm -f netwib/pkt/ip64bits.o
+	rm -f netwib/pkt/icmp4.o
+	rm -f netwib/pkt/icmp6.o
+	rm -f netwib/pkt/icmp6nd.o
+	rm -f netwib/pkt/layer.o
+	rm -f netwib/pkt/packet.o
+	rm -f netwib/pkt/conv.o
+	rm -f netwib/pkt/ipfrag.o
+	rm -f netwib/shw/priv.o
+	rm -f netwib/shw/debug.o
+	rm -f netwib/shw/array.o
+	rm -f netwib/shw/linkhdr.o
+	rm -f netwib/shw/iphdr.o
+	rm -f netwib/shw/ip4opt.o
+	rm -f netwib/shw/ip4opts.o
+	rm -f netwib/shw/ip6ext.o
+	rm -f netwib/shw/ip6exts.o
+	rm -f netwib/shw/arphdr.o
+	rm -f netwib/shw/tcphdr.o
+	rm -f netwib/shw/udphdr.o
+	rm -f netwib/shw/tcpopt.o
+	rm -f netwib/shw/tcpopts.o
+	rm -f netwib/shw/icmp4.o
+	rm -f netwib/shw/icmp6.o
+	rm -f netwib/shw/icmp6nd.o
+	rm -f netwib/shw/packet.o
+
+# cleaning shared objects
+incmakecleanlobj:
+	rm -f netwib/dat/priv.lo
+	rm -f netwib/dat/debug.lo
+	rm -f netwib/dat/c.lo
+	rm -f netwib/dat/c2.lo
+	rm -f netwib/dat/ptr.lo
+	rm -f netwib/dat/buf.lo
+	rm -f netwib/dat/bufpool.lo
+	rm -f netwib/dat/bufenc.lo
+	rm -f netwib/dat/bufdec.lo
+	rm -f netwib/dat/fmt.lo
+	rm -f netwib/dat/checksum.lo
+	rm -f netwib/dat/regexp.lo
+	rm -f netwib/dat/ring.lo
+	rm -f netwib/dat/ringi.lo
+	rm -f netwib/dat/hash.lo
+	rm -f netwib/dat/hashi.lo
+	rm -f netwib/dat/tlv.lo
+	rm -f netwib/dat/array.lo
+	rm -f netwib/dat/uint64.lo
+	rm -f netwib/sys/priv.lo
+	rm -f netwib/sys/debug.lo
+	rm -f netwib/sys/time.lo
+	rm -f netwib/sys/rand.lo
+	rm -f netwib/sys/path.lo
+	rm -f netwib/sys/pathname.lo
+	rm -f netwib/sys/pathstat.lo
+	rm -f netwib/sys/dirname.lo
+	rm -f netwib/sys/filename.lo
+	rm -f netwib/sys/dir.lo
+	rm -f netwib/sys/thread.lo
+	rm -f netwib/sys/threadmut.lo
+	rm -f netwib/sys/threadrwl.lo
+	rm -f netwib/sys/threadcond.lo
+	rm -f netwib/sys/threadtsd.lo
+	rm -f netwib/sys/threadlist.lo
+	rm -f netwib/sys/io.lo
+	rm -f netwib/sys/ionew.lo
+	rm -f netwib/sys/iousual.lo
+	rm -f netwib/sys/wait.lo
+	rm -f netwib/sys/waitlist.lo
+	rm -f netwib/sys/file.lo
+	rm -f netwib/sys/fd.lo
+	rm -f netwib/sys/stream.lo
+	rm -f netwib/sys/kbd.lo
+	rm -f netwib/sys/kbdchar.lo
+	rm -f netwib/sys/kbdint.lo
+	rm -f netwib/sys/kbdbuf.lo
+	rm -f netwib/sys/kbdpress.lo
+	rm -f netwib/sys/screen.lo
+	rm -f netwib/sys/bufenc.lo
+	rm -f netwib/sys/bufdec.lo
+	rm -f netwib/sys/disp.lo
+	rm -f netwib/sys/record.lo
+	rm -f netwib/sys/beep.lo
+	rm -f netwib/sys/global.lo
+	rm -f netwib/sys/init.lo
+	rm -f netwib/sys/error.lo
+	rm -f netwib/sys/internal.lo
+	rm -f netwib/sys/unix.lo
+	rm -f netwib/sys/windows.lo
+	rm -f netwib/net/priv.lo
+	rm -f netwib/net/debug.lo
+	rm -f netwib/net/device.lo
+	rm -f netwib/net/ip.lo
+	rm -f netwib/net/eth.lo
+	rm -f netwib/net/port.lo
+	rm -f netwib/net/ips.lo
+	rm -f netwib/net/ipsi.lo
+	rm -f netwib/net/eths.lo
+	rm -f netwib/net/ethsi.lo
+	rm -f netwib/net/ports.lo
+	rm -f netwib/net/portsi.lo
+	rm -f netwib/net/conf.lo
+	rm -f netwib/net/confdev.lo
+	rm -f netwib/net/confip.lo
+	rm -f netwib/net/confarp.lo
+	rm -f netwib/net/confrout.lo
+	rm -f netwib/net/sock.lo
+	rm -f netwib/net/sniff.lo
+	rm -f netwib/net/spoof.lo
+	rm -f netwib/pkt/priv.lo
+	rm -f netwib/pkt/debug.lo
+	rm -f netwib/pkt/linkhdr.lo
+	rm -f netwib/pkt/iphdr.lo
+	rm -f netwib/pkt/ip4opt.lo
+	rm -f netwib/pkt/ip4opts.lo
+	rm -f netwib/pkt/ip6ext.lo
+	rm -f netwib/pkt/ip6exts.lo
+	rm -f netwib/pkt/arphdr.lo
+	rm -f netwib/pkt/tcphdr.lo
+	rm -f netwib/pkt/udphdr.lo
+	rm -f netwib/pkt/tcpopt.lo
+	rm -f netwib/pkt/tcpopts.lo
+	rm -f netwib/pkt/ip64bits.lo
+	rm -f netwib/pkt/icmp4.lo
+	rm -f netwib/pkt/icmp6.lo
+	rm -f netwib/pkt/icmp6nd.lo
+	rm -f netwib/pkt/layer.lo
+	rm -f netwib/pkt/packet.lo
+	rm -f netwib/pkt/conv.lo
+	rm -f netwib/pkt/ipfrag.lo
+	rm -f netwib/shw/priv.lo
+	rm -f netwib/shw/debug.lo
+	rm -f netwib/shw/array.lo
+	rm -f netwib/shw/linkhdr.lo
+	rm -f netwib/shw/iphdr.lo
+	rm -f netwib/shw/ip4opt.lo
+	rm -f netwib/shw/ip4opts.lo
+	rm -f netwib/shw/ip6ext.lo
+	rm -f netwib/shw/ip6exts.lo
+	rm -f netwib/shw/arphdr.lo
+	rm -f netwib/shw/tcphdr.lo
+	rm -f netwib/shw/udphdr.lo
+	rm -f netwib/shw/tcpopt.lo
+	rm -f netwib/shw/tcpopts.lo
+	rm -f netwib/shw/icmp4.lo
+	rm -f netwib/shw/icmp6.lo
+	rm -f netwib/shw/icmp6nd.lo
+	rm -f netwib/shw/packet.lo
+
+# installing includes
+incmakeinstallinc:
+	mkdir -p $(INSTINCLUDE)/netwib539
+	chmod 755 $(INSTINCLUDE)/netwib539
+	mkdir -p $(INSTINCLUDE)/netwib539/dat
+	chmod 755 $(INSTINCLUDE)/netwib539/dat
+	mkdir -p $(INSTINCLUDE)/netwib539/sys
+	chmod 755 $(INSTINCLUDE)/netwib539/sys
+	mkdir -p $(INSTINCLUDE)/netwib539/net
+	chmod 755 $(INSTINCLUDE)/netwib539/net
+	mkdir -p $(INSTINCLUDE)/netwib539/pkt
+	chmod 755 $(INSTINCLUDE)/netwib539/pkt
+	mkdir -p $(INSTINCLUDE)/netwib539/shw
+	chmod 755 $(INSTINCLUDE)/netwib539/shw
+	cp ./netwib/dat/types.h $(INSTINCLUDE)/netwib539/dat/types.h
+	chmod 644 $(INSTINCLUDE)/netwib539/dat/types.h
+	cp ./netwib/sys/types.h $(INSTINCLUDE)/netwib539/sys/types.h
+	chmod 644 $(INSTINCLUDE)/netwib539/sys/types.h
+	cp ./netwib/net/types.h $(INSTINCLUDE)/netwib539/net/types.h
+	chmod 644 $(INSTINCLUDE)/netwib539/net/types.h
+	cp ./netwib/pkt/types.h $(INSTINCLUDE)/netwib539/pkt/types.h
+	chmod 644 $(INSTINCLUDE)/netwib539/pkt/types.h
+	cp ./netwib/shw/types.h $(INSTINCLUDE)/netwib539/shw/types.h
+	chmod 644 $(INSTINCLUDE)/netwib539/shw/types.h
+	cp netwib539.h $(INSTINCLUDE)/netwib539.h
+	chmod 644 $(INSTINCLUDE)/netwib539.h
+	rm -f $(INSTINCLUDE)/netwib.h
+	ln -s netwib539.h $(INSTINCLUDE)/netwib.h
+	cp netwib/def.h $(INSTINCLUDE)/netwib539/def.h
+	chmod 644 $(INSTINCLUDE)/netwib539/def.h
+	cp netwib/err.h $(INSTINCLUDE)/netwib539/err.h
+	chmod 644 $(INSTINCLUDE)/netwib539/err.h
+	cp netwib/dat.h $(INSTINCLUDE)/netwib539/dat.h
+	chmod 644 $(INSTINCLUDE)/netwib539/dat.h
+	cp netwib/sys.h $(INSTINCLUDE)/netwib539/sys.h
+	chmod 644 $(INSTINCLUDE)/netwib539/sys.h
+	cp netwib/net.h $(INSTINCLUDE)/netwib539/net.h
+	chmod 644 $(INSTINCLUDE)/netwib539/net.h
+	cp netwib/pkt.h $(INSTINCLUDE)/netwib539/pkt.h
+	chmod 644 $(INSTINCLUDE)/netwib539/pkt.h
+	cp netwib/shw.h $(INSTINCLUDE)/netwib539/shw.h
+	chmod 644 $(INSTINCLUDE)/netwib539/shw.h
+	cp netwib/dat/c.h $(INSTINCLUDE)/netwib539/dat/c.h
+	chmod 644 $(INSTINCLUDE)/netwib539/dat/c.h
+	cp netwib/dat/c2.h $(INSTINCLUDE)/netwib539/dat/c2.h
+	chmod 644 $(INSTINCLUDE)/netwib539/dat/c2.h
+	cp netwib/dat/ptr.h $(INSTINCLUDE)/netwib539/dat/ptr.h
+	chmod 644 $(INSTINCLUDE)/netwib539/dat/ptr.h
+	cp netwib/dat/buf.h $(INSTINCLUDE)/netwib539/dat/buf.h
+	chmod 644 $(INSTINCLUDE)/netwib539/dat/buf.h
+	cp netwib/dat/bufpool.h $(INSTINCLUDE)/netwib539/dat/bufpool.h
+	chmod 644 $(INSTINCLUDE)/netwib539/dat/bufpool.h
+	cp netwib/dat/bufenc.h $(INSTINCLUDE)/netwib539/dat/bufenc.h
+	chmod 644 $(INSTINCLUDE)/netwib539/dat/bufenc.h
+	cp netwib/dat/bufdec.h $(INSTINCLUDE)/netwib539/dat/bufdec.h
+	chmod 644 $(INSTINCLUDE)/netwib539/dat/bufdec.h
+	cp netwib/dat/fmt.h $(INSTINCLUDE)/netwib539/dat/fmt.h
+	chmod 644 $(INSTINCLUDE)/netwib539/dat/fmt.h
+	cp netwib/dat/checksum.h $(INSTINCLUDE)/netwib539/dat/checksum.h
+	chmod 644 $(INSTINCLUDE)/netwib539/dat/checksum.h
+	cp netwib/dat/regexp.h $(INSTINCLUDE)/netwib539/dat/regexp.h
+	chmod 644 $(INSTINCLUDE)/netwib539/dat/regexp.h
+	cp netwib/dat/ring.h $(INSTINCLUDE)/netwib539/dat/ring.h
+	chmod 644 $(INSTINCLUDE)/netwib539/dat/ring.h
+	cp netwib/dat/ringi.h $(INSTINCLUDE)/netwib539/dat/ringi.h
+	chmod 644 $(INSTINCLUDE)/netwib539/dat/ringi.h
+	cp netwib/dat/hash.h $(INSTINCLUDE)/netwib539/dat/hash.h
+	chmod 644 $(INSTINCLUDE)/netwib539/dat/hash.h
+	cp netwib/dat/hashi.h $(INSTINCLUDE)/netwib539/dat/hashi.h
+	chmod 644 $(INSTINCLUDE)/netwib539/dat/hashi.h
+	cp netwib/dat/tlv.h $(INSTINCLUDE)/netwib539/dat/tlv.h
+	chmod 644 $(INSTINCLUDE)/netwib539/dat/tlv.h
+	cp netwib/dat/array.h $(INSTINCLUDE)/netwib539/dat/array.h
+	chmod 644 $(INSTINCLUDE)/netwib539/dat/array.h
+	cp netwib/dat/uint64.h $(INSTINCLUDE)/netwib539/dat/uint64.h
+	chmod 644 $(INSTINCLUDE)/netwib539/dat/uint64.h
+	cp netwib/sys/time.h $(INSTINCLUDE)/netwib539/sys/time.h
+	chmod 644 $(INSTINCLUDE)/netwib539/sys/time.h
+	cp netwib/sys/rand.h $(INSTINCLUDE)/netwib539/sys/rand.h
+	chmod 644 $(INSTINCLUDE)/netwib539/sys/rand.h
+	cp netwib/sys/path.h $(INSTINCLUDE)/netwib539/sys/path.h
+	chmod 644 $(INSTINCLUDE)/netwib539/sys/path.h
+	cp netwib/sys/pathname.h $(INSTINCLUDE)/netwib539/sys/pathname.h
+	chmod 644 $(INSTINCLUDE)/netwib539/sys/pathname.h
+	cp netwib/sys/pathstat.h $(INSTINCLUDE)/netwib539/sys/pathstat.h
+	chmod 644 $(INSTINCLUDE)/netwib539/sys/pathstat.h
+	cp netwib/sys/dirname.h $(INSTINCLUDE)/netwib539/sys/dirname.h
+	chmod 644 $(INSTINCLUDE)/netwib539/sys/dirname.h
+	cp netwib/sys/filename.h $(INSTINCLUDE)/netwib539/sys/filename.h
+	chmod 644 $(INSTINCLUDE)/netwib539/sys/filename.h
+	cp netwib/sys/dir.h $(INSTINCLUDE)/netwib539/sys/dir.h
+	chmod 644 $(INSTINCLUDE)/netwib539/sys/dir.h
+	cp netwib/sys/thread.h $(INSTINCLUDE)/netwib539/sys/thread.h
+	chmod 644 $(INSTINCLUDE)/netwib539/sys/thread.h
+	cp netwib/sys/threadmut.h $(INSTINCLUDE)/netwib539/sys/threadmut.h
+	chmod 644 $(INSTINCLUDE)/netwib539/sys/threadmut.h
+	cp netwib/sys/threadrwl.h $(INSTINCLUDE)/netwib539/sys/threadrwl.h
+	chmod 644 $(INSTINCLUDE)/netwib539/sys/threadrwl.h
+	cp netwib/sys/threadcond.h $(INSTINCLUDE)/netwib539/sys/threadcond.h
+	chmod 644 $(INSTINCLUDE)/netwib539/sys/threadcond.h
+	cp netwib/sys/threadtsd.h $(INSTINCLUDE)/netwib539/sys/threadtsd.h
+	chmod 644 $(INSTINCLUDE)/netwib539/sys/threadtsd.h
+	cp netwib/sys/threadlist.h $(INSTINCLUDE)/netwib539/sys/threadlist.h
+	chmod 644 $(INSTINCLUDE)/netwib539/sys/threadlist.h
+	cp netwib/sys/io.h $(INSTINCLUDE)/netwib539/sys/io.h
+	chmod 644 $(INSTINCLUDE)/netwib539/sys/io.h
+	cp netwib/sys/ionew.h $(INSTINCLUDE)/netwib539/sys/ionew.h
+	chmod 644 $(INSTINCLUDE)/netwib539/sys/ionew.h
+	cp netwib/sys/iousual.h $(INSTINCLUDE)/netwib539/sys/iousual.h
+	chmod 644 $(INSTINCLUDE)/netwib539/sys/iousual.h
+	cp netwib/sys/wait.h $(INSTINCLUDE)/netwib539/sys/wait.h
+	chmod 644 $(INSTINCLUDE)/netwib539/sys/wait.h
+	cp netwib/sys/waitlist.h $(INSTINCLUDE)/netwib539/sys/waitlist.h
+	chmod 644 $(INSTINCLUDE)/netwib539/sys/waitlist.h
+	cp netwib/sys/file.h $(INSTINCLUDE)/netwib539/sys/file.h
+	chmod 644 $(INSTINCLUDE)/netwib539/sys/file.h
+	cp netwib/sys/fd.h $(INSTINCLUDE)/netwib539/sys/fd.h
+	chmod 644 $(INSTINCLUDE)/netwib539/sys/fd.h
+	cp netwib/sys/stream.h $(INSTINCLUDE)/netwib539/sys/stream.h
+	chmod 644 $(INSTINCLUDE)/netwib539/sys/stream.h
+	cp netwib/sys/kbd.h $(INSTINCLUDE)/netwib539/sys/kbd.h
+	chmod 644 $(INSTINCLUDE)/netwib539/sys/kbd.h
+	cp netwib/sys/kbdchar.h $(INSTINCLUDE)/netwib539/sys/kbdchar.h
+	chmod 644 $(INSTINCLUDE)/netwib539/sys/kbdchar.h
+	cp netwib/sys/kbdint.h $(INSTINCLUDE)/netwib539/sys/kbdint.h
+	chmod 644 $(INSTINCLUDE)/netwib539/sys/kbdint.h
+	cp netwib/sys/kbdbuf.h $(INSTINCLUDE)/netwib539/sys/kbdbuf.h
+	chmod 644 $(INSTINCLUDE)/netwib539/sys/kbdbuf.h
+	cp netwib/sys/kbdpress.h $(INSTINCLUDE)/netwib539/sys/kbdpress.h
+	chmod 644 $(INSTINCLUDE)/netwib539/sys/kbdpress.h
+	cp netwib/sys/screen.h $(INSTINCLUDE)/netwib539/sys/screen.h
+	chmod 644 $(INSTINCLUDE)/netwib539/sys/screen.h
+	cp netwib/sys/bufenc.h $(INSTINCLUDE)/netwib539/sys/bufenc.h
+	chmod 644 $(INSTINCLUDE)/netwib539/sys/bufenc.h
+	cp netwib/sys/bufdec.h $(INSTINCLUDE)/netwib539/sys/bufdec.h
+	chmod 644 $(INSTINCLUDE)/netwib539/sys/bufdec.h
+	cp netwib/sys/disp.h $(INSTINCLUDE)/netwib539/sys/disp.h
+	chmod 644 $(INSTINCLUDE)/netwib539/sys/disp.h
+	cp netwib/sys/record.h $(INSTINCLUDE)/netwib539/sys/record.h
+	chmod 644 $(INSTINCLUDE)/netwib539/sys/record.h
+	cp netwib/sys/beep.h $(INSTINCLUDE)/netwib539/sys/beep.h
+	chmod 644 $(INSTINCLUDE)/netwib539/sys/beep.h
+	cp netwib/sys/global.h $(INSTINCLUDE)/netwib539/sys/global.h
+	chmod 644 $(INSTINCLUDE)/netwib539/sys/global.h
+	cp netwib/sys/init.h $(INSTINCLUDE)/netwib539/sys/init.h
+	chmod 644 $(INSTINCLUDE)/netwib539/sys/init.h
+	cp netwib/sys/error.h $(INSTINCLUDE)/netwib539/sys/error.h
+	chmod 644 $(INSTINCLUDE)/netwib539/sys/error.h
+	cp netwib/sys/internal.h $(INSTINCLUDE)/netwib539/sys/internal.h
+	chmod 644 $(INSTINCLUDE)/netwib539/sys/internal.h
+	cp netwib/sys/unix.h $(INSTINCLUDE)/netwib539/sys/unix.h
+	chmod 644 $(INSTINCLUDE)/netwib539/sys/unix.h
+	cp netwib/sys/windows.h $(INSTINCLUDE)/netwib539/sys/windows.h
+	chmod 644 $(INSTINCLUDE)/netwib539/sys/windows.h
+	cp netwib/net/device.h $(INSTINCLUDE)/netwib539/net/device.h
+	chmod 644 $(INSTINCLUDE)/netwib539/net/device.h
+	cp netwib/net/ip.h $(INSTINCLUDE)/netwib539/net/ip.h
+	chmod 644 $(INSTINCLUDE)/netwib539/net/ip.h
+	cp netwib/net/eth.h $(INSTINCLUDE)/netwib539/net/eth.h
+	chmod 644 $(INSTINCLUDE)/netwib539/net/eth.h
+	cp netwib/net/port.h $(INSTINCLUDE)/netwib539/net/port.h
+	chmod 644 $(INSTINCLUDE)/netwib539/net/port.h
+	cp netwib/net/ips.h $(INSTINCLUDE)/netwib539/net/ips.h
+	chmod 644 $(INSTINCLUDE)/netwib539/net/ips.h
+	cp netwib/net/ipsi.h $(INSTINCLUDE)/netwib539/net/ipsi.h
+	chmod 644 $(INSTINCLUDE)/netwib539/net/ipsi.h
+	cp netwib/net/eths.h $(INSTINCLUDE)/netwib539/net/eths.h
+	chmod 644 $(INSTINCLUDE)/netwib539/net/eths.h
+	cp netwib/net/ethsi.h $(INSTINCLUDE)/netwib539/net/ethsi.h
+	chmod 644 $(INSTINCLUDE)/netwib539/net/ethsi.h
+	cp netwib/net/ports.h $(INSTINCLUDE)/netwib539/net/ports.h
+	chmod 644 $(INSTINCLUDE)/netwib539/net/ports.h
+	cp netwib/net/portsi.h $(INSTINCLUDE)/netwib539/net/portsi.h
+	chmod 644 $(INSTINCLUDE)/netwib539/net/portsi.h
+	cp netwib/net/conf.h $(INSTINCLUDE)/netwib539/net/conf.h
+	chmod 644 $(INSTINCLUDE)/netwib539/net/conf.h
+	cp netwib/net/confdev.h $(INSTINCLUDE)/netwib539/net/confdev.h
+	chmod 644 $(INSTINCLUDE)/netwib539/net/confdev.h
+	cp netwib/net/confip.h $(INSTINCLUDE)/netwib539/net/confip.h
+	chmod 644 $(INSTINCLUDE)/netwib539/net/confip.h
+	cp netwib/net/confarp.h $(INSTINCLUDE)/netwib539/net/confarp.h
+	chmod 644 $(INSTINCLUDE)/netwib539/net/confarp.h
+	cp netwib/net/confrout.h $(INSTINCLUDE)/netwib539/net/confrout.h
+	chmod 644 $(INSTINCLUDE)/netwib539/net/confrout.h
+	cp netwib/net/sock.h $(INSTINCLUDE)/netwib539/net/sock.h
+	chmod 644 $(INSTINCLUDE)/netwib539/net/sock.h
+	cp netwib/net/sniff.h $(INSTINCLUDE)/netwib539/net/sniff.h
+	chmod 644 $(INSTINCLUDE)/netwib539/net/sniff.h
+	cp netwib/net/spoof.h $(INSTINCLUDE)/netwib539/net/spoof.h
+	chmod 644 $(INSTINCLUDE)/netwib539/net/spoof.h
+	cp netwib/pkt/linkhdr.h $(INSTINCLUDE)/netwib539/pkt/linkhdr.h
+	chmod 644 $(INSTINCLUDE)/netwib539/pkt/linkhdr.h
+	cp netwib/pkt/iphdr.h $(INSTINCLUDE)/netwib539/pkt/iphdr.h
+	chmod 644 $(INSTINCLUDE)/netwib539/pkt/iphdr.h
+	cp netwib/pkt/ip4opt.h $(INSTINCLUDE)/netwib539/pkt/ip4opt.h
+	chmod 644 $(INSTINCLUDE)/netwib539/pkt/ip4opt.h
+	cp netwib/pkt/ip4opts.h $(INSTINCLUDE)/netwib539/pkt/ip4opts.h
+	chmod 644 $(INSTINCLUDE)/netwib539/pkt/ip4opts.h
+	cp netwib/pkt/ip6ext.h $(INSTINCLUDE)/netwib539/pkt/ip6ext.h
+	chmod 644 $(INSTINCLUDE)/netwib539/pkt/ip6ext.h
+	cp netwib/pkt/ip6exts.h $(INSTINCLUDE)/netwib539/pkt/ip6exts.h
+	chmod 644 $(INSTINCLUDE)/netwib539/pkt/ip6exts.h
+	cp netwib/pkt/arphdr.h $(INSTINCLUDE)/netwib539/pkt/arphdr.h
+	chmod 644 $(INSTINCLUDE)/netwib539/pkt/arphdr.h
+	cp netwib/pkt/tcphdr.h $(INSTINCLUDE)/netwib539/pkt/tcphdr.h
+	chmod 644 $(INSTINCLUDE)/netwib539/pkt/tcphdr.h
+	cp netwib/pkt/udphdr.h $(INSTINCLUDE)/netwib539/pkt/udphdr.h
+	chmod 644 $(INSTINCLUDE)/netwib539/pkt/udphdr.h
+	cp netwib/pkt/tcpopt.h $(INSTINCLUDE)/netwib539/pkt/tcpopt.h
+	chmod 644 $(INSTINCLUDE)/netwib539/pkt/tcpopt.h
+	cp netwib/pkt/tcpopts.h $(INSTINCLUDE)/netwib539/pkt/tcpopts.h
+	chmod 644 $(INSTINCLUDE)/netwib539/pkt/tcpopts.h
+	cp netwib/pkt/ip64bits.h $(INSTINCLUDE)/netwib539/pkt/ip64bits.h
+	chmod 644 $(INSTINCLUDE)/netwib539/pkt/ip64bits.h
+	cp netwib/pkt/icmp4.h $(INSTINCLUDE)/netwib539/pkt/icmp4.h
+	chmod 644 $(INSTINCLUDE)/netwib539/pkt/icmp4.h
+	cp netwib/pkt/icmp6.h $(INSTINCLUDE)/netwib539/pkt/icmp6.h
+	chmod 644 $(INSTINCLUDE)/netwib539/pkt/icmp6.h
+	cp netwib/pkt/icmp6nd.h $(INSTINCLUDE)/netwib539/pkt/icmp6nd.h
+	chmod 644 $(INSTINCLUDE)/netwib539/pkt/icmp6nd.h
+	cp netwib/pkt/layer.h $(INSTINCLUDE)/netwib539/pkt/layer.h
+	chmod 644 $(INSTINCLUDE)/netwib539/pkt/layer.h
+	cp netwib/pkt/packet.h $(INSTINCLUDE)/netwib539/pkt/packet.h
+	chmod 644 $(INSTINCLUDE)/netwib539/pkt/packet.h
+	cp netwib/pkt/conv.h $(INSTINCLUDE)/netwib539/pkt/conv.h
+	chmod 644 $(INSTINCLUDE)/netwib539/pkt/conv.h
+	cp netwib/pkt/ipfrag.h $(INSTINCLUDE)/netwib539/pkt/ipfrag.h
+	chmod 644 $(INSTINCLUDE)/netwib539/pkt/ipfrag.h
+	cp netwib/shw/array.h $(INSTINCLUDE)/netwib539/shw/array.h
+	chmod 644 $(INSTINCLUDE)/netwib539/shw/array.h
+	cp netwib/shw/linkhdr.h $(INSTINCLUDE)/netwib539/shw/linkhdr.h
+	chmod 644 $(INSTINCLUDE)/netwib539/shw/linkhdr.h
+	cp netwib/shw/iphdr.h $(INSTINCLUDE)/netwib539/shw/iphdr.h
+	chmod 644 $(INSTINCLUDE)/netwib539/shw/iphdr.h
+	cp netwib/shw/ip4opt.h $(INSTINCLUDE)/netwib539/shw/ip4opt.h
+	chmod 644 $(INSTINCLUDE)/netwib539/shw/ip4opt.h
+	cp netwib/shw/ip4opts.h $(INSTINCLUDE)/netwib539/shw/ip4opts.h
+	chmod 644 $(INSTINCLUDE)/netwib539/shw/ip4opts.h
+	cp netwib/shw/ip6ext.h $(INSTINCLUDE)/netwib539/shw/ip6ext.h
+	chmod 644 $(INSTINCLUDE)/netwib539/shw/ip6ext.h
+	cp netwib/shw/ip6exts.h $(INSTINCLUDE)/netwib539/shw/ip6exts.h
+	chmod 644 $(INSTINCLUDE)/netwib539/shw/ip6exts.h
+	cp netwib/shw/arphdr.h $(INSTINCLUDE)/netwib539/shw/arphdr.h
+	chmod 644 $(INSTINCLUDE)/netwib539/shw/arphdr.h
+	cp netwib/shw/tcphdr.h $(INSTINCLUDE)/netwib539/shw/tcphdr.h
+	chmod 644 $(INSTINCLUDE)/netwib539/shw/tcphdr.h
+	cp netwib/shw/udphdr.h $(INSTINCLUDE)/netwib539/shw/udphdr.h
+	chmod 644 $(INSTINCLUDE)/netwib539/shw/udphdr.h
+	cp netwib/shw/tcpopt.h $(INSTINCLUDE)/netwib539/shw/tcpopt.h
+	chmod 644 $(INSTINCLUDE)/netwib539/shw/tcpopt.h
+	cp netwib/shw/tcpopts.h $(INSTINCLUDE)/netwib539/shw/tcpopts.h
+	chmod 644 $(INSTINCLUDE)/netwib539/shw/tcpopts.h
+	cp netwib/shw/icmp4.h $(INSTINCLUDE)/netwib539/shw/icmp4.h
+	chmod 644 $(INSTINCLUDE)/netwib539/shw/icmp4.h
+	cp netwib/shw/icmp6.h $(INSTINCLUDE)/netwib539/shw/icmp6.h
+	chmod 644 $(INSTINCLUDE)/netwib539/shw/icmp6.h
+	cp netwib/shw/icmp6nd.h $(INSTINCLUDE)/netwib539/shw/icmp6nd.h
+	chmod 644 $(INSTINCLUDE)/netwib539/shw/icmp6nd.h
+	cp netwib/shw/packet.h $(INSTINCLUDE)/netwib539/shw/packet.h
+	chmod 644 $(INSTINCLUDE)/netwib539/shw/packet.h

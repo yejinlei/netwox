@@ -1,0 +1,35 @@
+<HTML><HEAD>
+<TITLE>netwib doc_html (version 5.39.0)</TITLE>
+</HEAD><BODY BGCOLOR="#FFFFFF" TEXT="#000000">
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../sys.html">section index</A></H2><HR><BR>
+<PRE>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* the FILE type is necessary to write to a file */</FONT>
+<FONT COLOR="#008800">#if defined <FONT COLOR="#000044">NETWIB_EXT_FILE</FONT></FONT>
+ <FONT COLOR="#880000">/* user included stdio.h (which defines FILE type) before
+    netwib.h */</FONT>
+<FONT COLOR="#008800"> #define NETWIBFILE FILE</FONT>
+<FONT COLOR="#008800">#else</FONT>
+ <FONT COLOR="#880000">/* [default] user perhaps forgot to include stdio.h before
+    netwib.h, but netwib has to work without bothering user */</FONT>
+<FONT COLOR="#008800"> #define NETWIBFILE void</FONT>
+<FONT COLOR="#008800">#endif</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* the HANDLE type is used everywhere under Windows */</FONT>
+<FONT COLOR="#008800">#if defined <FONT COLOR="#000044">NETWIB_EXT_HANDLE</FONT></FONT>
+ <FONT COLOR="#880000">/* user included windows.h (which defines FILE type) before
+    netwib.h */</FONT>
+<FONT COLOR="#008800"> #define NETWIBHANDLE HANDLE</FONT>
+<FONT COLOR="#008800">#else</FONT>
+ <FONT COLOR="#880000">/* [default] user perhaps forgot to include windows.h before
+    netwib.h or is under Unix, but netwib has to work without
+    bothering user */</FONT>
+<FONT COLOR="#008800"> #define NETWIBHANDLE void*</FONT>
+<FONT COLOR="#008800">#endif</FONT>
+</PRE><BR><BR><HR><BR>
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../sys.html">section index</A></H2>
+</BODY></HTML>

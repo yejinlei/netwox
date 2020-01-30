@@ -1,0 +1,49 @@
+<HTML>
+ <HEAD>
+ <TITLE>Tool 179: DHCP client requesting an INFORM</TITLE>
+ </HEAD>
+ <BODY BGCOLOR="#FFFFFF">
+  <CENTER>   <H3>Tool 179: DHCP client requesting an INFORM</H3>
+  </CENTER>
+
+  <P><H3>Description:</H3>
+   <PRE>
+  This tool sends an INFORM message requesting DHCP servers to tell us
+  several parameters (gateway, dns server, etc.).
+  
+  Parameters --device and --eth-src and --ip-src permit to send message
+  using a fake address.
+  
+  This tool may need to be run with admin privilege in order to sniff
+  and spoof.
+   </PRE>
+
+  <P><H3>Usage:</H3>
+  &nbsp;&nbsp;netwox 179 [-d device] [-e eth] [-i ip] [-T uint32]<BR>
+
+  <P><H3>Parameters:</H3>
+<TABLE BORDER=1 CELLPADDING=4>
+ <TR>
+  <TD ALIGN=middle><I>parameter</I></TD>
+  <TD ALIGN=middle><I>description</I></TD>
+  <TD ALIGN=middle><I>example</I></TD>
+ </TR>
+ <TR><TD><TT>-d|--device device</TD>
+<TD>device for spoof</TD>
+<TD>Eth0</TD></TR>
+<TR><TD><TT>-e|--eth-src eth</TD>
+<TD>Ethernet src</TD>
+<TD>E0:69:95:6F:ED:9A</TD></TR>
+<TR><TD><TT>-i|--ip-src ip</TD>
+<TD>IP src</TD>
+<TD>192.168.100.200</TD></TR>
+<TR><TD><TT>-T|--timeout uint32</TD>
+<TD>timeout in ms</TD>
+<TD>30000 </TD></TR>
+</TABLE>
+
+  <P><H3>Example:</H3>
+  &nbsp;&nbsp;netwox 179<BR>
+<BR>
+ </BODY>
+ </HTML>

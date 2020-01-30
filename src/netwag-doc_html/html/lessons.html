@@ -1,0 +1,351 @@
+<HTML><HEAD>
+<TITLE>netwag examples</TITLE>
+</HEAD><BODY BGCOLOR="#FFFFFF" TEXT="#000000">
+<CENTER><IMG SRC="../images/banner_netwag.jpg"></CENTER>
+<BR><BR>
+
+This document shows sample usages of netwag.
+<P>
+Several sessions/lessons will be presented. They assume user closes and reopen
+netwag each time. This is not necessary, but s/he migth have clicked
+somewhere and caused a state change. So, if results are not expected, close
+netwag and restart a lesson.
+<P>
+Netwag is graphical tool, but it is described here as text only because
+I cannot afford spending time to create screenshots.
+
+<BR><HR><H2>Lesson 1 : navigate in the GUI</H2>
+<UL>
+ <LI>click on Local_info notebook (the second button below File menu)</LI>
+ <LI>click on Remote_info notebook</LI>
+ <LI>click on Clipboard notebook</LI>
+ <LI>click on Tool notebook</LI>
+ <LI>click on Help sub-notebook (the second button below Run)</LI>
+ <LI>click on Form sub-notebook</LI>
+ <LI>click on Running sub-notebook</LI>
+ <LI>click on History sub-notebook</LI>
+ <LI>click on Local_info notebook</LI>
+ <LI>click on Ip sub-notebook</LI>
+ <LI>click on Arp_cache sub-notebook</LI>
+ <LI>click on Routes sub-notebook</LI>
+</UL>
+
+<BR><HR><H2>Lesson 2 : dynamic help</H2>
+<UL>
+ <LI>click on Tool notebook</LI>
+ <LI>click on Search sub-notebook</LI>
+ <LI>move the mouse on top of the green zone</LI>
+ <LI>don't move during one second</LI>
+ <LI>a yellow window appears containing description of the field</LI>
+ <LI>move the mouse on top of "sort" button (just below Search button)</LI>
+ <LI>don't move during one second</LI>
+ <LI>a yellow window appears containing description of the "sort" button</LI>
+ <LI>etc.</LI>
+</UL>
+Summary : just put the mouse on top of an item to obtain help.
+
+<BR><HR><H2>Lesson 3 : clipboards</H2>
+<UL>
+ <LI>click on Clipboard notebook (the screen is now divided in two parts :
+     a big white clipboard, and a blue informational
+     zone)</LI>
+ <LI>enter "hello" in one of the 4 big white clipboards</LI>
+ <LI>select "hello" text</LI>
+ <LI>menu Edit - Copy (or press Control-C key)</LI>
+ <LI>click in another clipboard</LI>
+ <LI>menu Edit - Paste (or press Control-V key)</LI>
+ <LI>between white and blue vertical scrollbars, there are 2 up arrows. Press
+     on them (or '+') several times : a small clipboard appears which is shared
+     between every notebook.</LI>
+</UL>
+Summary : those clipboards can save data you want
+
+<BR><HR><H2>Lesson 4 : local configuration</H2>
+<UL>
+ <LI>click on Local_info notebook</LI>
+ <LI>click on Devices/Ip/etc. buttons to obtain your local configuration</LI>
+</UL>
+Summary : Local_info notebook permits to obtain information about local computer
+
+<BR><HR><H2>Lesson 5 : remote configuration</H2>
+<UL>
+ <LI>click on Remote_info notebook</LI>
+ <LI>enter www.microsoft.com in the white field</LI>
+ <LI>press query button (on right of white field)</LI>
+ <LI>enter 1.2.3.4 (or whatever IP address) in the white field</LI>
+ <LI>press query button (on right of white field)</LI>
+</UL>
+Summary : Remote_info notebook permits to obtain information about a remote computer
+
+<BR><HR><H2>Lesson 6 : need to select a tool</H2>
+<UL>
+ <LI>[eventually exit and restart netwag because state might have changed]</LI>
+ <LI>[Tool notebook should be already selected]</LI>
+ <LI>click on Help sub-notebook</LI>
+ <LI>[The text "No tool is selected..." appears]</LI>
+ <LI>click on Form sub-notebook</LI>
+ <LI>[The text "No tool is selected..." appears]</LI>
+</UL>
+Summary : to use Help and Form sub-notebooks, a tool must be selected.
+
+<BR><HR><H2>Lesson 7 : select a tool (sorted by number)</H2>
+<UL>
+ <LI>redo all steps of lesson 6</LI>
+ <LI>click on Search sub-notebook</LI>
+ <LI>["sort" radio button should be already selected (top left)]</LI>
+ <LI>select tool 23 ("23 : Display ASCII table")</LI>
+ <LI>click on Help sub-notebook (now, the help should be displayed)</LI>
+ <LI>click on Form sub-notebook (now, the form should be displayed)</LI>
+ <LI>click on Search sub-notebook</LI>
+ <LI>double click on tool 22</LI>
+ <LI>[the Form sub-notebook appears automatically]</LI>
+</UL>
+Summary : to use Help and Form sub-notebooks, a tool must be selected in the search notebook.
+
+<BR><HR><H2>Lesson 8 : select a tool (sorted by tree)</H2>
+<UL>
+ <LI>[eventually exit and restart netwag because state might have changed]</LI>
+ <LI>[Tool notebook should be already selected]</LI>
+ <LI>[Search sub-notebook should be already selected]</LI>
+ <LI>click on "tree" radio button (top left)</LI>
+ <LI>[now, tools are ordered in a tree]</LI>
+ <LI>click on "+ tools not related to network"</LI>
+ <LI>select tool 23 ("23 : Display ASCII table")</LI>
+</UL>
+
+<BR><HR><H2>Lesson 9 : search a tool</H2>
+<UL>
+ <LI>[eventually exit and restart netwag because state might have changed]</LI>
+ <LI>[Tool notebook should be already selected]</LI>
+ <LI>[Search sub-notebook should be already selected]</LI>
+ <LI>click on "sort" radio button (top left)</LI>
+ <LI>click in white zone (top right, near "search")</LI>
+ <LI>press key 't'</LI>
+ <LI>press key 'c'</LI>
+ <LI>press key 'p'</LI>
+ <LI>[a list of tools related to TCP appears]</LI>
+ <LI>click on "show all" radio button (top right)</LI>
+ <LI>[now, all tools are visible]</LI>
+</UL>
+Summary : if you do not see all tools, it might be because search is activated
+
+<BR><HR><H2>Lesson 10 : run a tool (from Help)</H2>
+<UL>
+ <LI>click on Tool notebook</LI>
+ <LI>click on Search sub-notebook</LI>
+ <LI>select tool 23 ("23 : Display ASCII table")</LI>
+ <LI>click on Help sub-notebook</LI>
+ <LI>press on Example button</LI>
+ <LI>[the string "23" appears in the run command]</LI>
+ <LI>press on Run button</LI>
+ <LI>[Running notebook becomes selected and displays result between
+     green line. First green line indicates command. And last indicates
+     end of program.]</LI>
+ <LI>check the "NW" checkbox below Run button</LI>
+ <LI>press on Run button</LI>
+ <LI>[a New Window appears and displays result]</LI>
+ <LI>click on History sub-notebook</LI>
+ <LI>[the command "23" appears in the list]</LI>
+</UL>
+
+<BR><HR><H2>Lesson 11 : run a tool (from History)</H2>
+<UL>
+ <LI>click on Tool notebook</LI>
+ <LI>click on History sub-notebook</LI>
+ <LI>select command "23"</LI>
+ <LI>press on Copy_line button</LI>
+ <LI>[the string "23" appears in the run command]</LI>
+ <LI>press on Run button</LI>
+</UL>
+
+<BR><HR><H2>Lesson 12 : run a tool (from Form)</H2>
+<UL>
+ <LI>[select tool 23, as explained several times]</LI>
+ <LI>click on Form sub-notebook</LI>
+ <LI>press on Generate button</LI>
+ <LI>[the command line is "23"]</LI>
+ <LI>check "extended" line (press on right checkbox to automatically select
+     both)</LI>
+ <LI>press on Generate button</LI>
+ <LI>[the command line is now "23 --extended"]</LI>
+ <LI>press on Run button (NW not checked, to see green
+     command "23 --extended")</LI>
+</UL>
+
+<BR><HR><H2>Lesson 13 : all about History sub-notebook</H2>
+<UL>
+ <LI>click on Tool notebook</LI>
+ <LI>click on History sub-notebook</LI>
+ <LI>in the white zone in front of Run and NW, write "2"</LI>
+ <LI>press Add_current button</LI>
+ <LI>[current command is added in the history]</LI>
+ <LI>in the white zone in front of Run and NW, write "22 hello"</LI>
+ <LI>press Add_current button</LI>
+ <LI>[current command is added in the history]</LI>
+ <LI>select command 2</LI>
+ <LI>press Copy_line button</LI>
+ <LI>[command is copied in the command zone]</LI>
+ <LI>select command "22 hello"</LI>
+ <LI>press Run_it button</LI>
+ <LI>[command is copied and automatically run]</LI>
+ <LI>select command 2</LI>
+ <LI>press Delete_line button</LI>
+ <LI>[command 2 is removed from history]</LI>
+</UL>
+
+<BR><HR><H2>Lesson 14 : all about Help sub-notebook</H2>
+Well, it's almost the same as lesson 12. It should not be too
+difficult. The main idea to remember is the help is about the
+last tool selected in Search notebook.
+
+<BR><HR><H2>Lesson 15 : all about Form sub-notebook</H2>
+As for lesson 14, the form is about the
+last tool selected in Search notebook.
+<UL>
+ <LI>click on Search sub-notebook</LI>
+ <LI>double-click tool 7</LI>
+ <LI>[a form appears, corresponding to parameters of tool 7]</LI>
+</UL>
+Now, a quick explanation about this form.<BR>
+First parameter (device) is a listbox. You can select the
+device you want (Lo0, Eth0, etc.). The checkbox on left indicates
+if parameter --device has to be generated.<BR>
+Second parameter (filter) is a string. You can enter the text
+you want (host 1.2.3.4). The checkbox on left indicates
+if parameter --filter has to be generated.<BR>
+Third parameter (pause) is a boolean. You can check or not
+the checkbox. The checkbox on left indicates
+if parameter --pause has to be generated.<BR>
+Let's restart :<BR>
+<UL>
+ <LI>click on Search sub-notebook</LI>
+ <LI>double-click tool 7</LI>
+ <LI>[a form appears, corresponding to parameters of tool 7]</LI>
+ <LI>select parameter device "Eth0" (or whatever device name)</LI>
+ <LI>[the checkbox on left is automatically checked]</LI>
+ <LI>click on Generate button</LI>
+ <LI>[the command "7 --device "Eth0"" appears]</LI>
+ <LI>enter parameter filter "host 1.2.3.4"</LI>
+ <LI>click on Generate button</LI>
+ <LI>[the command "7 --device "Eth0" --filter "host 1.2.3.4"" appears]</LI>
+ <LI>check the checkbox for pause</LI>
+ <LI>click on Generate button</LI>
+ <LI>[the command "7 --filter "host 1.2.3.4" --pause" appears]</LI>
+</UL>
+
+Now a quick usage of other buttons :
+<UL>
+ <LI>Run : run the command</LI>
+ <LI>Run_it : generate and run the command</LI>
+ <LI>Reset : reset the form</LI>
+ <LI>Update : display form associated to tool number in command</LI>
+</UL>
+
+<BR><HR><H2>Lesson 16 : interacting with a tool (open a New Window)</H2>
+We suppose 1.2.3.4 has a listening FTP server.
+<UL>
+ <LI>click on Tool notebook</LI>
+ <LI>enter command "87 1.2.3.4 21"</LI>
+ <LI>check NW checkbox</LI>
+ <LI>press Run button</LI>
+ <LI>[a New Window appears. It should contain the banner of FTP server]</LI>
+ <LI>enter "QUIT" (press 'Q' 'U' 'I' 'T' keys, and press Return key)</LI>
+ <LI>[the FTP server says goodbye]</LI>
+ <LI>press a key to close the New Window</LI>
+</UL>
+
+<BR><HR><H2>Lesson 17 : interacting with a tool (in netwag)</H2>
+When you want to interact with a tool, it's easier to follow lesson 16.
+It can also be done in netwag, but it's more complicated.
+<UL>
+ <LI>click on Tool notebook</LI>
+ <LI>enter command "87 1.2.3.4 21"</LI>
+ <LI>do not check NW checkbox</LI>
+ <LI>press Run button</LI>
+ <LI>[netwag switches to Running notebook. It should contain the banner of FTP server]</LI>
+ <LI>enter "QUIT\n" (\n is for line skip) in the top white zone near Send button</LI>
+ <LI>press Send button (or press Return key)</LI>
+ <LI>[the data you entered (QUIT) is written in blue]</LI>
+ <LI>[the FTP server says goodbye]</LI>
+ <LI>[a green __END_OF_PROGRAM__ indicates tool has terminated]</LI>
+</UL>
+The checkbox after Send indicates if data has to be echoed
+in blue (uncheck to enter a password for example).
+This sending zone (text + Send button + echo checkbox) is only
+present for tools which can receive data from stdin (keyboard). For
+other tools, it is not needed, so it is hidden.
+<BR><BR>
+When a tool is running, a zone is present above. Button Copy_command permits to
+copy command which launched tool. Button Interrupt permits to
+interrupt a running tool. Button Pause permits to pause display. Checkbox
+autoscroll automatically scrolls down the window. This zone hides
+itself when tool has finished running.
+<BR><BR>
+When a tool has finished running, two buttons appears. Button Copy_command
+permits to copy command which launched tool. Button Run_it_again permits
+to run the same tool once more.
+
+<BR><HR><H2>Lesson 18 : when several tools have been run</H2>
+When two or more tools have been run, a notebook appears and permits
+to switch between different tools (running or terminated).
+<UL>
+ <LI>close and reopen netwag</LI>
+ <LI>click on Tool notebook</LI>
+ <LI>click on Running notebook</LI>
+ <LI>enter command "13"</LI>
+ <LI>press Run button</LI>
+ <LI>[its output is displayed]</LI>
+ <LI>enter command "7"</LI>
+ <LI>press Run button</LI>
+ <LI>[its output is displayed]</LI>
+ <LI>click alternatively on buttons 13 and 7 to switch between those
+     two tools : "13" is white which means its terminated, while "7"
+     is black so still running (if sniff is supported on your computer)</LI>
+ <LI>enter command "1"</LI>
+ <LI>press Run button</LI>
+ <LI>[its output is displayed]</LI>
+ <LI>click on 13</LI>
+ <LI>click on a black cross (X) to close current output (tool 13)</LI>
+ <LI>[only 7 and 1 are available now]</LI>
+</UL>
+
+<BR><HR><H2>Lesson 19 : font</H2>
+<UL>
+ <LI>open menu Options</LI>
+ <LI>choose "Font..."</LI>
+ <LI>select a new font</LI>
+</UL>
+
+<BR><HR><H2>Lesson 20 : colors</H2>
+Background colors have following meaning:
+<UL>
+ <LI>white is for editable text</LI>
+ <LI>blue is for selectable only text</LI>
+ <LI>green is for listboxes</LI>
+</UL>
+
+<BR><HR><H2>Lesson 21 : sessions</H2>
+When netwag is closed, it saves a session file : window's size,
+clipboard, font, etc.
+<UL>
+ <LI>open netwag</LI>
+ <LI>enlarge window's size</LI>
+ <LI>close netwag</LI>
+ <LI>reopen netwag</LI>
+ <LI>[netwag has now the new size]</LI>
+</UL>
+
+<BR><HR><H2>Lesson 22 : dynamic help</H2>
+In lesson 2, dynamic help was presented. It can be deactivated. Well, I
+suggest you to leave it for the first days.
+<UL>
+ <LI>open menu Help</LI>
+ <LI>select line Dynamic_help</LI>
+ <LI>[it becomes checked or unchecked]</LI>
+</UL>
+
+<BR><HR><H2>Conclusion</H2>
+Have fun :)
+
+</BODY>
+</HTML>

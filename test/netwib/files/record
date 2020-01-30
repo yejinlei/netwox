@@ -1,0 +1,73 @@
+# This file is used for test : do not remove it
+#123456
+#12345
+#1234
+#123
+#12
+#1
+#
+#
+# 'tutu'
+  74 75 74 75
+
+#packet 3
+ '#''345678"90jksdfj'
+  23 27 33 34 35 36 37 38 39 30 6A 6B 73 64 66 6A
+ 'k''js' E7 'j' E0 'sjd'
+  6B 22 6A 73 E7 6A E0 73 6A 64
+
+
+ 'X+~'  06 'Ik}' 18 'n' 80 ';' 01 11 ':E'
+  58 2B 7E 20 06 49 6B 7D 18 6E 80 3B 01 11 3A 45
+ '?Ub' 1E 19 0F 'd' 04 ' $n' 06 0A 'j5' 11
+  3F 55 62 1E 19 0F 64 04 20 24 6E 06 0A 6A 35 11
+ '!MjSv$LS`xFZ''x(K'
+  21 4D 6A 53 76 24 4C 53 60 7e 46 5A 22 78 28 4B
+ '!Pn>iiw}/{' 04 '&' 01 'm]/'
+
+ 'a''b''c''''d'
+
+
+# 'tutu'
+  74 75 74 75
+
+#
+# '01234567890jksdf'
+  30 31 32 33 34 35 36 37 38 39 30 6A 6B 73 64 66
+# 'jkhjsqjdsj'
+  6A 6B 68 6A 73 71 6A 64 73 6A
+
+
+#
+# 'Uy' B8 C8 D0 '_C' EF E2 '>' C3 F3 84 'k' 99 '0'
+  55 79 B8 C8 D0 5F 43 EF E2 3E C3 F3 84 6B 99 30
+# C6 DB 'j' 0B D5 9B 18 93 'C' 07 'z' E4 B6 D9 AE '?'
+  C6 DB 6A 0B D5 9B 18 93 43 07 7A E4 B6 D9 AE 3F
+# B3 F2 BD 'Xh' AB '~|' 0F C7 '~' 88 FB 85 'k' 1D
+  B3 F2 BD 58 68 AB 7E 7C 0F C7 7E 88 FB 85 6B 1D
+# DE '<' 0D '.' 88 F6 18 C7 F6 B2 ':' A9 9C DF F2 '&'
+  DE 3C 0D 2E 88 F6 18 C7 F6 B2 3A A9 9C DF F2 26
+# 0C 'l' F7 8F 't' 85 F8 B5 DA 'b' A1 'K:F'' FD
+  0C 6C F7 8F 74 85 F8 B5 DA 62 A1 4B 3A 46 27 FD
+# CF 'M' 04 'Eb' 05 16 'H!' 05 B6 01 '{' 1E B3 D6
+  CF 4D 04 45 62 05 16 48 21 05 B6 01 7B 1E B3 D6
+# 85 'H' 00 01 'W' BC C1 '^' AF A6 B4 'V' EE D1 90 '$'
+  85 48 00 01 57 BC C1 5E AF A6 B4 56 EE D1 90 24
+# CC 9E FA '/' A6 BF F0 'K' 80 04 98 'c' CF ''' DD 't'
+  CC 9E FA 2F A6 BF F0 4B 80 04 98 63 CF 27 DD 74
+# B8 'u' B2 03 90 C0 DF 1F FC 94 '~' 1A '-' AD 8D B3
+  B8 75 B2 03 90 C0 DF 1F FC 94 7E 1A 2D AD 8D B3
+# '4' F7 CD '?' BD DD
+  34 F7 CD 3F BD DD
+
+# 
+    
+AA
+
+#tabu
+			
+   
+BB
+
+# 2
+

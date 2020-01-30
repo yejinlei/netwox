@@ -1,0 +1,88 @@
+<HTML><HEAD>
+<TITLE>netwib doc_html (version 5.39.0)</TITLE>
+</HEAD><BODY BGCOLOR="#FFFFFF" TEXT="#000000">
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../sys.html">section index</A></H2><HR><BR>
+<PRE>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+typedef struct <FONT COLOR="#000088">netwib_thread_cond</FONT> <FONT COLOR="#000088">netwib_thread_cond</FONT>;
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_thread_cond_init
+   Description :
+     Initialize a condition.
+   Input parameter(s) :
+   Input/output parameter(s) :
+     *ppcond : <FONT COLOR="#000088">netwib_thread_cond</FONT> initialized
+   Output parameter(s) :
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_thread_cond_init</B>(<FONT COLOR="#000088">netwib_thread_cond</FONT> **ppcond);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_thread_cond_close
+   Description :
+     Close a condition.
+   Input parameter(s) :
+   Input/output parameter(s) :
+     *ppcond : <FONT COLOR="#000088">netwib_thread_cond</FONT> closed
+   Output parameter(s) :
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_thread_cond_close</B>(<FONT COLOR="#000088">netwib_thread_cond</FONT> **ppcond);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_thread_cond_broadcast
+   Description :
+     Inform every waiting thread.
+   Input parameter(s) :
+     value : value to broadcast
+   Input/output parameter(s) :
+     *pcond : netwib_thread_cond
+   Output parameter(s) :
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_thread_cond_broadcast</B>(<FONT COLOR="#000088">netwib_thread_cond</FONT> *pcond,
+                                        <FONT COLOR="#000088">netwib_uint32</FONT> value);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_thread_cond_wait
+   Description :
+     Wait for the condition.
+   Input parameter(s) :
+     *pcond : netwib_thread_cond
+     *pabstime : end time. If *pabstime is reached, function
+                 returns (*pevent set to <FONT COLOR="#000044">NETWIB_FALSE</FONT>).
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pevent : condition reached
+     *pvalue : value received
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_thread_cond_wait</B>(<FONT COLOR="#000088">netwib_thread_cond</FONT> *pcond,
+                                   <FONT COLOR="#000088">netwib_consttime</FONT> *pabstime,
+                                   <FONT COLOR="#000088">netwib_bool</FONT> *pevent,
+                                   <FONT COLOR="#000088">netwib_uint32</FONT> *pvalue);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_thread_cond_reinit
+   Description :
+     Reset the condition. So netwib_thread_cond_broadcast
+     can be used again.
+   Input parameter(s) :
+   Input/output parameter(s) :
+     *pcond : netwib_thread_cond
+   Output parameter(s) :
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_thread_cond_reinit</B>(<FONT COLOR="#000088">netwib_thread_cond</FONT> *pcond);
+</PRE><BR><BR><HR><BR>
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../sys.html">section index</A></H2>
+</BODY></HTML>

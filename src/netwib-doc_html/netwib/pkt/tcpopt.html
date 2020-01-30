@@ -1,0 +1,134 @@
+<HTML><HEAD>
+<TITLE>netwib doc_html (version 5.39.0)</TITLE>
+</HEAD><BODY BGCOLOR="#FFFFFF" TEXT="#000000">
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../pkt.html">section index</A></H2><HR><BR>
+<PRE>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+typedef enum {
+  <FONT COLOR="#000044">NETWIB_TCPOPTTYPE_END</FONT> = 0,          <FONT COLOR="#880000">/* rfc 793 - end of options */</FONT>
+  <FONT COLOR="#000044">NETWIB_TCPOPTTYPE_NOOP</FONT> = 1,         <FONT COLOR="#880000">/* rfc 793 - no operation */</FONT>
+  <FONT COLOR="#000044">NETWIB_TCPOPTTYPE_MSS</FONT> = 2,          <FONT COLOR="#880000">/* rfc 793 - maximum segment size */</FONT>
+  <FONT COLOR="#000044">NETWIB_TCPOPTTYPE_WINDOWSCALE</FONT> = 3,  <FONT COLOR="#880000">/* rfc 1323 - window scale */</FONT>
+  <FONT COLOR="#000044">NETWIB_TCPOPTTYPE_SACKPERMITTED</FONT> = 4,<FONT COLOR="#880000">/* rfc 2018 - SACK permitted */</FONT>
+  <FONT COLOR="#000044">NETWIB_TCPOPTTYPE_SACK</FONT> = 5,    <FONT COLOR="#880000">/* rfc 2018 - selective acknowledgment */</FONT>
+  <FONT COLOR="#000044">NETWIB_TCPOPTTYPE_ECHOREQUEST</FONT> = 6,  <FONT COLOR="#880000">/* rfc 1072 - echo request */</FONT>
+  <FONT COLOR="#000044">NETWIB_TCPOPTTYPE_ECHOREPLY</FONT> = 7,    <FONT COLOR="#880000">/* rfc 1072 - echo reply */</FONT>
+  <FONT COLOR="#000044">NETWIB_TCPOPTTYPE_TIMESTAMP</FONT> = 8,    <FONT COLOR="#880000">/* rfc 1323 - timestamp */</FONT>
+  <FONT COLOR="#000044">NETWIB_TCPOPTTYPE_CC</FONT> = 11,          <FONT COLOR="#880000">/* rfc 1644 - connection count */</FONT>
+  <FONT COLOR="#000044">NETWIB_TCPOPTTYPE_CCNEW</FONT> = 12,       <FONT COLOR="#880000">/* rfc 1644 - connection count */</FONT>
+  <FONT COLOR="#000044">NETWIB_TCPOPTTYPE_CCECHO</FONT> = 13       <FONT COLOR="#880000">/* rfc 1644 - connection count */</FONT>
+} <FONT COLOR="#000088">netwib_tcpopttype</FONT>;
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* maximum length of one TCP option */</FONT>
+<FONT COLOR="#008800">#define <FONT COLOR="#000044">NETWIB_TCPOPT_MAXLEN</FONT> 40</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+typedef struct {
+  <FONT COLOR="#000088">netwib_uint16</FONT> maxsegsize;
+} <FONT COLOR="#000088">netwib_tcpopt_mss</FONT>;
+typedef const <FONT COLOR="#000088">netwib_tcpopt_mss</FONT> <FONT COLOR="#000088">netwib_consttcpopt_mss</FONT>;
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+typedef struct {
+  <FONT COLOR="#000088">netwib_uint8</FONT> windowscale;
+} <FONT COLOR="#000088">netwib_tcpopt_windowscale</FONT>;
+typedef const <FONT COLOR="#000088">netwib_tcpopt_windowscale</FONT> <FONT COLOR="#000088">netwib_consttcpopt_windowscale</FONT>;
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+typedef struct {
+  <FONT COLOR="#000088">netwib_uint32</FONT> storedvalues; <FONT COLOR="#880000">/* 0 to 4 */</FONT>
+  <FONT COLOR="#000088">netwib_uint32</FONT> leftedge[4];
+  <FONT COLOR="#000088">netwib_uint32</FONT> rightedge[4];
+} <FONT COLOR="#000088">netwib_tcpopt_sack</FONT>;
+typedef const <FONT COLOR="#000088">netwib_tcpopt_sack</FONT> <FONT COLOR="#000088">netwib_consttcpopt_sack</FONT>;
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+typedef struct {
+  <FONT COLOR="#000088">netwib_uint32</FONT> data;
+} <FONT COLOR="#000088">netwib_tcpopt_echo</FONT>;
+typedef const <FONT COLOR="#000088">netwib_tcpopt_echo</FONT> <FONT COLOR="#000088">netwib_consttcpopt_echo</FONT>;
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+typedef struct {
+  <FONT COLOR="#000088">netwib_uint32</FONT> val;
+  <FONT COLOR="#000088">netwib_uint32</FONT> echoreply;
+} <FONT COLOR="#000088">netwib_tcpopt_timestamp</FONT>;
+typedef const <FONT COLOR="#000088">netwib_tcpopt_timestamp</FONT> <FONT COLOR="#000088">netwib_consttcpopt_timestamp</FONT>;
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+typedef struct {
+  <FONT COLOR="#000088">netwib_uint32</FONT> connectioncount;
+} <FONT COLOR="#000088">netwib_tcpopt_cc</FONT>;
+typedef const <FONT COLOR="#000088">netwib_tcpopt_cc</FONT> <FONT COLOR="#000088">netwib_consttcpopt_cc</FONT>;
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+typedef struct {
+  <FONT COLOR="#000088">netwib_tcpopttype</FONT> type;
+  union {
+    <FONT COLOR="#880000">/* type end : no value */</FONT>
+    <FONT COLOR="#880000">/* type noop : no value */</FONT>
+    <FONT COLOR="#000088">netwib_tcpopt_mss</FONT> mss;
+    <FONT COLOR="#000088">netwib_tcpopt_windowscale</FONT> windowscale;
+    <FONT COLOR="#880000">/* type sackpermitted : no value */</FONT>
+    <FONT COLOR="#000088">netwib_tcpopt_sack</FONT> sack;
+    <FONT COLOR="#000088">netwib_tcpopt_echo</FONT> echo; <FONT COLOR="#880000">/* used for request and reply */</FONT>
+    <FONT COLOR="#000088">netwib_tcpopt_timestamp</FONT> timestamp;
+    <FONT COLOR="#000088">netwib_tcpopt_cc</FONT> cc; <FONT COLOR="#880000">/* used for cc, ccnew and ccecho */</FONT>
+  } opt;
+} <FONT COLOR="#000088">netwib_tcpopt</FONT>;
+typedef const <FONT COLOR="#000088">netwib_tcpopt</FONT> <FONT COLOR="#000088">netwib_consttcpopt</FONT>;
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_tcpopt_initdefault
+   Description :
+     Initialize a <FONT COLOR="#000088">netwib_tcpopt</FONT> with default values.
+   Input parameter(s) :
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *ptcpopt : <FONT COLOR="#000088">netwib_tcpopt</FONT> to initialize
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_tcpopt_initdefault</B>(<FONT COLOR="#000088">netwib_tcpopttype</FONT> tcpopttype,
+                                     <FONT COLOR="#000088">netwib_tcpopt</FONT> *ptcpopt);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_pkt_append_tcpopt
+   Description :
+     Initialize physical data from a netwib_tcpopt.
+   Input parameter(s) :
+     tcpopt : netwib_tcpopt
+   Input/output parameter(s) :
+     *ppht : buffer to initialize
+   Output parameter(s) :
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_pkt_append_tcpopt</B>(<FONT COLOR="#000088">netwib_consttcpopt</FONT> *ptcpopt,
+                                    <FONT COLOR="#000088">netwib_buf</FONT> *ppkt);
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_pkt_prepend_tcpopt</B>(<FONT COLOR="#000088">netwib_consttcpopt</FONT> *ptcpopt,
+                                     <FONT COLOR="#000088">netwib_buf</FONT> *ppkt);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_pkt_decode_tcpopt
+   Description :
+     Decode a <FONT COLOR="#000088">netwib_tcpopt</FONT> from data coming from wire.
+   Input parameter(s) :
+     *ppkt : buffer containing physical data
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *ptcpopt : <FONT COLOR="#000088">netwib_tcpopt</FONT> to initialize
+     *pskipsize : size to skip this option
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_pkt_decode_tcpopt</B>(<FONT COLOR="#000088">netwib_constbuf</FONT> *ppkt,
+                                    <FONT COLOR="#000088">netwib_tcpopt</FONT> *ptcpopt,
+                                    <FONT COLOR="#000088">netwib_uint32</FONT> *pskipsize);
+</PRE><BR><BR><HR><BR>
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../pkt.html">section index</A></H2>
+</BODY></HTML>

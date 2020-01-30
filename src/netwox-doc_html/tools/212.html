@@ -1,0 +1,39 @@
+<HTML>
+ <HEAD>
+ <TITLE>Tool 212: Web spider : converts an url to its local downloaded filename</TITLE>
+ </HEAD>
+ <BODY BGCOLOR="#FFFFFF">
+  <CENTER>   <H3>Tool 212: Web spider : converts an url to its local downloaded filename</H3>
+  </CENTER>
+
+  <P><H3>Description:</H3>
+   <PRE>
+  This tool indicates in which local filename an url is stored.
+  For example http://server/f.php may be stored in files/02/f.html.
+   </PRE>
+
+  <P><H3>Usage:</H3>
+  &nbsp;&nbsp;netwox 212 -c file -u uri<BR>
+
+  <P><H3>Parameters:</H3>
+<TABLE BORDER=1 CELLPADDING=4>
+ <TR>
+  <TD ALIGN=middle><I>parameter</I></TD>
+  <TD ALIGN=middle><I>description</I></TD>
+  <TD ALIGN=middle><I>example</I></TD>
+ </TR>
+ <TR><TD><TT>-c|--conffile file</TD>
+<TD>configuration file</TD>
+<TD>srcfile.txt</TD></TR>
+<TR><TD><TT>-u|--url uri</TD>
+<TD>url to check</TD>
+<TD>http://www.example.com/ </TD></TR>
+</TABLE>
+
+  <P><H3>Examples:</H3>
+  &nbsp;&nbsp;netwox 212 -c "srcfile.txt" -u "http://www.example.com/"<BR>
+<BR>
+  &nbsp;&nbsp;netwox 212 --conffile "srcfile.txt" --url "http://www.example.com/"<BR>
+<BR>
+ </BODY>
+ </HTML>

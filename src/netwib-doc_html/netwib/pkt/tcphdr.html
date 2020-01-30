@@ -1,0 +1,89 @@
+<HTML><HEAD>
+<TITLE>netwib doc_html (version 5.39.0)</TITLE>
+</HEAD><BODY BGCOLOR="#FFFFFF" TEXT="#000000">
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../pkt.html">section index</A></H2><HR><BR>
+<PRE>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* TCP header */</FONT>
+typedef struct {
+  <FONT COLOR="#000088">netwib_port</FONT> src;
+  <FONT COLOR="#000088">netwib_port</FONT> dst;
+  <FONT COLOR="#000088">netwib_uint32</FONT> seqnum;
+  <FONT COLOR="#000088">netwib_uint32</FONT> acknum;
+  <FONT COLOR="#000088">netwib_uint8</FONT> doff;
+  <FONT COLOR="#000088">netwib_bool</FONT> reserved1;
+  <FONT COLOR="#000088">netwib_bool</FONT> reserved2;
+  <FONT COLOR="#000088">netwib_bool</FONT> reserved3;
+  <FONT COLOR="#000088">netwib_bool</FONT> reserved4;
+  <FONT COLOR="#000088">netwib_bool</FONT> cwr; <FONT COLOR="#880000">/* RFC 3168 */</FONT>
+  <FONT COLOR="#000088">netwib_bool</FONT> ece; <FONT COLOR="#880000">/* RFC 3168 */</FONT>
+  <FONT COLOR="#000088">netwib_bool</FONT> urg;
+  <FONT COLOR="#000088">netwib_bool</FONT> ack;
+  <FONT COLOR="#000088">netwib_bool</FONT> psh;
+  <FONT COLOR="#000088">netwib_bool</FONT> rst;
+  <FONT COLOR="#000088">netwib_bool</FONT> syn;
+  <FONT COLOR="#000088">netwib_bool</FONT> fin;
+  <FONT COLOR="#000088">netwib_uint16</FONT> window;
+  <FONT COLOR="#000088">netwib_uint16</FONT> check;
+  <FONT COLOR="#000088">netwib_uint16</FONT> urgptr;
+  <FONT COLOR="#000088">netwib_bufext</FONT> opts; <FONT COLOR="#880000">/* TCP options as defined in tcpopts.h */</FONT>
+} <FONT COLOR="#000088">netwib_tcphdr</FONT>;
+typedef const <FONT COLOR="#000088">netwib_tcphdr</FONT> <FONT COLOR="#000088">netwib_consttcphdr</FONT>;
+<FONT COLOR="#008800">#define <FONT COLOR="#000044">NETWIB_TCPHDR_MINLEN</FONT> 20</FONT>
+<FONT COLOR="#008800">#define <FONT COLOR="#000044">NETWIB_TCPHDR_MAXLEN</FONT> 64</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_tcphdr_initdefault
+   Description :
+     Initialize a <FONT COLOR="#000088">netwib_tcphdr</FONT> with default values.
+   Input parameter(s) :
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *ptcphdr : <FONT COLOR="#000088">netwib_tcphdr</FONT> to initialize
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_tcphdr_initdefault</B>(<FONT COLOR="#000088">netwib_tcphdr</FONT> *ptcphdr);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_pkt_append_tcphdr
+   Description :
+     Initialize physical data from a netwib_tcphdr.
+   Input parameter(s) :
+     *ptcphdr : netwib_tcphdr
+   Input/output parameter(s) :
+     *ppht : buffer to initialize
+   Output parameter(s) :
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+   Note : field doff is eventually recomputed.
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_pkt_append_tcphdr</B>(<FONT COLOR="#000088">netwib_consttcphdr</FONT> *ptcphdr,
+                                    <FONT COLOR="#000088">netwib_buf</FONT> *ppkt);
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_pkt_prepend_tcphdr</B>(<FONT COLOR="#000088">netwib_consttcphdr</FONT> *ptcphdr,
+                                     <FONT COLOR="#000088">netwib_buf</FONT> *ppkt);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_pkt_decode_tcphdr
+   Description :
+     Decode a <FONT COLOR="#000088">netwib_tcphdr</FONT> from physical data.
+   Input parameter(s) :
+     *ppkt : buffer containing physical data
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *ptcphdr : <FONT COLOR="#000088">netwib_tcphdr</FONT> contained in pkt
+     *pskipsize : size to use to skip this header
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+     <FONT COLOR="#000044">NETWIB_ERR_NOTCONVERTED</FONT> : pkt could not be decoded
+     <FONT COLOR="#000044">NETWIB_ERR_DATAMISSING</FONT> : pkt was not big enough
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_pkt_decode_tcphdr</B>(<FONT COLOR="#000088">netwib_constbuf</FONT> *ppkt,
+                                    <FONT COLOR="#000088">netwib_tcphdr</FONT> *ptcphdr,
+                                    <FONT COLOR="#000088">netwib_uint32</FONT> *pskipsize);
+</PRE><BR><BR><HR><BR>
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../pkt.html">section index</A></H2>
+</BODY></HTML>

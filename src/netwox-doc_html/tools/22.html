@@ -1,0 +1,99 @@
+<HTML>
+ <HEAD>
+ <TITLE>Tool 22: Convert a string</TITLE>
+ </HEAD>
+ <BODY BGCOLOR="#FFFFFF">
+  <CENTER>   <H3>Tool 22: Convert a string</H3>
+  </CENTER>
+
+  <P><H3>Description:</H3>
+   <PRE>
+  This tool converts a text, from/to text, hexadecimal, mixed, base64
+  and md4/md5 (md4/md5 sum can only be computed).
+  For example:
+    netwox 22 --hexa 4142
+    netwox 22 --hexa 4142 --disp-mixed
+   </PRE>
+
+  <P><H3>Synonyms:</H3>
+  &nbsp;&nbsp;base64, hexadecimal, text, mixed, md5sum<BR>
+
+  <P><H3>Usage:</H3>
+  &nbsp;&nbsp;netwox 22 -d data [-s|+s] [-h|+h] [-m|+m] [-b|+b] [-t|+t] [-S|+S] [-H|+H] [-M|+M] [-B|+B] [-2|+2] [-4|+4] [-5|+5] [-C|+C] [-D|+D] [-E|+E] [-F|+F] [-G|+G] [-J|+J] [-K|+K]<BR>
+
+  <P><H3>Parameters:</H3>
+<TABLE BORDER=1 CELLPADDING=4>
+ <TR>
+  <TD ALIGN=middle><I>parameter</I></TD>
+  <TD ALIGN=middle><I>description</I></TD>
+  <TD ALIGN=middle><I>example</I></TD>
+ </TR>
+ <TR><TD><TT>-d|--data data</TD>
+<TD>data to convert</TD>
+<TD>hello</TD></TR>
+<TR><TD><TT>-s|--string|+s|--no-string</TD>
+<TD>data is string</TD>
+<TD><I>This boolean is set.<BR>Use + or --no- to unset it.</I></TD></TR>
+<TR><TD><TT>-h|--hexa|+h|--no-hexa</TD>
+<TD>data is hexa</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-m|--mixed|+m|--no-mixed</TD>
+<TD>data is mixed</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-b|--base64|+b|--no-base64</TD>
+<TD>data is base64</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-t|--title|+t|--no-title</TD>
+<TD>display titles</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-S|--disp-string|+S|--no-disp-string</TD>
+<TD>display string</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-H|--disp-hexa|+H|--no-disp-hexa</TD>
+<TD>display hexa</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-M|--disp-mixed|+M|--no-disp-mixed</TD>
+<TD>display mixed</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-B|--disp-base64|+B|--no-disp-base64</TD>
+<TD>display base64</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-2|--disp-md2|+2|--no-disp-md2</TD>
+<TD>display md2</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-4|--disp-md4|+4|--no-disp-md4</TD>
+<TD>display md4</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-5|--disp-md5|+5|--no-disp-md5</TD>
+<TD>display md5</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-C|--disp-ripemd128|+C|--no-disp-ripemd128</TD>
+<TD>display ripemd128</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-D|--disp-ripemd160|+D|--no-disp-ripemd160</TD>
+<TD>display ripemd160</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-E|--disp-sha1|+E|--no-disp-sha1</TD>
+<TD>display sha1</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-F|--disp-sha224|+F|--no-disp-sha224</TD>
+<TD>display sha224</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-G|--disp-sha256|+G|--no-disp-sha256</TD>
+<TD>display sha256</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-J|--disp-sha384|+J|--no-disp-sha384</TD>
+<TD>display sha384</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-K|--disp-sha512|+K|--no-disp-sha512</TD>
+<TD>display sha512</TD>
+<TD>&nbsp; </TD></TR>
+</TABLE>
+
+  <P><H3>Examples:</H3>
+  &nbsp;&nbsp;netwox 22 -d "hello"<BR>
+<BR>
+  &nbsp;&nbsp;netwox 22 --data "hello"<BR>
+<BR>
+ </BODY>
+ </HTML>

@@ -1,0 +1,74 @@
+<HTML>
+ <HEAD>
+ <TITLE>Tool 21: Convert a number</TITLE>
+ </HEAD>
+ <BODY BGCOLOR="#FFFFFF">
+  <CENTER>   <H3>Tool 21: Convert a number</H3>
+  </CENTER>
+
+  <P><H3>Description:</H3>
+   <PRE>
+  This tool converts a number, from/to decimal, binary, octal and
+  hexadecimal. For example:
+    netwox 21 --hexa 3D4B
+    netwox 21 --hexa 3D4B --disp-decimal
+   </PRE>
+
+  <P><H3>Synonyms:</H3>
+  &nbsp;&nbsp;calc, binary, decimal, hexadecimal, octal<BR>
+
+  <P><H3>Usage:</H3>
+  &nbsp;&nbsp;netwox 21 -n data [-d|+d] [-b|+b] [-o|+o] [-x|+x] [-c|+c] [-t|+t] [-D|+D] [-B|+B] [-O|+O] [-X|+X] [-C|+C]<BR>
+
+  <P><H3>Parameters:</H3>
+<TABLE BORDER=1 CELLPADDING=4>
+ <TR>
+  <TD ALIGN=middle><I>parameter</I></TD>
+  <TD ALIGN=middle><I>description</I></TD>
+  <TD ALIGN=middle><I>example</I></TD>
+ </TR>
+ <TR><TD><TT>-n|--number data</TD>
+<TD>number to convert</TD>
+<TD>10</TD></TR>
+<TR><TD><TT>-d|--decimal|+d|--no-decimal</TD>
+<TD>number is decimal</TD>
+<TD><I>This boolean is set.<BR>Use + or --no- to unset it.</I></TD></TR>
+<TR><TD><TT>-b|--binary|+b|--no-binary</TD>
+<TD>number is binary</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-o|--octal|+o|--no-octal</TD>
+<TD>number is octal</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-x|--hexadecimal|+x|--no-hexadecimal</TD>
+<TD>number is hexadecimal</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-c|--char|+c|--no-char</TD>
+<TD>number is a character</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-t|--title|+t|--no-title</TD>
+<TD>display titles</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-D|--disp-decimal|+D|--no-disp-decimal</TD>
+<TD>display decimal</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-B|--disp-binary|+B|--no-disp-binary</TD>
+<TD>display binary</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-O|--disp-octal|+O|--no-disp-octal</TD>
+<TD>display octal</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-X|--disp-hexadecimal|+X|--no-disp-hexadecimal</TD>
+<TD>display hexadecimal</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-C|--disp-char|+C|--no-disp-char</TD>
+<TD>display character</TD>
+<TD>&nbsp; </TD></TR>
+</TABLE>
+
+  <P><H3>Examples:</H3>
+  &nbsp;&nbsp;netwox 21 -n "10"<BR>
+<BR>
+  &nbsp;&nbsp;netwox 21 --number "10"<BR>
+<BR>
+ </BODY>
+ </HTML>

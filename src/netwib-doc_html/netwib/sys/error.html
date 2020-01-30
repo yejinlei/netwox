@@ -1,0 +1,142 @@
+<HTML><HEAD>
+<TITLE>netwib doc_html (version 5.39.0)</TITLE>
+</HEAD><BODY BGCOLOR="#FFFFFF" TEXT="#000000">
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../sys.html">section index</A></H2><HR><BR>
+<PRE>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+typedef enum {
+  <FONT COLOR="#000044">NETWIB_ERR_ENCODETYPE_TEXT</FONT> = 1,    <FONT COLOR="#880000">/* append the error text */</FONT>
+  <FONT COLOR="#000044">NETWIB_ERR_ENCODETYPE_NUMTEXT</FONT>,     <FONT COLOR="#880000">/* append "Error n : text" */</FONT>
+  <FONT COLOR="#000044">NETWIB_ERR_ENCODETYPE_FULL</FONT>         <FONT COLOR="#880000">/* full (error, errno, h_errno,
+                                        GetLastError, errstr) :
+                                        "Error n : text\n `--&gt; message\n"
+                                     */</FONT>
+} <FONT COLOR="#000088">netwib_err_encodetype</FONT>;
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_buf_append_err
+   Description :
+     Append a string representing an error.
+   Input parameter(s) :
+     error : error to print
+     encodetype : <FONT COLOR="#000088">netwib_err_encodetype</FONT> to use
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pbuf : <FONT COLOR="#000088">netwib_buf</FONT> receiving data
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+   Notes :
+     - Error code might have been set by a previous error. By
+       example, error in open() sets errno, and then an error
+       is gethostbyname() sets h_errno, and both will be
+       displayed because the first one is not purged.
+       This is normal, because if user directly used
+       gethostbyname(), he knows he doesn't have to look at
+        errno.
+     - If an error occurred in function open() and sets errno.
+       Then, memory might need to be freed (so errno will be
+       unset). Then error is returned to user, but errno is
+       zero.
+    As a conclusion, user might not_get/get_incorrect errno,
+    h_errno or GetLastError.
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_buf_append_err</B>(<FONT COLOR="#000088">netwib_err</FONT> error,
+                                 <FONT COLOR="#000088">netwib_err_encodetype</FONT> encodetype,
+                                 <FONT COLOR="#000088">netwib_buf</FONT> *buf);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_err_display
+   Description :
+     Print the error associated to a netwib_err.
+   Input parameter(s) :
+     error : error to print
+     encodetype : <FONT COLOR="#000088">netwib_err_encodetype</FONT> to use
+   Input/output parameter(s) :
+   Output parameter(s) :
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_err_display</B>(<FONT COLOR="#000088">netwib_err</FONT> error,
+                              <FONT COLOR="#000088">netwib_err_encodetype</FONT> encodetype);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000"><B>/***************************************************************
+ * Every netwib function return an <FONT COLOR="#000088">netwib_err</FONT> corresponding to *
+ * an error code. Developer have to test this value to ensure  *
+ * everything went fine. There is 3 ways to do it :            *
+ *                                                             *
+ *  1 - doing the test by hand :                               *
+ *    ret = function(...);                                     *
+ *    if (ret != <FONT COLOR="#000044">NETWIB_ERR_OK</FONT>) {                              *
+ *      return(ret);                                           *
+ *    }                                                        *
+ *                                                             *
+ *  2 - use <FONT COLOR="#000088">netwib_er</FONT> :                                        *
+ *    <B>netwib_er</B>(function(...));                                *
+ *                                                             *
+ *  3 - use <FONT COLOR="#000088">netwib_eg</FONT> :                                        *
+ *    Note : this define uses a "goto". Developers tend to     *
+ *           hate using goto. I also do, but there is one case *
+ *           where goto are very useful. This case is for      *
+ *           error handling because it creates an error flow   *
+ *           similar to exceptions in Java or C++.             *
+ *           I'll try to explain it : a program has two flows  *
+ *           inside : the normal flow (the real job done) and  *
+ *           the error flow (what to do when an error occurs). *
+ *           With most algorithms, both flow use the same path,*
+ *           so there is no need to use goto. But, when flow   *
+ *           differs, we have to complicate the algorithm to   *
+ *           deal with both normal and errors conditions.      *
+ *           Without goto, it quickly becomes hard to read     *
+ *           code, to free (only allocated) resources, to close*
+ *           (only opened) descriptors, etc.                   *
+ *           With goto, we have something like :               *
+ *    {
+ *      <FONT COLOR="#000088">netwib_io</FONT> *pio1, *pio2, *pio3;
+ *      <FONT COLOR="#000088">netwib_bool</FONT> pio1set, pio2set, pio3set;
+ *      <FONT COLOR="#000088">netwib_err</FONT> ret;
+ *
+ *      pio1set = pio2set = pio3set = <FONT COLOR="#000044">NETWIB_FALSE</FONT>;
+ *      ret = <FONT COLOR="#000044">NETWIB_ERR_OK</FONT>;
+ *
+ *      <B>netwib_eg</B>(netwib_io_init...(&amp;pio1));
+ *      pio1set = <FONT COLOR="#000044">NETWIB_TRUE</FONT>;
+ *      <B>netwib_eg</B>(netwib_io_init...(&amp;pio2));
+ *      pio2set = <FONT COLOR="#000044">NETWIB_TRUE</FONT>;
+ *      here_complicated_code_which_can_use_"<B>netwib_eg</B>()"
+ *      <B>netwib_eg</B>(<B>netwib_io_close</B>(&amp;pio2));
+ *      pio2set = <FONT COLOR="#000044">NETWIB_FALSE</FONT>;
+ *      here_complicated_code_which_can_use_"<B>netwib_eg</B>()"
+ *      <B>netwib_eg</B>(netwib_io_init...(&amp;pio3));
+ *      pio3set = <FONT COLOR="#000044">NETWIB_TRUE</FONT>;
+ *
+ *     <FONT COLOR="#000088">netwib_gotolabel</FONT> :
+ *      if (pio1set) { <B>netwib_er</B>(<B>netwib_io_close</B>(&amp;pio1)); }
+ *      if (pio2set) { <B>netwib_er</B>(<B>netwib_io_close</B>(&amp;pio2)); }
+ *      if (pio3set) { <B>netwib_er</B>(<B>netwib_io_close</B>(&amp;pio3)); }
+ *      return(ret);
+ *    }
+ *           As seen in this simple example, program flow and  *
+ *           error flow are separated.                         *
+ ***************************************************************/</B></FONT>
+
+<FONT COLOR="#880000">/* if (r != <FONT COLOR="#000044">NETWIB_ERR_OK</FONT>) return(r) */</FONT>
+<FONT COLOR="#008800">#define <B>netwib_er</B>(r) {<FONT COLOR="#000088">netwib_err</FONT> netwib_coderr=r;if(netwib_coderr!=<FONT COLOR="#000044">NETWIB_ERR_OK</FONT>)return(netwib_coderr);}</FONT>
+
+<FONT COLOR="#880000">/* the label */</FONT>
+<FONT COLOR="#008800">#define <FONT COLOR="#000088">netwib_gotolabel</FONT> netwibleavefunction</FONT>
+
+<FONT COLOR="#880000">/* goto label and return r (note : this uses a variable named "ret") */</FONT>
+<FONT COLOR="#008800">#define <B>netwib_goto</B>(r) {ret = r; goto netwibleavefunction;}</FONT>
+
+<FONT COLOR="#880000">/* if (r != <FONT COLOR="#000044">NETWIB_ERR_OK</FONT>) { goto label and return r } */</FONT>
+<FONT COLOR="#008800">#define <B>netwib_eg</B>(r) {<FONT COLOR="#000088">netwib_err</FONT> netwib_coderr=r;if(netwib_coderr!=<FONT COLOR="#000044">NETWIB_ERR_OK</FONT>)<B>netwib_goto</B>(netwib_coderr);}</FONT>
+
+
+
+</PRE><BR><BR><HR><BR>
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../sys.html">section index</A></H2>
+</BODY></HTML>

@@ -1,0 +1,99 @@
+<HTML>
+ <HEAD>
+ <TITLE>Tool 82: Sniff and send ICMP4/ICMP6 destination unreachable</TITLE>
+ </HEAD>
+ <BODY BGCOLOR="#FFFFFF">
+  <CENTER>   <H3>Tool 82: Sniff and send ICMP4/ICMP6 destination unreachable</H3>
+  </CENTER>
+
+  <P><H3>Description:</H3>
+   <PRE>
+  This tool sends an ICMP error message when a packet matching filter
+  is sniffed.
+  Parameter --device indicates on which device to sniff. Please note
+  that under some systems, such as Windows, sniffing on some devices is
+  not supported.
+  Parameter --filter defines the sniff filter. It permits to restrict
+  captured packets. This kind of filter is named a BPF or pcap filter.
+  Basic elements of a filter are:
+    host 1.2.3.4
+    net 192.168.10
+    net 192.168.10.0 mask 255.255.255.0
+    net 192.168.10.0/24
+    port 21
+    dst host 1.2.3.4
+    src port 2345
+    ether host a:b:c:d:e:f ('ether a:b:c:d:e:f' is not working)
+    ether src aa:bb:cc:dd:ee:ff
+    ip
+    arp
+    rarp
+    tcp
+    icmp
+    udp
+  Here are filter examples:
+    "host 1.2.3.4"
+    "net 192.168 and icmp"
+    "host 1.2.3.4 or dst port 80"
+    "(udp or tcp) and not host 1.2.3.4"
+  Parameter --spoofip indicates how to generate link layer for spoofing.
+  Values 'best', 'link' or 'raw' are common choices for --spoofip. Here
+  is the list of accepted values:
+   - 'raw' means to spoof at IP4/IP6 level (it uses system IP stack). If
+     a firewall is installed, or on some systems, this might not work.
+   - 'linkf' means to spoof at link level (currently, only Ethernet is
+     supported). The 'f' means to Fill source Ethernet address.
+     However, if source IP address is spoofed, it might be impossible
+     to Fill it. So, linkf will not work: use linkb or linkfb instead.
+   - 'linkb' means to spoof at link level. The 'b' means to left a Blank
+     source Ethernet address (0:0:0:0:0:0, do not try to Fill it).
+   - 'linkfb' means to spoof at link level. The 'f' means to try to Fill
+     source Ethernet address, but if it is not possible, it is left
+     Blank.
+   - 'rawlinkf' means to try 'raw', then try 'linkf'
+   - 'rawlinkb' means to try 'raw', then try 'linkb'
+   - 'rawlinkfb' means to try 'raw', then try 'linkfb'
+   - 'linkfraw' means to try 'linkf', then try 'raw'
+   - 'linkbraw' means to try 'linkb', then try 'raw'
+   - 'linkfbraw' means to try 'linkfb', then try 'raw'
+   - 'link' is an alias for 'linkfb'
+   - 'rawlink' is an alias for 'rawlinkfb'
+   - 'linkraw' is an alias for 'linkfbraw'
+   - 'best' is an alias for 'linkraw'. It should work in all cases.
+  
+  This tool may need to be run with admin privilege in order to sniff
+  and spoof.
+   </PRE>
+
+  <P><H3>Usage:</H3>
+  &nbsp;&nbsp;netwox 82 [-d device] [-f filter] [-c uint32] [-i ip] [-s spoofip]<BR>
+
+  <P><H3>Parameters:</H3>
+<TABLE BORDER=1 CELLPADDING=4>
+ <TR>
+  <TD ALIGN=middle><I>parameter</I></TD>
+  <TD ALIGN=middle><I>description</I></TD>
+  <TD ALIGN=middle><I>example</I></TD>
+ </TR>
+ <TR><TD><TT>-d|--device device</TD>
+<TD>device name</TD>
+<TD>Eth0</TD></TR>
+<TR><TD><TT>-f|--filter filter</TD>
+<TD>pcap filter</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-c|--code uint32</TD>
+<TD>ICMP code</TD>
+<TD>0</TD></TR>
+<TR><TD><TT>-i|--src-ip ip</TD>
+<TD>source IP address</TD>
+<TD>192.168.100.200</TD></TR>
+<TR><TD><TT>-s|--spoofip spoofip</TD>
+<TD>IP spoof initialization type</TD>
+<TD>linkbraw </TD></TR>
+</TABLE>
+
+  <P><H3>Example:</H3>
+  &nbsp;&nbsp;netwox 82<BR>
+<BR>
+ </BODY>
+ </HTML>

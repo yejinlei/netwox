@@ -1,0 +1,1005 @@
+<HTML><HEAD>
+<TITLE>netwib doc_html (version 5.39.0)</TITLE>
+</HEAD><BODY BGCOLOR="#FFFFFF" TEXT="#000000">
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../sys.html">section index</A></H2><HR><BR>
+<PRE>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000"><B>/***************************************************************
+ * A <FONT COLOR="#000088">netwib_io</FONT> is the main way to exchange data in netwib.     *
+ *                                                             *
+ * A concrete example first :                                  *
+ *   ----.     ,-----.     ,-------.     ,----.     ,------    *
+ *   file &gt;----&gt;readl &gt;---( program )----&gt;conv &gt;----&gt;socket    *
+ *   ----'     `-----'     `-------'     `----'     `------    *
+ *                                                             *
+ * It works like this :                                        *
+ *  - read data from a file                                    *
+ *  - read only line by line                                   *
+ *  - treat it in the program                                  *
+ *  - write data for output                                    *
+ *  - convert data, for example replacing '\' by "\\"          *
+ *  - write data to socket                                     *
+ *                                                             *
+ * This example contains 3 types of <FONT COLOR="#000088">netwib_io</FONT> :                *
+ *  - file and socket are "io final link"                      *
+ *  - readl and conv are "io link"                             *
+ *  - file and socket are also "io link" (because a            *
+ *    "io final link" is a special kind of "io link")          *
+ *  - conv is a "io chain" composed of conv+socket             *
+ *  - readl is a "io chain" composed of readl+file             *
+ *  - socket is a "io chain" composed of only socket           *
+ *  - file is a "io chain" composed of only file               *
+ *                                                             *
+ * Using the same program, we might for example read data      *
+ * from a file and write them back to a socket. This can be    *
+ * represented as :                                            *
+ *   ------.      ,-------.      ,---------                    *
+ *    file  &gt;----( program )-----&gt; socket                      *
+ *   ------'      `-------'      `---------                    *
+ * Another variant would be to plug readl or conv to other     *
+ * "io chain", such as :                                       *
+ *   ----.     ,-----.     ,-------.     ,----.     ,------    *
+ *   ipc  &gt;----&gt;readl &gt;---( program )----&gt;conv &gt;----&gt;record    *
+ *   ----'     `-----'     `-------'     `----'     `------    *
+ * An "io chain" can be bi-directional. For example :          *
+ *   --------.       ,--.      ,-------.                       *
+ *    socket  &gt;------&gt;l5 &gt;----( program )-.                    *
+ *           &lt;------&lt;   &lt;--.   `-------'  |                    *
+ *   --------'       `--'   `-------------'                    *
+ *                                                             *
+ * Note : you can find other examples at the end of this file  *
+ *                                                             *
+ * The main ideas to remember is :                             *
+ *  - a "io chain" is composed of one or more "io link"        *
+ *  - a "io link" might be intermediary or "io final link"     *
+ *  - those 3 types use the same structure : <FONT COLOR="#000088">netwib_io</FONT>         *
+ ***************************************************************/</B></FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+typedef struct <FONT COLOR="#000088">netwib_io</FONT> <FONT COLOR="#000088">netwib_io</FONT>;
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* direction */</FONT>
+typedef enum {
+  <FONT COLOR="#000044">NETWIB_IO_WAYTYPE_READ</FONT> = 1,    <FONT COLOR="#880000">/* read */</FONT>
+  <FONT COLOR="#000044">NETWIB_IO_WAYTYPE_WRITE</FONT>,       <FONT COLOR="#880000">/* write */</FONT>
+  <FONT COLOR="#000044">NETWIB_IO_WAYTYPE_RDWR</FONT>,        <FONT COLOR="#880000">/* read and write */</FONT>
+  <FONT COLOR="#000044">NETWIB_IO_WAYTYPE_NONE</FONT>,        <FONT COLOR="#880000">/* nor read nor write */</FONT>
+  <FONT COLOR="#000044">NETWIB_IO_WAYTYPE_SUPPORTED</FONT>    <FONT COLOR="#880000">/* every way supported by the io */</FONT>
+} <FONT COLOR="#000088">netwib_io_waytype</FONT>;
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000"><B>/***************************************************************
+ * Currently, system "io final link" are :                     *
+ *    Name      Definition     Read/Write                      *
+ *   FILE   : regular file   : read/write                      *
+ *   FD     : file desc      : read/write                      *
+ *   HANDLE : Windows HANDLE : read/write                      *
+ *   KBD    : keyboard       : read                            *
+ *   RECORD : record         : read/write                      *
+ *   SOCK   : socket         : read/write                      *
+ *   SNIFF  : sniff          : read                            *
+ *   SPOOF  : spoof          : write                           *
+ * They are initialized by :                                   *
+ *  - <FONT COLOR="#000088">netwib_io_init_file</FONT>                                      *
+ *  - <FONT COLOR="#000088">netwib_io_init_fd</FONT>                                        *
+ *  - etc.                                                     *
+ ***************************************************************/</B></FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000"><B>/***************************************************************
+ * Those five functions permits to create and to navigate      *
+ * through a "io chain".                                       *
+ ***************************************************************/</B></FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_io_plug
+   Description :
+     Create a chain by pluging one link/chain to another.
+   Input parameter(s) :
+     *piowheretoplug : io where to plug
+     typeofplug : type of plug
+   Input/output parameter(s) :
+     *pio : current io
+   Output parameter(s) :
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_io_plug</B>(<FONT COLOR="#000088">netwib_io</FONT> *pio,
+                          <FONT COLOR="#000088">netwib_io_waytype</FONT> typeofplug,
+                          <FONT COLOR="#000088">netwib_io</FONT> *piowheretoplug);
+<FONT COLOR="#880000">/* <FONT COLOR="#000088">netwib_err</FONT> f(<FONT COLOR="#000088">netwib_io</FONT> *pio, <FONT COLOR="#000088">netwib_io</FONT> *piowheretoplug); */</FONT>
+<FONT COLOR="#008800">#define <B>netwib_io_plug_read</B>(pio,piowheretoplug) <B>netwib_io_plug</B>(pio,<FONT COLOR="#000044">NETWIB_IO_WAYTYPE_READ</FONT>,piowheretoplug)</FONT>
+<FONT COLOR="#008800">#define <B>netwib_io_plug_write</B>(pio,piowheretoplug) <B>netwib_io_plug</B>(pio,<FONT COLOR="#000044">NETWIB_IO_WAYTYPE_WRITE</FONT>,piowheretoplug)</FONT>
+<FONT COLOR="#008800">#define <B>netwib_io_plug_rdwr</B>(pio,piowheretoplug) <B>netwib_io_plug</B>(pio,<FONT COLOR="#000044">NETWIB_IO_WAYTYPE_RDWR</FONT>,piowheretoplug)</FONT>
+<FONT COLOR="#008800">#define <B>netwib_io_plug_supported</B>(pio,piowheretoplug) <B>netwib_io_plug</B>(pio,<FONT COLOR="#000044">NETWIB_IO_WAYTYPE_SUPPORTED</FONT>,piowheretoplug)</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000"><B>/***************************************************************
+ * There are three ways to unplug :                            *
+ *      ,----.     ,----.     ,----.     ,----.     ,----.     *
+ *   ---&gt; io1 &gt;----&gt; io2 &gt;----&gt; io3 &gt;----&gt; io4 &gt;----&gt; io5 &gt;--  *
+ *      `----'     `----'     `----'     `----'     `----'     *
+ *                                                             *
+ * <FONT COLOR="#000088">netwib_io_unplug_next</FONT> with:                                 *
+ *   pio = &amp;io1                                                *
+ *  ==&gt; cut between io1 and io2, and put &amp;io2 in pnextio       *
+ *                                                             *
+ * <FONT COLOR="#000088">netwib_io_unplug_before</FONT> with:                               *
+ *   pio = &amp;io1                                                *
+ *   psearchedio = &amp;io3                                        *
+ *  ==&gt; cut between io2 and io3                                *
+ *                                                             *
+ * <FONT COLOR="#000088">netwib_io_unplug_after</FONT> with:                                *
+ *   pio = &amp;io1                                                *
+ *   psearchedio = &amp;io3                                        *
+ *  ==&gt; cut between io3 and io4, and put &amp;io4 in pafterio      *
+ ***************************************************************/</B></FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_io_unplug_xyz
+   Description :
+     Separate a chain by unplugging one link/chain from another.
+   Input parameter(s) :
+     typeofplug : type of plug
+     *psearchedio : searched io
+   Input/output parameter(s) :
+     *pio : io chain
+   Output parameter(s) :
+     **ppnextio : next io or NULL if at end
+     **ppafterio : next io or NULL if at end
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+     <FONT COLOR="#000044">NETWIB_ERR_NOTFOUND</FONT> : psearchedio was not found
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_io_unplug_next</B>(<FONT COLOR="#000088">netwib_io</FONT> *pio,
+                                 <FONT COLOR="#000088">netwib_io_waytype</FONT> typeofplug,
+                                 <FONT COLOR="#000088">netwib_io</FONT> **ppnextio);
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_io_unplug_before</B>(<FONT COLOR="#000088">netwib_io</FONT> *pio,
+                                   <FONT COLOR="#000088">netwib_io_waytype</FONT> typeofplug,
+                                   <FONT COLOR="#000088">netwib_io</FONT> *psearchedio);
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_io_unplug_after</B>(<FONT COLOR="#000088">netwib_io</FONT> *pio,
+                                  <FONT COLOR="#000088">netwib_io_waytype</FONT> typeofplug,
+                                  <FONT COLOR="#000088">netwib_io</FONT> *psearchedio,
+                                  <FONT COLOR="#000088">netwib_io</FONT> **ppafterio);
+<FONT COLOR="#008800">#define <B>netwib_io_unplug_next_read</B>(pio,ppnextio) <B>netwib_io_unplug_next</B>(pio,<FONT COLOR="#000044">NETWIB_IO_WAYTYPE_READ</FONT>,ppnextio)</FONT>
+<FONT COLOR="#008800">#define <B>netwib_io_unplug_before_read</B>(pio,psearchedio) <B>netwib_io_unplug_before</B>(pio,<FONT COLOR="#000044">NETWIB_IO_WAYTYPE_READ</FONT>,psearchedio)</FONT>
+<FONT COLOR="#008800">#define <B>netwib_io_unplug_after_read</B>(pio,psearchedio,ppafterio) <B>netwib_io_unplug_after</B>(pio,<FONT COLOR="#000044">NETWIB_IO_WAYTYPE_READ</FONT>,psearchedio,ppafterio)</FONT>
+<FONT COLOR="#008800">#define <B>netwib_io_unplug_next_write</B>(pio,ppnextio) <B>netwib_io_unplug_next</B>(pio,<FONT COLOR="#000044">NETWIB_IO_WAYTYPE_WRITE</FONT>,ppnextio)</FONT>
+<FONT COLOR="#008800">#define <B>netwib_io_unplug_before_write</B>(pio,psearchedio) <B>netwib_io_unplug_before</B>(pio,<FONT COLOR="#000044">NETWIB_IO_WAYTYPE_WRITE</FONT>,psearchedio)</FONT>
+<FONT COLOR="#008800">#define <B>netwib_io_unplug_after_write</B>(pio,psearchedio,ppafterio) <B>netwib_io_unplug_after</B>(pio,<FONT COLOR="#000044">NETWIB_IO_WAYTYPE_WRITE</FONT>,psearchedio,ppafterio)</FONT>
+<FONT COLOR="#008800">#define <B>netwib_io_unplug_next_rdwr</B>(pio,ppnextio) <B>netwib_io_unplug_next</B>(pio,<FONT COLOR="#000044">NETWIB_IO_WAYTYPE_RDWR</FONT>,ppnextio)</FONT>
+<FONT COLOR="#008800">#define <B>netwib_io_unplug_before_rdwr</B>(pio,psearchedio) <B>netwib_io_unplug_before</B>(pio,<FONT COLOR="#000044">NETWIB_IO_WAYTYPE_RDWR</FONT>,psearchedio)</FONT>
+<FONT COLOR="#008800">#define <B>netwib_io_unplug_after_rdwr</B>(pio,psearchedio,ppafterio) <B>netwib_io_unplug_after</B>(pio,<FONT COLOR="#000044">NETWIB_IO_WAYTYPE_RDWR</FONT>,psearchedio,ppafterio)</FONT>
+<FONT COLOR="#008800">#define <B>netwib_io_unplug_next_supported</B>(pio,ppnextio) <B>netwib_io_unplug_next</B>(pio,<FONT COLOR="#000044">NETWIB_IO_WAYTYPE_SUPPORTED</FONT>,ppnextio)</FONT>
+<FONT COLOR="#008800">#define <B>netwib_io_unplug_before_supported</B>(pio,psearchedio) <B>netwib_io_unplug_before</B>(pio,<FONT COLOR="#000044">NETWIB_IO_WAYTYPE_SUPPORTED</FONT>,psearchedio)</FONT>
+<FONT COLOR="#008800">#define <B>netwib_io_unplug_after_supported</B>(pio,psearchedio,ppafterio) <B>netwib_io_unplug_after</B>(pio,<FONT COLOR="#000044">NETWIB_IO_WAYTYPE_SUPPORTED</FONT>,psearchedio,ppafterio)</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_io_next
+   Description :
+     Obtain the next io in the chain.
+   Input parameter(s) :
+     *pio : io
+   Input/output parameter(s) :
+     **ppionext : io after pio of type typetofollow
+   Output parameter(s) :
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+     <FONT COLOR="#000044">NETWIB_ERR_DATAEND</FONT> : there is no more io after
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_io_next</B>(<FONT COLOR="#000088">netwib_io</FONT> *pio,
+                          <FONT COLOR="#000088">netwib_io_waytype</FONT> typetofollow,
+                          <FONT COLOR="#000088">netwib_io</FONT> **ppionext);
+<FONT COLOR="#880000">/* <FONT COLOR="#000088">netwib_err</FONT> f(<FONT COLOR="#000088">netwib_io</FONT> *pio, <FONT COLOR="#000088">netwib_io</FONT> *pionext); */</FONT>
+<FONT COLOR="#008800">#define <B>netwib_io_next_read</B>(pio,pionext) <B>netwib_io_next</B>(pio,<FONT COLOR="#000044">NETWIB_IO_WAYTYPE_READ</FONT>,pionext)</FONT>
+<FONT COLOR="#008800">#define <B>netwib_io_next_write</B>(pio,pionext) <B>netwib_io_next</B>(pio,<FONT COLOR="#000044">NETWIB_IO_WAYTYPE_WRITE</FONT>,pionext)</FONT>
+<FONT COLOR="#008800">#define <B>netwib_io_next_rdwr</B>(pio,pionext) <B>netwib_io_next</B>(pio,<FONT COLOR="#000044">NETWIB_IO_WAYTYPE_RDWR</FONT>,pionext)</FONT>
+<FONT COLOR="#008800">#define <B>netwib_io_next_supported</B>(pio,pionext) <B>netwib_io_next</B>(pio,<FONT COLOR="#000044">NETWIB_IO_WAYTYPE_SUPPORTED</FONT>,pionext)</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000"><B>/***************************************************************
+ * Those three functions permits to exchange data through a    *
+ * "io chain".                                                 *
+ ***************************************************************/</B></FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_io_write_xyz
+   Description :
+     Write data to a netwib_io.
+   Input parameter(s) :
+     *pbuf : buffer to write
+   Input/output parameter(s) :
+     **pio : <FONT COLOR="#000088">netwib_io</FONT> where to write
+   Output parameter(s) :
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_io_write</B>(<FONT COLOR="#000088">netwib_io</FONT> *pio,
+                           <FONT COLOR="#000088">netwib_constbuf</FONT> *pbuf);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_io_read_xyz
+   Description :
+     Read data to a netwib_io.
+   Input parameter(s) :
+   Input/output parameter(s) :
+     **pio : <FONT COLOR="#000088">netwib_io</FONT> where to read
+     *pbuf : buffer storing read data
+   Output parameter(s) :
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+     <FONT COLOR="#000044">NETWIB_ERR_DATAEND</FONT> : end of data
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_io_read</B>(<FONT COLOR="#000088">netwib_io</FONT> *pio,
+                          <FONT COLOR="#000088">netwib_buf</FONT> *pbuf);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_io_unread
+   Description :
+     Put data back in the read io.
+   Input parameter(s) :
+   Input/output parameter(s) :
+     **pio : <FONT COLOR="#000088">netwib_io</FONT> where to read
+     *pbuf : buffer containing data
+   Output parameter(s) :
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_io_unread</B>(<FONT COLOR="#000088">netwib_io</FONT> *pio,
+                            <FONT COLOR="#000088">netwib_constbuf</FONT> *pbuf);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000"><B>/***************************************************************
+ * Those three functions permits to control an "io chain".     *
+ ***************************************************************/</B></FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_io_wait
+   Description :
+     Wait for data in the io.
+   Input parameter(s) :
+     *pabstime : end time. If *pabstime is reached, function
+                 returns (*pevent set to <FONT COLOR="#000044">NETWIB_FALSE</FONT>).
+   Input/output parameter(s) :
+     **pio : <FONT COLOR="#000088">netwib_io</FONT> where to wait
+   Output parameter(s) :
+     *pevent : an event occurred
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_io_wait</B>(<FONT COLOR="#000088">netwib_io</FONT> *pio,
+                          <FONT COLOR="#000088">netwib_io_waytype</FONT> way,
+                          <FONT COLOR="#000088">netwib_consttime</FONT> *pabstime,
+                          <FONT COLOR="#000088">netwib_bool</FONT> *pevent);
+<FONT COLOR="#880000">/* <FONT COLOR="#000088">netwib_err</FONT> f(<FONT COLOR="#000088">netwib_io</FONT> *pio, <FONT COLOR="#000088">netwib_consttime</FONT> *pabstime, <FONT COLOR="#000088">netwib_bool</FONT> *pevent); */</FONT>
+<FONT COLOR="#008800">#define <B>netwib_io_wait_read</B>(pio,pabstime,pevent) <B>netwib_io_wait</B>(pio,<FONT COLOR="#000044">NETWIB_IO_WAYTYPE_READ</FONT>,pabstime,pevent)</FONT>
+<FONT COLOR="#008800">#define <B>netwib_io_wait_write</B>(pio,pabstime,pevent) <B>netwib_io_wait</B>(pio,<FONT COLOR="#000044">NETWIB_IO_WAYTYPE_WRITE</FONT>,pabstime,pevent)</FONT>
+<FONT COLOR="#008800">#define <B>netwib_io_wait_rdwr</B>(pio,pabstime,pevent) <B>netwib_io_wait</B>(pio,<FONT COLOR="#000044">NETWIB_IO_WAYTYPE_RDWR</FONT>,pabstime,pevent)</FONT>
+<FONT COLOR="#008800">#define <B>netwib_io_wait_supported</B>(pio,pabstime,pevent) <B>netwib_io_wait</B>(pio,<FONT COLOR="#000044">NETWIB_IO_WAYTYPE_SUPPORTED</FONT>,pabstime,pevent)</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Explaining those values would be too complicated here. Please
+   refer to the defines using them (which are documented).
+*/</FONT>
+typedef enum {
+  <FONT COLOR="#880000"><B>/** values working on current io (they are not recursive) **/</B></FONT>
+  <FONT COLOR="#000044">NETWIB_IO_CTLTYPE_SUPPORT</FONT> = 1,
+  <FONT COLOR="#000044">NETWIB_IO_CTLTYPE_NUMUSERS</FONT>,
+  <FONT COLOR="#000044">NETWIB_IO_CTLTYPE_NUMUSERSINC</FONT>,
+  <FONT COLOR="#880000"><B>/** values working on current io (if <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> is returned) or
+      on next io (if <FONT COLOR="#000044">NETWIB_ERR_PLEASETRYNEXT</FONT> is returned) **/</B></FONT>
+  <FONT COLOR="#000044">NETWIB_IO_CTLTYPE_RES</FONT> = 100,
+  <FONT COLOR="#000044">NETWIB_IO_CTLTYPE_END</FONT>,
+  <FONT COLOR="#880000"><B>/** values which are specific **/</B></FONT>
+  <FONT COLOR="#880000">/* file : 200 */</FONT>
+  <FONT COLOR="#000044">NETWIB_IO_CTLTYPE_FILE_SEEK_BEGIN</FONT> = 200,
+  <FONT COLOR="#000044">NETWIB_IO_CTLTYPE_FILE_SEEK_CURRENT</FONT>,
+  <FONT COLOR="#000044">NETWIB_IO_CTLTYPE_FILE_SEEK_END</FONT>,
+  <FONT COLOR="#000044">NETWIB_IO_CTLTYPE_FILE_TELL</FONT>,
+  <FONT COLOR="#000044">NETWIB_IO_CTLTYPE_FILE_TRUNCATE</FONT>,
+  <FONT COLOR="#880000">/* fd : 300 */</FONT>
+  <FONT COLOR="#880000">/* handle : 400 */</FONT>
+  <FONT COLOR="#880000">/* ipc : 500 */</FONT>
+  <FONT COLOR="#000044">NETWIB_IO_CTLTYPE_IPC_SIDEREAD</FONT> = 500,
+  <FONT COLOR="#000044">NETWIB_IO_CTLTYPE_IPC_SIDEWRITE</FONT>,
+  <FONT COLOR="#000044">NETWIB_IO_CTLTYPE_IPC_NOTUSED</FONT>,
+  <FONT COLOR="#880000">/* kbd : 600 */</FONT>
+  <FONT COLOR="#000044">NETWIB_IO_CTLTYPE_KBD_ECHO</FONT> = 600,
+  <FONT COLOR="#000044">NETWIB_IO_CTLTYPE_KBD_LINE</FONT>,
+  <FONT COLOR="#000044">NETWIB_IO_CTLTYPE_KBD_PURGE</FONT>,
+  <FONT COLOR="#880000">/* record : 700 */</FONT>
+  <FONT COLOR="#880000">/* sock : 800 */</FONT>
+  <FONT COLOR="#000044">NETWIB_IO_CTLTYPE_SOCK_IP4OPTS</FONT> = 800,
+  <FONT COLOR="#000044">NETWIB_IO_CTLTYPE_SOCK_IP6EXTS</FONT>,
+  <FONT COLOR="#000044">NETWIB_IO_CTLTYPE_SOCK_LOCAL</FONT>,
+  <FONT COLOR="#000044">NETWIB_IO_CTLTYPE_SOCK_REMOTE</FONT>,
+  <FONT COLOR="#000044">NETWIB_IO_CTLTYPE_SOCK_MULTICASTTTL</FONT>,
+  <FONT COLOR="#000044">NETWIB_IO_CTLTYPE_SOCK_SOCKTYPE</FONT>,
+  <FONT COLOR="#880000">/* sockv : 900 */</FONT>
+  <FONT COLOR="#000044">NETWIB_IO_CTLTYPE_SOCKV_ANSWERALIVE</FONT> = 900,
+  <FONT COLOR="#880000">/* sniff : 1000 */</FONT>
+  <FONT COLOR="#000044">NETWIB_IO_CTLTYPE_SNIFF_FILTER</FONT> = 1000,
+  <FONT COLOR="#000044">NETWIB_IO_CTLTYPE_SNIFF_DLT</FONT>,
+  <FONT COLOR="#880000">/* spoof : 1100 */</FONT>
+  <FONT COLOR="#000044">NETWIB_IO_CTLTYPE_SPOOF_DLT</FONT>= 1100,
+  <FONT COLOR="#880000"><B>/** values which are specific to iousual.h **/</B></FONT>
+  <FONT COLOR="#880000">/* ioutil : 2000 */</FONT>
+  <FONT COLOR="#000044">NETWIB_IO_CTLTYPE_DATA_LINE_MSDOS</FONT> = 2000,
+  <FONT COLOR="#000044">NETWIB_IO_CTLTYPE_DATA_CHUNK_MINSIZE</FONT>,
+  <FONT COLOR="#000044">NETWIB_IO_CTLTYPE_DATA_CHUNK_MAXSIZE</FONT>,
+  <FONT COLOR="#000044">NETWIB_IO_CTLTYPE_DATA_FIXED_SIZE</FONT>,
+  <FONT COLOR="#000044">NETWIB_IO_CTLTYPE_DATA_TYPE</FONT>,
+  <FONT COLOR="#000044">NETWIB_IO_CTLTYPE_STORAGE_FLUSH</FONT>,
+  <FONT COLOR="#880000"><B>/** values which are specific to users' utilities **/</B></FONT>
+  <FONT COLOR="#880000">/* user defined : start at 10000 */</FONT>
+  <FONT COLOR="#000044">NETWIB_IO_CTLTYPE_USER_BEGIN</FONT> = <FONT COLOR="#000044">NETWIB_ENUM_USER_BEGIN</FONT>
+} <FONT COLOR="#000088">netwib_io_ctltype</FONT>;
+<FONT COLOR="#880000">/* Those functions permit to set/get parameters (pointer and
+   integer) about a netwib_io. It should not be used directly,
+   but by the defines.
+   In function netwib_io_ctl_get, parameter p could be
+   a "<FONT COLOR="#000088">netwib_ptr</FONT> *pp" instead of "<FONT COLOR="#000088">netwib_ptr</FONT> p", but it
+   complicates things for nothing : a pointer can be
+   used for what we want. For example, its easier to use
+   ctl_get(..., &amp;buf, &amp;ui) instead of ("&amp;&amp;buf", &amp;ui).
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_io_ctl_set</B>(<FONT COLOR="#000088">netwib_io</FONT> *pio,
+                             <FONT COLOR="#000088">netwib_io_waytype</FONT> way,
+                             <FONT COLOR="#000088">netwib_io_ctltype</FONT> ctltype,
+                             <FONT COLOR="#000088">netwib_ptr</FONT> p,
+                             <FONT COLOR="#000088">netwib_uint32</FONT> ui);
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_io_ctl_get</B>(<FONT COLOR="#000088">netwib_io</FONT> *pio,
+                             <FONT COLOR="#000088">netwib_io_waytype</FONT> way,
+                             <FONT COLOR="#000088">netwib_io_ctltype</FONT> ctltype,
+                             <FONT COLOR="#000088">netwib_ptr</FONT> p,
+                             <FONT COLOR="#000088">netwib_uint32</FONT> *pui);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000"><B>/***************************************************************
+ * This function permits to close an "io chain".               *
+ ***************************************************************/</B></FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_io_close
+   Description :
+     Close a chain (links are closed only if nobody use them
+     anymore : numusers == 0).
+   Input parameter(s) :
+   Input/output parameter(s) :
+     **ppio : <FONT COLOR="#000088">netwib_io</FONT> to close
+   Output parameter(s) :
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_io_close</B>(<FONT COLOR="#000088">netwib_io</FONT> **ppio);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000"><B>/***************************************************************
+ * Common control defines                                      *
+ ***************************************************************/</B></FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+typedef enum {
+  <FONT COLOR="#000044">NETWIB_IO_RESTYPE_FILE</FONT> = 1,
+  <FONT COLOR="#000044">NETWIB_IO_RESTYPE_FD</FONT>,
+  <FONT COLOR="#000044">NETWIB_IO_RESTYPE_HANDLE</FONT>,
+  <FONT COLOR="#000044">NETWIB_IO_RESTYPE_IPC</FONT>,
+  <FONT COLOR="#000044">NETWIB_IO_RESTYPE_KBD</FONT>,
+  <FONT COLOR="#000044">NETWIB_IO_RESTYPE_SCREEN</FONT>,
+  <FONT COLOR="#000044">NETWIB_IO_RESTYPE_STREAM</FONT>,
+  <FONT COLOR="#000044">NETWIB_IO_RESTYPE_RECORD</FONT>,
+  <FONT COLOR="#000044">NETWIB_IO_RESTYPE_SOCK</FONT>,
+  <FONT COLOR="#000044">NETWIB_IO_RESTYPE_SOCKV</FONT>,
+  <FONT COLOR="#000044">NETWIB_IO_RESTYPE_SNIFF</FONT>,
+  <FONT COLOR="#000044">NETWIB_IO_RESTYPE_SPOOF</FONT>,
+  <FONT COLOR="#000044">NETWIB_IO_RESTYPE_NULL</FONT>,
+  <FONT COLOR="#000044">NETWIB_IO_RESTYPE_MEM</FONT>,
+  <FONT COLOR="#000044">NETWIB_IO_RESTYPE_TLV</FONT>,
+  <FONT COLOR="#000044">NETWIB_IO_RESTYPE_EXEC</FONT>,
+  <FONT COLOR="#000044">NETWIB_IO_RESTYPE_SHELLSERVER</FONT>,
+  <FONT COLOR="#000044">NETWIB_IO_RESTYPE_SHELLCLIENT</FONT>,
+  <FONT COLOR="#000044">NETWIB_IO_RESTYPE_USER_BEGIN</FONT> = <FONT COLOR="#000044">NETWIB_ENUM_USER_BEGIN</FONT>
+} <FONT COLOR="#000088">netwib_io_restype</FONT>;
+<FONT COLOR="#880000">/* Obtain the resource type of a <FONT COLOR="#000088">netwib_io</FONT> */</FONT>
+<FONT COLOR="#880000">/* <FONT COLOR="#000088">netwib_err</FONT> f(<FONT COLOR="#000088">netwib_io</FONT> *pio, <FONT COLOR="#000088">netwib_io_waytype</FONT> way, <FONT COLOR="#000088">netwib_io_restype</FONT> *pres); */</FONT>
+<FONT COLOR="#008800">#define <B>netwib_io_ctl_get_res</B>(pio,way,pres) <B>netwib_io_ctl_get</B>(pio,way,<FONT COLOR="#000044">NETWIB_IO_CTLTYPE_RES</FONT>,NULL,(netwib_uint32*)pres)</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* indicate the end of data */</FONT>
+<FONT COLOR="#880000">/* <FONT COLOR="#000088">netwib_err</FONT> f(<FONT COLOR="#000088">netwib_io</FONT> *pio, <FONT COLOR="#000088">netwib_io_waytype</FONT> way); */</FONT>
+<FONT COLOR="#008800">#define <B>netwib_io_ctl_set_end</B>(pio,way) <B>netwib_io_ctl_set</B>(pio,way,<FONT COLOR="#000044">NETWIB_IO_CTLTYPE_END</FONT>,NULL,0)</FONT>
+<FONT COLOR="#008800">#define <B>netwib_io_ctl_set_end_write</B>(pio) <B>netwib_io_ctl_set_end</B>(pio,<FONT COLOR="#000044">NETWIB_IO_WAYTYPE_WRITE</FONT>)</FONT>
+
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000"><B>/***************************************************************
+ * Now, a big example ...                                      *
+ ***************************************************************/</B></FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#008800">#if 0</FONT>
+<FONT COLOR="#880000">/* Complete example :
+
+  We create a module (named m) having one input (i1) and two
+  outputs (o1, o2) :
+
+<FONT COLOR="#008800">            ############# m #############</FONT>
+<FONT COLOR="#008800">            #                           #</FONT>
+<FONT COLOR="#008800">            #         ooooooooo         #  o1</FONT>
+        i1  #  ,--.   o       o---------------&gt;
+      &gt;--------&gt;l1 &gt;--o HEART o   ,--.  #
+<FONT COLOR="#008800">            #  `--'   o       o---&gt;l2 &gt;-------&gt;</FONT>
+<FONT COLOR="#008800">            #         ooooooooo   `--'  #  o2</FONT>
+<FONT COLOR="#008800">            #                           #</FONT>
+<FONT COLOR="#008800">            #############################</FONT>
+
+  The module contains 2 ios :
+   - l1 : reads line by line
+   - l2 : converts data to base64
+
+  The heart of the module reads data from l1's output. If the
+  data starts by 'A', then it is sent to o1. Else, data goes
+  through l2.
+
+  *** Usage 1 :
+   - i1 is plugged to a file through io l3
+   - o1 is plugged to file2
+   - o2 is plugged to file3 through io l4
+   - l3 reads data and duplicates it (read 'qa', output 'qqaa')
+   - l4 reads data, displays it to screen and sends to output
+                                                   ,-------
+<FONT COLOR="#008800">                               #####       ,-------&gt; file2</FONT>
+      -------.      ,--.       #   &gt;------'        `-------
+       file1  &gt;-----&gt;l3 &gt;------&gt; m #     ,--.      ,-------
+      -------'      `--'       #   &gt;-----&gt;l4 &gt;-----&gt; file3
+<FONT COLOR="#008800">                               #####     `--'      `-------</FONT>
+
+  *** Usage 2 :
+   - i1 is plugged to socket soc1
+   - o1 is plugged to null (data is junked)
+   - o2 is plugged back to the same socket
+<FONT COLOR="#008800">                               #####               ,------</FONT>
+      ------.                  #   &gt;---------------&gt; null
+       soc1  &gt;-----------------&gt; m #               `------
+            &lt;-------.          #   &gt;----.
+      ------'        \         #####    |
+                      `-----------------'
+
+  *** Usage 3 :
+   - i1 is plugged to a socket through io l3
+   - o1 is plugged to null (data is junked)
+   - o2 is plugged back to the same socket through io l4
+<FONT COLOR="#008800">                               #####               ,------</FONT>
+                    ,--.       #   &gt;---------------&gt; null
+      ------.    ,--&gt;l3 &gt;------&gt; m #               `------
+       soc1  &gt;--'   `--'       #   &gt;----.
+            &lt;--.    ,--.       #####    |
+      ------'   `--&lt; l4&lt;----------------'
+                    `--'
+
+  *** Usage 4 :
+   - l5 is a bi-directional io converting string to uppercase
+   - l5 is plugged to socket soc1
+   - i1 is plugged to l5
+   - o1 is plugged to null (data is junked)
+   - o2 is plugged back to l5
+<FONT COLOR="#008800">                               #####               ,------</FONT>
+<FONT COLOR="#008800">                               #   &gt;---------------&gt; null</FONT>
+      ------.       ,--.    ,--&gt; m #               `------
+       soc1  &gt;------&gt;l5 &gt;--'   #   &gt;----.
+            &lt;------&lt;   &lt;--.    #####    |
+      ------'       `--'   `------------'
+
+  *** Usage 5 :
+   - i1 is plugged to file1 through l5
+   - o1 is plugged to null (data is junked)
+   - o2 is plugged to file2 through l5
+<FONT COLOR="#008800">                               #####               ,------</FONT>
+     -------.                  #   &gt;---------------&gt; null
+      file1  &gt;--.   ,--.    ,--&gt; m #               `------
+     -------'    `--&gt;l5 &gt;--'   #   &gt;----.
+     -------.   ,--&lt;   &lt;--.    #####    |
+      file2 &lt;--'    `--'   `------------'
+     -------'
+
+  *** Usage 6 :
+   - i1 is plugged to file1
+   - o1 are o2 are both plugged to file2
+<FONT COLOR="#008800">                               #####</FONT>
+      -------.                 #   &gt;------------.  ,-------
+       file1  &gt;----------------&gt; m #             --&gt; file2
+      -------'                 #   &gt;------------'  `-------
+<FONT COLOR="#008800">                               #####</FONT>
+
+  *** Usage 7 :
+   - m2 is a module similar to m except it has 2 inputs
+     and one output
+   - i1 is plugged to file1
+   - i2 is plugged to file1
+   - o1 is plugged to null (data is junked)
+   - o2 is plugged to file2
+<FONT COLOR="#008800">                               #####</FONT>
+      -------.   ,-------------&gt;   #               ,------
+       file1  &gt;--              # m &gt;---------------&gt; null
+      -------'   `-------------&gt;   #               `------
+<FONT COLOR="#008800">                               #####</FONT>
+
+*/</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* l1 is <FONT COLOR="#000088">netwib_io_init_read_line</FONT> */</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* l2 : converts data to base64 */</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> l2_write(<FONT COLOR="#000088">netwib_io</FONT> *pio,
+                    <FONT COLOR="#000088">netwib_constbuf</FONT> *pbuf);
+<FONT COLOR="#000088">netwib_err</FONT> l2_write(<FONT COLOR="#000088">netwib_io</FONT> *pio,
+                    <FONT COLOR="#000088">netwib_constbuf</FONT> *pbuf)
+{
+  <FONT COLOR="#000088">netwib_buf</FONT> bufbase64;
+  <FONT COLOR="#000088">netwib_io</FONT> *pionext;
+  <FONT COLOR="#000088">netwib_err</FONT> ret;
+
+  <FONT COLOR="#880000">/* obtain the next io in the chain */</FONT>
+  <B>netwib_er</B>(<B>netwib_io_next_write</B>(pio, &amp;pionext));
+
+  <FONT COLOR="#880000">/* converts pbuf to base64 */</FONT>
+  <B>netwib_er</B>(<B>netwib_buf_init_mallocdefault</B>(&amp;bufbase64));
+  <B>netwib_er</B>(<B>netwib_buf_encode</B>(pbuf, <FONT COLOR="#000044">NETWIB_ENCODETYPE_BASE64</FONT>, &amp;bufbase64));
+
+  <FONT COLOR="#880000">/* write data to the next io */</FONT>
+  ret = <B>netwib_io_write</B>(pionext, &amp;bufbase64);
+  <B>netwib_er</B>(<B>netwib_buf_close</B>(&amp;bufbase64));
+
+  return(ret);
+}
+
+<FONT COLOR="#000088">netwib_err</FONT> l2_init(<FONT COLOR="#000088">netwib_io</FONT> **ppio);
+<FONT COLOR="#000088">netwib_err</FONT> l2_init(<FONT COLOR="#000088">netwib_io</FONT> **ppio)
+{
+  <B>netwib_er</B>(<B>netwib_io_init</B>(<FONT COLOR="#000044">NETWIB_FALSE</FONT>, <FONT COLOR="#000044">NETWIB_TRUE</FONT>, NULL,
+                           NULL<FONT COLOR="#880000">/*read*/</FONT>, &amp;l2_write,
+                           NULL<FONT COLOR="#880000">/*wait*/</FONT>, NULL<FONT COLOR="#880000">/*unread*/</FONT>,
+                           NULL<FONT COLOR="#880000">/*ctlset*/</FONT>, NULL<FONT COLOR="#880000">/*ctlget*/</FONT>,
+                           NULL<FONT COLOR="#880000">/*close*/</FONT>, ppio));
+  return(<FONT COLOR="#000044">NETWIB_ERR_OK</FONT>);
+}
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* l3 reads data and duplicates it (read 'qa', output 'qqaa') */</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> l3_dup(<FONT COLOR="#000088">netwib_constbuf</FONT> *pinbuf,
+                  <FONT COLOR="#000088">netwib_buf</FONT> *poutbuf);
+<FONT COLOR="#000088">netwib_err</FONT> l3_dup(<FONT COLOR="#000088">netwib_constbuf</FONT> *pinbuf,
+                  <FONT COLOR="#000088">netwib_buf</FONT> *poutbuf)
+{
+  <FONT COLOR="#000088">netwib_data</FONT> data;
+  <FONT COLOR="#000088">netwib_uint32</FONT> datasize, i;
+
+  data = <B>netwib__buf_ref_data_ptr</B>(pinbuf);
+  datasize = <B>netwib__buf_ref_data_size</B>(pinbuf);
+  for (i = 0; i &lt; datasize; i++) {
+    <B>netwib_er</B>(<B>netwib_buf_append_byte</B>(data[i], poutbuf));
+    <B>netwib_er</B>(<B>netwib_buf_append_byte</B>(data[i], poutbuf));
+  }
+
+  return(<FONT COLOR="#000044">NETWIB_ERR_OK</FONT>);
+}
+<FONT COLOR="#000088">netwib_err</FONT> l3_read(<FONT COLOR="#000088">netwib_io</FONT> *pio,
+                   <FONT COLOR="#000088">netwib_buf</FONT> *pbuf);
+<FONT COLOR="#000088">netwib_err</FONT> l3_read(<FONT COLOR="#000088">netwib_io</FONT> *pio,
+                   <FONT COLOR="#000088">netwib_buf</FONT> *pbuf)
+{
+  <FONT COLOR="#000088">netwib_buf</FONT> buf;
+  <FONT COLOR="#000088">netwib_io</FONT> *pionext;
+
+  <FONT COLOR="#880000">/* obtain the next io in the chain */</FONT>
+  <B>netwib_er</B>(<B>netwib_io_next_read</B>(pio, &amp;pionext));
+
+  <FONT COLOR="#880000">/* read data */</FONT>
+  <B>netwib_er</B>(<B>netwib_buf_init_mallocdefault</B>(&amp;buf));
+  <B>netwib_er</B>(<B>netwib_io_read</B>(pionext, &amp;buf));
+
+  <FONT COLOR="#880000">/* duplicate buf */</FONT>
+  <B>netwib_er</B>(l3_dup(&amp;buf, pbuf));
+  <B>netwib_er</B>(<B>netwib_buf_close</B>(&amp;buf));
+
+  return(<FONT COLOR="#000044">NETWIB_ERR_OK</FONT>);
+}
+<FONT COLOR="#000088">netwib_err</FONT> l3_init(<FONT COLOR="#000088">netwib_io</FONT> **ppio);
+<FONT COLOR="#000088">netwib_err</FONT> l3_init(<FONT COLOR="#000088">netwib_io</FONT> **ppio)
+{
+  <B>netwib_er</B>(<B>netwib_io_init</B>(<FONT COLOR="#000044">NETWIB_FALSE</FONT>, <FONT COLOR="#000044">NETWIB_TRUE</FONT>, NULL,
+                           &amp;l3_read<FONT COLOR="#880000">/*read*/</FONT>, NULL<FONT COLOR="#880000">/*write*/</FONT>,
+                           NULL<FONT COLOR="#880000">/*wait*/</FONT>, NULL<FONT COLOR="#880000">/*unread*/</FONT>,
+                           NULL<FONT COLOR="#880000">/*ctlset*/</FONT>, NULL<FONT COLOR="#880000">/*ctlget*/</FONT>,
+                           NULL<FONT COLOR="#880000">/*close*/</FONT>, ppio));
+
+  return(<FONT COLOR="#000044">NETWIB_ERR_OK</FONT>);
+}
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* l4 reads data, displays it to screen and sends to output */</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> l4_write(<FONT COLOR="#000088">netwib_io</FONT> *pio,
+                    <FONT COLOR="#000088">netwib_constbuf</FONT> *pbuf);
+<FONT COLOR="#000088">netwib_err</FONT> l4_write(<FONT COLOR="#000088">netwib_io</FONT> *pio,
+                    <FONT COLOR="#000088">netwib_constbuf</FONT> *pbuf)
+{
+  <FONT COLOR="#000088">netwib_buf</FONT> bufbase64;
+  <FONT COLOR="#000088">netwib_io</FONT> *pionext;
+  <FONT COLOR="#000088">netwib_err</FONT> ret;
+
+  <FONT COLOR="#880000">/* obtain the next io in the chain */</FONT>
+  <B>netwib_er</B>(<B>netwib_io_next_write</B>(pio, &amp;pionext));
+
+  <FONT COLOR="#880000">/* display it */</FONT>
+  <B>netwib_er</B>(<B>netwib_buf_display</B>(pbuf, <FONT COLOR="#000044">NETWIB_ENCODETYPE_DUMP</FONT>));
+
+  <FONT COLOR="#880000">/* write data to the next io */</FONT>
+  ret = <B>netwib_io_write</B>(pionext, pbuf);
+
+  return(ret);
+}
+
+<FONT COLOR="#000088">netwib_err</FONT> l4_init(<FONT COLOR="#000088">netwib_io</FONT> **ppio);
+<FONT COLOR="#000088">netwib_err</FONT> l4_init(<FONT COLOR="#000088">netwib_io</FONT> **ppio)
+{
+  <B>netwib_er</B>(<B>netwib_io_init</B>(<FONT COLOR="#000044">NETWIB_FALSE</FONT>, <FONT COLOR="#000044">NETWIB_TRUE</FONT>, NULL,
+                           NULL<FONT COLOR="#880000">/*read*/</FONT>, &amp;l4_write,
+                           NULL<FONT COLOR="#880000">/*wait*/</FONT>, NULL<FONT COLOR="#880000">/*unread*/</FONT>,
+                           NULL<FONT COLOR="#880000">/*ctlset*/</FONT>, NULL<FONT COLOR="#880000">/*ctlget*/</FONT>,
+                           NULL<FONT COLOR="#880000">/*close*/</FONT>, ppio));
+
+  return(<FONT COLOR="#000044">NETWIB_ERR_OK</FONT>);
+}
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* l5 convert data to uppercase */</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> l5_up(<FONT COLOR="#000088">netwib_constbuf</FONT> *pinbuf,
+                 <FONT COLOR="#000088">netwib_buf</FONT> *poutbuf);
+<FONT COLOR="#000088">netwib_err</FONT> l5_up(<FONT COLOR="#000088">netwib_constbuf</FONT> *pinbuf,
+                 <FONT COLOR="#000088">netwib_buf</FONT> *poutbuf)
+{
+  <FONT COLOR="#000088">netwib_data</FONT> data;
+  <FONT COLOR="#000088">netwib_uint32</FONT> datasize, i;
+  <FONT COLOR="#000088">netwib_byte</FONT> c;
+
+  data = <B>netwib__buf_ref_data_ptr</B>(pinbuf);
+  datasize = <B>netwib__buf_ref_data_size</B>(pinbuf);
+  for (i = 0; i &lt; datasize; i++) {
+    c = data[i];
+    <B>netwib_c2_upper</B>(c);
+    <B>netwib_er</B>(<B>netwib_buf_append_byte</B>(c, poutbuf));
+  }
+
+  return(<FONT COLOR="#000044">NETWIB_ERR_OK</FONT>);
+}
+<FONT COLOR="#000088">netwib_err</FONT> l5_read(<FONT COLOR="#000088">netwib_io</FONT> *pio,
+                   <FONT COLOR="#000088">netwib_buf</FONT> *pbuf);
+<FONT COLOR="#000088">netwib_err</FONT> l5_read(<FONT COLOR="#000088">netwib_io</FONT> *pio,
+                   <FONT COLOR="#000088">netwib_buf</FONT> *pbuf)
+{
+  <FONT COLOR="#000088">netwib_buf</FONT> buf;
+  <FONT COLOR="#000088">netwib_io</FONT> *pionext;
+
+  <B>netwib_er</B>(<B>netwib_io_next_read</B>(pio, &amp;pionext));
+  <B>netwib_er</B>(<B>netwib_buf_init_mallocdefault</B>(&amp;buf));
+  <B>netwib_er</B>(<B>netwib_io_read</B>(pionext, &amp;buf));
+  <B>netwib_er</B>(l5_up(&amp;buf, pbuf));
+  <B>netwib_er</B>(<B>netwib_buf_close</B>(&amp;buf));
+
+  return(<FONT COLOR="#000044">NETWIB_ERR_OK</FONT>);
+}
+<FONT COLOR="#000088">netwib_err</FONT> l5_write(<FONT COLOR="#000088">netwib_io</FONT> *pio,
+                    <FONT COLOR="#000088">netwib_constbuf</FONT> *pbuf);
+<FONT COLOR="#000088">netwib_err</FONT> l5_write(<FONT COLOR="#000088">netwib_io</FONT> *pio,
+                    <FONT COLOR="#000088">netwib_constbuf</FONT> *pbuf)
+{
+  <FONT COLOR="#000088">netwib_buf</FONT> buf;
+  <FONT COLOR="#000088">netwib_io</FONT> *pionext;
+  <FONT COLOR="#000088">netwib_err</FONT> ret;
+
+  <B>netwib_er</B>(<B>netwib_io_next_write</B>(pio, &amp;pionext));
+  <B>netwib_er</B>(<B>netwib_buf_init_mallocdefault</B>(&amp;buf));
+  <B>netwib_er</B>(l5_up(pbuf, &amp;buf));
+  ret = <B>netwib_io_write</B>(pionext, &amp;buf);
+  <B>netwib_er</B>(<B>netwib_buf_close</B>(&amp;buf));
+
+  return(ret);
+}
+<FONT COLOR="#000088">netwib_err</FONT> l5_init(<FONT COLOR="#000088">netwib_io</FONT> **ppio);
+<FONT COLOR="#000088">netwib_err</FONT> l5_init(<FONT COLOR="#000088">netwib_io</FONT> **ppio)
+{
+  <B>netwib_er</B>(<B>netwib_io_init</B>(<FONT COLOR="#000044">NETWIB_FALSE</FONT>, <FONT COLOR="#000044">NETWIB_TRUE</FONT>, NULL,
+                           &amp;l5_read, &amp;l5_write,
+                           NULL<FONT COLOR="#880000">/*wait*/</FONT>, NULL<FONT COLOR="#880000">/*unread*/</FONT>,
+                           NULL<FONT COLOR="#880000">/*ctlset*/</FONT>, NULL<FONT COLOR="#880000">/*ctlget*/</FONT>,
+                           NULL<FONT COLOR="#880000">/*close*/</FONT>, ppio));
+
+  return(<FONT COLOR="#000044">NETWIB_ERR_OK</FONT>);
+}
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* module m */</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> m(<FONT COLOR="#000088">netwib_io</FONT> *pi1,
+             <FONT COLOR="#000088">netwib_io</FONT> *po1,
+             <FONT COLOR="#000088">netwib_io</FONT> *po2);
+<FONT COLOR="#000088">netwib_err</FONT> m(<FONT COLOR="#000088">netwib_io</FONT> *pi1,
+             <FONT COLOR="#000088">netwib_io</FONT> *po1,
+             <FONT COLOR="#000088">netwib_io</FONT> *po2)
+{
+  <FONT COLOR="#000088">netwib_buf</FONT> buf;
+  <FONT COLOR="#000088">netwib_err</FONT> ret;
+  <FONT COLOR="#000088">netwib_io</FONT> *pl1, *pl2;
+  <FONT COLOR="#000088">netwib_data</FONT> data;
+  <FONT COLOR="#000088">netwib_uint32</FONT> datasize;
+
+  <FONT COLOR="#880000">/* create l1 */</FONT>
+  <B>netwib_er</B>(<B>netwib_io_init_line</B>(&amp;pl1));
+
+  <FONT COLOR="#880000">/* create l2 */</FONT>
+  <B>netwib_er</B>(l2_init(&amp;pl2));
+
+  <FONT COLOR="#880000">/* add l1 to i1 */</FONT>
+  <B>netwib_er</B>(<B>netwib_io_plug_read</B>(pl1, pi1));
+
+  <FONT COLOR="#880000">/* add l2 to o2 */</FONT>
+  <B>netwib_er</B>(<B>netwib_io_plug_read</B>(pl2, po2));
+
+  <FONT COLOR="#880000">/* main loop */</FONT>
+  <B>netwib_er</B>(<B>netwib_buf_init_mallocdefault</B>(&amp;buf));
+  while (<FONT COLOR="#000044">NETWIB_TRUE</FONT>) {
+    <B>netwib__buf_reinit</B>(&amp;buf);
+    ret = <B>netwib_io_read</B>(pl1, &amp;buf);
+    if (ret == <FONT COLOR="#000044">NETWIB_ERR_DATAEND</FONT>) {
+      ret = <FONT COLOR="#000044">NETWIB_ERR_OK</FONT>;
+      break;
+    } else if (ret != <FONT COLOR="#000044">NETWIB_ERR_OK</FONT>) {
+      break;
+    }
+    data = <B>netwib__buf_ref_data_ptr</B>(&amp;buf);
+    datasize = <B>netwib__buf_ref_data_size</B>(&amp;buf);
+    if (datasize &amp;&amp; data[0] == 'A') {
+      ret = <B>netwib_io_write</B>(po1, &amp;buf);
+    } else {
+      ret = <B>netwib_io_write</B>(pl2, &amp;buf);
+    }
+    if (ret != <FONT COLOR="#000044">NETWIB_ERR_OK</FONT>) {
+      break;
+    }
+  }
+  <B>netwib_er</B>(<B>netwib_buf_close</B>(&amp;buf));
+
+  <FONT COLOR="#880000">/* close only l1 and l2 (not the complete chain) */</FONT>
+  <B>netwib_er</B>(<B>netwib_io_close</B>(&amp;pl1));
+  <B>netwib_er</B>(<B>netwib_io_close</B>(&amp;pl2));
+
+  return(ret);
+}
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* usage 1 */</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> usage1(void);
+<FONT COLOR="#000088">netwib_err</FONT> usage1(void)
+{
+  <FONT COLOR="#000088">netwib_err</FONT> ret;
+  <FONT COLOR="#000088">netwib_buf</FONT> filename;
+  <FONT COLOR="#000088">netwib_io</FONT> *pfile1, *pfile2, *pfile3, *pl3 , *pl4;
+
+  <FONT COLOR="#880000">/* open files */</FONT>
+  <B>netwib_er</B>(<B>netwib_buf_init_ext_string</B>("file1", &amp;filename));
+  <B>netwib_er</B>(<B>netwib_io_init_file_read</B>(&amp;filename, &amp;pfile1));
+  <B>netwib_er</B>(<B>netwib_buf_init_ext_string</B>("file2", &amp;filename));
+  <B>netwib_er</B>(<B>netwib_io_init_file_write</B>(&amp;filename, &amp;pfile2));
+  <B>netwib_er</B>(<B>netwib_buf_init_ext_string</B>("file3", &amp;filename));
+  <B>netwib_er</B>(<B>netwib_io_init_file_write</B>(&amp;filename, &amp;pfile3));
+
+  <FONT COLOR="#880000">/* initialize l3 and l4 */</FONT>
+  <B>netwib_er</B>(l3_init(&amp;pl3));
+  <B>netwib_er</B>(l4_init(&amp;pl4));
+
+  <FONT COLOR="#880000">/* create chains */</FONT>
+  <B>netwib_er</B>(<B>netwib_io_plug_read</B>(pl3, pfile1));
+  <B>netwib_er</B>(<B>netwib_io_plug_write</B>(pl4, pfile3));
+
+  <FONT COLOR="#880000">/* core loop */</FONT>
+  ret = m(pl3, pfile2, pl4);
+
+  <FONT COLOR="#880000">/* close chains */</FONT>
+  <B>netwib_er</B>(<B>netwib_io_close</B>(&amp;pl3)); <FONT COLOR="#880000">/* or close_read */</FONT>
+  <B>netwib_er</B>(<B>netwib_io_close</B>(&amp;pfile2)); <FONT COLOR="#880000">/* or close_write */</FONT>
+  <B>netwib_er</B>(<B>netwib_io_close</B>(&amp;pl4)); <FONT COLOR="#880000">/* or close_write */</FONT>
+
+  return(ret);
+}
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* usage 2 */</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> usage2(void);
+<FONT COLOR="#000088">netwib_err</FONT> usage2(void)
+{
+  <FONT COLOR="#000088">netwib_err</FONT> ret;
+  <FONT COLOR="#000088">netwib_io</FONT> *psock, *pnull;
+  <FONT COLOR="#000088">netwib_ip</FONT> ipad;
+
+  <FONT COLOR="#880000">/* open socket */</FONT>
+  <B>netwib_er</B>(<B>netwib_ip_init_ip4</B>(0x7F000001, &amp;ipad));
+  <B>netwib_er</B>(<B>netwib_io_init_sock_tcp_cli_easy</B>(&amp;ipad, 1234, &amp;psock));
+
+  <FONT COLOR="#880000">/* open null */</FONT>
+  <B>netwib_er</B>(<B>netwib_io_init_null</B>(&amp;pnull));
+
+  <FONT COLOR="#880000">/* core loop */</FONT>
+  ret = m(psock, pnull, psock);
+
+  <FONT COLOR="#880000">/* close chains */</FONT>
+  <B>netwib_er</B>(<B>netwib_io_close</B>(&amp;psock));
+  <B>netwib_er</B>(<B>netwib_io_close</B>(&amp;pnull)); <FONT COLOR="#880000">/* or close_write */</FONT>
+
+  return(ret);
+}
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* usage 3 */</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> usage3(void);
+<FONT COLOR="#000088">netwib_err</FONT> usage3(void)
+{
+  <FONT COLOR="#000088">netwib_err</FONT> ret;
+  <FONT COLOR="#000088">netwib_io</FONT> *psock, *pnull, *pl3 , *pl4;
+  <FONT COLOR="#000088">netwib_ip</FONT> ipad;
+
+  <FONT COLOR="#880000">/* open socket */</FONT>
+  <B>netwib_er</B>(<B>netwib_ip_init_ip4</B>(0x7F000001, &amp;ipad));
+  <B>netwib_er</B>(<B>netwib_io_init_sock_tcp_cli_easy</B>(&amp;ipad, 1234, &amp;psock));
+
+  <FONT COLOR="#880000">/* open null */</FONT>
+  <B>netwib_er</B>(<B>netwib_io_init_null</B>(&amp;pnull));
+
+  <FONT COLOR="#880000">/* initialize l3 and l4 */</FONT>
+  <B>netwib_er</B>(l3_init(&amp;pl3));
+  <B>netwib_er</B>(l4_init(&amp;pl4));
+
+  <FONT COLOR="#880000">/* create chains */</FONT>
+  <B>netwib_er</B>(<B>netwib_io_plug_read</B>(pl3, psock));
+  <B>netwib_er</B>(<B>netwib_io_plug_write</B>(pl4, psock));
+
+  <FONT COLOR="#880000">/* core loop */</FONT>
+  ret = m(pl3, pnull, pl4);
+
+  <FONT COLOR="#880000">/* close chains */</FONT>
+  <B>netwib_er</B>(<B>netwib_io_close</B>(&amp;pl3)); <FONT COLOR="#880000">/* or close_read */</FONT>
+  <B>netwib_er</B>(<B>netwib_io_close</B>(&amp;pnull)); <FONT COLOR="#880000">/* or close_write */</FONT>
+  <B>netwib_er</B>(<B>netwib_io_close</B>(&amp;pl4)); <FONT COLOR="#880000">/* or close_write */</FONT>
+
+  return(ret);
+}
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* usage 4 */</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> usage4(void);
+<FONT COLOR="#000088">netwib_err</FONT> usage4(void)
+{
+  <FONT COLOR="#000088">netwib_err</FONT> ret;
+  <FONT COLOR="#000088">netwib_io</FONT> *psock, *pnull, *pl5;
+  <FONT COLOR="#000088">netwib_ip</FONT> ipad;
+
+  <FONT COLOR="#880000">/* open socket */</FONT>
+  <B>netwib_er</B>(<B>netwib_ip_init_ip4</B>(0x7F000001, &amp;ipad));
+  <B>netwib_er</B>(<B>netwib_io_init_sock_tcp_cli_easy</B>(&amp;ipad, 1234, &amp;psock));
+
+  <FONT COLOR="#880000">/* open null */</FONT>
+  <B>netwib_er</B>(<B>netwib_io_init_null</B>(&amp;pnull));
+
+  <FONT COLOR="#880000">/* initialize l5 */</FONT>
+  <B>netwib_er</B>(l5_init(&amp;pl5));
+
+  <FONT COLOR="#880000">/* create chains */</FONT>
+  <B>netwib_er</B>(<B>netwib_io_plug_read</B>(pl5, psock));
+  <B>netwib_er</B>(<B>netwib_io_plug_write</B>(pl5, psock));
+
+  <FONT COLOR="#880000">/* core loop */</FONT>
+  ret = m(pl5, pnull, pl5);
+
+  <FONT COLOR="#880000">/* close chains */</FONT>
+  <B>netwib_er</B>(<B>netwib_io_close</B>(&amp;pl5));
+  <B>netwib_er</B>(<B>netwib_io_close</B>(&amp;pnull)); <FONT COLOR="#880000">/* or close_write */</FONT>
+
+  return(ret);
+}
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* usage 5 */</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> usage5(void);
+<FONT COLOR="#000088">netwib_err</FONT> usage5(void)
+{
+  <FONT COLOR="#000088">netwib_err</FONT> ret;
+  <FONT COLOR="#000088">netwib_buf</FONT> filename;
+  <FONT COLOR="#000088">netwib_io</FONT> *pfile1, *pfile2, *pnull, *pl5;
+
+  <FONT COLOR="#880000">/* open files */</FONT>
+  <B>netwib_er</B>(<B>netwib_buf_init_ext_string</B>("file1", &amp;filename));
+  <B>netwib_er</B>(<B>netwib_io_init_file_read</B>(&amp;filename, &amp;pfile1));
+  <B>netwib_er</B>(<B>netwib_buf_init_ext_string</B>("file2", &amp;filename));
+  <B>netwib_er</B>(<B>netwib_io_init_file_write</B>(&amp;filename, &amp;pfile2));
+
+  <FONT COLOR="#880000">/* open null */</FONT>
+  <B>netwib_er</B>(<B>netwib_io_init_null</B>(&amp;pnull));
+
+  <FONT COLOR="#880000">/* initialize l5 */</FONT>
+  <B>netwib_er</B>(l5_init(&amp;pl5));
+
+  <FONT COLOR="#880000">/* create chains */</FONT>
+  <B>netwib_er</B>(<B>netwib_io_plug_read</B>(pl5, pfile1));
+  <B>netwib_er</B>(<B>netwib_io_plug_write</B>(pl5, pfile2));
+
+  <FONT COLOR="#880000">/* core loop */</FONT>
+  ret = m(pl5, pnull, pl5);
+
+  <FONT COLOR="#880000">/* close chains */</FONT>
+  <B>netwib_er</B>(<B>netwib_io_close</B>(&amp;pl5));
+  <B>netwib_er</B>(<B>netwib_io_close</B>(&amp;pnull)); <FONT COLOR="#880000">/* or close_write */</FONT>
+
+  return(ret);
+}
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* usage 6 */</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> usage6(void);
+<FONT COLOR="#000088">netwib_err</FONT> usage6(void)
+{
+  <FONT COLOR="#000088">netwib_err</FONT> ret;
+  <FONT COLOR="#000088">netwib_buf</FONT> filename;
+  <FONT COLOR="#000088">netwib_io</FONT> *pfile1, *pfile2;
+
+  <FONT COLOR="#880000">/* open files */</FONT>
+  <B>netwib_er</B>(<B>netwib_buf_init_ext_string</B>("file1", &amp;filename));
+  <B>netwib_er</B>(<B>netwib_io_init_file_read</B>(&amp;filename, &amp;pfile1));
+  <B>netwib_er</B>(<B>netwib_buf_init_ext_string</B>("file2", &amp;filename));
+  <B>netwib_er</B>(<B>netwib_io_init_file_write</B>(&amp;filename, &amp;pfile2));
+
+  <FONT COLOR="#880000">/* core loop */</FONT>
+  ret = m(pfile1, pfile2, pfile2);
+
+  <FONT COLOR="#880000">/* close chains */</FONT>
+  <B>netwib_er</B>(<B>netwib_io_close</B>(&amp;pfile1));
+  <B>netwib_er</B>(<B>netwib_io_close</B>(&amp;pfile2));
+
+  return(ret);
+}
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* usage 7 */</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> usage7(void);
+<FONT COLOR="#000088">netwib_err</FONT> m2(<FONT COLOR="#000088">netwib_io</FONT> *pi1,
+              <FONT COLOR="#000088">netwib_io</FONT> *pi2,
+              <FONT COLOR="#000088">netwib_io</FONT> *po1);
+<FONT COLOR="#000088">netwib_err</FONT> usage7(void)
+{
+  <FONT COLOR="#000088">netwib_err</FONT> ret;
+  <FONT COLOR="#000088">netwib_buf</FONT> filename;
+  <FONT COLOR="#000088">netwib_io</FONT> *pfile1, *pnull;
+
+  <FONT COLOR="#880000">/* open files */</FONT>
+  <B>netwib_er</B>(<B>netwib_buf_init_ext_string</B>("file1", &amp;filename));
+  <B>netwib_er</B>(<B>netwib_io_init_file_read</B>(&amp;filename, &amp;pfile1));
+
+  <FONT COLOR="#880000">/* open null */</FONT>
+  <B>netwib_er</B>(<B>netwib_io_init_null</B>(&amp;pnull));
+
+  <FONT COLOR="#880000">/* core loop */</FONT>
+  ret = m2(pfile1, pfile1, pnull);
+
+  <FONT COLOR="#880000">/* close chains */</FONT>
+  <B>netwib_er</B>(<B>netwib_io_close</B>(&amp;pfile1));
+  <B>netwib_er</B>(<B>netwib_io_close</B>(&amp;pnull));
+
+  return(ret);
+}
+<FONT COLOR="#008800">#endif</FONT>
+</PRE><BR><BR><HR><BR>
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../sys.html">section index</A></H2>
+</BODY></HTML>

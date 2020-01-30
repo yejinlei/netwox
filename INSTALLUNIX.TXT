@@ -1,0 +1,72 @@
+                    Installation under Unix
+
+There are 2 ways to install netwib, netwox and netwag :
+ - automatic installation:
+     This is easy.
+ - step by step installation:
+     If automatic installation does not work, use a step by step
+     procedure to spot the problem.
+
+
+Automatic:
+==========
+
+  - Install libpcap yourself (download it from http://www.tcpdump.org/
+    or use a package for your system)
+  - Install libnet yourself (download it from
+    http://www.packetfactory.net/libnet or use a package for your system)
+  - Install Tcl/Tk yourself (download it from http://www.tcl.tk/ or use
+    a package for your system)
+  - Run netwib/netwox/netwag automatic installer :
+      ./installunix.sh  [it asks some questions]
+
+
+Step by step:
+=============
+
+LIBPCAP
+  - Install libpcap yourself (download it from http://www.tcpdump.org/
+    or use a package for your system)
+LIBNET
+  - Install libnet yourself (download it from
+    http://www.packetfactory.net/libnet or use a package for your system)
+NETWIB
+  # cd src/netwib-src/
+  # less INSTALLUNIX.TXT
+  # cd src/
+  # ./genemake
+  # make
+  # make install  [must be root to run this command]
+  # cd ../../../
+NETWOX
+  # cd src/netwox-src/
+  # less INSTALLUNIX.TXT
+  # cd src/
+  # ./genemake
+  # make
+  # make install  [must be root to run this command]
+  # cd ../../../
+TCL/TK
+  - Install Tcl/Tk yourself (download it from http://www.tcl.tk/ or use
+    a package for your system)
+NETWAG
+  # cd src/netwag-src/
+  # less INSTALL.TXT
+  # cd src/
+  # ./genemake
+  # make
+  # make install  [must be root to run this command]
+  # cd ../../../
+DOCUMENTATION
+  - Directories netwib-doc_html, netwox-doc_html and netwag-doc_html
+    contains documentation. You can copy them where you want.
+    For example:
+      # mkdir /usr/local/doc/netw539
+      # cp -R src/netwib-doc_html/ /usr/local/doc/netw539
+      # cp -R src/netwox-doc_html/ /usr/local/doc/netw539
+      # cp -R src/netwag-doc_html/ /usr/local/doc/netw539
+END
+  - Now, you can run:
+      netwag  [Read netwag-doc_html/html/lessons.html]
+      netwox  [Read netwox-doc_html/html/examples.html]
+

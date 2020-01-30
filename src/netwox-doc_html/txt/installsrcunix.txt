@@ -1,0 +1,30 @@
+                 -------------------------------
+                 |        INTRODUCTION         |
+                 -------------------------------
+
+Note : if you encounter problems, read ./doc/probleminstallunix.txt
+
+There are 2 steps :
+ - compile and install netwib [if not already installed]
+ - compile and install netwox
+
+
+                  ------------------------------
+                  |       STEP 1 : netwib      |
+                  ------------------------------
+
+If netwib isn't installed on your system, you have to do it :
+   http://ntwib.sourceforge.net/
+Installation procedure for netwib is explained in downloaded files.
+
+
+                  -----------------------------
+                  |      STEP 2 : netwox      |
+                  -----------------------------
+
+ - "cd src"            (to go in source directory)
+ - ./genemake          (to generate Makefile)
+ - "make"              (to compile netwox)
+ - "make install"      (to install netwox in the PATH. You need to be root
+                        to achieve this command)
+

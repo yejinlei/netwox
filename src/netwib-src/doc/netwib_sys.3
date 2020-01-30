@@ -1,0 +1,4223 @@
+.TH NETWIB_SYS 3 "08/07/2012"
+.SH NAME
+\fBnetwib\fR - section \fBsys\fR
+
+.SH HTML DOC
+If you have a browser, read netwib-5.39.0-doc_html.tgz
+which is easier to read than this manpage.
+
+.SH PRESENTATION
+This manpage contains a concatenation of includes for section
+SYS.
+.SH MODULE TYPES
+.nf
+
+/*-------------------------------------------------------------*/
+/* the FILE type is necessary to write to a file */
+#if defined \fBNETWIB_EXT_FILE\fP
+ /* user included stdio.h (which defines FILE type) before
+    netwib.h */
+ \fI#define\fP NETWIBFILE FILE
+#else
+ /* [default] user perhaps forgot to include stdio.h before
+    netwib.h, but netwib has to work without bothering user */
+ \fI#define\fP NETWIBFILE void
+#endif
+
+/*-------------------------------------------------------------*/
+/* the HANDLE type is used everywhere under Windows */
+#if defined \fBNETWIB_EXT_HANDLE\fP
+ /* user included windows.h (which defines FILE type) before
+    netwib.h */
+ \fI#define\fP NETWIBHANDLE HANDLE
+#else
+ /* [default] user perhaps forgot to include windows.h before
+    netwib.h or is under Unix, but netwib has to work without
+    bothering user */
+ \fI#define\fP NETWIBHANDLE void*
+#endif
+.fi
+.SH MODULE TIME
+.nf
+
+/*-------------------------------------------------------------*/
+/***************************************************************
+ * A \fBnetwib_time\fP contains a time duration (relative time) or a *
+ * date (absolute time).                                       *
+ * Fields of a \fBnetwib_time\fP can be directly used, but when it is*
+ * set nsec must be between 0 and 999999999.                   *
+ ***************************************************************/
+
+/*-------------------------------------------------------------*/
+\fItypedef\fP struct {
+  \fBnetwib_uint32\fP sec;  /* seconds */
+  \fBnetwib_uint32\fP nsec; /* nanoseconds */
+} \fBnetwib_time\fP;
+\fItypedef\fP const \fBnetwib_time\fP \fBnetwib_consttime\fP;
+
+/*-------------------------------------------------------------*/
+/***************************************************************
+ * Every function should be prepared to receive as input :     *
+ *  - \fBnetwib_time\fP*                                             *
+ *  - \fBNETWIB_TIME_ZERO\fP                                         *
+ *  - \fBNETWIB_TIME_INFINITE\fP                                     *
+ * However, \fBNETWIB_TIME_ZERO\fP and \fBNETWIB_TIME_INFINITE\fP cannot be*
+ * returned as output by a function. Those defines exist to    *
+ * quickly specify those specific inputs.                      *
+ ***************************************************************/
+/* Empty time duration or year 1970 */
+\fI#define\fP \fBNETWIB_TIME_ZERO\fP ((\fBnetwib_time\fP*)1)
+/* Infinite time duration or year 2038/2108 */
+\fI#define\fP \fBNETWIB_TIME_INFINITE\fP ((\fBnetwib_time\fP*)2)
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_time_init_time\fP
+   Description :
+     Initialize a \fBnetwib_time\fP from another \fBnetwib_time\fP.
+     This function is mainly useful to convert
+     \fBNETWIB_TIME_ZERO\fP or \fBNETWIB_TIME_INFINITE\fP to a real structure.
+   Input parameter(s) :
+     ptimein : time to copy
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *ptimeout : \fBnetwib_time\fP set
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_time_init_time\fP(\fBnetwib_consttime\fP *ptimein,
+                                 \fBnetwib_time\fP *ptimeout);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_time_init_fields\fP
+   Description :
+     Initialize a \fBnetwib_time\fP.
+   Input parameter(s) :
+     sec : number of seconds
+     msec : number of milliseconds
+     usec : number of microseconds
+     nsec : number of nanoseconds
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *ptime : \fBnetwib_time\fP set
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_time_init_fields\fP(\fBnetwib_uint32\fP sec,
+                                   \fBnetwib_uint32\fP msec,
+                                   \fBnetwib_uint32\fP usec,
+                                   \fBnetwib_uint32\fP nsec,
+                                   \fBnetwib_time\fP *ptime);
+\fI#define\fP \fBnetwib_time_init_sec\fP(sec,ptime) \fBnetwib_time_init_fields\fP(sec,0,0,0,ptime)
+\fI#define\fP \fBnetwib_time_init_msec\fP(msec,ptime) \fBnetwib_time_init_fields\fP(0,msec,0,0,ptime)
+\fI#define\fP \fBnetwib_time_init_usec\fP(usec,ptime) \fBnetwib_time_init_fields\fP(0,0,usec,0,ptime)
+\fI#define\fP \fBnetwib_time_init_nsec\fP(nsec,ptime) \fBnetwib_time_init_fields\fP(0,0,0,nsec,ptime)
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_time_decode_xyz\fP
+   Description :
+     Obtain time values stored in a \fBnetwib_time\fP.
+       function                 obtained ranges
+       \fBnetwib_time_decode_sec\fP    [0..2^32]
+       \fBnetwib_time_decode_msec\fP   [0..2^32]
+       \fBnetwib_time_decode_usec\fP   [0..2^32]
+       \fBnetwib_time_decode_nsec\fP   [0..2^32]
+       \fBnetwib_time_decode_fields\fP [0..2^32], [0-999], [0-999], [0-999]
+   Input parameter(s) :
+     *ptime : \fBnetwib_time\fP
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *psec : seconds
+     *pmsec : milliseconds
+     *pusec : microseconds
+     *pnsec : nanoseconds
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+     \fBNETWIB_ERR_NOTCONVERTED\fP : too big to be decoded
+*/
+\fBnetwib_err\fP \fBnetwib_time_decode_fields\fP(\fBnetwib_consttime\fP *ptime,
+                                     \fBnetwib_uint32\fP *psec,
+                                     \fBnetwib_uint32\fP *pmsec,
+                                     \fBnetwib_uint32\fP *pusec,
+                                     \fBnetwib_uint32\fP *pnsec);
+\fBnetwib_err\fP \fBnetwib_time_decode_sec\fP(\fBnetwib_consttime\fP *ptime,
+                                  \fBnetwib_uint32\fP *psec);
+\fBnetwib_err\fP \fBnetwib_time_decode_msec\fP(\fBnetwib_consttime\fP *ptime,
+                                   \fBnetwib_uint32\fP *pmsec);
+\fBnetwib_err\fP \fBnetwib_time_decode_usec\fP(\fBnetwib_consttime\fP *ptime,
+                                   \fBnetwib_uint32\fP *pusec);
+\fBnetwib_err\fP \fBnetwib_time_decode_nsec\fP(\fBnetwib_consttime\fP *ptime,
+                                   \fBnetwib_uint32\fP *pnsec);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_time_plus_time\fP
+   Description :
+     Initialize a \fBnetwib_time\fP by adding two \fBnetwib_time\fP.
+   Input parameter(s) :
+     ptimetoadd : time to add
+   Input/output parameter(s) :
+     *ptime : \fBnetwib_time\fP incremented by ptime
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_time_plus_time\fP(\fBnetwib_time\fP *ptime,
+                                 \fBnetwib_consttime\fP *ptimetoadd);
+\fBnetwib_err\fP \fBnetwib_time_plus_fields\fP(\fBnetwib_time\fP *ptime,
+                                   \fBnetwib_uint32\fP sec,
+                                   \fBnetwib_uint32\fP msec,
+                                   \fBnetwib_uint32\fP usec,
+                                   \fBnetwib_uint32\fP nsec);
+\fI#define\fP \fBnetwib_time_plus_sec\fP(ptime,sec) \fBnetwib_time_plus_fields\fP(ptime,sec,0,0,0)
+\fI#define\fP \fBnetwib_time_plus_msec\fP(ptime,msec) \fBnetwib_time_plus_fields\fP(ptime,0,msec,0,0)
+\fI#define\fP \fBnetwib_time_plus_usec\fP(ptime,usec) \fBnetwib_time_plus_fields\fP(ptime,0,0,usec,0)
+\fI#define\fP \fBnetwib_time_plus_nsec\fP(ptime,nsec) \fBnetwib_time_plus_fields\fP(ptime,0,0,0,nsec)
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_time_minus_time\fP
+   Description :
+     Initialize a \fBnetwib_time\fP by adding two \fBnetwib_time\fP.
+   Input parameter(s) :
+     ptimetoadd : time to add
+   Input/output parameter(s) :
+     *ptime : \fBnetwib_time\fP incremented by ptime
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_time_minus_time\fP(\fBnetwib_time\fP *ptime,
+                                  \fBnetwib_consttime\fP *ptimetosub);
+\fBnetwib_err\fP \fBnetwib_time_minus_fields\fP(\fBnetwib_time\fP *ptime,
+                                    \fBnetwib_uint32\fP sec,
+                                    \fBnetwib_uint32\fP msec,
+                                    \fBnetwib_uint32\fP usec,
+                                    \fBnetwib_uint32\fP nsec);
+\fI#define\fP \fBnetwib_time_minus_sec\fP(ptime,sec) \fBnetwib_time_minus_fields\fP(ptime,sec,0,0,0)
+\fI#define\fP \fBnetwib_time_minus_msec\fP(ptime,msec) \fBnetwib_time_minus_fields\fP(ptime,0,msec,0,0)
+\fI#define\fP \fBnetwib_time_minus_usec\fP(ptime,usec) \fBnetwib_time_minus_fields\fP(ptime,0,0,usec,0)
+\fI#define\fP \fBnetwib_time_minus_nsec\fP(ptime,nsec) \fBnetwib_time_minus_fields\fP(ptime,0,0,0,nsec)
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_time_cmp\fP
+   Description :
+     Compare two \fBnetwib_time\fP.
+   Input parameter(s) :
+     ptime1 : time
+     ptime2 : time
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pcmp :
+       - if time1<time2, *pcmp is set to \fBNETWIB_CMP_LT\fP
+       - if time1>time2, *pcmp is set to \fBNETWIB_CMP_GT\fP
+       - if time1==time2, *pcmp is set to \fBNETWIB_CMP_EQ\fP
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_time_cmp\fP(\fBnetwib_consttime\fP *ptime1,
+                           \fBnetwib_consttime\fP *ptime2,
+                           \fBnetwib_cmp\fP *pcmp);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_time_sleep_xyz\fP
+   Description :
+     Sleep for a time duration.
+     This is not a "real time" sleep. This sleep is not precise.
+     On some systems, the duration might exceed the wanted time
+     by several milliseconds.
+   Input parameter(s) :
+     *preltime : relative time
+     sec : number of seconds to wait
+     msec : number of milliseconds to wait
+     usec : number of microseconds to wait
+   Input/output parameter(s) :
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_time_sleep_time\fP(\fBnetwib_consttime\fP *preltime);
+\fBnetwib_err\fP \fBnetwib_time_sleep_fields\fP(\fBnetwib_uint32\fP sec,
+                                    \fBnetwib_uint32\fP msec,
+                                    \fBnetwib_uint32\fP usec,
+                                    \fBnetwib_uint32\fP nsec);
+\fI#define\fP \fBnetwib_time_sleep_sec\fP(sec) \fBnetwib_time_sleep_fields\fP(sec,0,0,0)
+\fI#define\fP \fBnetwib_time_sleep_msec\fP(msec) \fBnetwib_time_sleep_fields\fP(0,msec,0,0)
+\fI#define\fP \fBnetwib_time_sleep_usec\fP(usec) \fBnetwib_time_sleep_fields\fP(0,0,usec,0)
+\fI#define\fP \fBnetwib_time_sleep_nsec\fP(nsec) \fBnetwib_time_sleep_fields\fP(0,0,0,nsec)
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_time_wait_time\fP
+   Description :
+     Wait an absolute time value.
+     This is not a "real time" wait. This wait is not precise.
+     On some systems, the duration might exceed the wanted time
+     by several milliseconds.
+   Input parameter(s) :
+     *pabstime : absolute time (from 1970)
+   Input/output parameter(s) :
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_time_wait_time\fP(\fBnetwib_consttime\fP *pabstime);
+
+/*-------------------------------------------------------------*/
+\fItypedef\fP enum {
+  \fBNETWIB_TIME_ENCODETYPE_NOTHING\fP = 1, /* print nothing */
+  \fBNETWIB_TIME_ENCODETYPE_BEST\fP,        /* best display of the form :
+                                         2d:3h:4m:5s:6ms:7us:8ns*/
+  \fBNETWIB_TIME_ENCODETYPE_BEST2\fP,       /* best display of the form :
+                                         2 days 3 hours 4 minutes ...*/
+  \fBNETWIB_TIME_ENCODETYPE_SEC\fP,         /* "123s" */
+  \fBNETWIB_TIME_ENCODETYPE_SEC2\fP,        /* "123 second(s)" */
+  \fBNETWIB_TIME_ENCODETYPE_MSEC\fP,        /* "123ms" */
+  \fBNETWIB_TIME_ENCODETYPE_MSEC2\fP,       /* "123 millisecond(s)" */
+  \fBNETWIB_TIME_ENCODETYPE_USEC\fP,        /* "123us" */
+  \fBNETWIB_TIME_ENCODETYPE_USEC2\fP,       /* "123 microsecond(s)" */
+  \fBNETWIB_TIME_ENCODETYPE_NSEC\fP,        /* "123ns" */
+  \fBNETWIB_TIME_ENCODETYPE_NSEC2\fP        /* "123 nanosecond(s)" */
+} \fBnetwib_time_encodetype\fP;
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_buf_append_time\fP
+   Description :
+     Append a string representing a \fBnetwib_time\fP duration (relative
+     time). To display an absolute time, use function
+     \fBnetwib_time_decode_localtime\fP.
+   Input parameter(s) :
+     *ptime : time to print
+     encodetype : \fBnetwib_time_encodetype\fP to use
+   Input/output parameter(s) :
+   Output parameter(s) :
+     pbuf : buffer updated
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_buf_append_time\fP(\fBnetwib_consttime\fP *preltime,
+                                  \fBnetwib_time_encodetype\fP encodetype,
+                                  \fBnetwib_buf\fP *pbuf);
+
+/*-------------------------------------------------------------*/
+\fItypedef\fP struct {
+  \fBnetwib_uint32\fP nsec; /* nanoseconds [0-999999999]*/
+  \fBnetwib_int32\fP sec; /* seconds [0-59] */
+  \fBnetwib_int32\fP min; /* minutes [0-59] */
+  \fBnetwib_int32\fP hour; /* hours [0-23] */
+  \fBnetwib_int32\fP mday; /* day [1-31] */
+  \fBnetwib_int32\fP mon; /* month [1-12] (!= from struct tm) */
+  \fBnetwib_uint32\fP year; /* year (start at 0) (!= from struct tm) */
+  \fBnetwib_uint32\fP wday; /* day of the week [0(sun)-6(sat)] */
+  \fBnetwib_uint32\fP yday; /* day of the year [1-365/366] (!= from struct tm) */
+  \fBnetwib_int32\fP zoneoffset; /* offset in seconds between localtime
+                              and GMT (for example GMT+1 is
+                              +3600). This field is used only by
+                              \fBnetwib_time_decode_localtime\fP */
+} \fBnetwib_localtime\fP;
+\fItypedef\fP const \fBnetwib_localtime\fP \fBnetwib_constlocaltime\fP;
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_time_init_now\fP
+   Description :
+     Initialize a \fBnetwib_time\fP with the current UTC/GMT time.
+     It uses the number of seconds elapsed since 00:00:00 on
+     January 1, 1970, Coordinated Universal Time (UTC)
+   Input parameter(s) :
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *ptime : \fBnetwib_time\fP set to the current time (absolute time)
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_time_init_now\fP(\fBnetwib_time\fP *pabstime);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_time_init_localtime\fP
+   Description :
+     Initialize a \fBnetwib_time\fP using localtime fields
+   Input parameter(s) :
+     *plocaltime : structure containing day. Fields nsec, wday,
+                   and yday are ignored. Other fields
+                   are normalized before converting.
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *ptime : \fBnetwib_time\fP set to the current local time
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_time_init_localtime\fP(\fBnetwib_constlocaltime\fP *plocaltime,
+                                      \fBnetwib_time\fP *pabstime);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_time_decode_localtime\fP
+   Description :
+     Initialize a \fBnetwib_localtime\fP using time fields
+   Input parameter(s) :
+     *ptime : structure containing current time (UTC)
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *plocaltime : \fBnetwib_localtime\fP set
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_time_decode_localtime\fP(\fBnetwib_consttime\fP *pabstime,
+                                        \fBnetwib_localtime\fP *plocaltime);
+
+/*-------------------------------------------------------------*/
+\fItypedef\fP enum {
+  \fBNETWIB_LOCALTIME_ENCODETYPE_NOTHING\fP = 1, /* print nothing */
+  \fBNETWIB_LOCALTIME_ENCODETYPE_NSEC_ZERO\fP,   /* 000000000-999999999 */
+  \fBNETWIB_LOCALTIME_ENCODETYPE_NSEC_SPACE\fP,  /* ________0-999999999 */
+  \fBNETWIB_LOCALTIME_ENCODETYPE_SEC_ZERO\fP,    /* 00-59 */
+  \fBNETWIB_LOCALTIME_ENCODETYPE_SEC_SPACE\fP,   /* _0-59 */
+  \fBNETWIB_LOCALTIME_ENCODETYPE_MIN_ZERO\fP,    /* 00-59 */
+  \fBNETWIB_LOCALTIME_ENCODETYPE_MIN_SPACE\fP,   /* _0-59 */
+  \fBNETWIB_LOCALTIME_ENCODETYPE_HOUR_ZERO\fP,   /* 00-23 */
+  \fBNETWIB_LOCALTIME_ENCODETYPE_HOUR_SPACE\fP,  /* _0-23 */
+  \fBNETWIB_LOCALTIME_ENCODETYPE_MDAY_ZERO\fP,   /* 01-31 */
+  \fBNETWIB_LOCALTIME_ENCODETYPE_MDAY_SPACE\fP,  /* _1-31 */
+  \fBNETWIB_LOCALTIME_ENCODETYPE_MON_ZERO\fP,    /* 01-12 */
+  \fBNETWIB_LOCALTIME_ENCODETYPE_MON_SPACE\fP,   /* _1-12 */
+  \fBNETWIB_LOCALTIME_ENCODETYPE_MON_SHORT\fP,   /* Jan */
+  \fBNETWIB_LOCALTIME_ENCODETYPE_MON_LONG\fP,    /* January */
+  \fBNETWIB_LOCALTIME_ENCODETYPE_YEAR_SHORT\fP,  /* 04 */
+  \fBNETWIB_LOCALTIME_ENCODETYPE_YEAR_LONG\fP,   /* 2004 */
+  \fBNETWIB_LOCALTIME_ENCODETYPE_WDAY_SHORT\fP,  /* Mon */
+  \fBNETWIB_LOCALTIME_ENCODETYPE_WDAY_LONG\fP,   /* Monday */
+  \fBNETWIB_LOCALTIME_ENCODETYPE_YDAY_ZERO\fP,   /* 001-365 */
+  \fBNETWIB_LOCALTIME_ENCODETYPE_YDAY_SPACE\fP,  /* __1-365 */
+  \fBNETWIB_LOCALTIME_ENCODETYPE_ZONE_SEC\fP,    /* +3600 */
+  \fBNETWIB_LOCALTIME_ENCODETYPE_ZONE_GMT\fP,    /* GMT+1 */
+  \fBNETWIB_LOCALTIME_ENCODETYPE_ZONE_HM\fP,     /* +0100 */
+} \fBnetwib_localtime_encodetype\fP;
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_buf_append_localtime\fP
+   Description :
+     Append a string representing a field of a \fBnetwib_localtime\fP.
+   Input parameter(s) :
+     *plocaltime : localtime to print
+     encodetype : \fBnetwib_localtime_encodetype\fP to use
+   Input/output parameter(s) :
+   Output parameter(s) :
+     pbuf : buffer updated
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_buf_append_localtime\fP(\fBnetwib_constlocaltime\fP *plocaltime,
+                                       \fBnetwib_localtime_encodetype\fP encodetype,
+                                       \fBnetwib_buf\fP *pbuf);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_time_iselapsed\fP
+   Description :
+     Check if an absolute time has elapsed.
+   Input parameter(s) :
+     *ptime : time
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pyes : true if elapsed or equal
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_time_iselapsed\fP(\fBnetwib_consttime\fP *pabstime,
+                                 \fBnetwib_bool\fP *pyes);
+.fi
+.SH MODULE RAND
+.nf
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_uint32_init_rand\fP
+   Description :
+     Generate a random number
+   Input parameter(s) :
+     min : minimum value
+     max : maximum value
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pnumber : random number generated
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_uint32_init_rand\fP(\fBnetwib_uint32\fP min,
+                                   \fBnetwib_uint32\fP max,
+                                   \fBnetwib_uint32\fP *pnumber);
+\fI#define\fP \fBnetwib_uint32_init_rand_all\fP(pnumber) \fBnetwib_uint32_init_rand\fP(0,0xFFFFFFFFu,pnumber)
+\fBnetwib_err\fP \fBnetwib_uint64_init_rand\fP(\fBnetwib_uint64\fP min,
+                                   \fBnetwib_uint64\fP max,
+                                   \fBnetwib_uint64\fP *pnumber);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_buf_append_rand\fP
+   Description :
+     Generate a random buffer
+   Input parameter(s) :
+     size : wanted buffer size
+     min : minimal value
+     max : maximal value
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pbuf : random buffer generated
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+   This function sets \fBNETWIB_BUF_FLAGS_SENSITIVE\fP.
+*/
+\fBnetwib_err\fP \fBnetwib_buf_append_rand\fP(\fBnetwib_uint32\fP size,
+                                  \fBnetwib_byte\fP min,
+                                  \fBnetwib_byte\fP max,
+                                  \fBnetwib_buf\fP *pbuf);
+\fI#define\fP \fBnetwib_buf_append_rand_all\fP(size,pbuf) \fBnetwib_buf_append_rand\fP(size,0,255,pbuf)
+.fi
+.SH MODULE PATH
+.nf
+
+/*-------------------------------------------------------------*/
+/***************************************************************
+ * Under Windows, '/' and '\\' are recognized as directory      *
+ * separator. However, under Unix, only '/' is valid.          *
+ * So, if you want your code to be portable, use '/'.          *
+ ***************************************************************/
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_path_canon\fP
+   Description :
+     Clean a filename ("//"->"/", "/./"->"/", "/aa/../"->"/", etc.).
+   Input parameter(s) :
+     pathname : filename (ex : "/tmp/dir/..//./file")
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pcanonizedpathname : cleaned filename (ex : "/tmp/file")
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+   Examples of canonical paths :
+     file          dir          dir/file          dir/dir
+     /file         /dir         /dir/file         /dir/dir
+     ../file       ../dir       ../dir/file       ../dir/dir
+     /             .            ..
+    Windows using a drive letter :
+     c:file        c:dir        c:dir/file        c:dir/dir
+     c:/file       c:/dir       c:/dir/file       c:/dir/dir
+     c:../file     c:../dir     c:../dir/file     c:../dir/dir
+     c:/           c:           c:..
+    Windows using a smb or cifs share :
+     //server/share/
+     //s/sh/file   //s/sh/dir   //s/sh/dir/file   //s/sh/dir/dir
+    Note : a Window share is very similar to an absolute path
+           with two leading '/'. To ensure they are not mixed,
+           you have to ensure an absolute path does not start
+           with '//'.
+*/
+\fBnetwib_err\fP \fBnetwib_path_canon\fP(\fBnetwib_constbuf\fP *ppathname,
+                             \fBnetwib_buf\fP *pcanonizedpathname);
+
+/*-------------------------------------------------------------*/
+/***************************************************************
+ * netwib functions :                                          *
+ *  - always work with :                                       *
+ *     + canonized path                                        *
+ *  - generally work with :                                    *
+ *     + relative path with leading "./"                       *
+ *     + "c:." instead of "c:" (only under Windows)            *
+ *     + path with "\\" instead of "/" (only under Windows)     *
+ *  - might work with :                                        *
+ *     + directory name ending with "/" (not under Windows)    *
+ *     + path such as "/dir/../dir2/file"                      *
+ *                                                             *
+ * So, user should canonize paths before using netwib          *
+ * functions. However, functions in this module accept         *
+ * un-canonized paths and produce canonized paths. So,         *
+ * functions in this module are safe for use.                  *
+ ***************************************************************/
+
+/*-------------------------------------------------------------*/
+/***************************************************************
+ * Empty string ("") is not a valid path. If functions of this *
+ * module have an empty parameter, error                       *
+ * \fBNETWIB_ERR_PAPATHNOTCANON\fP occurs.                           *
+ ***************************************************************/
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_pathtype_init\fP
+   Description :
+     Obtain type of a path.
+   Input parameter(s) :
+     *ppathname : pathname to obtain info for (do not need to be canonized).
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *ppathtype : type as a bitfield
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+   Examples :
+     pathname     absolute  root   unix  windrive  winshare
+      file         0=no       0      1      0         0
+      /file        1=yes      0      1      0         0
+      ../file        0        0      1      0         0
+      /              1        1      1      0         0
+      .              0        0      1      0         0
+      ..             0        0      1      0         0
+      c:file         0        0      0      1         0
+      c:/file        1        0      0      1         0
+      c:../file      0        0      0      1         0
+      c:/            1        1      0      1         0
+      c:             0        0      0      1         0
+      c:..           0        0      0      1         0
+      //s/sh/file    1        0      0      0         1
+      //s/sh/        1        1      0      0         1
+*/
+\fI#define\fP \fBNETWIB_PATHTYPE_ABSOLUTE\fP 0x01 /* absolute: path is fully specified */
+\fI#define\fP \fBNETWIB_PATHTYPE_ROOT\fP     0x02 /* root: can't go up */
+\fI#define\fP \fBNETWIB_PATHTYPE_UNIX\fP     0x04 /* unix (or windows simple path) */
+\fI#define\fP \fBNETWIB_PATHTYPE_WINDRIVE\fP 0x08 /* windows drive: c:, d: */
+\fI#define\fP \fBNETWIB_PATHTYPE_WINSHARE\fP 0x10 /* windows smb share: //server/share/ */
+\fItypedef\fP \fBnetwib_uint32\fP \fBnetwib_pathtype\fP;
+\fBnetwib_err\fP \fBnetwib_pathtype_init\fP(\fBnetwib_constbuf\fP *ppathname,
+                                \fBnetwib_pathtype\fP *ppathtype);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_path_decode_xyz\fP
+   Description :
+     Separate a path.
+   Input parameter(s) :
+     ppathname : filename (ex : "/tmp/file") (do not need to be canonized)
+   Input/output parameter(s) :
+     type : type of information to extract
+   Output parameter(s) :
+     *pout : output buffer (canonized, even if ppathname is not)
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+   Examples :
+     pathname     begin   core      parent   child
+      file        .       file      .        file
+      d/f         .       d/f       d        f
+      /file       /       /file     /        file
+      /d/f        /       /d/f      /d       f
+      ../file     .       ../file   ..       file
+      ../d/f      .       ../d/f    ../d     f
+      /           /       /         Error1   /
+      .           .       .         ..       .
+      ..          .       ..        ../..    ..
+      c:file      c:      file      c:       file
+      c:d/f       c:      d/f       c:d      f
+      c:/file     c:/     /file     c:/      file
+      c:/d/f      c:/     /d/f      c:/d     f
+      c:../file   c:      ../file   c:..     file
+      c:../d/f    c:      ../d/f    c:../d   f
+      c:/         c:/     /         Error1   /
+      c:          c:      .         c:..     .
+      c:..        c:      ..        c:../..  ..
+      //s/t/file  //s/t/  /file     //s/t/   file
+      //s/t/d/f   //s/t/  /d/f      //s/t/d  f
+      //s/t/      //s/t/  /         Error1   /
+   Errors are :
+     Error1 : \fBNETWIB_ERR_PAPATHROOTDOTDOT\fP
+*/
+\fItypedef\fP enum {
+  \fBNETWIB_PATH_DECODETYPE_BEGIN\fP = 1, /* root directory or . */
+  \fBNETWIB_PATH_DECODETYPE_CORE\fP,      /* path starting at begin */
+  \fBNETWIB_PATH_DECODETYPE_PARENT\fP,    /* parent directory */
+  \fBNETWIB_PATH_DECODETYPE_CHILD\fP,     /* last item */
+  \fBNETWIB_PATH_DECODETYPE_EXTENSION\fP  /* file extension without the dot
+                                       (empty if no extension) ; pout is
+                                       a \fBnetwib_bufext\fP */
+  /* note : pathname == begin+core or parent+child */
+} \fBnetwib_path_decodetype\fP;
+\fBnetwib_err\fP \fBnetwib_path_decode\fP(\fBnetwib_constbuf\fP *ppathname,
+                              \fBnetwib_path_decodetype\fP type,
+                              \fBnetwib_buf\fP *pout);
+\fI#define\fP \fBnetwib_path_decode_begin\fP(pathname,pout) \fBnetwib_path_decode\fP(pathname,\fBNETWIB_PATH_DECODETYPE_BEGIN\fP,pout)
+\fI#define\fP \fBnetwib_path_decode_core\fP(pathname,pout) \fBnetwib_path_decode\fP(pathname,\fBNETWIB_PATH_DECODETYPE_CORE\fP,pout)
+\fI#define\fP \fBnetwib_path_decode_parent\fP(pathname,pout) \fBnetwib_path_decode\fP(pathname,\fBNETWIB_PATH_DECODETYPE_PARENT\fP,pout)
+\fI#define\fP \fBnetwib_path_decode_child\fP(pathname,pout) \fBnetwib_path_decode\fP(pathname,\fBNETWIB_PATH_DECODETYPE_CHILD\fP,pout)
+\fI#define\fP \fBnetwib_path_decode_extension\fP(pathname,pout) \fBnetwib_path_decode\fP(pathname,\fBNETWIB_PATH_DECODETYPE_EXTENSION\fP,pout)
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_path_init_xyz\fP
+   Description :
+     Initialize a path.
+   Input parameter(s) :
+     See below (do not need to be canonized)
+   Input/output parameter(s) :
+     pout : path initialized (canonized, even if input is not)
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fItypedef\fP enum {
+  \fBNETWIB_PATH_INITTYPE_CONCAT\fP = 1,
+  \fBNETWIB_PATH_INITTYPE_JAIL\fP,
+  \fBNETWIB_PATH_INITTYPE_ABS\fP,
+  \fBNETWIB_PATH_INITTYPE_RELA\fP,
+  \fBNETWIB_PATH_INITTYPE_RELB\fP,
+} \fBnetwib_path_inittype\fP;
+/*
+   Definitions :
+     concat : path from the beginning of dirname1 to pathname2
+                 [dirname1]-[pathname2]
+                 X-------------------->
+              If pathname2 is absolute, an error occurs (except if
+              dirname1 is a root).
+     jail : same as concat except pathname2 is considered as an
+            absolute path inside dirname1. It's a kind of chroot
+            or jail with a rootdir of dirname1. Resulting filename
+            cannot escape from dirname1.
+     abs : absolute path to pathname2 (pathname2 is in a
+           file located in dirname1 directory)
+              root
+                [dirname1]-[pathname2]
+              X---------------------->
+           If pathname2 is absolute, result is pathname2.
+           If dirname1 is not absolute, an error occurs.
+     rela : relative path to go to pathname2 from a file
+            in dirname1 directory (pathname2 is in a
+            file located in dirname1 directory)
+               [dirname1]-[pathname2]
+                        X----------->
+            If pathname2 is relative, result is pathname2.
+            If pathname2 is absolute, dirname1 must be absolute.
+     relb : relative path to go to pathname2 from a file
+            in dirname1 directory (pathname1 and pathname2
+            are located in the same directory)
+               [dirname1]
+               [  pathname2   ]
+                        X----->
+            If pathname2 is absolute, dirname1 must be absolute.
+            If pathname2 is relative, dirname1 must be relative.
+   Examples of concat, jail and abs :
+     dirname1   pathname2  concat       jail         abs
+     d1         d2/f2      d1/d2/f2     d1/d2/f2     Error
+     d1         ../d2/f2   d2/f2        Error        Error
+     d1         /d2/f2     Error        d1/d2/f2     /d2/f2
+     ../d1      d2/f2      ../d1/d2/f2  ../d1/d2/f2  Error
+     ../d1      ../d2/f2   ../d2/f2     Error        Error
+     ../d1      /d2/f2     Error        ../d1/d2/f2  /d2/f2
+     /d1        d2/f2      /d1/d2/f2    /d1/d2/f2    /d1/d2/f2
+     /d1        ../d2/f2   /d2/f2       Error        /d2/f2
+     /d1        /d2/f2     Error        /d1/d2/f2    /d2/f2
+     isroot     /d2/f2     x/d2/f2      x/d2/f2      /d2/f2
+   Examples of rela and relb :
+     dirname1   pathname2  rela         relb
+     d1         d2/f2      d2/f2        ../d2/f2
+     d1         ../d2/f2   ../d2/f2     ../../d2/f2
+     d1         /d2/f2     Error        Error
+     ../d1      d2/f2      d2/f2        Error
+     ../d1      ../d2/f2   ../d2/f2     ../d2/f2
+     ../d1      /d2/f2     Error        Error
+     /d1        d2/f2      d2/f2        Error
+     /d1        ../d2/f2   ../d2/f2     Error
+     /d1        /d2/f2     ../d2/f2     ../d2/f2
+     d1         d1         d1           . (because pathname2 is like ...)
+     /d1        /d1        .            . (dirname1, so it's a directory)
+   The errors have the code : \fBNETWIB_ERR_PAPATHCANTINIT\fP.
+*/
+\fBnetwib_err\fP \fBnetwib_path_init\fP(\fBnetwib_constbuf\fP *pdirname1,
+                            \fBnetwib_constbuf\fP *ppathname2,
+                            \fBnetwib_path_inittype\fP type,
+                            \fBnetwib_buf\fP *pout);
+\fI#define\fP \fBnetwib_path_init_concat\fP(dirname1,pathname2,pout) \fBnetwib_path_init\fP(dirname1,pathname2,\fBNETWIB_PATH_INITTYPE_CONCAT\fP,pout)
+\fI#define\fP \fBnetwib_path_init_jail\fP(dirname1,pathname2,pout) \fBnetwib_path_init\fP(dirname1,pathname2,\fBNETWIB_PATH_INITTYPE_JAIL\fP,pout)
+\fI#define\fP \fBnetwib_path_init_abs\fP(dirname1,pathname2,pout) \fBnetwib_path_init\fP(dirname1,pathname2,\fBNETWIB_PATH_INITTYPE_ABS\fP,pout)
+\fI#define\fP \fBnetwib_path_init_rela\fP(dirname1,pathname2,pout) \fBnetwib_path_init\fP(dirname1,pathname2,\fBNETWIB_PATH_INITTYPE_RELA\fP,pout)
+\fI#define\fP \fBnetwib_path_init_relb\fP(dirname1,pathname2,pout) \fBnetwib_path_init\fP(dirname1,pathname2,\fBNETWIB_PATH_INITTYPE_RELB\fP,pout)
+.fi
+.SH MODULE PATHNAME
+.nf
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_pathname_exists\fP
+   Description :
+     Check if a path exists.
+   Input parameter(s) :
+     *ppathname : pathname
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pyes : if path exists
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_pathname_exists\fP(\fBnetwib_constbuf\fP *ppathname,
+                                  \fBnetwib_bool\fP *pyes);
+
+.fi
+.SH MODULE PATHSTAT
+.nf
+
+/*-------------------------------------------------------------*/
+\fItypedef\fP enum {
+  \fBNETWIB_PATHSTAT_TYPE_UNKNOWN\fP = 0, /* unknown type */
+  \fBNETWIB_PATHSTAT_TYPE_REG\fP,         /* regular file */
+  \fBNETWIB_PATHSTAT_TYPE_DIR\fP,         /* directory */
+  \fBNETWIB_PATHSTAT_TYPE_LINK\fP,        /* link */
+  \fBNETWIB_PATHSTAT_TYPE_SOCK\fP,        /* socket */
+  \fBNETWIB_PATHSTAT_TYPE_BLOCK\fP,       /* block file */
+  \fBNETWIB_PATHSTAT_TYPE_CHAR\fP,        /* char file */
+  \fBNETWIB_PATHSTAT_TYPE_FIFO\fP         /* fifo */
+} \fBnetwib_pathstat_type\fP;
+
+/*-------------------------------------------------------------*/
+/***************************************************************
+ * On conventional filesystems, maximum file size is           *
+ * 0x7FFFFFFF (2G) because it is stored as signed (as netwib   *
+ * defines size as unsigned, we could extend this limit to 4G, *
+ * but this poses some other problems because all underlying   *
+ * system calls have a limit of 2G).                           *
+ * On large filesystems, maximum file size can be greater and  *
+ * might not feet in an \fBnetwib_uint32\fP size. If file size is    *
+ * > 0x7FFFFFFF, size is set to \fBNETWIB_PATHSTAT_SIZE_GT2G\fP.     *
+ * In both cases, size64 variable contains the real value.     *
+ ***************************************************************/
+\fI#define\fP \fBNETWIB_PATHSTAT_SIZE_GT2G\fP 0x80000000u
+\fItypedef\fP struct {
+  \fBnetwib_pathstat_type\fP type;
+  \fBnetwib_uint32\fP size; /* set to \fBNETWIB_PATHSTAT_SIZE_GT2G\fP
+                         if \fBnetwib_uint32\fP variable is too
+                         small to contain real size */
+  \fBnetwib_uint64\fP size64; /* real size, not truncated */
+  \fBnetwib_time\fP mtime; /* last modification time */
+} \fBnetwib_pathstat\fP;
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_pathstat_init\fP
+   Description :
+     Get information of a path.
+   Input parameter(s) :
+     *ppathstat : pathstat
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *ptype : type of the path
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+     \fBNETWIB_ERR_OKFILENOTFOUND\fP : file was not found
+*/
+\fBnetwib_err\fP \fBnetwib_pathstat_init\fP(\fBnetwib_constbuf\fP *ppath,
+                                \fBnetwib_pathstat\fP *pstat);
+.fi
+.SH MODULE DIRNAME
+.nf
+
+/*-------------------------------------------------------------*/
+/***************************************************************
+ * NOTE ABOUT SECURITY UNDER UNIX                              *
+ * The only way to deal securely with a file/dir is to store   *
+ * it in a secure directory (every dir in the path should only *
+ * be writable by root or current user).                       *
+ * Otherwise a malicious user can create a symlink and force   *
+ * corruption/creation/removing of a file/dir.                 *
+ * So, to secure your program, you should force user to work   *
+ * only in secured directories. Function \fBnetwib_dirname_secure\fP *
+ * permits to check if a directory is secure. Note that netwib *
+ * functions do not check for secure directories internally :  *
+ * you should do it yourself.                                  *
+ ***************************************************************/
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_dirname_secure\fP
+   Description :
+     Check if a directory is secure.
+   Input parameter(s) :
+     *pdirname : name of the directory
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pyes : true if directory is secure
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_dirname_secure\fP(\fBnetwib_constbuf\fP *pdirname,
+                                 \fBnetwib_bool\fP *pyes);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_dirname_cwd\fP
+   Description :
+     Get current working directory.
+   Input parameter(s) :
+   Input/output parameter(s) :
+     *pdirname : name of the directory
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_dirname_cwd\fP(\fBnetwib_buf\fP *pdirname);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_dirname_exists\fP
+   Description :
+     Check if a directory exist.
+   Input parameter(s) :
+     *pdirname : name of the directory
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pyes : true if directory exists
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_dirname_exists\fP(\fBnetwib_constbuf\fP *pdirname,
+                                 \fBnetwib_bool\fP *pyes);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_dirname_create\fP
+   Description :
+     Create a directory.
+     Warning : this function is not secured against
+               symlink races
+   Input parameter(s) :
+     *pdirname : name of the directory
+   Input/output parameter(s) :
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_dirname_create\fP(\fBnetwib_constbuf\fP *pdirname);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_dirname_remove\fP
+   Description :
+     Remove a directory.
+   Input parameter(s) :
+     *pdirname : name of the directory
+   Input/output parameter(s) :
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_dirname_remove\fP(\fBnetwib_constbuf\fP *pdirname);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_dirname_rename\fP
+   Description :
+     Rename a directory.
+   Input parameter(s) :
+     *polddirname : previous name of the directory
+     *pnewdirname : new name for the directory
+   Input/output parameter(s) :
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_dirname_rename\fP(\fBnetwib_constbuf\fP *polddirname,
+                                 \fBnetwib_constbuf\fP *pnewdirname);
+
+.fi
+.SH MODULE FILENAME
+.nf
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_filename_exists\fP
+   Description :
+     Check if a regular file exists.
+   Input parameter(s) :
+     *pfilename : filename
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pyes : if file exists
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_filename_exists\fP(\fBnetwib_constbuf\fP *pfilename,
+                                  \fBnetwib_bool\fP *pyes);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_filename_size\fP
+   Description :
+     Get size of a file.
+   Input parameter(s) :
+     *pfilename : filename
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *psize : size of the file
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+     \fBNETWIB_ERR_NOTFOUND\fP : file was not found
+   Note :
+     On a large filesystem, if file size is greater than
+     2G, this function returns the error \fBNETWIB_ERR_PAFILE2G\fP.
+     Use \fBnetwib_pathstat_init\fP instead.
+*/
+\fBnetwib_err\fP \fBnetwib_filename_size\fP(\fBnetwib_constbuf\fP *pfilename,
+                                \fBnetwib_uint32\fP *psize);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_filename_create\fP
+   Description :
+     Create an empty file. If it exists, truncate its contents.
+   Input parameter(s) :
+     *pfilename : filename
+   Input/output parameter(s) :
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_filename_create\fP(\fBnetwib_constbuf\fP *pfilename);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_filename_remove\fP
+   Description :
+     Remove a file.
+   Input parameter(s) :
+     *pfilename : filename
+   Input/output parameter(s) :
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+     \fBNETWIB_ERR_NOTFOUND\fP : file was not found
+*/
+\fBnetwib_err\fP \fBnetwib_filename_remove\fP(\fBnetwib_constbuf\fP *pfilename);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_filename_rename\fP
+   Description :
+     Rename a file.
+   Input parameter(s) :
+     *poldfilename : old filename
+     *pnewfilename : new filename
+   Input/output parameter(s) :
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+     \fBNETWIB_ERR_NOTFOUND\fP : file was not found
+*/
+\fBnetwib_err\fP \fBnetwib_filename_rename\fP(\fBnetwib_constbuf\fP *poldfilename,
+                                  \fBnetwib_constbuf\fP *pnewfilename);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_filename_copy\fP
+   Description :
+     Copy a file.
+   Input parameter(s) :
+     *poldfilename : old filename
+     *pnewfilename : new filename
+   Input/output parameter(s) :
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+     \fBNETWIB_ERR_NOTFOUND\fP : file was not found
+*/
+\fBnetwib_err\fP \fBnetwib_filename_copy\fP(\fBnetwib_constbuf\fP *poldfilename,
+                                \fBnetwib_constbuf\fP *pnewfilename);
+.fi
+.SH MODULE DIR
+.nf
+
+/*-------------------------------------------------------------*/
+/***************************************************************
+ * A \fBnetwib_dir\fP permits to loop through all filenames in a     *
+ * directory.                                                  *
+ ***************************************************************/
+
+/*-------------------------------------------------------------*/
+\fItypedef\fP struct \fBnetwib_dir\fP \fBnetwib_dir\fP;
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_dir_init\fP
+   Description :
+     Open a directory.
+   Input parameter(s) :
+     *pdirname : directory name
+   Input/output parameter(s) :
+   Output parameter(s) :
+     **ppdir : \fBnetwib_dir\fP initialized
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_dir_init\fP(\fBnetwib_constbuf\fP *pdirname,
+                           \fBnetwib_dir\fP **ppdir);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_dir_close\fP
+   Description :
+     Close a \fBnetwib_dir\fP.
+   Input parameter(s) :
+   Input/output parameter(s) :
+     **ppdir : \fBnetwib_dir\fP closed
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_dir_close\fP(\fBnetwib_dir\fP **ppdir);
+
+/*-------------------------------------------------------------*/
+/* Types to control a \fBnetwib_dir\fP */
+\fItypedef\fP enum {
+  \fBNETWIB_DIR_CTLTYPE_REWIND\fP = 1        /* position at beginning */
+} \fBnetwib_dir_ctltype\fP;
+\fBnetwib_err\fP \fBnetwib_dir_ctl_set\fP(\fBnetwib_dir\fP *pdir,
+                              \fBnetwib_dir_ctltype\fP type,
+                              \fBnetwib_ptr\fP p,
+                              \fBnetwib_uint32\fP ui);
+\fBnetwib_err\fP \fBnetwib_dir_ctl_get\fP(\fBnetwib_dir\fP *pdir,
+                              \fBnetwib_dir_ctltype\fP type,
+                              \fBnetwib_ptr\fP p,
+                              \fBnetwib_uint32\fP *pui);
+
+/*-------------------------------------------------------------*/
+/* \fBnetwib_err\fP f(\fBnetwib_dir\fP *pdir); */
+\fI#define\fP \fBnetwib_dir_ctl_set_rewind\fP(pdir) \fBnetwib_dir_ctl_set\fP(pdir,\fBNETWIB_DIR_CTLTYPE_REWIND\fP,NULL,0)
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_dir_next\fP
+   Description :
+     Obtain the next file of a \fBnetwib_dir\fP.
+   Input parameter(s) :
+   Input/output parameter(s) :
+     **ppdir : \fBnetwib_dir\fP
+     pbuffilename : buffer containing the filename
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+   Notes :
+     If directory files change between two calls,
+     the next result might be incorrect, but it will not crash.
+*/
+\fBnetwib_err\fP \fBnetwib_dir_next\fP(\fBnetwib_dir\fP *pdir,
+                           \fBnetwib_buf\fP *pbuffilename);
+.fi
+.SH MODULE THREAD
+.nf
+
+/*-------------------------------------------------------------*/
+\fItypedef\fP struct \fBnetwib_thread\fP \fBnetwib_thread\fP;
+
+/*-------------------------------------------------------------*/
+/* thread ends when this function returns */
+\fItypedef\fP \fBnetwib_err\fP (*\fBnetwib_thread_pf\fP)(\fBnetwib_ptr\fP infosin,
+                                       \fBnetwib_ptr\fP *pinfosout);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_thread_init\fP
+   Description :
+     Create a new thread, which will execute *pfunc and exit.
+   Input parameter(s) :
+     *pfunc : function executed by the new thread :
+              infosin : set with infosin
+              pinfosout : eventually set by user
+     infosin : data to pass to the thread
+   Input/output parameter(s) :
+   Output parameter(s) :
+     **ppthread : thread created
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_thread_init\fP(\fBnetwib_thread_pf\fP pfunc,
+                              \fBnetwib_ptr\fP infosin,
+                              \fBnetwib_thread\fP **ppthread);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_thread_close\fP
+   Description :
+     Free memory allocated by a \fBnetwib_thread\fP.
+     Note : this function does not terminate the thread.
+            function \fBnetwib_thread_wait\fP must be called before
+   Input parameter(s) :
+   Input/output parameter(s) :
+     **ppthread : thread to free
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_thread_close\fP(\fBnetwib_thread\fP **ppthead);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_thread_wait\fP
+   Description :
+     Wait for the end of the thread.
+   Input parameter(s) :
+     *pthread : thread to wait for
+     *pabstime : end time. If *pabstime is reached, function
+                 returns (*pevent set to \fBNETWIB_FALSE\fP).
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pevent : true if thread ended
+     *preturnederror : value returned by the thread
+     *pinfosout : info eventually set by thread
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_thread_wait\fP(\fBnetwib_thread\fP *pthread,
+                              \fBnetwib_consttime\fP *pabstime,
+                              \fBnetwib_bool\fP *pevent,
+                              \fBnetwib_err\fP *preturnederror,
+                              \fBnetwib_ptr\fP *pinfosout);
+.fi
+.SH MODULE THREADMUT
+.nf
+
+/*-------------------------------------------------------------*/
+\fItypedef\fP struct \fBnetwib_thread_mutex\fP \fBnetwib_thread_mutex\fP;
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_thread_mutex_init\fP
+   Description :
+     Initialize a mutex.
+   Input parameter(s) :
+   Input/output parameter(s) :
+     *ppmutex : \fBnetwib_thread_mutex\fP initialized
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_thread_mutex_init\fP(\fBnetwib_thread_mutex\fP **ppmutex);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_thread_mutex_close\fP
+   Description :
+     Close a mutex.
+   Input parameter(s) :
+   Input/output parameter(s) :
+     *ppmutex : \fBnetwib_thread_mutex\fP closed
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_thread_mutex_close\fP(\fBnetwib_thread_mutex\fP **ppmutex);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_thread_mutex_lock\fP
+   Description :
+     Wait for the mutex.
+   Input parameter(s) :
+     *pmutex : \fBnetwib_thread_mutex\fP
+     *pabstime : end time. If *pabstime is reached, locking is
+                 not done (*plocked set to \fBNETWIB_FALSE\fP).
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *plocked : the mutex could be locked
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_thread_mutex_lock\fP(\fBnetwib_thread_mutex\fP *pmutex,
+                                    \fBnetwib_consttime\fP *pabstime,
+                                    \fBnetwib_bool\fP *plocked);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_thread_mutex_unlock\fP
+   Description :
+     Unlock a mutex.
+   Input parameter(s) :
+   Input/output parameter(s) :
+     *pmutex : \fBnetwib_thread_mutex\fP to unlock
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_thread_mutex_unlock\fP(\fBnetwib_thread_mutex\fP *pmutex);
+
+.fi
+.SH MODULE THREADRWL
+.nf
+
+/*-------------------------------------------------------------*/
+\fItypedef\fP struct \fBnetwib_thread_rwlock\fP \fBnetwib_thread_rwlock\fP;
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_thread_rwlock_init\fP
+   Description :
+     Initialize a rwlock.
+   Input parameter(s) :
+   Input/output parameter(s) :
+     *pprwlock : \fBnetwib_thread_rwlock\fP initialized
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_thread_rwlock_init\fP(\fBnetwib_thread_rwlock\fP **pprwlock);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_thread_rwlock_close\fP
+   Description :
+     Close a rwlock.
+   Input parameter(s) :
+   Input/output parameter(s) :
+     *pprwlock : \fBnetwib_thread_rwlock\fP closed
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_thread_rwlock_close\fP(\fBnetwib_thread_rwlock\fP **pprwlock);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_thread_rwlock_rdlock\fP
+   Description :
+     Wait for the rwlock.
+     We lock for reading.
+   Input parameter(s) :
+     *prwlock : \fBnetwib_thread_rwlock\fP
+     *pabstime : end time. If *pabstime is reached, locking is
+                 not done (*plocked set to \fBNETWIB_FALSE\fP).
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *plocked : the rwlock could be locked
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_thread_rwlock_rdlock\fP(\fBnetwib_thread_rwlock\fP *prwlock,
+                                       \fBnetwib_consttime\fP *pabstime,
+                                       \fBnetwib_bool\fP *plocked);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_thread_rwlock_rdunlock\fP
+   Description :
+     Unlock reading of a rwlock.
+   Input parameter(s) :
+   Input/output parameter(s) :
+     *prwlock : \fBnetwib_thread_rwlock\fP to unlock
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_thread_rwlock_rdunlock\fP(\fBnetwib_thread_rwlock\fP *prwlock);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_thread_rwlock_wrlock\fP
+   Description :
+     Wait for the rwlock.
+     We lock for writing.
+   Input parameter(s) :
+     *prwlock : \fBnetwib_thread_rwlock\fP
+     *pabstime : end time. If *pabstime is reached, locking is
+                 not done (*plocked set to \fBNETWIB_FALSE\fP).
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *plocked : the rwlock could be locked
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_thread_rwlock_wrlock\fP(\fBnetwib_thread_rwlock\fP *prwlock,
+                                       \fBnetwib_consttime\fP *pabstime,
+                                       \fBnetwib_bool\fP *plocked);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_thread_rwlock_wrunlock\fP
+   Description :
+     Unlock writing of a rwlock.
+   Input parameter(s) :
+   Input/output parameter(s) :
+     *prwlock : \fBnetwib_thread_rwlock\fP to unlock
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_thread_rwlock_wrunlock\fP(\fBnetwib_thread_rwlock\fP *prwlock);
+.fi
+.SH MODULE THREADCOND
+.nf
+
+/*-------------------------------------------------------------*/
+\fItypedef\fP struct \fBnetwib_thread_cond\fP \fBnetwib_thread_cond\fP;
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_thread_cond_init\fP
+   Description :
+     Initialize a condition.
+   Input parameter(s) :
+   Input/output parameter(s) :
+     *ppcond : \fBnetwib_thread_cond\fP initialized
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_thread_cond_init\fP(\fBnetwib_thread_cond\fP **ppcond);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_thread_cond_close\fP
+   Description :
+     Close a condition.
+   Input parameter(s) :
+   Input/output parameter(s) :
+     *ppcond : \fBnetwib_thread_cond\fP closed
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_thread_cond_close\fP(\fBnetwib_thread_cond\fP **ppcond);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_thread_cond_broadcast\fP
+   Description :
+     Inform every waiting thread.
+   Input parameter(s) :
+     value : value to broadcast
+   Input/output parameter(s) :
+     *pcond : \fBnetwib_thread_cond\fP
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_thread_cond_broadcast\fP(\fBnetwib_thread_cond\fP *pcond,
+                                        \fBnetwib_uint32\fP value);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_thread_cond_wait\fP
+   Description :
+     Wait for the condition.
+   Input parameter(s) :
+     *pcond : \fBnetwib_thread_cond\fP
+     *pabstime : end time. If *pabstime is reached, function
+                 returns (*pevent set to \fBNETWIB_FALSE\fP).
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pevent : condition reached
+     *pvalue : value received
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_thread_cond_wait\fP(\fBnetwib_thread_cond\fP *pcond,
+                                   \fBnetwib_consttime\fP *pabstime,
+                                   \fBnetwib_bool\fP *pevent,
+                                   \fBnetwib_uint32\fP *pvalue);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_thread_cond_reinit\fP
+   Description :
+     Reset the condition. So \fBnetwib_thread_cond_broadcast\fP
+     can be used again.
+   Input parameter(s) :
+   Input/output parameter(s) :
+     *pcond : \fBnetwib_thread_cond\fP
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_thread_cond_reinit\fP(\fBnetwib_thread_cond\fP *pcond);
+.fi
+.SH MODULE THREADTSD
+.nf
+
+/*-------------------------------------------------------------*/
+/***************************************************************
+ * TSD : Thread Specific Data                                  *
+ ***************************************************************/
+
+/*-------------------------------------------------------------*/
+\fItypedef\fP struct \fBnetwib_thread_tsd\fP \fBnetwib_thread_tsd\fP;
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_thread_tsd_init\fP
+   Description :
+     Initialize a tsd.
+   Input parameter(s) :
+   Input/output parameter(s) :
+     *pptsd : \fBnetwib_thread_tsd\fP initialized
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_thread_tsd_init\fP(\fBnetwib_thread_tsd\fP **pptsd);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_thread_tsd_close\fP
+   Description :
+     Close a tsd.
+   Input parameter(s) :
+   Input/output parameter(s) :
+     *pptsd : \fBnetwib_thread_tsd\fP closed
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_thread_tsd_close\fP(\fBnetwib_thread_tsd\fP **pptsd);
+
+/*-------------------------------------------------------------*/
+/* Types to control a \fBnetwib_thread_tsd\fP */
+\fItypedef\fP enum {
+  \fBNETWIB_THREAD_TSD_CTLTYPE_VALUE\fP = 1   /* get/set value */
+} \fBnetwib_thread_tsd_ctltype\fP;
+\fBnetwib_err\fP \fBnetwib_thread_tsd_ctl_set\fP(\fBnetwib_thread_tsd\fP *ptsd,
+                                     \fBnetwib_thread_tsd_ctltype\fP type,
+                                     \fBnetwib_ptr\fP p,
+                                     \fBnetwib_uint32\fP ui);
+\fBnetwib_err\fP \fBnetwib_thread_tsd_ctl_get\fP(\fBnetwib_thread_tsd\fP *ptsd,
+                                     \fBnetwib_thread_tsd_ctltype\fP type,
+                                     \fBnetwib_ptr\fP p,
+                                     \fBnetwib_uint32\fP *pui);
+
+/*-------------------------------------------------------------*/
+/* \fBnetwib_err\fP f(\fBnetwib_thread_tsd\fP *pthread_tsd, \fBnetwib_ptr\fP ptr); */
+\fI#define\fP \fBnetwib_thread_tsd_ctl_set_value\fP(pthread_tsd,ptr) \fBnetwib_thread_tsd_ctl_set\fP(pthread_tsd,\fBNETWIB_THREAD_TSD_CTLTYPE_VALUE\fP,ptr,0)
+/* \fBnetwib_err\fP f(\fBnetwib_thread_tsd\fP *pthread_tsd, \fBnetwib_ptr\fP ptr); */
+\fI#define\fP \fBnetwib_thread_tsd_ctl_get_value\fP(pthread_tsd,ptr) \fBnetwib_thread_tsd_ctl_get\fP(pthread_tsd,\fBNETWIB_THREAD_TSD_CTLTYPE_VALUE\fP,ptr,0)
+.fi
+.SH MODULE THREADLIST
+.nf
+
+/*-------------------------------------------------------------*/
+/***************************************************************
+ * Those functions deals with several threads, referenced      *
+ * by their id.                                                *
+ ***************************************************************/
+
+/*-------------------------------------------------------------*/
+\fItypedef\fP struct {
+  \fBnetwib_thread\fP *pthread;
+  \fBnetwib_uint32\fP threadid;
+} \fBnetwib_threadringitem\fP;
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_threadlist_init\fP
+   Description :
+     Create a new threadlist.
+   Input parameter(s) :
+   Input/output parameter(s) :
+   Output parameter(s) :
+     **ppring : \fBnetwib_ring\fP initialized
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_threadlist_init\fP(\fBnetwib_ring\fP **ppring);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_threadlist_close\fP
+   Description :
+     Wait for threads in the list (this can be infinite if one
+     thread never ends). If one thread returns on error, it is
+     ignored. Then, close the threadlist.
+   Input parameter(s) :
+   Input/output parameter(s) :
+   Output parameter(s) :
+     **ppring : \fBnetwib_ring\fP to close
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_threadlist_close\fP(\fBnetwib_ring\fP **ppring);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_threadlist_add\fP
+   Description :
+     Add a new thread.
+   Input parameter(s) :
+     *pthread : thread to add
+     threadid : id of the newly added thread (any value decided
+                by user)
+   Input/output parameter(s) :
+     *pring : \fBnetwib_ring\fP where to add the thread
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_threadlist_add\fP(\fBnetwib_ring\fP *pring,
+                                 \fBnetwib_thread\fP *pthread,
+                                 \fBnetwib_uint32\fP threadid);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_threadlist_del\fP
+   Description :
+     Remove a thread from the ring.
+   Input parameter(s) :
+     threadid : id of the thread to remove
+   Input/output parameter(s) :
+     *pring : \fBnetwib_ring\fP where to remove the thread
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_threadlist_del\fP(\fBnetwib_ring\fP *pring,
+                                 \fBnetwib_uint32\fP threadid);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_threadlist_wait\fP
+   Description :
+     Wait for the end of one thread. When this occurs, the
+     \fBnetwib_thread\fP associated is closed (use \fBnetwib_threadlist_del\fP
+     to remove a thread from the list : you can wait and close
+     it yourself).
+   Input parameter(s) :
+     *pring : \fBnetwib_ring\fP containing threads
+     *pabstime : end time. If *pabstime is reached, function
+                 returns (*pevent set to \fBNETWIB_FALSE\fP).
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pevent : a thread finished
+     *pthreadid : id of the thread
+     *preturnederror : value returned by the thread
+     *pinfosout : info eventually set by thread
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+     \fBNETWIB_ERR_DATAEND\fP : there is no more thread in the ring
+*/
+\fBnetwib_err\fP \fBnetwib_threadlist_wait\fP(\fBnetwib_ring\fP *pring,
+                                  \fBnetwib_consttime\fP *pabstime,
+                                  \fBnetwib_bool\fP *pevent,
+                                  \fBnetwib_uint32\fP *pthreadid,
+                                  \fBnetwib_err\fP *preturnederror,
+                                  \fBnetwib_ptr\fP *pinfosout);
+
+/*-------------------------------------------------------------*/
+/***************************************************************
+ * For other functions, you can directly use functions of      *
+ * ring.h.                                                     *
+ * To do so, booleans "eraseitems" and "duplicateitems" have   *
+ * be set to \fBNETWIB_TRUE\fP. See \fBnetwib_threadlist_close\fP for      *
+ * example.                                                    *
+ ***************************************************************/
+.fi
+.SH MODULE IO
+.nf
+
+/*-------------------------------------------------------------*/
+/***************************************************************
+ * A \fBnetwib_io\fP is the main way to exchange data in netwib.     *
+ *                                                             *
+ * A concrete example first :                                  *
+ *   ----.     ,-----.     ,-------.     ,----.     ,------    *
+ *   file >---->readl >---( program )---->conv >---->socket    *
+ *   ----'     `-----'     `-------'     `----'     `------    *
+ *                                                             *
+ * It works like this :                                        *
+ *  - read data from a file                                    *
+ *  - read only line by line                                   *
+ *  - treat it in the program                                  *
+ *  - write data for output                                    *
+ *  - convert data, for example replacing '\\' by "\\\\"          *
+ *  - write data to socket                                     *
+ *                                                             *
+ * This example contains 3 types of \fBnetwib_io\fP :                *
+ *  - file and socket are "io final link"                      *
+ *  - readl and conv are "io link"                             *
+ *  - file and socket are also "io link" (because a            *
+ *    "io final link" is a special kind of "io link")          *
+ *  - conv is a "io chain" composed of conv+socket             *
+ *  - readl is a "io chain" composed of readl+file             *
+ *  - socket is a "io chain" composed of only socket           *
+ *  - file is a "io chain" composed of only file               *
+ *                                                             *
+ * Using the same program, we might for example read data      *
+ * from a file and write them back to a socket. This can be    *
+ * represented as :                                            *
+ *   ------.      ,-------.      ,---------                    *
+ *    file  >----( program )-----> socket                      *
+ *   ------'      `-------'      `---------                    *
+ * Another variant would be to plug readl or conv to other     *
+ * "io chain", such as :                                       *
+ *   ----.     ,-----.     ,-------.     ,----.     ,------    *
+ *   ipc  >---->readl >---( program )---->conv >---->record    *
+ *   ----'     `-----'     `-------'     `----'     `------    *
+ * An "io chain" can be bi-directional. For example :          *
+ *   --------.       ,--.      ,-------.                       *
+ *    socket  >------>l5 >----( program )-.                    *
+ *           <------<   <--.   `-------'  |                    *
+ *   --------'       `--'   `-------------'                    *
+ *                                                             *
+ * Note : you can find other examples at the end of this file  *
+ *                                                             *
+ * The main ideas to remember is :                             *
+ *  - a "io chain" is composed of one or more "io link"        *
+ *  - a "io link" might be intermediary or "io final link"     *
+ *  - those 3 types use the same structure : \fBnetwib_io\fP         *
+ ***************************************************************/
+
+/*-------------------------------------------------------------*/
+\fItypedef\fP struct \fBnetwib_io\fP \fBnetwib_io\fP;
+
+/*-------------------------------------------------------------*/
+/* direction */
+\fItypedef\fP enum {
+  \fBNETWIB_IO_WAYTYPE_READ\fP = 1,    /* read */
+  \fBNETWIB_IO_WAYTYPE_WRITE\fP,       /* write */
+  \fBNETWIB_IO_WAYTYPE_RDWR\fP,        /* read and write */
+  \fBNETWIB_IO_WAYTYPE_NONE\fP,        /* nor read nor write */
+  \fBNETWIB_IO_WAYTYPE_SUPPORTED\fP    /* every way supported by the io */
+} \fBnetwib_io_waytype\fP;
+
+/*-------------------------------------------------------------*/
+/***************************************************************
+ * Currently, system "io final link" are :                     *
+ *    Name      Definition     Read/Write                      *
+ *   FILE   : regular file   : read/write                      *
+ *   FD     : file desc      : read/write                      *
+ *   HANDLE : Windows HANDLE : read/write                      *
+ *   KBD    : keyboard       : read                            *
+ *   RECORD : record         : read/write                      *
+ *   SOCK   : socket         : read/write                      *
+ *   SNIFF  : sniff          : read                            *
+ *   SPOOF  : spoof          : write                           *
+ * They are initialized by :                                   *
+ *  - \fBnetwib_io_init_file\fP                                      *
+ *  - \fBnetwib_io_init_fd\fP                                        *
+ *  - etc.                                                     *
+ ***************************************************************/
+
+/*-------------------------------------------------------------*/
+/***************************************************************
+ * Those five functions permits to create and to navigate      *
+ * through a "io chain".                                       *
+ ***************************************************************/
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_io_plug\fP
+   Description :
+     Create a chain by pluging one link/chain to another.
+   Input parameter(s) :
+     *piowheretoplug : io where to plug
+     typeofplug : type of plug
+   Input/output parameter(s) :
+     *pio : current io
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_io_plug\fP(\fBnetwib_io\fP *pio,
+                          \fBnetwib_io_waytype\fP typeofplug,
+                          \fBnetwib_io\fP *piowheretoplug);
+/* \fBnetwib_err\fP f(\fBnetwib_io\fP *pio, \fBnetwib_io\fP *piowheretoplug); */
+\fI#define\fP \fBnetwib_io_plug_read\fP(pio,piowheretoplug) \fBnetwib_io_plug\fP(pio,\fBNETWIB_IO_WAYTYPE_READ\fP,piowheretoplug)
+\fI#define\fP \fBnetwib_io_plug_write\fP(pio,piowheretoplug) \fBnetwib_io_plug\fP(pio,\fBNETWIB_IO_WAYTYPE_WRITE\fP,piowheretoplug)
+\fI#define\fP \fBnetwib_io_plug_rdwr\fP(pio,piowheretoplug) \fBnetwib_io_plug\fP(pio,\fBNETWIB_IO_WAYTYPE_RDWR\fP,piowheretoplug)
+\fI#define\fP \fBnetwib_io_plug_supported\fP(pio,piowheretoplug) \fBnetwib_io_plug\fP(pio,\fBNETWIB_IO_WAYTYPE_SUPPORTED\fP,piowheretoplug)
+
+/*-------------------------------------------------------------*/
+/***************************************************************
+ * There are three ways to unplug :                            *
+ *      ,----.     ,----.     ,----.     ,----.     ,----.     *
+ *   ---> io1 >----> io2 >----> io3 >----> io4 >----> io5 >--  *
+ *      `----'     `----'     `----'     `----'     `----'     *
+ *                                                             *
+ * \fBnetwib_io_unplug_next\fP with:                                 *
+ *   pio = &io1                                                *
+ *  ==> cut between io1 and io2, and put &io2 in pnextio       *
+ *                                                             *
+ * \fBnetwib_io_unplug_before\fP with:                               *
+ *   pio = &io1                                                *
+ *   psearchedio = &io3                                        *
+ *  ==> cut between io2 and io3                                *
+ *                                                             *
+ * \fBnetwib_io_unplug_after\fP with:                                *
+ *   pio = &io1                                                *
+ *   psearchedio = &io3                                        *
+ *  ==> cut between io3 and io4, and put &io4 in pafterio      *
+ ***************************************************************/
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_io_unplug_xyz\fP
+   Description :
+     Separate a chain by unplugging one link/chain from another.
+   Input parameter(s) :
+     typeofplug : type of plug
+     *psearchedio : searched io
+   Input/output parameter(s) :
+     *pio : io chain
+   Output parameter(s) :
+     **ppnextio : next io or NULL if at end
+     **ppafterio : next io or NULL if at end
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+     \fBNETWIB_ERR_NOTFOUND\fP : psearchedio was not found
+*/
+\fBnetwib_err\fP \fBnetwib_io_unplug_next\fP(\fBnetwib_io\fP *pio,
+                                 \fBnetwib_io_waytype\fP typeofplug,
+                                 \fBnetwib_io\fP **ppnextio);
+\fBnetwib_err\fP \fBnetwib_io_unplug_before\fP(\fBnetwib_io\fP *pio,
+                                   \fBnetwib_io_waytype\fP typeofplug,
+                                   \fBnetwib_io\fP *psearchedio);
+\fBnetwib_err\fP \fBnetwib_io_unplug_after\fP(\fBnetwib_io\fP *pio,
+                                  \fBnetwib_io_waytype\fP typeofplug,
+                                  \fBnetwib_io\fP *psearchedio,
+                                  \fBnetwib_io\fP **ppafterio);
+\fI#define\fP \fBnetwib_io_unplug_next_read\fP(pio,ppnextio) \fBnetwib_io_unplug_next\fP(pio,\fBNETWIB_IO_WAYTYPE_READ\fP,ppnextio)
+\fI#define\fP \fBnetwib_io_unplug_before_read\fP(pio,psearchedio) \fBnetwib_io_unplug_before\fP(pio,\fBNETWIB_IO_WAYTYPE_READ\fP,psearchedio)
+\fI#define\fP \fBnetwib_io_unplug_after_read\fP(pio,psearchedio,ppafterio) \fBnetwib_io_unplug_after\fP(pio,\fBNETWIB_IO_WAYTYPE_READ\fP,psearchedio,ppafterio)
+\fI#define\fP \fBnetwib_io_unplug_next_write\fP(pio,ppnextio) \fBnetwib_io_unplug_next\fP(pio,\fBNETWIB_IO_WAYTYPE_WRITE\fP,ppnextio)
+\fI#define\fP \fBnetwib_io_unplug_before_write\fP(pio,psearchedio) \fBnetwib_io_unplug_before\fP(pio,\fBNETWIB_IO_WAYTYPE_WRITE\fP,psearchedio)
+\fI#define\fP \fBnetwib_io_unplug_after_write\fP(pio,psearchedio,ppafterio) \fBnetwib_io_unplug_after\fP(pio,\fBNETWIB_IO_WAYTYPE_WRITE\fP,psearchedio,ppafterio)
+\fI#define\fP \fBnetwib_io_unplug_next_rdwr\fP(pio,ppnextio) \fBnetwib_io_unplug_next\fP(pio,\fBNETWIB_IO_WAYTYPE_RDWR\fP,ppnextio)
+\fI#define\fP \fBnetwib_io_unplug_before_rdwr\fP(pio,psearchedio) \fBnetwib_io_unplug_before\fP(pio,\fBNETWIB_IO_WAYTYPE_RDWR\fP,psearchedio)
+\fI#define\fP \fBnetwib_io_unplug_after_rdwr\fP(pio,psearchedio,ppafterio) \fBnetwib_io_unplug_after\fP(pio,\fBNETWIB_IO_WAYTYPE_RDWR\fP,psearchedio,ppafterio)
+\fI#define\fP \fBnetwib_io_unplug_next_supported\fP(pio,ppnextio) \fBnetwib_io_unplug_next\fP(pio,\fBNETWIB_IO_WAYTYPE_SUPPORTED\fP,ppnextio)
+\fI#define\fP \fBnetwib_io_unplug_before_supported\fP(pio,psearchedio) \fBnetwib_io_unplug_before\fP(pio,\fBNETWIB_IO_WAYTYPE_SUPPORTED\fP,psearchedio)
+\fI#define\fP \fBnetwib_io_unplug_after_supported\fP(pio,psearchedio,ppafterio) \fBnetwib_io_unplug_after\fP(pio,\fBNETWIB_IO_WAYTYPE_SUPPORTED\fP,psearchedio,ppafterio)
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_io_next\fP
+   Description :
+     Obtain the next io in the chain.
+   Input parameter(s) :
+     *pio : io
+   Input/output parameter(s) :
+     **ppionext : io after pio of type typetofollow
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+     \fBNETWIB_ERR_DATAEND\fP : there is no more io after
+*/
+\fBnetwib_err\fP \fBnetwib_io_next\fP(\fBnetwib_io\fP *pio,
+                          \fBnetwib_io_waytype\fP typetofollow,
+                          \fBnetwib_io\fP **ppionext);
+/* \fBnetwib_err\fP f(\fBnetwib_io\fP *pio, \fBnetwib_io\fP *pionext); */
+\fI#define\fP \fBnetwib_io_next_read\fP(pio,pionext) \fBnetwib_io_next\fP(pio,\fBNETWIB_IO_WAYTYPE_READ\fP,pionext)
+\fI#define\fP \fBnetwib_io_next_write\fP(pio,pionext) \fBnetwib_io_next\fP(pio,\fBNETWIB_IO_WAYTYPE_WRITE\fP,pionext)
+\fI#define\fP \fBnetwib_io_next_rdwr\fP(pio,pionext) \fBnetwib_io_next\fP(pio,\fBNETWIB_IO_WAYTYPE_RDWR\fP,pionext)
+\fI#define\fP \fBnetwib_io_next_supported\fP(pio,pionext) \fBnetwib_io_next\fP(pio,\fBNETWIB_IO_WAYTYPE_SUPPORTED\fP,pionext)
+
+/*-------------------------------------------------------------*/
+/***************************************************************
+ * Those three functions permits to exchange data through a    *
+ * "io chain".                                                 *
+ ***************************************************************/
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_io_write_xyz\fP
+   Description :
+     Write data to a \fBnetwib_io\fP.
+   Input parameter(s) :
+     *pbuf : buffer to write
+   Input/output parameter(s) :
+     **pio : \fBnetwib_io\fP where to write
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_io_write\fP(\fBnetwib_io\fP *pio,
+                           \fBnetwib_constbuf\fP *pbuf);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_io_read_xyz\fP
+   Description :
+     Read data to a \fBnetwib_io\fP.
+   Input parameter(s) :
+   Input/output parameter(s) :
+     **pio : \fBnetwib_io\fP where to read
+     *pbuf : buffer storing read data
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+     \fBNETWIB_ERR_DATAEND\fP : end of data
+*/
+\fBnetwib_err\fP \fBnetwib_io_read\fP(\fBnetwib_io\fP *pio,
+                          \fBnetwib_buf\fP *pbuf);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_io_unread\fP
+   Description :
+     Put data back in the read io.
+   Input parameter(s) :
+   Input/output parameter(s) :
+     **pio : \fBnetwib_io\fP where to read
+     *pbuf : buffer containing data
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_io_unread\fP(\fBnetwib_io\fP *pio,
+                            \fBnetwib_constbuf\fP *pbuf);
+
+/*-------------------------------------------------------------*/
+/***************************************************************
+ * Those three functions permits to control an "io chain".     *
+ ***************************************************************/
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_io_wait\fP
+   Description :
+     Wait for data in the io.
+   Input parameter(s) :
+     *pabstime : end time. If *pabstime is reached, function
+                 returns (*pevent set to \fBNETWIB_FALSE\fP).
+   Input/output parameter(s) :
+     **pio : \fBnetwib_io\fP where to wait
+   Output parameter(s) :
+     *pevent : an event occurred
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_io_wait\fP(\fBnetwib_io\fP *pio,
+                          \fBnetwib_io_waytype\fP way,
+                          \fBnetwib_consttime\fP *pabstime,
+                          \fBnetwib_bool\fP *pevent);
+/* \fBnetwib_err\fP f(\fBnetwib_io\fP *pio, \fBnetwib_consttime\fP *pabstime, \fBnetwib_bool\fP *pevent); */
+\fI#define\fP \fBnetwib_io_wait_read\fP(pio,pabstime,pevent) \fBnetwib_io_wait\fP(pio,\fBNETWIB_IO_WAYTYPE_READ\fP,pabstime,pevent)
+\fI#define\fP \fBnetwib_io_wait_write\fP(pio,pabstime,pevent) \fBnetwib_io_wait\fP(pio,\fBNETWIB_IO_WAYTYPE_WRITE\fP,pabstime,pevent)
+\fI#define\fP \fBnetwib_io_wait_rdwr\fP(pio,pabstime,pevent) \fBnetwib_io_wait\fP(pio,\fBNETWIB_IO_WAYTYPE_RDWR\fP,pabstime,pevent)
+\fI#define\fP \fBnetwib_io_wait_supported\fP(pio,pabstime,pevent) \fBnetwib_io_wait\fP(pio,\fBNETWIB_IO_WAYTYPE_SUPPORTED\fP,pabstime,pevent)
+
+/*-------------------------------------------------------------*/
+/* Explaining those values would be too complicated here. Please
+   refer to the defines using them (which are documented).
+*/
+\fItypedef\fP enum {
+  /** values working on current io (they are not recursive) **/
+  \fBNETWIB_IO_CTLTYPE_SUPPORT\fP = 1,
+  \fBNETWIB_IO_CTLTYPE_NUMUSERS\fP,
+  \fBNETWIB_IO_CTLTYPE_NUMUSERSINC\fP,
+  /** values working on current io (if \fBNETWIB_ERR_OK\fP is returned) or
+      on next io (if \fBNETWIB_ERR_PLEASETRYNEXT\fP is returned) **/
+  \fBNETWIB_IO_CTLTYPE_RES\fP = 100,
+  \fBNETWIB_IO_CTLTYPE_END\fP,
+  /** values which are specific **/
+  /* file : 200 */
+  \fBNETWIB_IO_CTLTYPE_FILE_SEEK_BEGIN\fP = 200,
+  \fBNETWIB_IO_CTLTYPE_FILE_SEEK_CURRENT\fP,
+  \fBNETWIB_IO_CTLTYPE_FILE_SEEK_END\fP,
+  \fBNETWIB_IO_CTLTYPE_FILE_TELL\fP,
+  \fBNETWIB_IO_CTLTYPE_FILE_TRUNCATE\fP,
+  /* fd : 300 */
+  /* handle : 400 */
+  /* ipc : 500 */
+  \fBNETWIB_IO_CTLTYPE_IPC_SIDEREAD\fP = 500,
+  \fBNETWIB_IO_CTLTYPE_IPC_SIDEWRITE\fP,
+  \fBNETWIB_IO_CTLTYPE_IPC_NOTUSED\fP,
+  /* kbd : 600 */
+  \fBNETWIB_IO_CTLTYPE_KBD_ECHO\fP = 600,
+  \fBNETWIB_IO_CTLTYPE_KBD_LINE\fP,
+  \fBNETWIB_IO_CTLTYPE_KBD_PURGE\fP,
+  /* record : 700 */
+  /* sock : 800 */
+  \fBNETWIB_IO_CTLTYPE_SOCK_IP4OPTS\fP = 800,
+  \fBNETWIB_IO_CTLTYPE_SOCK_IP6EXTS\fP,
+  \fBNETWIB_IO_CTLTYPE_SOCK_LOCAL\fP,
+  \fBNETWIB_IO_CTLTYPE_SOCK_REMOTE\fP,
+  \fBNETWIB_IO_CTLTYPE_SOCK_MULTICASTTTL\fP,
+  \fBNETWIB_IO_CTLTYPE_SOCK_SOCKTYPE\fP,
+  /* sockv : 900 */
+  \fBNETWIB_IO_CTLTYPE_SOCKV_ANSWERALIVE\fP = 900,
+  /* sniff : 1000 */
+  \fBNETWIB_IO_CTLTYPE_SNIFF_FILTER\fP = 1000,
+  \fBNETWIB_IO_CTLTYPE_SNIFF_DLT\fP,
+  /* spoof : 1100 */
+  \fBNETWIB_IO_CTLTYPE_SPOOF_DLT\fP= 1100,
+  /** values which are specific to iousual.h **/
+  /* ioutil : 2000 */
+  \fBNETWIB_IO_CTLTYPE_DATA_LINE_MSDOS\fP = 2000,
+  \fBNETWIB_IO_CTLTYPE_DATA_CHUNK_MINSIZE\fP,
+  \fBNETWIB_IO_CTLTYPE_DATA_CHUNK_MAXSIZE\fP,
+  \fBNETWIB_IO_CTLTYPE_DATA_FIXED_SIZE\fP,
+  \fBNETWIB_IO_CTLTYPE_DATA_TYPE\fP,
+  \fBNETWIB_IO_CTLTYPE_STORAGE_FLUSH\fP,
+  /** values which are specific to users' utilities **/
+  /* user defined : start at 10000 */
+  \fBNETWIB_IO_CTLTYPE_USER_BEGIN\fP = \fBNETWIB_ENUM_USER_BEGIN\fP
+} \fBnetwib_io_ctltype\fP;
+/* Those functions permit to set/get parameters (pointer and
+   integer) about a \fBnetwib_io\fP. It should not be used directly,
+   but by the defines.
+   In function \fBnetwib_io_ctl_get\fP, parameter p could be
+   a "\fBnetwib_ptr\fP *pp" instead of "\fBnetwib_ptr\fP p", but it
+   complicates things for nothing : a pointer can be
+   used for what we want. For example, its easier to use
+   ctl_get(..., &buf, &ui) instead of ("&&buf", &ui).
+*/
+\fBnetwib_err\fP \fBnetwib_io_ctl_set\fP(\fBnetwib_io\fP *pio,
+                             \fBnetwib_io_waytype\fP way,
+                             \fBnetwib_io_ctltype\fP ctltype,
+                             \fBnetwib_ptr\fP p,
+                             \fBnetwib_uint32\fP ui);
+\fBnetwib_err\fP \fBnetwib_io_ctl_get\fP(\fBnetwib_io\fP *pio,
+                             \fBnetwib_io_waytype\fP way,
+                             \fBnetwib_io_ctltype\fP ctltype,
+                             \fBnetwib_ptr\fP p,
+                             \fBnetwib_uint32\fP *pui);
+
+/*-------------------------------------------------------------*/
+/***************************************************************
+ * This function permits to close an "io chain".               *
+ ***************************************************************/
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_io_close\fP
+   Description :
+     Close a chain (links are closed only if nobody use them
+     anymore : numusers == 0).
+   Input parameter(s) :
+   Input/output parameter(s) :
+     **ppio : \fBnetwib_io\fP to close
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_io_close\fP(\fBnetwib_io\fP **ppio);
+
+/*-------------------------------------------------------------*/
+/***************************************************************
+ * Common control defines                                      *
+ ***************************************************************/
+
+/*-------------------------------------------------------------*/
+\fItypedef\fP enum {
+  \fBNETWIB_IO_RESTYPE_FILE\fP = 1,
+  \fBNETWIB_IO_RESTYPE_FD\fP,
+  \fBNETWIB_IO_RESTYPE_HANDLE\fP,
+  \fBNETWIB_IO_RESTYPE_IPC\fP,
+  \fBNETWIB_IO_RESTYPE_KBD\fP,
+  \fBNETWIB_IO_RESTYPE_SCREEN\fP,
+  \fBNETWIB_IO_RESTYPE_STREAM\fP,
+  \fBNETWIB_IO_RESTYPE_RECORD\fP,
+  \fBNETWIB_IO_RESTYPE_SOCK\fP,
+  \fBNETWIB_IO_RESTYPE_SOCKV\fP,
+  \fBNETWIB_IO_RESTYPE_SNIFF\fP,
+  \fBNETWIB_IO_RESTYPE_SPOOF\fP,
+  \fBNETWIB_IO_RESTYPE_NULL\fP,
+  \fBNETWIB_IO_RESTYPE_MEM\fP,
+  \fBNETWIB_IO_RESTYPE_TLV\fP,
+  \fBNETWIB_IO_RESTYPE_EXEC\fP,
+  \fBNETWIB_IO_RESTYPE_SHELLSERVER\fP,
+  \fBNETWIB_IO_RESTYPE_SHELLCLIENT\fP,
+  \fBNETWIB_IO_RESTYPE_USER_BEGIN\fP = \fBNETWIB_ENUM_USER_BEGIN\fP
+} \fBnetwib_io_restype\fP;
+/* Obtain the resource type of a \fBnetwib_io\fP */
+/* \fBnetwib_err\fP f(\fBnetwib_io\fP *pio, \fBnetwib_io_waytype\fP way, \fBnetwib_io_restype\fP *pres); */
+\fI#define\fP \fBnetwib_io_ctl_get_res\fP(pio,way,pres) \fBnetwib_io_ctl_get\fP(pio,way,\fBNETWIB_IO_CTLTYPE_RES\fP,NULL,(\fBnetwib_uint32\fP*)pres)
+
+/*-------------------------------------------------------------*/
+/* indicate the end of data */
+/* \fBnetwib_err\fP f(\fBnetwib_io\fP *pio, \fBnetwib_io_waytype\fP way); */
+\fI#define\fP \fBnetwib_io_ctl_set_end\fP(pio,way) \fBnetwib_io_ctl_set\fP(pio,way,\fBNETWIB_IO_CTLTYPE_END\fP,NULL,0)
+\fI#define\fP \fBnetwib_io_ctl_set_end_write\fP(pio) \fBnetwib_io_ctl_set_end\fP(pio,\fBNETWIB_IO_WAYTYPE_WRITE\fP)
+
+
+/*-------------------------------------------------------------*/
+/***************************************************************
+ * Now, a big example ...                                      *
+ ***************************************************************/
+
+/*-------------------------------------------------------------*/
+/*-------------------------------------------------------------*/
+#if 0
+/* Complete example :
+
+  We create a module (named m) having one input (i1) and two
+  outputs (o1, o2) :
+
+            ############# m #############
+            #                           #
+            #         ooooooooo         #  o1
+        i1  #  ,--.   o       o--------------->
+      >-------->l1 >--o HEART o   ,--.  #
+            #  `--'   o       o--->l2 >------->
+            #         ooooooooo   `--'  #  o2
+            #                           #
+            #############################
+
+  The module contains 2 ios :
+   - l1 : reads line by line
+   - l2 : converts data to base64
+
+  The heart of the module reads data from l1's output. If the
+  data starts by 'A', then it is sent to o1. Else, data goes
+  through l2.
+
+  *** Usage 1 :
+   - i1 is plugged to a file through io l3
+   - o1 is plugged to file2
+   - o2 is plugged to file3 through io l4
+   - l3 reads data and duplicates it (read 'qa', output 'qqaa')
+   - l4 reads data, displays it to screen and sends to output
+                                                   ,-------
+                               #####       ,-------> file2
+      -------.      ,--.       #   >------'        `-------
+       file1  >----->l3 >------> m #     ,--.      ,-------
+      -------'      `--'       #   >----->l4 >-----> file3
+                               #####     `--'      `-------
+
+  *** Usage 2 :
+   - i1 is plugged to socket soc1
+   - o1 is plugged to null (data is junked)
+   - o2 is plugged back to the same socket
+                               #####               ,------
+      ------.                  #   >---------------> null
+       soc1  >-----------------> m #               `------
+            <-------.          #   >----.
+      ------'        \\         #####    |
+                      `-----------------'
+
+  *** Usage 3 :
+   - i1 is plugged to a socket through io l3
+   - o1 is plugged to null (data is junked)
+   - o2 is plugged back to the same socket through io l4
+                               #####               ,------
+                    ,--.       #   >---------------> null
+      ------.    ,-->l3 >------> m #               `------
+       soc1  >--'   `--'       #   >----.
+            <--.    ,--.       #####    |
+      ------'   `--< l4<----------------'
+                    `--'
+
+  *** Usage 4 :
+   - l5 is a bi-directional io converting string to uppercase
+   - l5 is plugged to socket soc1
+   - i1 is plugged to l5
+   - o1 is plugged to null (data is junked)
+   - o2 is plugged back to l5
+                               #####               ,------
+                               #   >---------------> null
+      ------.       ,--.    ,--> m #               `------
+       soc1  >------>l5 >--'   #   >----.
+            <------<   <--.    #####    |
+      ------'       `--'   `------------'
+
+  *** Usage 5 :
+   - i1 is plugged to file1 through l5
+   - o1 is plugged to null (data is junked)
+   - o2 is plugged to file2 through l5
+                               #####               ,------
+     -------.                  #   >---------------> null
+      file1  >--.   ,--.    ,--> m #               `------
+     -------'    `-->l5 >--'   #   >----.
+     -------.   ,--<   <--.    #####    |
+      file2 <--'    `--'   `------------'
+     -------'
+
+  *** Usage 6 :
+   - i1 is plugged to file1
+   - o1 are o2 are both plugged to file2
+                               #####
+      -------.                 #   >------------.  ,-------
+       file1  >----------------> m #             --> file2
+      -------'                 #   >------------'  `-------
+                               #####
+
+  *** Usage 7 :
+   - m2 is a module similar to m except it has 2 inputs
+     and one output
+   - i1 is plugged to file1
+   - i2 is plugged to file1
+   - o1 is plugged to null (data is junked)
+   - o2 is plugged to file2
+                               #####
+      -------.   ,------------->   #               ,------
+       file1  >--              # m >---------------> null
+      -------'   `------------->   #               `------
+                               #####
+
+*/
+
+/*-------------------------------------------------------------*/
+/* l1 is \fBnetwib_io_init_read_line\fP */
+
+/*-------------------------------------------------------------*/
+/* l2 : converts data to base64 */
+\fBnetwib_err\fP l2_write(\fBnetwib_io\fP *pio,
+                    \fBnetwib_constbuf\fP *pbuf);
+\fBnetwib_err\fP l2_write(\fBnetwib_io\fP *pio,
+                    \fBnetwib_constbuf\fP *pbuf)
+{
+  \fBnetwib_buf\fP bufbase64;
+  \fBnetwib_io\fP *pionext;
+  \fBnetwib_err\fP ret;
+
+  /* obtain the next io in the chain */
+  \fBnetwib_er\fP(\fBnetwib_io_next_write\fP(pio, &pionext));
+
+  /* converts pbuf to base64 */
+  \fBnetwib_er\fP(\fBnetwib_buf_init_mallocdefault\fP(&bufbase64));
+  \fBnetwib_er\fP(\fBnetwib_buf_encode\fP(pbuf, \fBNETWIB_ENCODETYPE_BASE64\fP, &bufbase64));
+
+  /* write data to the next io */
+  ret = \fBnetwib_io_write\fP(pionext, &bufbase64);
+  \fBnetwib_er\fP(\fBnetwib_buf_close\fP(&bufbase64));
+
+  return(ret);
+}
+
+\fBnetwib_err\fP l2_init(\fBnetwib_io\fP **ppio);
+\fBnetwib_err\fP l2_init(\fBnetwib_io\fP **ppio)
+{
+  \fBnetwib_er\fP(\fBnetwib_io_init\fP(\fBNETWIB_FALSE\fP, \fBNETWIB_TRUE\fP, NULL,
+                           NULL/*read*/, &l2_write,
+                           NULL/*wait*/, NULL/*unread*/,
+                           NULL/*ctlset*/, NULL/*ctlget*/,
+                           NULL/*close*/, ppio));
+  return(\fBNETWIB_ERR_OK\fP);
+}
+
+/*-------------------------------------------------------------*/
+/* l3 reads data and duplicates it (read 'qa', output 'qqaa') */
+\fBnetwib_err\fP l3_dup(\fBnetwib_constbuf\fP *pinbuf,
+                  \fBnetwib_buf\fP *poutbuf);
+\fBnetwib_err\fP l3_dup(\fBnetwib_constbuf\fP *pinbuf,
+                  \fBnetwib_buf\fP *poutbuf)
+{
+  \fBnetwib_data\fP data;
+  \fBnetwib_uint32\fP datasize, i;
+
+  data = \fBnetwib__buf_ref_data_ptr\fP(pinbuf);
+  datasize = \fBnetwib__buf_ref_data_size\fP(pinbuf);
+  for (i = 0; i < datasize; i++) {
+    \fBnetwib_er\fP(\fBnetwib_buf_append_byte\fP(data[i], poutbuf));
+    \fBnetwib_er\fP(\fBnetwib_buf_append_byte\fP(data[i], poutbuf));
+  }
+
+  return(\fBNETWIB_ERR_OK\fP);
+}
+\fBnetwib_err\fP l3_read(\fBnetwib_io\fP *pio,
+                   \fBnetwib_buf\fP *pbuf);
+\fBnetwib_err\fP l3_read(\fBnetwib_io\fP *pio,
+                   \fBnetwib_buf\fP *pbuf)
+{
+  \fBnetwib_buf\fP buf;
+  \fBnetwib_io\fP *pionext;
+
+  /* obtain the next io in the chain */
+  \fBnetwib_er\fP(\fBnetwib_io_next_read\fP(pio, &pionext));
+
+  /* read data */
+  \fBnetwib_er\fP(\fBnetwib_buf_init_mallocdefault\fP(&buf));
+  \fBnetwib_er\fP(\fBnetwib_io_read\fP(pionext, &buf));
+
+  /* duplicate buf */
+  \fBnetwib_er\fP(l3_dup(&buf, pbuf));
+  \fBnetwib_er\fP(\fBnetwib_buf_close\fP(&buf));
+
+  return(\fBNETWIB_ERR_OK\fP);
+}
+\fBnetwib_err\fP l3_init(\fBnetwib_io\fP **ppio);
+\fBnetwib_err\fP l3_init(\fBnetwib_io\fP **ppio)
+{
+  \fBnetwib_er\fP(\fBnetwib_io_init\fP(\fBNETWIB_FALSE\fP, \fBNETWIB_TRUE\fP, NULL,
+                           &l3_read/*read*/, NULL/*write*/,
+                           NULL/*wait*/, NULL/*unread*/,
+                           NULL/*ctlset*/, NULL/*ctlget*/,
+                           NULL/*close*/, ppio));
+
+  return(\fBNETWIB_ERR_OK\fP);
+}
+
+/*-------------------------------------------------------------*/
+/* l4 reads data, displays it to screen and sends to output */
+\fBnetwib_err\fP l4_write(\fBnetwib_io\fP *pio,
+                    \fBnetwib_constbuf\fP *pbuf);
+\fBnetwib_err\fP l4_write(\fBnetwib_io\fP *pio,
+                    \fBnetwib_constbuf\fP *pbuf)
+{
+  \fBnetwib_buf\fP bufbase64;
+  \fBnetwib_io\fP *pionext;
+  \fBnetwib_err\fP ret;
+
+  /* obtain the next io in the chain */
+  \fBnetwib_er\fP(\fBnetwib_io_next_write\fP(pio, &pionext));
+
+  /* display it */
+  \fBnetwib_er\fP(\fBnetwib_buf_display\fP(pbuf, \fBNETWIB_ENCODETYPE_DUMP\fP));
+
+  /* write data to the next io */
+  ret = \fBnetwib_io_write\fP(pionext, pbuf);
+
+  return(ret);
+}
+
+\fBnetwib_err\fP l4_init(\fBnetwib_io\fP **ppio);
+\fBnetwib_err\fP l4_init(\fBnetwib_io\fP **ppio)
+{
+  \fBnetwib_er\fP(\fBnetwib_io_init\fP(\fBNETWIB_FALSE\fP, \fBNETWIB_TRUE\fP, NULL,
+                           NULL/*read*/, &l4_write,
+                           NULL/*wait*/, NULL/*unread*/,
+                           NULL/*ctlset*/, NULL/*ctlget*/,
+                           NULL/*close*/, ppio));
+
+  return(\fBNETWIB_ERR_OK\fP);
+}
+
+/*-------------------------------------------------------------*/
+/* l5 convert data to uppercase */
+\fBnetwib_err\fP l5_up(\fBnetwib_constbuf\fP *pinbuf,
+                 \fBnetwib_buf\fP *poutbuf);
+\fBnetwib_err\fP l5_up(\fBnetwib_constbuf\fP *pinbuf,
+                 \fBnetwib_buf\fP *poutbuf)
+{
+  \fBnetwib_data\fP data;
+  \fBnetwib_uint32\fP datasize, i;
+  \fBnetwib_byte\fP c;
+
+  data = \fBnetwib__buf_ref_data_ptr\fP(pinbuf);
+  datasize = \fBnetwib__buf_ref_data_size\fP(pinbuf);
+  for (i = 0; i < datasize; i++) {
+    c = data[i];
+    \fBnetwib_c2_upper\fP(c);
+    \fBnetwib_er\fP(\fBnetwib_buf_append_byte\fP(c, poutbuf));
+  }
+
+  return(\fBNETWIB_ERR_OK\fP);
+}
+\fBnetwib_err\fP l5_read(\fBnetwib_io\fP *pio,
+                   \fBnetwib_buf\fP *pbuf);
+\fBnetwib_err\fP l5_read(\fBnetwib_io\fP *pio,
+                   \fBnetwib_buf\fP *pbuf)
+{
+  \fBnetwib_buf\fP buf;
+  \fBnetwib_io\fP *pionext;
+
+  \fBnetwib_er\fP(\fBnetwib_io_next_read\fP(pio, &pionext));
+  \fBnetwib_er\fP(\fBnetwib_buf_init_mallocdefault\fP(&buf));
+  \fBnetwib_er\fP(\fBnetwib_io_read\fP(pionext, &buf));
+  \fBnetwib_er\fP(l5_up(&buf, pbuf));
+  \fBnetwib_er\fP(\fBnetwib_buf_close\fP(&buf));
+
+  return(\fBNETWIB_ERR_OK\fP);
+}
+\fBnetwib_err\fP l5_write(\fBnetwib_io\fP *pio,
+                    \fBnetwib_constbuf\fP *pbuf);
+\fBnetwib_err\fP l5_write(\fBnetwib_io\fP *pio,
+                    \fBnetwib_constbuf\fP *pbuf)
+{
+  \fBnetwib_buf\fP buf;
+  \fBnetwib_io\fP *pionext;
+  \fBnetwib_err\fP ret;
+
+  \fBnetwib_er\fP(\fBnetwib_io_next_write\fP(pio, &pionext));
+  \fBnetwib_er\fP(\fBnetwib_buf_init_mallocdefault\fP(&buf));
+  \fBnetwib_er\fP(l5_up(pbuf, &buf));
+  ret = \fBnetwib_io_write\fP(pionext, &buf);
+  \fBnetwib_er\fP(\fBnetwib_buf_close\fP(&buf));
+
+  return(ret);
+}
+\fBnetwib_err\fP l5_init(\fBnetwib_io\fP **ppio);
+\fBnetwib_err\fP l5_init(\fBnetwib_io\fP **ppio)
+{
+  \fBnetwib_er\fP(\fBnetwib_io_init\fP(\fBNETWIB_FALSE\fP, \fBNETWIB_TRUE\fP, NULL,
+                           &l5_read, &l5_write,
+                           NULL/*wait*/, NULL/*unread*/,
+                           NULL/*ctlset*/, NULL/*ctlget*/,
+                           NULL/*close*/, ppio));
+
+  return(\fBNETWIB_ERR_OK\fP);
+}
+
+/*-------------------------------------------------------------*/
+/* module m */
+\fBnetwib_err\fP m(\fBnetwib_io\fP *pi1,
+             \fBnetwib_io\fP *po1,
+             \fBnetwib_io\fP *po2);
+\fBnetwib_err\fP m(\fBnetwib_io\fP *pi1,
+             \fBnetwib_io\fP *po1,
+             \fBnetwib_io\fP *po2)
+{
+  \fBnetwib_buf\fP buf;
+  \fBnetwib_err\fP ret;
+  \fBnetwib_io\fP *pl1, *pl2;
+  \fBnetwib_data\fP data;
+  \fBnetwib_uint32\fP datasize;
+
+  /* create l1 */
+  \fBnetwib_er\fP(\fBnetwib_io_init_line\fP(&pl1));
+
+  /* create l2 */
+  \fBnetwib_er\fP(l2_init(&pl2));
+
+  /* add l1 to i1 */
+  \fBnetwib_er\fP(\fBnetwib_io_plug_read\fP(pl1, pi1));
+
+  /* add l2 to o2 */
+  \fBnetwib_er\fP(\fBnetwib_io_plug_read\fP(pl2, po2));
+
+  /* main loop */
+  \fBnetwib_er\fP(\fBnetwib_buf_init_mallocdefault\fP(&buf));
+  while (\fBNETWIB_TRUE\fP) {
+    \fBnetwib__buf_reinit\fP(&buf);
+    ret = \fBnetwib_io_read\fP(pl1, &buf);
+    if (ret == \fBNETWIB_ERR_DATAEND\fP) {
+      ret = \fBNETWIB_ERR_OK\fP;
+      break;
+    } else if (ret != \fBNETWIB_ERR_OK\fP) {
+      break;
+    }
+    data = \fBnetwib__buf_ref_data_ptr\fP(&buf);
+    datasize = \fBnetwib__buf_ref_data_size\fP(&buf);
+    if (datasize && data[0] == 'A') {
+      ret = \fBnetwib_io_write\fP(po1, &buf);
+    } else {
+      ret = \fBnetwib_io_write\fP(pl2, &buf);
+    }
+    if (ret != \fBNETWIB_ERR_OK\fP) {
+      break;
+    }
+  }
+  \fBnetwib_er\fP(\fBnetwib_buf_close\fP(&buf));
+
+  /* close only l1 and l2 (not the complete chain) */
+  \fBnetwib_er\fP(\fBnetwib_io_close\fP(&pl1));
+  \fBnetwib_er\fP(\fBnetwib_io_close\fP(&pl2));
+
+  return(ret);
+}
+
+/*-------------------------------------------------------------*/
+/* usage 1 */
+\fBnetwib_err\fP usage1(void);
+\fBnetwib_err\fP usage1(void)
+{
+  \fBnetwib_err\fP ret;
+  \fBnetwib_buf\fP filename;
+  \fBnetwib_io\fP *pfile1, *pfile2, *pfile3, *pl3 , *pl4;
+
+  /* open files */
+  \fBnetwib_er\fP(\fBnetwib_buf_init_ext_string\fP("file1", &filename));
+  \fBnetwib_er\fP(\fBnetwib_io_init_file_read\fP(&filename, &pfile1));
+  \fBnetwib_er\fP(\fBnetwib_buf_init_ext_string\fP("file2", &filename));
+  \fBnetwib_er\fP(\fBnetwib_io_init_file_write\fP(&filename, &pfile2));
+  \fBnetwib_er\fP(\fBnetwib_buf_init_ext_string\fP("file3", &filename));
+  \fBnetwib_er\fP(\fBnetwib_io_init_file_write\fP(&filename, &pfile3));
+
+  /* initialize l3 and l4 */
+  \fBnetwib_er\fP(l3_init(&pl3));
+  \fBnetwib_er\fP(l4_init(&pl4));
+
+  /* create chains */
+  \fBnetwib_er\fP(\fBnetwib_io_plug_read\fP(pl3, pfile1));
+  \fBnetwib_er\fP(\fBnetwib_io_plug_write\fP(pl4, pfile3));
+
+  /* core loop */
+  ret = m(pl3, pfile2, pl4);
+
+  /* close chains */
+  \fBnetwib_er\fP(\fBnetwib_io_close\fP(&pl3)); /* or close_read */
+  \fBnetwib_er\fP(\fBnetwib_io_close\fP(&pfile2)); /* or close_write */
+  \fBnetwib_er\fP(\fBnetwib_io_close\fP(&pl4)); /* or close_write */
+
+  return(ret);
+}
+
+/*-------------------------------------------------------------*/
+/* usage 2 */
+\fBnetwib_err\fP usage2(void);
+\fBnetwib_err\fP usage2(void)
+{
+  \fBnetwib_err\fP ret;
+  \fBnetwib_io\fP *psock, *pnull;
+  \fBnetwib_ip\fP ipad;
+
+  /* open socket */
+  \fBnetwib_er\fP(\fBnetwib_ip_init_ip4\fP(0x7F000001, &ipad));
+  \fBnetwib_er\fP(\fBnetwib_io_init_sock_tcp_cli_easy\fP(&ipad, 1234, &psock));
+
+  /* open null */
+  \fBnetwib_er\fP(\fBnetwib_io_init_null\fP(&pnull));
+
+  /* core loop */
+  ret = m(psock, pnull, psock);
+
+  /* close chains */
+  \fBnetwib_er\fP(\fBnetwib_io_close\fP(&psock));
+  \fBnetwib_er\fP(\fBnetwib_io_close\fP(&pnull)); /* or close_write */
+
+  return(ret);
+}
+
+/*-------------------------------------------------------------*/
+/* usage 3 */
+\fBnetwib_err\fP usage3(void);
+\fBnetwib_err\fP usage3(void)
+{
+  \fBnetwib_err\fP ret;
+  \fBnetwib_io\fP *psock, *pnull, *pl3 , *pl4;
+  \fBnetwib_ip\fP ipad;
+
+  /* open socket */
+  \fBnetwib_er\fP(\fBnetwib_ip_init_ip4\fP(0x7F000001, &ipad));
+  \fBnetwib_er\fP(\fBnetwib_io_init_sock_tcp_cli_easy\fP(&ipad, 1234, &psock));
+
+  /* open null */
+  \fBnetwib_er\fP(\fBnetwib_io_init_null\fP(&pnull));
+
+  /* initialize l3 and l4 */
+  \fBnetwib_er\fP(l3_init(&pl3));
+  \fBnetwib_er\fP(l4_init(&pl4));
+
+  /* create chains */
+  \fBnetwib_er\fP(\fBnetwib_io_plug_read\fP(pl3, psock));
+  \fBnetwib_er\fP(\fBnetwib_io_plug_write\fP(pl4, psock));
+
+  /* core loop */
+  ret = m(pl3, pnull, pl4);
+
+  /* close chains */
+  \fBnetwib_er\fP(\fBnetwib_io_close\fP(&pl3)); /* or close_read */
+  \fBnetwib_er\fP(\fBnetwib_io_close\fP(&pnull)); /* or close_write */
+  \fBnetwib_er\fP(\fBnetwib_io_close\fP(&pl4)); /* or close_write */
+
+  return(ret);
+}
+
+/*-------------------------------------------------------------*/
+/* usage 4 */
+\fBnetwib_err\fP usage4(void);
+\fBnetwib_err\fP usage4(void)
+{
+  \fBnetwib_err\fP ret;
+  \fBnetwib_io\fP *psock, *pnull, *pl5;
+  \fBnetwib_ip\fP ipad;
+
+  /* open socket */
+  \fBnetwib_er\fP(\fBnetwib_ip_init_ip4\fP(0x7F000001, &ipad));
+  \fBnetwib_er\fP(\fBnetwib_io_init_sock_tcp_cli_easy\fP(&ipad, 1234, &psock));
+
+  /* open null */
+  \fBnetwib_er\fP(\fBnetwib_io_init_null\fP(&pnull));
+
+  /* initialize l5 */
+  \fBnetwib_er\fP(l5_init(&pl5));
+
+  /* create chains */
+  \fBnetwib_er\fP(\fBnetwib_io_plug_read\fP(pl5, psock));
+  \fBnetwib_er\fP(\fBnetwib_io_plug_write\fP(pl5, psock));
+
+  /* core loop */
+  ret = m(pl5, pnull, pl5);
+
+  /* close chains */
+  \fBnetwib_er\fP(\fBnetwib_io_close\fP(&pl5));
+  \fBnetwib_er\fP(\fBnetwib_io_close\fP(&pnull)); /* or close_write */
+
+  return(ret);
+}
+
+/*-------------------------------------------------------------*/
+/* usage 5 */
+\fBnetwib_err\fP usage5(void);
+\fBnetwib_err\fP usage5(void)
+{
+  \fBnetwib_err\fP ret;
+  \fBnetwib_buf\fP filename;
+  \fBnetwib_io\fP *pfile1, *pfile2, *pnull, *pl5;
+
+  /* open files */
+  \fBnetwib_er\fP(\fBnetwib_buf_init_ext_string\fP("file1", &filename));
+  \fBnetwib_er\fP(\fBnetwib_io_init_file_read\fP(&filename, &pfile1));
+  \fBnetwib_er\fP(\fBnetwib_buf_init_ext_string\fP("file2", &filename));
+  \fBnetwib_er\fP(\fBnetwib_io_init_file_write\fP(&filename, &pfile2));
+
+  /* open null */
+  \fBnetwib_er\fP(\fBnetwib_io_init_null\fP(&pnull));
+
+  /* initialize l5 */
+  \fBnetwib_er\fP(l5_init(&pl5));
+
+  /* create chains */
+  \fBnetwib_er\fP(\fBnetwib_io_plug_read\fP(pl5, pfile1));
+  \fBnetwib_er\fP(\fBnetwib_io_plug_write\fP(pl5, pfile2));
+
+  /* core loop */
+  ret = m(pl5, pnull, pl5);
+
+  /* close chains */
+  \fBnetwib_er\fP(\fBnetwib_io_close\fP(&pl5));
+  \fBnetwib_er\fP(\fBnetwib_io_close\fP(&pnull)); /* or close_write */
+
+  return(ret);
+}
+
+/*-------------------------------------------------------------*/
+/* usage 6 */
+\fBnetwib_err\fP usage6(void);
+\fBnetwib_err\fP usage6(void)
+{
+  \fBnetwib_err\fP ret;
+  \fBnetwib_buf\fP filename;
+  \fBnetwib_io\fP *pfile1, *pfile2;
+
+  /* open files */
+  \fBnetwib_er\fP(\fBnetwib_buf_init_ext_string\fP("file1", &filename));
+  \fBnetwib_er\fP(\fBnetwib_io_init_file_read\fP(&filename, &pfile1));
+  \fBnetwib_er\fP(\fBnetwib_buf_init_ext_string\fP("file2", &filename));
+  \fBnetwib_er\fP(\fBnetwib_io_init_file_write\fP(&filename, &pfile2));
+
+  /* core loop */
+  ret = m(pfile1, pfile2, pfile2);
+
+  /* close chains */
+  \fBnetwib_er\fP(\fBnetwib_io_close\fP(&pfile1));
+  \fBnetwib_er\fP(\fBnetwib_io_close\fP(&pfile2));
+
+  return(ret);
+}
+
+/*-------------------------------------------------------------*/
+/* usage 7 */
+\fBnetwib_err\fP usage7(void);
+\fBnetwib_err\fP m2(\fBnetwib_io\fP *pi1,
+              \fBnetwib_io\fP *pi2,
+              \fBnetwib_io\fP *po1);
+\fBnetwib_err\fP usage7(void)
+{
+  \fBnetwib_err\fP ret;
+  \fBnetwib_buf\fP filename;
+  \fBnetwib_io\fP *pfile1, *pnull;
+
+  /* open files */
+  \fBnetwib_er\fP(\fBnetwib_buf_init_ext_string\fP("file1", &filename));
+  \fBnetwib_er\fP(\fBnetwib_io_init_file_read\fP(&filename, &pfile1));
+
+  /* open null */
+  \fBnetwib_er\fP(\fBnetwib_io_init_null\fP(&pnull));
+
+  /* core loop */
+  ret = m2(pfile1, pfile1, pnull);
+
+  /* close chains */
+  \fBnetwib_er\fP(\fBnetwib_io_close\fP(&pfile1));
+  \fBnetwib_er\fP(\fBnetwib_io_close\fP(&pnull));
+
+  return(ret);
+}
+#endif
+.fi
+.SH MODULE IONEW
+.nf
+
+/*-------------------------------------------------------------*/
+/***************************************************************
+ * Functions herein allow to create a new \fBnetwib_io\fP.           *
+ ***************************************************************/
+
+/*-------------------------------------------------------------*/
+/***************************************************************
+ * Following functions can return :                            *
+ *  - \fBNETWIB_ERR_OK\fP : the job was done (by the io or a next in *
+ *                    the chain)                               *
+ *  - \fBNETWIB_ERR_PLEASETRYNEXT\fP : the io doesn't know how to do *
+ *                               what was requested, so please *
+ *                               try next                      *
+ *  - \fBNETWIB_ERR_PLEASECONSTRUCT\fP : if way is                   *
+ *                                 \fBNETWIB_IO_WAYTYPE_RDWR\fP or   *
+ *                                _SUPPORTED, the library has  *
+ *                                to do the task using _READ   *
+ *                                and _WRITE                   *
+ *  - \fBNETWIB_ERR_PLEASELOOPTIME\fP : there is no event, so please *
+ *                                loop to reach abstime        *
+ ***************************************************************/
+
+/* Function called when \fBnetwib_io_read\fP is called on the io
+   This function should return :
+     \fBNETWIB_ERR_OK\fP
+     \fBNETWIB_ERR_PLEASETRYNEXT\fP
+*/
+\fItypedef\fP \fBnetwib_err\fP (*\fBnetwib_io_read_pf\fP)(\fBnetwib_io\fP *pio,
+                                        \fBnetwib_buf\fP *pbuf);
+
+/* Function called when \fBnetwib_io_write\fP is called on the io
+   This function should return :
+     \fBNETWIB_ERR_OK\fP
+     \fBNETWIB_ERR_PLEASETRYNEXT\fP
+*/
+\fItypedef\fP \fBnetwib_err\fP (*\fBnetwib_io_write_pf\fP)(\fBnetwib_io\fP *pio,
+                                         \fBnetwib_constbuf\fP *pbuf);
+
+/* Function called when \fBnetwib_io_wait\fP is called on the io
+   This function should return :
+     \fBNETWIB_ERR_OK\fP
+     \fBNETWIB_ERR_PLEASETRYNEXT\fP
+     \fBNETWIB_ERR_PLEASECONSTRUCT\fP
+     \fBNETWIB_ERR_PLEASELOOPTIME\fP
+*/
+\fItypedef\fP \fBnetwib_err\fP (*\fBnetwib_io_wait_pf\fP)(\fBnetwib_io\fP *pio,
+                                        \fBnetwib_io_waytype\fP way,
+                                        \fBnetwib_consttime\fP *pabstime,
+                                        \fBnetwib_bool\fP *pevent);
+
+/* Function called when \fBnetwib_io_unread\fP is called on the io
+   This function should return :
+     \fBNETWIB_ERR_OK\fP
+     \fBNETWIB_ERR_PLEASETRYNEXT\fP
+*/
+\fItypedef\fP \fBnetwib_err\fP (*\fBnetwib_io_unread_pf\fP)(\fBnetwib_io\fP *pio,
+                                          \fBnetwib_constbuf\fP *pbuf);
+
+/* Function called when \fBnetwib_io_ctl_set\fP is called on the io
+   This function should return :
+     \fBNETWIB_ERR_OK\fP
+     \fBNETWIB_ERR_PLEASETRYNEXT\fP
+     \fBNETWIB_ERR_PLEASECONSTRUCT\fP
+*/
+\fItypedef\fP \fBnetwib_err\fP (*\fBnetwib_io_ctl_set_pf\fP)(\fBnetwib_io\fP *pio,
+                                           \fBnetwib_io_waytype\fP way,
+                                           \fBnetwib_io_ctltype\fP ctltype,
+                                           \fBnetwib_ptr\fP p,
+                                           \fBnetwib_uint32\fP ui);
+/* Function called when \fBnetwib_io_ctl_get\fP is called on the io
+   This function should return :
+     \fBNETWIB_ERR_OK\fP
+     \fBNETWIB_ERR_PLEASETRYNEXT\fP
+     \fBNETWIB_ERR_PLEASECONSTRUCT\fP
+*/
+\fItypedef\fP \fBnetwib_err\fP (*\fBnetwib_io_ctl_get_pf\fP)(\fBnetwib_io\fP *pio,
+                                           \fBnetwib_io_waytype\fP way,
+                                           \fBnetwib_io_ctltype\fP ctltype,
+                                           \fBnetwib_ptr\fP p,
+                                           \fBnetwib_uint32\fP *pui);
+
+/* Function called when \fBnetwib_io_close\fP is called on the io
+   This function should return :
+     \fBNETWIB_ERR_OK\fP
+*/
+\fItypedef\fP \fBnetwib_err\fP (*\fBnetwib_io_close_pf\fP)(\fBnetwib_io\fP *pio);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_io_init\fP
+   Description :
+     Create a user defined \fBnetwib_io\fP.
+   Input parameter(s) :
+     readsupported : read is supported
+     writesupported : write is supported
+     pcommon : common data which can be shared between functions
+     pfx : functions or NULL if not needed
+   Input/output parameter(s) :
+   Output parameter(s) :
+     **ppio : io created
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_io_init\fP(\fBnetwib_bool\fP readsupported,
+                          \fBnetwib_bool\fP writesupported,
+                          \fBnetwib_ptr\fP pcommon,
+                          \fBnetwib_io_read_pf\fP pfread,
+                          \fBnetwib_io_write_pf\fP pfwrite,
+                          \fBnetwib_io_wait_pf\fP pfwait,
+                          \fBnetwib_io_unread_pf\fP pfunread,
+                          \fBnetwib_io_ctl_set_pf\fP pfctl_set,
+                          \fBnetwib_io_ctl_get_pf\fP pfctl_get,
+                          \fBnetwib_io_close_pf\fP pfclose,
+                          \fBnetwib_io\fP **ppio);
+
+/*-------------------------------------------------------------*/
+/***************************************************************
+ * Those structure definitions should only be used in functions*
+ * for \fBnetwib_io_init\fP.                                         *
+ ***************************************************************/
+\fItypedef\fP struct {
+  \fBnetwib_io\fP *pnext; /* next io in the chain */
+  \fBnetwib_bool\fP supported; /* true if way is supported */
+  \fBnetwib_uint32\fP numusers; /* number of io using this one */
+} \fBnetwib_io_way_t\fP;
+struct \fBnetwib_io\fP {
+  \fBnetwib_io_way_t\fP rd; /* read information */
+  \fBnetwib_io_way_t\fP wr; /* write information */
+  \fBnetwib_ptr\fP pcommon; /* pointer used in \fBnetwib_io_init\fP */
+  \fBnetwib_io_write_pf\fP pfwrite;
+  \fBnetwib_io_read_pf\fP pfread;
+  \fBnetwib_io_unread_pf\fP pfunread;
+  \fBnetwib_io_wait_pf\fP pfwait;
+  \fBnetwib_io_ctl_set_pf\fP pfctl_set;
+  \fBnetwib_io_ctl_get_pf\fP pfctl_get;
+  \fBnetwib_io_close_pf\fP pfclose;
+};
+
+/*-------------------------------------------------------------*/
+/***************************************************************
+ * Previous structure is useful to do simple things. But,      *
+ * it's complicated to deal with several \fBnetwib_io_waytype\fP.    *
+ * Those defines can be used :                                 *
+ *  - to work on "pnext", use \fBnetwib_io_next\fP (in io.h)         *
+ *  - to work on "supported", use \fBnetwib_io_ctl_s\fP/get_support  *
+ *  - to work on "numusers", use \fBnetwib_io_ctl_s\fP/get_numusers  *
+ ***************************************************************/
+
+/* \fBnetwib_err\fP f(\fBnetwib_io\fP *pio, \fBnetwib_io_waytype\fP way, \fBnetwib_bool\fP yes); */
+\fI#define\fP \fBnetwib_io_ctl_set_support\fP(pio,way,yes) \fBnetwib_io_ctl_set\fP(pio,way,\fBNETWIB_IO_CTLTYPE_SUPPORT\fP,NULL,(\fBnetwib_uint32\fP)yes)
+\fI#define\fP \fBnetwib_io_ctl_get_support\fP(pio,way,pyes) \fBnetwib_io_ctl_get\fP(pio,way,\fBNETWIB_IO_CTLTYPE_SUPPORT\fP,NULL,(\fBnetwib_uint32\fP*)pyes)
+
+/* \fBnetwib_err\fP f(\fBnetwib_io\fP *pio,\fBnetwib_io_waytype\fP way,\fBnetwib_uint32\fP numusers);*/
+\fI#define\fP \fBnetwib_io_ctl_set_numusers\fP(pio,way,numusers) \fBnetwib_io_ctl_set\fP(pio,way,\fBNETWIB_IO_CTLTYPE_NUMUSERS\fP,NULL,numusers)
+\fI#define\fP \fBnetwib_io_ctl_get_numusers\fP(pio,way,pnumusers) \fBnetwib_io_ctl_get\fP(pio,way,\fBNETWIB_IO_CTLTYPE_NUMUSERS\fP,NULL,pnumusers)
+/* only increment or decrement */
+\fI#define\fP \fBnetwib_io_ctl_set_numusers_inc\fP(pio,way) \fBnetwib_io_ctl_set\fP(pio,way,\fBNETWIB_IO_CTLTYPE_NUMUSERSINC\fP,NULL,+1)
+\fI#define\fP \fBnetwib_io_ctl_set_numusers_dec\fP(pio,way) \fBnetwib_io_ctl_set\fP(pio,way,\fBNETWIB_IO_CTLTYPE_NUMUSERSINC\fP,NULL,(\fBnetwib_uint32\fP)-1)
+.fi
+.SH MODULE IOUSUAL
+.nf
+
+/*-------------------------------------------------------------*/
+/***************************************************************
+ * Functions herein are examples of frequently needed          *
+ * \fBnetwib_io\fP.                                                  *
+ ***************************************************************/
+
+/*-------------------------------------------------------------*/
+/***************************************************************
+ *                           FINAL LINKS                       *
+ ***************************************************************/
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_io_init_null\fP
+   Description :
+     Create an io junking data and giving nothing.
+   Input parameter(s) :
+   Input/output parameter(s) :
+   Output parameter(s) :
+     **ppio : io created
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_io_init_null\fP(\fBnetwib_io\fP **ppio);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_io_init_mem\fP
+   Description :
+     Create an io storing and reading data from memory.
+   Input parameter(s) :
+     pbufread : buffer where data is read
+     pbufwrite : buffer where data is written
+     *plockbufread : lock used when another thread want to
+                     access pbufread
+     *plockbufwrite : lock used when another thread want to
+                      access pbufwrite
+     closebufsatend : if the buffers are closed when the io
+                      is closed (in locked version, this also
+                      close rwlocks)
+   Input/output parameter(s) :
+   Output parameter(s) :
+     **ppio : io created
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_io_init_mem\fP(\fBnetwib_buf\fP *pbufread,
+                              \fBnetwib_buf\fP *pbufwrite,
+                              \fBnetwib_bool\fP closebufsatend,
+                              \fBnetwib_io\fP **ppio);
+\fBnetwib_err\fP \fBnetwib_io_init_mem_lock\fP(\fBnetwib_thread_rwlock\fP *plockbufread,
+                                   \fBnetwib_buf\fP *pbufread,
+                                   \fBnetwib_thread_rwlock\fP *plockbufwrite,
+                                   \fBnetwib_buf\fP *pbufwrite,
+                                   \fBnetwib_bool\fP closebufsatend,
+                                   \fBnetwib_io\fP **ppio);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_io_init_tlv\fP
+   Description :
+     Create an io storing and reading data from memory.
+   Input parameter(s) :
+     pbufread : buffer where data is read
+     pbufwrite : buffer where data is written
+     *plockbufread : lock used when another thread want to
+                     access pbufread
+     *plockbufwrite : lock used when another thread want to
+                      access pbufwrite
+     closebufsatend : if the buffers are closed when the io
+                      is closed (in locked version, this also
+                      close rwlocks)
+   Input/output parameter(s) :
+   Output parameter(s) :
+     **ppio : io created
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+   Note :
+     If canslide is set on pbufread or pbufwrite, it will be
+     faster.
+*/
+\fBnetwib_err\fP \fBnetwib_io_init_tlv\fP(\fBnetwib_buf\fP *pbufread,
+                              \fBnetwib_buf\fP *pbufwrite,
+                              \fBnetwib_bool\fP closebufsatend,
+                              \fBnetwib_io\fP **ppio);
+\fBnetwib_err\fP \fBnetwib_io_init_tlv_lock\fP(\fBnetwib_thread_rwlock\fP *plockbufread,
+                                   \fBnetwib_buf\fP *pbufread,
+                                   \fBnetwib_thread_rwlock\fP *plockbufwrite,
+                                   \fBnetwib_buf\fP *pbufwrite,
+                                   \fBnetwib_bool\fP closebufsatend,
+                                   \fBnetwib_io\fP **ppio);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_io_init_exec\fP
+   Description :
+     Create an io redirecting read and write requests to
+     a sub process.
+   Input parameter(s) :
+     pbufcommand : command (for example "/bin/ls /")
+     providedway : if user will read or write from the io
+     killonclose : if true, a close kills the process
+     pexitednormally : address of a boolean which will receive :
+                        - \fBNETWIB_TRUE\fP : if program exited normally
+                        - \fBNETWIB_FALSE\fP : else
+                       if NULL, do not set it
+     preturnedvalue : address of a uint32 which will receive
+                      value returned by the program
+                      if NULL, do not set it
+   Input/output parameter(s) :
+   Output parameter(s) :
+     **ppio : io created
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+   Example 1 :
+     /bin/ls a b "c"
+    corresponds to :
+     filename = /bin/ls
+     argv[0] = ls
+     argv[1] = a
+     argv[2] = b
+     argv[3] = c
+   Example 2 :
+     ls "a \\"'\\t\\\\a\\x41"
+    corresponds to :
+     filename = ls
+     argv[0] = ls
+     argv[1] = a "'_tabulation_\\a_0x41_
+     argv[3] = NULL
+    Note : \\ sequences recognized inside "" are : abtnr
+*/
+\fBnetwib_err\fP \fBnetwib_io_init_exec\fP(\fBnetwib_constbuf\fP *pbufcommand,
+                               \fBnetwib_io_waytype\fP providedway,
+                               \fBnetwib_bool\fP killonclose,
+                               \fBnetwib_bool\fP *pexitednormally,
+                               \fBnetwib_uint32\fP *preturnedvalue,
+                               \fBnetwib_io\fP **ppio);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_io_init_shellserver\fP
+   Description :
+     Create an io redirecting read and write requests to
+     a shell.
+     It should be used with \fBnetwib_io_init_shellclient\fP.
+     IMPORTANT: It is currently only implemented for Linux.
+   Input parameter(s) :
+     uid : requested user id
+     *pbufterm : TERM environment variable
+     *pbufpath : PATH environment variable
+     killonclose : if true, a close kills the process
+     pexitednormally : address of a boolean which will receive :
+                        - \fBNETWIB_TRUE\fP : if program exited normally
+                        - \fBNETWIB_FALSE\fP : else
+                       if NULL, do not set it
+     preturnedvalue : address of a uint32 which will receive
+                      value returned by the last command executed
+                      in the shell
+                      if NULL, do not set it
+   Input/output parameter(s) :
+   Output parameter(s) :
+     **ppio : io created
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+     \fBNETWIB_ERR_LONOTIMPLEMENTED\fP : not on Linux
+*/
+\fBnetwib_err\fP \fBnetwib_io_init_shellserver\fP(\fBnetwib_uint32\fP uid,
+                                      \fBnetwib_constbuf\fP *pbufterm,
+                                      \fBnetwib_bool\fP killonclose,
+                                      \fBnetwib_bool\fP *pexitednormally,
+                                      \fBnetwib_uint32\fP *preturnedvalue,
+                                      \fBnetwib_io\fP **ppio);
+\fI#define\fP \fBNETWIB_IO_INIT_SHELLSERVER_UID_NONE\fP 0xFFFFFFFFu
+\fI#define\fP \fBNETWIB_IO_INIT_SHELLSERVER_TERM_NONE\fP NULL
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_io_init_shellclient\fP
+   Description :
+     Create an io redirecting read and write requests to
+     a console.
+     It should be used with \fBnetwib_io_init_shellserver\fP.
+     IMPORTANT: It is currently only implemented for Linux.
+   Input parameter(s) :
+   Input/output parameter(s) :
+   Output parameter(s) :
+     **ppio : io created
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+     \fBNETWIB_ERR_LONOTIMPLEMENTED\fP : not on Linux
+*/
+\fBnetwib_err\fP \fBnetwib_io_init_shellclient\fP(\fBnetwib_io\fP **ppio);
+/* to obtain term for \fBnetwib_io_init_shellserver\fP() */
+\fBnetwib_err\fP \fBnetwib_shellclient_term\fP(\fBnetwib_bufext\fP *pbufterm);
+
+
+/*-------------------------------------------------------------*/
+/***************************************************************
+ *                       INTERMEDIARY LINKS                    *
+ ***************************************************************/
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_io_init_data\fP
+   Description :
+     Create several type of io. For example line io can be used
+     like this to read line by line :
+       \fBnetwib_er\fP(\fBnetwib_io_init_file_read\fP("/tmp/f", &pio));
+       \fBnetwib_er\fP(\fBnetwib_io_init_data_line\fP(&pioline));
+       \fBnetwib_er\fP(\fBnetwib_io_plug_read\fP(&pioline, &pio));
+       \fBnetwib_er\fP(\fBnetwib_io_read\fP(&pioline, &b));
+       etc.
+       \fBnetwib_er\fP(\fBnetwib_io_close_read\fP(&pioline);
+   Input parameter(s) :
+   Input/output parameter(s) :
+   Output parameter(s) :
+     **ppio : io created
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fItypedef\fP enum {
+  \fBNETWIB_IO_INIT_DATA_TYPE_LINE\fP = 1,
+  \fBNETWIB_IO_INIT_DATA_TYPE_CHUNK\fP,
+  \fBNETWIB_IO_INIT_DATA_TYPE_FIXED\fP,
+  \fBNETWIB_IO_INIT_DATA_TYPE_TRANSPARENT\fP
+} \fBnetwib_io_init_data_type\fP;
+\fBnetwib_err\fP \fBnetwib_io_init_data\fP(\fBnetwib_io_init_data_type\fP rdtype,
+                               \fBnetwib_io_init_data_type\fP wrtype,
+                               \fBnetwib_io\fP **ppio);
+
+/*-------------------------------------------------------------*/
+/* read/write line by line */
+\fI#define\fP \fBnetwib_io_init_data_line\fP(ppio) \fBnetwib_io_init_data\fP(\fBNETWIB_IO_INIT_DATA_TYPE_LINE\fP,\fBNETWIB_IO_INIT_DATA_TYPE_LINE\fP,ppio)
+/* If write writes '\\r\\n'(true) or '\\n'(false) */
+/* \fBnetwib_err\fP f(\fBnetwib_io\fP *pio, \fBnetwib_bool\fP add_r); */
+\fI#define\fP \fBnetwib_io_ctl_set_data_line_msdos\fP(pio,add_r) \fBnetwib_io_ctl_set\fP(pio,\fBNETWIB_IO_WAYTYPE_WRITE\fP,\fBNETWIB_IO_CTLTYPE_DATA_LINE_MSDOS\fP,NULL,add_r)
+\fI#define\fP \fBnetwib_io_ctl_get_data_line_msdos\fP(pio,padd_r) \fBnetwib_io_ctl_get\fP(pio,\fBNETWIB_IO_WAYTYPE_WRITE\fP,\fBNETWIB_IO_CTLTYPE_DATA_LINE_MSDOS\fP,NULL,padd_r)
+
+/*-------------------------------------------------------------*/
+/* read/write a chunk of data */
+/* note : when end is reached, last returned chunk might be smaller */
+\fI#define\fP \fBnetwib_io_init_data_chunk\fP(ppio) \fBnetwib_io_init_data\fP(\fBNETWIB_IO_INIT_DATA_TYPE_CHUNK\fP,\fBNETWIB_IO_INIT_DATA_TYPE_CHUNK\fP,ppio)
+/* To change size of read/written data : between minsize and maxsize */
+/* \fBnetwib_err\fP f(\fBnetwib_io\fP *pio, \fBnetwib_io_waytype\fP way, \fBnetwib_uint32\fP size); */
+\fI#define\fP \fBnetwib_io_ctl_set_data_chunk_minsize\fP(pio,way,minsize) \fBnetwib_io_ctl_set\fP(pio,way,\fBNETWIB_IO_CTLTYPE_DATA_CHUNK_MINSIZE\fP,NULL,minsize)
+\fI#define\fP \fBnetwib_io_ctl_set_data_chunk_maxsize\fP(pio,way,maxsize) \fBnetwib_io_ctl_set\fP(pio,way,\fBNETWIB_IO_CTLTYPE_DATA_CHUNK_MAXSIZE\fP,NULL,maxsize)
+/* \fBnetwib_err\fP f(\fBnetwib_io\fP *pio, \fBnetwib_io_waytype\fP way, \fBnetwib_uint32\fP *psize); */
+\fI#define\fP \fBnetwib_io_ctl_get_data_chunk_minsize\fP(pio,way,pminsize) \fBnetwib_io_ctl_get\fP(pio,way,\fBNETWIB_IO_CTLTYPE_DATA_CHUNK_MINSIZE\fP,NULL,pminsize)
+\fI#define\fP \fBnetwib_io_ctl_get_data_chunk_maxsize\fP(pio,way,pmaxsize) \fBnetwib_io_ctl_get\fP(pio,way,\fBNETWIB_IO_CTLTYPE_DATA_CHUNK_MAXSIZE\fP,NULL,pmaxsize)
+
+/*-------------------------------------------------------------*/
+/* read/write fixed size of data */
+/* note : when end is reached, last returned data might be smaller */
+\fI#define\fP \fBnetwib_io_init_data_fixed\fP(ppio) \fBnetwib_io_init_data\fP(\fBNETWIB_IO_INIT_DATA_TYPE_FIXED\fP,\fBNETWIB_IO_INIT_DATA_TYPE_FIXED\fP,ppio)
+/* To change size of read data. */
+/* \fBnetwib_err\fP f(\fBnetwib_io\fP *pio, \fBnetwib_io_waytype\fP way, \fBnetwib_uint32\fP size); */
+\fI#define\fP \fBnetwib_io_ctl_set_data_fixed_size\fP(pio,way,size) \fBnetwib_io_ctl_set\fP(pio,way,\fBNETWIB_IO_CTLTYPE_DATA_FIXED_SIZE\fP,NULL,size)
+/* \fBnetwib_err\fP f(\fBnetwib_io\fP *pio, \fBnetwib_io_waytype\fP way, \fBnetwib_uint32\fP *psize); */
+\fI#define\fP \fBnetwib_io_ctl_get_data_fixed_size\fP(pio,way,psize) \fBnetwib_io_ctl_get\fP(pio,way,\fBNETWIB_IO_CTLTYPE_DATA_FIXED_SIZE\fP,NULL,psize)
+
+/*-------------------------------------------------------------*/
+/* transparent : does nothing */
+\fI#define\fP \fBnetwib_io_init_data_transparent\fP(ppio) \fBnetwib_io_init_data\fP(\fBNETWIB_IO_INIT_DATA_TYPE_TRANSPARENT\fP,\fBNETWIB_IO_INIT_DATA_TYPE_TRANSPARENT\fP,ppio)
+
+/*-------------------------------------------------------------*/
+/* To change io type */
+/* \fBnetwib_err\fP f(\fBnetwib_io\fP *pio, \fBnetwib_io_init_data_type\fP type); */
+\fI#define\fP \fBnetwib_io_ctl_set_data_type\fP(pio,way,type) \fBnetwib_io_ctl_set\fP(pio,way,\fBNETWIB_IO_CTLTYPE_DATA_TYPE\fP,NULL,type)
+/* \fBnetwib_err\fP f(\fBnetwib_io\fP *pio, \fBnetwib_io_init_data_type\fP *ptype); */
+\fI#define\fP \fBnetwib_io_ctl_get_data_type\fP(pio,way,ptype) \fBnetwib_io_ctl_get\fP(pio,way,\fBNETWIB_IO_CTLTYPE_DATA_TYPE\fP,NULL,ptype)
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_io_init_storage\fP
+   Description :
+     Create an io buffering data. It can be plugged in front
+     of low level io not supporting unread for example.
+   Input parameter(s) :
+   Input/output parameter(s) :
+   Output parameter(s) :
+     **ppio : io created
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_io_init_storage\fP(\fBnetwib_io\fP **ppio);
+\fI#define\fP \fBnetwib_io_ctl_set_storage_flush\fP(pio) \fBnetwib_io_ctl_set\fP(pio,\fBNETWIB_IO_WAYTYPE_SUPPORTED\fP,\fBNETWIB_IO_CTLTYPE_STORAGE_FLUSH\fP,NULL,0)
+
+
+/*-------------------------------------------------------------*/
+/***************************************************************
+ *                         MULTIPLEX LINKS                     *
+ ***************************************************************/
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_io_init_rdwr\fP
+   Description :
+     Create an io redirecting read an write requests to two
+     distinct io.
+   Input parameter(s) :
+     preadio : io where data is read
+     pwriteio : io where data is written
+     closeiosatend : if the io are closed when the io
+                     is closed
+   Input/output parameter(s) :
+   Output parameter(s) :
+     **ppio : io created
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_io_init_rdwr\fP(\fBnetwib_io\fP *preadio,
+                               \fBnetwib_io\fP *pwriteio,
+                               \fBnetwib_bool\fP closeiosatend,
+                               \fBnetwib_io\fP **ppio);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_io_init_tee\fP
+   Description :
+     Write data to 2 io.
+     Read data from 2 io.
+   Input parameter(s) :
+     pio1 : first io where data is read/written
+     pio2 : second io where data is read/written
+     closeiosatend : if pio1/pio2 are closed when the io
+                     is closed
+   Input/output parameter(s) :
+   Output parameter(s) :
+     **ppio : io created
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_io_init_tee\fP(\fBnetwib_io\fP *pio1,
+                              \fBnetwib_io\fP *pio2,
+                              \fBnetwib_bool\fP closeiosatend,
+                              \fBnetwib_io\fP **ppio);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_io_init_debug\fP
+   Description :
+     Display information for each request.
+   Input parameter(s) :
+     pnormalio : io where normal data is read/written
+     pdebugio : io where debugging data is written
+     closeiosatend : if io are closed when the io
+                     is closed
+   Input/output parameter(s) :
+   Output parameter(s) :
+     **ppio : io created
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_io_init_debug\fP(\fBnetwib_io\fP *pnormalio,
+                                \fBnetwib_io\fP *pdebugio,
+                                \fBnetwib_bool\fP closeiosatend,
+                                \fBnetwib_io\fP **ppio);
+
+.fi
+.SH MODULE WAIT
+.nf
+
+/*-------------------------------------------------------------*/
+/***************************************************************
+ * A \fBnetwib_wait\fP permits to wait for an event during a user    *
+ * defined duration.                                           *
+ ***************************************************************/
+
+/*-------------------------------------------------------------*/
+\fItypedef\fP struct \fBnetwib_wait\fP \fBnetwib_wait\fP;
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_wait_init\fP
+   Description :
+     Initialize a \fBnetwib_wait\fP : wait for an event decided by a
+     function.
+   Input parameter(s) :
+     pfuncevent : memory address of the function which will
+                  be called to check for an event
+                  For each call, the first parameter ('infos')
+                  will be set with the optional parameter below.
+     pfuncclose : optional parameter (can be NULL) which
+                  contain the function to call to free
+                  resources allocated by infos (when
+                  \fBnetwib_wait_close\fP will be called)
+   Input/output parameter(s) :
+     infos : optional parameter (can be NULL) which will be
+             used as the first parameter for *pfunc.
+             This may be used to send information to *pfunc.
+   Output parameter(s) :
+     **ppwait : \fBnetwib_wait\fP associated to function
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fItypedef\fP \fBnetwib_err\fP (*\fBnetwib_wait_event_pf\fP)(\fBnetwib_ptr\fP infos,
+                                           \fBnetwib_consttime\fP *pabstime,
+                                           \fBnetwib_bool\fP *pevent);
+\fItypedef\fP \fBnetwib_err\fP (*\fBnetwib_wait_close_pf\fP)(\fBnetwib_ptr\fP infos);
+\fBnetwib_err\fP \fBnetwib_wait_init\fP(\fBnetwib_wait_event_pf\fP pfuncevent,
+                            \fBnetwib_ptr\fP infos,
+                            \fBnetwib_wait_close_pf\fP pfuncclose,
+                            \fBnetwib_wait\fP **ppwait);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_wait_close\fP
+   Description :
+     Close a \fBnetwib_wait\fP.
+   Input parameter(s) :
+   Input/output parameter(s) :
+     **ppwait : \fBnetwib_wait\fP to close
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_wait_close\fP(\fBnetwib_wait\fP **ppwait);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_wait_init_io\fP
+   Description :
+     Initialize a \fBnetwib_wait\fP : wait for data from the \fBnetwib_io\fP.
+   Input parameter(s) :
+     *pio : \fBnetwib_io\fP where to wait for data
+   Input/output parameter(s) :
+   Output parameter(s) :
+     **ppwait : \fBnetwib_wait\fP associated to *pio
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_wait_init_io\fP(\fBnetwib_io\fP *pio,
+                               \fBnetwib_io_waytype\fP way,
+                               \fBnetwib_wait\fP **ppwait);
+/* \fBnetwib_err\fP f(\fBnetwib_io\fP *pio, \fBnetwib_wait\fP **ppwait); */
+\fI#define\fP \fBnetwib_wait_init_io_read\fP(pio,ppwait) \fBnetwib_wait_init_io\fP(pio,\fBNETWIB_IO_WAYTYPE_READ\fP,ppwait)
+\fI#define\fP \fBnetwib_wait_init_io_write\fP(pio,ppwait) \fBnetwib_wait_init_io\fP(pio,\fBNETWIB_IO_WAYTYPE_WRITE\fP,ppwait)
+\fI#define\fP \fBnetwib_wait_init_io_rdwr\fP(pio,ppwait) \fBnetwib_wait_init_io\fP(pio,\fBNETWIB_IO_WAYTYPE_RDWR\fP,ppwait)
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_wait_init_thread_end\fP
+   Description :
+     Initialize a \fBnetwib_wait\fP : wait for the end of a thread.
+   Input parameter(s) :
+     *pthread : thread to wait for
+   Input/output parameter(s) :
+     preturnederror : address of a variable which will contain
+                      returned error
+     pinfosout : address of a variable which will contain
+                 output information
+   Output parameter(s) :
+     *ppwait : \fBnetwib_wait\fP associated to *pthread
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_wait_init_thread_end\fP(\fBnetwib_thread\fP *pthread,
+                                       \fBnetwib_err\fP *preturnederror,
+                                       \fBnetwib_ptr\fP *pinfosout,
+                                       \fBnetwib_wait\fP **ppwait);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_wait_init_thread_cond\fP
+   Description :
+     Initialize a \fBnetwib_wait\fP : wait for a condition
+   Input parameter(s) :
+     *pcond : condition to wait for
+   Input/output parameter(s) :
+     *pvalue : address of a variable which will contain
+               condition value
+   Output parameter(s) :
+     *ppwait : \fBnetwib_wait\fP associated to *pcond
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_wait_init_thread_cond\fP(\fBnetwib_thread_cond\fP *pcond,
+                                        \fBnetwib_uint32\fP *pvalue,
+                                        \fBnetwib_wait\fP **ppwait);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_wait_wait1\fP
+   Description :
+     Wait for 1 event.
+   Input parameter(s) :
+     *pwait : \fBnetwib_wait\fP to wait for
+     *pabstime : end time
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pevent : an event occurred on *pwait. If *pabstime is
+               reached *pevent is set to \fBNETWIB_FALSE\fP.
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_wait_wait1\fP(\fBnetwib_wait\fP *pwait,
+                             \fBnetwib_consttime\fP *pabstime,
+                             \fBnetwib_bool\fP *pevent);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_wait_wait5\fP
+   Description :
+     Wait for 1 event amongst 5 \fBnetwib_wait\fP.
+   Input parameter(s) :
+     *pwait1..5 : \fBnetwib_wait\fP to wait for
+     *pabstime : end time
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pevent1..5 : an event occurred on *pwait1..5
+                   If abstime is reached *pevent is set
+                   to \fBNETWIB_FALSE\fP.
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_wait_wait5\fP(\fBnetwib_wait\fP *pwait1,
+                             \fBnetwib_wait\fP *pwait2,
+                             \fBnetwib_wait\fP *pwait3,
+                             \fBnetwib_wait\fP *pwait4,
+                             \fBnetwib_wait\fP *pwait5,
+                             \fBnetwib_consttime\fP *pabstime,
+                             \fBnetwib_bool\fP *pevent1,
+                             \fBnetwib_bool\fP *pevent2,
+                             \fBnetwib_bool\fP *pevent3,
+                             \fBnetwib_bool\fP *pevent4,
+                             \fBnetwib_bool\fP *pevent5);
+\fI#define\fP \fBnetwib_wait_wait4\fP(pwait1,pwait2,pwait3,pwait4,pabstime,pevent1,pevent2,pevent3,pevent4) \fBnetwib_wait_wait5\fP(pwait1,pwait2,pwait3,pwait4,NULL,pabstime,pevent1,pevent2,pevent3,pevent4,NULL)
+\fI#define\fP \fBnetwib_wait_wait3\fP(pwait1,pwait2,pwait3,pabstime,pevent1,pevent2,pevent3) \fBnetwib_wait_wait5\fP(pwait1,pwait2,pwait3,NULL,NULL,pabstime,pevent1,pevent2,pevent3,NULL,NULL)
+\fI#define\fP \fBnetwib_wait_wait2\fP(pwait1,pwait2,pabstime,pevent1,pevent2) \fBnetwib_wait_wait5\fP(pwait1,pwait2,NULL,NULL,NULL,pabstime,pevent1,pevent2,NULL,NULL,NULL)
+.fi
+.SH MODULE WAITLIST
+.nf
+
+/*-------------------------------------------------------------*/
+\fItypedef\fP struct {
+  \fBnetwib_wait\fP *pwait;
+  \fBnetwib_uint32\fP waitident; /* because waitid exists */
+} \fBnetwib_waitringitem\fP;
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_waitlist_init\fP
+   Description :
+     Initialize a list of events. It can be use to wait for more
+     than 5 event (otherwise use \fBnetwib_wait_wait5\fP) which is
+     easier.
+   Input parameter(s) :
+   Input/output parameter(s) :
+     **ppring : ring initialized
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_waitlist_init\fP(\fBnetwib_ring\fP **ppring);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_waitlist_add\fP
+   Description :
+     Add an event to the waiting ring.
+   Input parameter(s) :
+     waitident : id of the item to add (any value chosen by user)
+     *pwait : \fBnetwib_wait\fP to add
+   Input/output parameter(s) :
+     *pring : ring where to add items
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_waitlist_add\fP(\fBnetwib_ring\fP *pring,
+                               \fBnetwib_wait\fP *pwait,
+                               \fBnetwib_uint32\fP waitident);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_waitlist_del\fP
+   Description :
+     Remove an event to the waiting ring.
+   Input parameter(s) :
+     waitident : id of the item to remove
+   Input/output parameter(s) :
+     *pring : ring where to remove items
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_waitlist_del\fP(\fBnetwib_ring\fP *pring,
+                               \fBnetwib_uint32\fP waitident);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_waitlist_wait\fP
+   Description :
+     Wait for an event in the waiting ring. The \fBnetwib_wait\fP
+     is never closed by this function (different behavior
+     compared to \fBnetwib_threadlist_wait\fP).
+   Input parameter(s) :
+     *pabstime : end time
+   Input/output parameter(s) :
+     *pring : ring where to wait for
+   Output parameter(s) :
+     *pevent : true if an event occurred. If *pabstime is
+               reached *pevent is set to \fBNETWIB_FALSE\fP.
+     *pringofwaitid : ring of all events id
+                      This ring contains \fBnetwib_uintptr\fP
+                      cast-ed to \fBnetwib_ptr\fP. This ring is
+                      initialized only when there is an event.
+                      It's user's job to close this ring with :
+                  \fBnetwib_ring_close\fP(ppringofwaitid, \fBNETWIB_FALSE\fP)
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+     \fBNETWIB_ERR_DATAEND\fP: ring is empty
+*/
+\fBnetwib_err\fP \fBnetwib_waitlist_wait\fP(\fBnetwib_ring\fP *pring,
+                                \fBnetwib_consttime\fP *pabstime,
+                                \fBnetwib_bool\fP *pevent,
+                                \fBnetwib_ring\fP **ppringofwaitid);
+\fI#define\fP \fBnetwib_waitlist_waitident_init_ptr\fP(p) ((\fBnetwib_uint32\fP)(\fBnetwib_uintptr\fP)(p))
+
+/*-------------------------------------------------------------*/
+/***************************************************************
+ * For other functions, you can directly use functions of      *
+ * ring.h.                                                     *
+ * To do so, booleans "eraseitems" and "duplicateitems" have   *
+ * be set to \fBNETWIB_TRUE\fP. See \fBnetwib_waitlist_close\fP for        *
+ * example.                                                    *
+ ***************************************************************/
+
+\fI#define\fP \fBnetwib_waitlist_close\fP(ppring) \fBnetwib_ring_close\fP(ppring,\fBNETWIB_TRUE\fP)
+.fi
+.SH MODULE FILE
+.nf
+
+/*-------------------------------------------------------------*/
+\fItypedef\fP enum {
+  \fBNETWIB_FILE_INITTYPE_READ\fP = 1,    /* open the file for reading */
+  \fBNETWIB_FILE_INITTYPE_WRITE\fP,       /* open the file for writing */
+  \fBNETWIB_FILE_INITTYPE_APPEND\fP,      /* open the file for appending */
+  \fBNETWIB_FILE_INITTYPE_RDWR\fP         /* open the file for reading and writing */
+} \fBnetwib_file_inittype\fP;
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_io_init_file\fP
+   Description :
+     Open a file.
+   Input parameter(s) :
+     *pfilename : file name
+     textmode : (useful under Windows and ignored under Unix)
+                if file has to be opened in text mode ("\\n" are
+                converted to "\\r\\n" for output; "\\r\\n" are
+                converted to "\\n" for input)
+   Input/output parameter(s) :
+   Output parameter(s) :
+     **ppio : io created
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_io_init_file\fP(\fBnetwib_constbuf\fP *pfilename,
+                               \fBnetwib_file_inittype\fP type,
+                               \fBnetwib_bool\fP textmode,
+                               \fBnetwib_io\fP **ppio);
+\fI#define\fP \fBnetwib_io_init_file_read\fP(filename,ppio) \fBnetwib_io_init_file\fP(filename,\fBNETWIB_FILE_INITTYPE_READ\fP,\fBNETWIB_FALSE\fP,ppio)
+\fI#define\fP \fBnetwib_io_init_file_write\fP(filename,ppio) \fBnetwib_io_init_file\fP(filename,\fBNETWIB_FILE_INITTYPE_WRITE\fP,\fBNETWIB_FALSE\fP,ppio)
+\fI#define\fP \fBnetwib_io_init_file_append\fP(filename,ppio) \fBnetwib_io_init_file\fP(filename,\fBNETWIB_FILE_INITTYPE_APPEND\fP,\fBNETWIB_FALSE\fP,ppio)
+\fI#define\fP \fBnetwib_io_init_file_rdwr\fP(filename,ppio) \fBnetwib_io_init_file\fP(filename,\fBNETWIB_FILE_INITTYPE_RDWR\fP,\fBNETWIB_FALSE\fP,ppio)
+\fI#define\fP \fBnetwib_io_init_file_textread\fP(filename,ppio) \fBnetwib_io_init_file\fP(filename,\fBNETWIB_FILE_INITTYPE_READ\fP,\fBNETWIB_TRUE\fP,ppio)
+\fI#define\fP \fBnetwib_io_init_file_textwrite\fP(filename,ppio) \fBnetwib_io_init_file\fP(filename,\fBNETWIB_FILE_INITTYPE_WRITE\fP,\fBNETWIB_TRUE\fP,ppio)
+\fI#define\fP \fBnetwib_io_init_file_textappend\fP(filename,ppio) \fBnetwib_io_init_file\fP(filename,\fBNETWIB_FILE_INITTYPE_APPEND\fP,\fBNETWIB_TRUE\fP,ppio)
+\fI#define\fP \fBnetwib_io_init_file_textrdwr\fP(filename,ppio) \fBnetwib_io_init_file\fP(filename,\fBNETWIB_FILE_INITTYPE_RDWR\fP,\fBNETWIB_TRUE\fP,ppio)
+
+/*-------------------------------------------------------------*/
+/* set current position from beginning of file */
+/* \fBnetwib_err\fP f(\fBnetwib_io\fP *pio, \fBnetwib_int32\fP pos); */
+\fI#define\fP \fBnetwib_file_ctl_set_seek_begin\fP(pio,pos) \fBnetwib_io_ctl_set\fP(pio,\fBNETWIB_IO_WAYTYPE_SUPPORTED\fP,\fBNETWIB_IO_CTLTYPE_FILE_SEEK_BEGIN\fP,NULL,(\fBnetwib_uint32\fP)pos)
+/* \fBnetwib_err\fP f(\fBnetwib_io\fP *pio, const \fBnetwib_int64\fP *ppos); */
+\fI#define\fP \fBnetwib_file_ctl_set_seek64_begin\fP(pio,ppos) \fBnetwib_io_ctl_set\fP(pio,\fBNETWIB_IO_WAYTYPE_SUPPORTED\fP,\fBNETWIB_IO_CTLTYPE_FILE_SEEK_BEGIN\fP,ppos,0)
+
+/*-------------------------------------------------------------*/
+/* set current position from current position of file */
+/* \fBnetwib_err\fP f(\fBnetwib_io\fP *pio, \fBnetwib_int32\fP pos); */
+\fI#define\fP \fBnetwib_file_ctl_set_seek_current\fP(pio,pos) \fBnetwib_io_ctl_set\fP(pio,\fBNETWIB_IO_WAYTYPE_SUPPORTED\fP,\fBNETWIB_IO_CTLTYPE_FILE_SEEK_CURRENT\fP,NULL,(\fBnetwib_uint32\fP)pos)
+/* \fBnetwib_err\fP f(\fBnetwib_io\fP *pio, const \fBnetwib_int64\fP *ppos); */
+\fI#define\fP \fBnetwib_file_ctl_set_seek64_current\fP(pio,ppos) \fBnetwib_io_ctl_set\fP(pio,\fBNETWIB_IO_WAYTYPE_SUPPORTED\fP,\fBNETWIB_IO_CTLTYPE_FILE_SEEK_CURRENT\fP,ppos,0)
+
+/*-------------------------------------------------------------*/
+/* set current position from end of file */
+/* \fBnetwib_err\fP f(\fBnetwib_io\fP *pio, \fBnetwib_int32\fP pos); */
+\fI#define\fP \fBnetwib_file_ctl_set_seek_end\fP(pio,pos) \fBnetwib_io_ctl_set\fP(pio,\fBNETWIB_IO_WAYTYPE_SUPPORTED\fP,\fBNETWIB_IO_CTLTYPE_FILE_SEEK_END\fP,NULL,(\fBnetwib_uint32\fP)pos)
+/* \fBnetwib_err\fP f(\fBnetwib_io\fP *pio, const \fBnetwib_int64\fP *ppos); */
+\fI#define\fP \fBnetwib_file_ctl_set_seek64_end\fP(pio,ppos) \fBnetwib_io_ctl_set\fP(pio,\fBNETWIB_IO_WAYTYPE_SUPPORTED\fP,\fBNETWIB_IO_CTLTYPE_FILE_SEEK_END\fP,ppos,0)
+
+/*-------------------------------------------------------------*/
+/* get current position from beginning of file */
+/* \fBnetwib_err\fP f(\fBnetwib_io\fP *pio, \fBnetwib_int32\fP *ppos); */
+\fI#define\fP \fBnetwib_file_ctl_get_tell\fP(pio,ppos) \fBnetwib_io_ctl_get\fP(pio,\fBNETWIB_IO_WAYTYPE_SUPPORTED\fP,\fBNETWIB_IO_CTLTYPE_FILE_TELL\fP,NULL,(\fBnetwib_uint32\fP*)ppos)
+/* \fBnetwib_err\fP f(\fBnetwib_io\fP *pio, \fBnetwib_int64\fP *ppos); */
+\fI#define\fP \fBnetwib_file_ctl_get_tell64\fP(pio,ppos) \fBnetwib_io_ctl_get\fP(pio,\fBNETWIB_IO_WAYTYPE_SUPPORTED\fP,\fBNETWIB_IO_CTLTYPE_FILE_TELL\fP,ppos,NULL)
+
+/*-------------------------------------------------------------*/
+/* truncate file to indicated size */
+/* \fBnetwib_err\fP f(\fBnetwib_io\fP *pio, \fBnetwib_int32\fP pos); */
+\fI#define\fP \fBnetwib_file_ctl_set_truncate\fP(pio,pos) \fBnetwib_io_ctl_set\fP(pio,\fBNETWIB_IO_WAYTYPE_SUPPORTED\fP,\fBNETWIB_IO_CTLTYPE_FILE_TRUNCATE\fP,NULL,(\fBnetwib_uint32\fP)pos)
+/* \fBnetwib_err\fP f(\fBnetwib_io\fP *pio, const \fBnetwib_int64\fP *ppos); */
+\fI#define\fP \fBnetwib_file_ctl_set_truncate64\fP(pio,ppos) \fBnetwib_io_ctl_set\fP(pio,\fBNETWIB_IO_WAYTYPE_SUPPORTED\fP,\fBNETWIB_IO_CTLTYPE_FILE_TRUNCATE\fP,ppos,0)
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_io_init_filetemp\fP
+   Description :
+     Open a temporary file, and give back the chosen file name.
+   Input parameter(s) :
+     textmode : (useful under Windows and ignored under Unix)
+                if file has to be opened in text mode ("\\n" are
+                converted to "\\r\\n")
+   Input/output parameter(s) :
+     *pfilename : file name
+                  If its size is 0, choose a filename in
+                  system's temporary directory.
+                  If it contains something, append 6 random
+                  characters to create the file name. So, it must
+                  end with '/' to be interpreted as a directory.
+                  The chosen filename is set in this variable.
+   Output parameter(s) :
+     **ppio : io created
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_io_init_filetemp\fP(\fBnetwib_bool\fP textmode,
+                                   \fBnetwib_buf\fP *pfilename,
+                                   \fBnetwib_io\fP **ppio);
+
+.fi
+.SH MODULE FD
+.nf
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_io_init_fd\fP
+   Description :
+     Open a file descriptor.
+   Input parameter(s) :
+     fd : file descriptor
+   Input/output parameter(s) :
+     closefdatend : if fd have to be closed when the io is
+                    closed
+   Output parameter(s) :
+     **ppio : io created
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_io_init_fd\fP(int fd,
+                             \fBnetwib_bool\fP closefdatend,
+                             \fBnetwib_io\fP **ppio);
+
+.fi
+.SH MODULE STREAM
+.nf
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_io_init_stream\fP
+   Description :
+     Open a file descriptor.
+   Input parameter(s) :
+     pfile : stream
+   Input/output parameter(s) :
+     closefileatend : if pfile have to be closed when the io is
+                      closed
+   Output parameter(s) :
+     **ppio : io created
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_io_init_stream\fP(NETWIBFILE *pfile,
+                                 \fBnetwib_bool\fP closefileatend,
+                                 \fBnetwib_io\fP **ppio);
+.fi
+.SH MODULE KBD
+.nf
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_io_init_kbd_xyz\fP
+   Description :
+     Open the keyboard. Its default state is to echo pressed
+     keys and to read line by line.
+   Input parameter(s) :
+     fd : file descriptor to eventually use
+     h : HANDLE to eventually use
+   Input/output parameter(s) :
+   Output parameter(s) :
+     **ppio : io created
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_io_init_kbddefault\fP(\fBnetwib_io\fP **ppio);
+\fBnetwib_err\fP \fBnetwib_io_init_kbd_fd\fP(int fd,
+                                 \fBnetwib_io\fP **ppio);
+\fBnetwib_err\fP \fBnetwib_io_init_kbd_handle\fP(NETWIBHANDLE h,
+                                     \fBnetwib_io\fP **ppio);
+
+/*-------------------------------------------------------------*/
+/* decides if pressed keys have to be displayed */
+/* \fBnetwib_err\fP f(\fBnetwib_io\fP *pio, \fBnetwib_bool\fP b); */
+\fI#define\fP \fBnetwib_kbd_ctl_set_echo\fP(pio,b) \fBnetwib_io_ctl_set\fP(pio,\fBNETWIB_IO_WAYTYPE_READ\fP,\fBNETWIB_IO_CTLTYPE_KBD_ECHO\fP,NULL,b)
+/* \fBnetwib_err\fP f(\fBnetwib_io\fP *pio, \fBnetwib_bool\fP *pb); */
+\fI#define\fP \fBnetwib_kbd_ctl_get_echo\fP(pio,pb) \fBnetwib_io_ctl_get\fP(pio,\fBNETWIB_IO_WAYTYPE_READ\fP,\fBNETWIB_IO_CTLTYPE_KBD_ECHO\fP,NULL,pb)
+/* decides if we read line by line or char by char */
+/* \fBnetwib_err\fP f(\fBnetwib_io\fP *pio, \fBnetwib_bool\fP b); */
+\fI#define\fP \fBnetwib_kbd_ctl_set_line\fP(pio,b) \fBnetwib_io_ctl_set\fP(pio,\fBNETWIB_IO_WAYTYPE_READ\fP,\fBNETWIB_IO_CTLTYPE_KBD_LINE\fP,NULL,b)
+/* \fBnetwib_err\fP f(\fBnetwib_io\fP *pio, \fBnetwib_bool\fP *pb); */
+\fI#define\fP \fBnetwib_kbd_ctl_get_line\fP(pio,pb) \fBnetwib_io_ctl_get\fP(pio,\fBNETWIB_IO_WAYTYPE_READ\fP,\fBNETWIB_IO_CTLTYPE_KBD_LINE\fP,NULL,pb)
+/* purge pressed characters not yet read */
+/* \fBnetwib_err\fP f(\fBnetwib_io\fP *pio); */
+\fI#define\fP \fBnetwib_kbd_ctl_set_purge\fP(pio) \fBnetwib_io_ctl_set\fP(pio,\fBNETWIB_IO_WAYTYPE_READ\fP,\fBNETWIB_IO_CTLTYPE_KBD_PURGE\fP,NULL,0)
+
+.fi
+.SH MODULE KBDCHAR
+.nf
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_char_init_kbd\fP
+   Description :
+     Ask user to enter a character
+   Input parameter(s) :
+     *pmessage : message to print before
+     *pallowedchar : string containing allowed characters
+                     For example : "aAbBrR"
+                     If NULL all char are allowed
+     defaultchar : default character (0 means no default)
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pchar : character chosen
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_char_init_kbd\fP(\fBnetwib_constbuf\fP *pmessage,
+                                \fBnetwib_constbuf\fP *pallowedchars,
+                                \fBnetwib_char\fP defaultchar,
+                                \fBnetwib_char\fP *pchar);
+\fI#define\fP \fBNETWIB_CHAR_INIT_KBD_NODEF\fP 0
+.fi
+.SH MODULE KBDINT
+.nf
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_uint32_init_kbd\fP
+   Description :
+     Ask user to enter an integer.
+   Input parameter(s) :
+     *pmessage : message to print before
+     min : minvalue which can be entered (if 0 no min)
+     max : maxvalue which can be entered (if 0xFFFFFFFFu no max)
+     defaultnumber : default number (if 0xFFFFFFFFu no default)
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pnumber : number chosen
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_uint32_init_kbd\fP(\fBnetwib_constbuf\fP *pmessage,
+                                  \fBnetwib_uint32\fP min,
+                                  \fBnetwib_uint32\fP max,
+                                  \fBnetwib_uint32\fP defaultnumber,
+                                  \fBnetwib_uint32\fP *pnumber);
+\fI#define\fP \fBNETWIB_UINT32_INIT_KBD_NOMIN\fP 0
+\fI#define\fP \fBNETWIB_UINT32_INIT_KBD_NOMAX\fP 0xFFFFFFFFu
+\fI#define\fP \fBNETWIB_UINT32_INIT_KBD_NODEF\fP 0xFFFFFFFFu
+\fBnetwib_err\fP \fBnetwib_uint64_init_kbd\fP(\fBnetwib_constbuf\fP *pmessage,
+                                  \fBnetwib_uint64\fP defaultnumber,
+                                  \fBnetwib_uint64\fP *pnumber);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_int32_init_kbd\fP
+   Description :
+     Ask user to enter an integer.
+   Input parameter(s) :
+     *pmessage : message to print before
+     min : minvalue which can be entered (if -0x80000000 no min)
+     max : maxvalue which can be entered (if 0x7FFFFFFF no max)
+     defaultnumber : default number (if 0x7FFFFFFF no default)
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pnumber : number chosen
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_int32_init_kbd\fP(\fBnetwib_constbuf\fP *pmessage,
+                                 \fBnetwib_int32\fP min,
+                                 \fBnetwib_int32\fP max,
+                                 \fBnetwib_int32\fP defaultnumber,
+                                 \fBnetwib_int32\fP *pnumber);
+\fI#define\fP \fBNETWIB_INT32_INIT_KBD_NOMIN\fP (-0x7FFFFFFF-1)
+\fI#define\fP \fBNETWIB_INT32_INIT_KBD_NOMAX\fP 0x7FFFFFFF
+\fI#define\fP \fBNETWIB_INT32_INIT_KBD_NODEF\fP 0x7FFFFFFF
+\fBnetwib_err\fP \fBnetwib_int64_init_kbd\fP(\fBnetwib_constbuf\fP *pmessage,
+                                 \fBnetwib_int64\fP defaultnumber,
+                                 \fBnetwib_int64\fP *pnumber);
+.fi
+.SH MODULE KBDBUF
+.nf
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_buf_append_kbd\fP
+   Description :
+     Ask user to enter a text on keyboard.
+   Input parameter(s) :
+     *pmessage : message to print before asking user
+     *pdefaultext : text string to use if user enters nothing
+                    if NULL, there is no default
+   Input/output parameter(s) :
+   Output parameter(s) :
+     pbuf : output buffer set with the text
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_buf_append_kbd\fP(\fBnetwib_constbuf\fP *pmessage,
+                                 \fBnetwib_constbuf\fP *pdefaulttext,
+                                 \fBnetwib_buf\fP *pbuf);
+\fI#define\fP \fBNETWIB_BUF_APPEND_KBD_NODEF\fP NULL
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_buf_append_password\fP
+   Description :
+     Ask user to enter a password on keyboard.
+   Input parameter(s) :
+     *pmessage : message to print before asking user
+     *pdefaultext : text string to use if user enters nothing
+   Input/output parameter(s) :
+   Output parameter(s) :
+     pbuf : output buffer set with the text
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+   This function sets \fBNETWIB_BUF_FLAGS_SENSITIVE\fP.
+*/
+\fBnetwib_err\fP \fBnetwib_buf_append_password\fP(\fBnetwib_constbuf\fP *pmessage,
+                                      \fBnetwib_constbuf\fP *pdefaulttext,
+                                      \fBnetwib_buf\fP *pbuf);
+.fi
+.SH MODULE KBDPRESS
+.nf
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_kbd_press\fP
+   Description :
+     Ask user to press a key
+   Input parameter(s) :
+     *pmessage : message to print before
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pchar : character chosen
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_kbd_press\fP(\fBnetwib_constbuf\fP *pmessage,
+                            \fBnetwib_char\fP *pchar);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_kbd_purge\fP
+   Description :
+     Purge every pressed keys
+   Input parameter(s) :
+   Input/output parameter(s) :
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_kbd_purge\fP(void);
+.fi
+.SH MODULE SCREEN
+.nf
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_io_init_screen\fP
+   Description :
+     Write data to screen.
+   Input parameter(s) :
+   Input/output parameter(s) :
+   Output parameter(s) :
+     **ppio : io created
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_io_init_screen\fP(\fBnetwib_io\fP **ppio);
+.fi
+.SH MODULE BUFENC
+.nf
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_buf_append_encodetype\fP
+   Description :
+     Append the description text of an encodetype.
+   Input parameter(s) :
+     encodetype : \fBnetwib_encodetype\fP to append
+   Input/output parameter(s) :
+     *pbuf : buffer where text is appended
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_buf_append_encodetype\fP(\fBnetwib_encodetype\fP encodetype,
+                                        \fBnetwib_buf\fP *pbuf);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_encodetype_init_kbd\fP
+   Description :
+     Initialize a \fBnetwib_encodetype\fP with data entered through keyboard.
+   Input parameter(s) :
+     *pmessage : message to print before
+     displayonlymostuseful : only most useful values are shown
+     defaultencodetype : default encodetype to use if user enters nothing
+                         (if 0xFFFFFFFFu, means no default)
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pencodetype : \fBnetwib_encodetype\fP initialized
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_encodetype_init_kbd\fP(\fBnetwib_constbuf\fP *pmessage,
+                                      \fBnetwib_bool\fP displayonlymostuseful,
+                                      \fBnetwib_encodetype\fP defaultencodetype,
+                                      \fBnetwib_encodetype\fP *pencodetype);
+\fI#define\fP \fBNETWIB_ENCODETYPE_INIT_KBD_NODEF\fP (\fBnetwib_encodetype\fP)0xFFFFFFFFu
+.fi
+.SH MODULE BUFDEC
+.nf
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_buf_append_decodetype\fP
+   Description :
+     Append the description text of an decodetype.
+   Input parameter(s) :
+     decodetype : \fBnetwib_decodetype\fP to append
+   Input/output parameter(s) :
+     *pbuf : buffer where text is appended
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_buf_append_decodetype\fP(\fBnetwib_decodetype\fP decodetype,
+                                        \fBnetwib_buf\fP *pbuf);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_decodetype_init_kbd\fP
+   Description :
+     Initialize a \fBnetwib_decodetype\fP with data entered through keyboard.
+   Input parameter(s) :
+     *pmessage : message to print before
+     defaultdecodetype : default decodetype to use if user enters nothing
+                         (if 0xFFFFFFFFu, means no default)
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pdecodetype : \fBnetwib_decodetype\fP initialized
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_decodetype_init_kbd\fP(\fBnetwib_constbuf\fP *pmessage,
+                                      \fBnetwib_decodetype\fP defaultdecodetype,
+                                      \fBnetwib_decodetype\fP *pdecodetype);
+\fI#define\fP \fBNETWIB_DECODETYPE_INIT_KBD_NODEF\fP (\fBnetwib_decodetype\fP)0xFFFFFFFFu
+.fi
+.SH MODULE DISP
+.nf
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_buf_display\fP
+   Description :
+     Print data contained in a \fBnetwib_buf\fP.
+   Input parameter(s) :
+     *pbuf : buffer to print
+     encodetype : \fBnetwib_encodetype\fP to use
+   Input/output parameter(s) :
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_buf_display\fP(\fBnetwib_constbuf\fP *pbuf,
+                              \fBnetwib_encodetype\fP encodetype);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_fmt_display\fP
+   Description :
+     Print formatted data.
+   Input parameter(s) :
+     fmt : format as explained in dat/fmt.h
+   Input/output parameter(s) :
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_fmt_display\fP(\fBnetwib_conststring\fP fmt,
+                              ...);
+.fi
+.SH MODULE RECORD
+.nf
+
+/*-------------------------------------------------------------*/
+/***************************************************************
+ * A record is a file where we can save and read data.         *
+ * Each data is separated by an empty newline.                 *
+ ***************************************************************/
+
+/*-------------------------------------------------------------*/
+\fItypedef\fP enum {
+  \fBNETWIB_RECORD_ENCODETYPE_HEXA0\fP = \fBNETWIB_ENCODETYPE_HEXA0\fP,
+  \fBNETWIB_RECORD_ENCODETYPE_HEXA1\fP = \fBNETWIB_ENCODETYPE_HEXA1\fP,
+  \fBNETWIB_RECORD_ENCODETYPE_HEXA2\fP = \fBNETWIB_ENCODETYPE_HEXA2\fP,
+  \fBNETWIB_RECORD_ENCODETYPE_HEXA4\fP = \fBNETWIB_ENCODETYPE_HEXA4\fP,
+  \fBNETWIB_RECORD_ENCODETYPE_MIXED0\fP = \fBNETWIB_ENCODETYPE_MIXED0\fP,
+  \fBNETWIB_RECORD_ENCODETYPE_MIXED1\fP = \fBNETWIB_ENCODETYPE_MIXED1\fP,
+  \fBNETWIB_RECORD_ENCODETYPE_HEXA0_WRAP\fP = \fBNETWIB_ENCODETYPE_HEXA0_WRAP\fP,
+  \fBNETWIB_RECORD_ENCODETYPE_HEXA1_WRAP\fP = \fBNETWIB_ENCODETYPE_HEXA1_WRAP\fP,
+  \fBNETWIB_RECORD_ENCODETYPE_HEXA2_WRAP\fP = \fBNETWIB_ENCODETYPE_HEXA2_WRAP\fP,
+  \fBNETWIB_RECORD_ENCODETYPE_HEXA4_WRAP\fP = \fBNETWIB_ENCODETYPE_HEXA4_WRAP\fP,
+  \fBNETWIB_RECORD_ENCODETYPE_MIXED0_WRAP\fP = \fBNETWIB_ENCODETYPE_MIXED0_WRAP\fP,
+  \fBNETWIB_RECORD_ENCODETYPE_MIXED1_WRAP\fP = \fBNETWIB_ENCODETYPE_MIXED1_WRAP\fP,
+  \fBNETWIB_RECORD_ENCODETYPE_DUMP\fP = \fBNETWIB_ENCODETYPE_DUMP\fP,
+  \fBNETWIB_RECORD_ENCODETYPE_MIXED0H_WRAP\fP = \fBNETWIB_ENCODETYPE_MIXED0H_WRAP\fP,
+  \fBNETWIB_RECORD_ENCODETYPE_MIXED1H_WRAP\fP = \fBNETWIB_ENCODETYPE_MIXED1H_WRAP\fP,
+  \fBNETWIB_RECORD_ENCODETYPE_BIN\fP = 1000,  /* binary */
+  \fBNETWIB_RECORD_ENCODETYPE_PCAP\fP,        /* libpcap format */
+  /* aliases */
+  \fBNETWIB_RECORD_ENCODETYPE_HEXA\fP = \fBNETWIB_RECORD_ENCODETYPE_HEXA1\fP,
+  \fBNETWIB_RECORD_ENCODETYPE_MIXED\fP = \fBNETWIB_RECORD_ENCODETYPE_MIXED1\fP,
+  \fBNETWIB_RECORD_ENCODETYPE_HEXA_WRAP\fP = \fBNETWIB_RECORD_ENCODETYPE_HEXA1_WRAP\fP,
+  \fBNETWIB_RECORD_ENCODETYPE_MIXED_WRAP\fP = \fBNETWIB_RECORD_ENCODETYPE_MIXED1_WRAP\fP,
+  \fBNETWIB_RECORD_ENCODETYPE_MIXEDH_WRAP\fP = \fBNETWIB_RECORD_ENCODETYPE_MIXED1H_WRAP\fP
+} \fBnetwib_record_encodetype\fP;
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_record_encodetype_init_kbd\fP
+   Description :
+     Initialize a \fBnetwib_encodetype\fP with data entered through keyboard.
+   Input parameter(s) :
+     *pmessage : message to print before
+     displayonlymostuseful : only most useful values are shown
+     defaultencodetype : default encodetype to use if user enters nothing
+                      (if 0xFFFFFFFFu, means no default)
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pencodetype : \fBnetwib_encodetype\fP initialized
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_record_encodetype_init_kbd\fP(\fBnetwib_constbuf\fP *pmessage,
+                                             \fBnetwib_bool\fP displayonlymostuseful,
+                                             \fBnetwib_record_encodetype\fP defaultencodetype,
+                                             \fBnetwib_record_encodetype\fP *pencodetype);
+\fI#define\fP \fBNETWIB_RECORD_ENCODETYPE_INIT_KBD_NODEF\fP (\fBnetwib_record_encodetype\fP)0xFFFFFFFFu
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_buf_append_record_encodetype\fP
+   Description :
+     Append the description text of an encodetype.
+   Input parameter(s) :
+     encodetype : \fBnetwib_record_encodetype\fP to append
+   Input/output parameter(s) :
+     *pbuf : buffer where text is appended
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_buf_append_record_encodetype\fP(\fBnetwib_record_encodetype\fP encodetype,
+                                               \fBnetwib_buf\fP *pbuf);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_io_init_record\fP
+   Description :
+     Open a record.
+   Input parameter(s) :
+     *precordname : filename of the record
+   Input/output parameter(s) :
+   Output parameter(s) :
+     **ppio : io created
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_io_init_record\fP(\fBnetwib_constbuf\fP *precordname,
+                                 \fBnetwib_file_inittype\fP inittype,
+                                 \fBnetwib_record_encodetype\fP encodetype,
+                                 \fBnetwib_io\fP **ppio);
+\fI#define\fP \fBnetwib_io_init_record_read\fP(recordname,ppio) \fBnetwib_io_init_record\fP(recordname,\fBNETWIB_FILE_INITTYPE_READ\fP,\fBNETWIB_RECORD_ENCODETYPE_INIT_KBD_NODEF\fP,ppio)
+\fI#define\fP \fBnetwib_io_init_record_write\fP(recordname,encodetype,ppio) \fBnetwib_io_init_record\fP(recordname,\fBNETWIB_FILE_INITTYPE_WRITE\fP,encodetype,ppio)
+\fI#define\fP \fBnetwib_io_init_record_append\fP(recordname,ppio) \fBnetwib_io_init_record\fP(recordname,\fBNETWIB_FILE_INITTYPE_APPEND\fP,\fBNETWIB_RECORD_ENCODETYPE_INIT_KBD_NODEF\fP,ppio)
+.fi
+.SH MODULE BEEP
+.nf
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_beep\fP
+   Description :
+     Beep.
+   Input parameter(s) :
+   Input/output parameter(s) :
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_beep\fP(void);
+
+.fi
+.SH MODULE GLOBAL
+.nf
+
+/*-------------------------------------------------------------*/
+/***************************************************************
+ * Functions herein permit to change global configuration of   *
+ * netwib.                                                     *
+ ***************************************************************/
+
+/*-------------------------------------------------------------*/
+/* See below for the meaning of those values */
+\fItypedef\fP enum {
+  \fBNETWIB_GLOBAL_CTLTYPE_ERR_PURGE\fP = 1,
+  \fBNETWIB_GLOBAL_CTLTYPE_CONF_UPDATE\fP,
+  \fBNETWIB_GLOBAL_CTLTYPE_DEBUG_CTRLC_PRESSED\fP
+} \fBnetwib_global_ctltype\fP;
+\fBnetwib_err\fP \fBnetwib_global_ctl_set\fP(\fBnetwib_global_ctltype\fP type,
+                                 \fBnetwib_ptr\fP p,
+                                 \fBnetwib_uint32\fP ui);
+\fBnetwib_err\fP \fBnetwib_global_ctl_get\fP(\fBnetwib_global_ctltype\fP type,
+                                 \fBnetwib_ptr\fP p,
+                                 \fBnetwib_uint32\fP *pui);
+
+/*-------------------------------------------------------------*/
+/* purge last error */
+/* \fBnetwib_err\fP f(void); */
+\fI#define\fP \fBnetwib_global_ctl_set_err_purge\fP() \fBnetwib_global_ctl_set\fP(\fBNETWIB_GLOBAL_CTLTYPE_ERR_PURGE\fP,NULL,0)
+
+/*-------------------------------------------------------------*/
+/* update configuration. Care must be taken to ensure nobody
+   is currently looping through current configuration
+   (lock/mutex). */
+/* \fBnetwib_err\fP f(void); */
+\fI#define\fP \fBnetwib_global_ctl_set_conf_update\fP() \fBnetwib_global_ctl_set\fP(\fBNETWIB_GLOBAL_CTLTYPE_CONF_UPDATE\fP,NULL,0)
+
+/*-------------------------------------------------------------*/
+/* if Control-C was pressed (used only in Debug mode under Linux,
+   in order to detect memory leaks) */
+/* \fBnetwib_err\fP f(\fBnetwib_bool\fP *pbool); */
+\fI#define\fP \fBnetwib_global_ctl_get_debug_ctrlc_pressed\fP(pbool) \fBnetwib_global_ctl_get\fP(\fBNETWIB_GLOBAL_CTLTYPE_DEBUG_CTRLC_PRESSED\fP,NULL,(\fBnetwib_uint32\fP *)pbool)
+\fI#define\fP \fBnetwib__debug_ctrlc_pressed_break\fP() { \fBnetwib_err\fP \fBnetwib__debug_ctrlc_pressed_break_ret\fP; \fBnetwib_bool\fP \fBnetwib__debug_ctrlc_pressed_break_pressed\fP; \fBnetwib__debug_ctrlc_pressed_break_ret\fP = \fBnetwib_global_ctl_get_debug_ctrlc_pressed\fP(&\fBnetwib__debug_ctrlc_pressed_break_pressed\fP); if (\fBnetwib__debug_ctrlc_pressed_break_ret\fP == \fBNETWIB_ERR_OK\fP && \fBnetwib__debug_ctrlc_pressed_break_pressed\fP) break; }
+.fi
+.SH MODULE INIT
+.nf
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_init\fP
+   Description :
+     Initialize netwib.
+   Input parameter(s) :
+   Input/output parameter(s) :
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_init\fP(void);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_close\fP
+   Description :
+     Finish to use netwib's functions.
+   Input parameter(s) :
+   Input/output parameter(s) :
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_close\fP(void);
+.fi
+.SH MODULE ERROR
+.nf
+
+/*-------------------------------------------------------------*/
+\fItypedef\fP enum {
+  \fBNETWIB_ERR_ENCODETYPE_TEXT\fP = 1,    /* append the error text */
+  \fBNETWIB_ERR_ENCODETYPE_NUMTEXT\fP,     /* append "Error n : text" */
+  \fBNETWIB_ERR_ENCODETYPE_FULL\fP         /* full (error, errno, h_errno,
+                                        GetLastError, errstr) :
+                                        "Error n : text\\n `--> message\\n"
+                                     */
+} \fBnetwib_err_encodetype\fP;
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_buf_append_err\fP
+   Description :
+     Append a string representing an error.
+   Input parameter(s) :
+     error : error to print
+     encodetype : \fBnetwib_err_encodetype\fP to use
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pbuf : \fBnetwib_buf\fP receiving data
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+   Notes :
+     - Error code might have been set by a previous error. By
+       example, error in open() sets errno, and then an error
+       is gethostbyname() sets h_errno, and both will be
+       displayed because the first one is not purged.
+       This is normal, because if user directly used
+       gethostbyname(), he knows he doesn't have to look at
+        errno.
+     - If an error occurred in function open() and sets errno.
+       Then, memory might need to be freed (so errno will be
+       unset). Then error is returned to user, but errno is
+       zero.
+    As a conclusion, user might not_get/get_incorrect errno,
+    h_errno or GetLastError.
+*/
+\fBnetwib_err\fP \fBnetwib_buf_append_err\fP(\fBnetwib_err\fP error,
+                                 \fBnetwib_err_encodetype\fP encodetype,
+                                 \fBnetwib_buf\fP *buf);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_err_display\fP
+   Description :
+     Print the error associated to a \fBnetwib_err\fP.
+   Input parameter(s) :
+     error : error to print
+     encodetype : \fBnetwib_err_encodetype\fP to use
+   Input/output parameter(s) :
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_err_display\fP(\fBnetwib_err\fP error,
+                              \fBnetwib_err_encodetype\fP encodetype);
+
+/*-------------------------------------------------------------*/
+/***************************************************************
+ * Every netwib function return an \fBnetwib_err\fP corresponding to *
+ * an error code. Developer have to test this value to ensure  *
+ * everything went fine. There is 3 ways to do it :            *
+ *                                                             *
+ *  1 - doing the test by hand :                               *
+ *    ret = function(...);                                     *
+ *    if (ret != \fBNETWIB_ERR_OK\fP) {                              *
+ *      return(ret);                                           *
+ *    }                                                        *
+ *                                                             *
+ *  2 - use \fBnetwib_er\fP :                                        *
+ *    \fBnetwib_er\fP(function(...));                                *
+ *                                                             *
+ *  3 - use \fBnetwib_eg\fP :                                        *
+ *    Note : this define uses a "goto". Developers tend to     *
+ *           hate using goto. I also do, but there is one case *
+ *           where goto are very useful. This case is for      *
+ *           error handling because it creates an error flow   *
+ *           similar to exceptions in Java or C++.             *
+ *           I'll try to explain it : a program has two flows  *
+ *           inside : the normal flow (the real job done) and  *
+ *           the error flow (what to do when an error occurs). *
+ *           With most algorithms, both flow use the same path,*
+ *           so there is no need to use goto. But, when flow   *
+ *           differs, we have to complicate the algorithm to   *
+ *           deal with both normal and errors conditions.      *
+ *           Without goto, it quickly becomes hard to read     *
+ *           code, to free (only allocated) resources, to close*
+ *           (only opened) descriptors, etc.                   *
+ *           With goto, we have something like :               *
+ *    {
+ *      \fBnetwib_io\fP *pio1, *pio2, *pio3;
+ *      \fBnetwib_bool\fP pio1set, pio2set, pio3set;
+ *      \fBnetwib_err\fP ret;
+ *
+ *      pio1set = pio2set = pio3set = \fBNETWIB_FALSE\fP;
+ *      ret = \fBNETWIB_ERR_OK\fP;
+ *
+ *      \fBnetwib_eg\fP(\fBnetwib_io_init\fP...(&pio1));
+ *      pio1set = \fBNETWIB_TRUE\fP;
+ *      \fBnetwib_eg\fP(\fBnetwib_io_init\fP...(&pio2));
+ *      pio2set = \fBNETWIB_TRUE\fP;
+ *      here_complicated_code_which_can_use_"\fBnetwib_eg\fP()"
+ *      \fBnetwib_eg\fP(\fBnetwib_io_close\fP(&pio2));
+ *      pio2set = \fBNETWIB_FALSE\fP;
+ *      here_complicated_code_which_can_use_"\fBnetwib_eg\fP()"
+ *      \fBnetwib_eg\fP(\fBnetwib_io_init\fP...(&pio3));
+ *      pio3set = \fBNETWIB_TRUE\fP;
+ *
+ *     \fBnetwib_gotolabel\fP :
+ *      if (pio1set) { \fBnetwib_er\fP(\fBnetwib_io_close\fP(&pio1)); }
+ *      if (pio2set) { \fBnetwib_er\fP(\fBnetwib_io_close\fP(&pio2)); }
+ *      if (pio3set) { \fBnetwib_er\fP(\fBnetwib_io_close\fP(&pio3)); }
+ *      return(ret);
+ *    }
+ *           As seen in this simple example, program flow and  *
+ *           error flow are separated.                         *
+ ***************************************************************/
+
+/* if (r != \fBNETWIB_ERR_OK\fP) return(r) */
+\fI#define\fP \fBnetwib_er\fP(r) {\fBnetwib_err\fP \fBnetwib_coderr\fP=r;if(\fBnetwib_coderr\fP!=\fBNETWIB_ERR_OK\fP)return(\fBnetwib_coderr\fP);}
+
+/* the label */
+\fI#define\fP \fBnetwib_gotolabel\fP netwibleavefunction
+
+/* goto label and return r (note : this uses a variable named "ret") */
+\fI#define\fP \fBnetwib_goto\fP(r) {ret = r; goto netwibleavefunction;}
+
+/* if (r != \fBNETWIB_ERR_OK\fP) { goto label and return r } */
+\fI#define\fP \fBnetwib_eg\fP(r) {\fBnetwib_err\fP \fBnetwib_coderr\fP=r;if(\fBnetwib_coderr\fP!=\fBNETWIB_ERR_OK\fP)\fBnetwib_goto\fP(\fBnetwib_coderr\fP);}
+
+
+
+.fi
+.SH MODULE INTERNAL
+.nf
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_internal_version\fP
+   Description :
+     Obtain netwib version.
+   Input parameter(s) :
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pversionmajor : major version
+     *pversionminor : minor version
+     *pversionmicro : micro version
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_internal_version\fP(\fBnetwib_uint32\fP *pversionmajor,
+                                   \fBnetwib_uint32\fP *pversionminor,
+                                   \fBnetwib_uint32\fP *pversionmicro);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_buf_append_internal\fP
+   Description :
+     Append a string representing all compilation parameters.
+   Input parameter(s) :
+   Input/output parameter(s) :
+     *pbuf : \fBnetwib_buf\fP receiving data
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_buf_append_internal\fP(\fBnetwib_buf\fP *buf);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_internal_display\fP
+   Description :
+     Print all compilation parameters.
+   Input parameter(s) :
+   Input/output parameter(s) :
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_internal_display\fP(void);
+.fi
+.SH MODULE UNIX
+.nf
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_unix_symlink\fP
+   Description :
+     Create a symlink plinkname -> ppathname
+   Input parameter(s) :
+     ppathname : pointed path
+     plinkname : link
+   Input/output parameter(s) :
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_unix_symlink\fP(\fBnetwib_constbuf\fP *ppathname,
+                               \fBnetwib_constbuf\fP *plinkname);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_unix_readlink\fP
+   Description :
+     Read a symlink value
+   Input parameter(s) :
+     plinkname : link
+   Input/output parameter(s) :
+     ppathname : stored/pointed path
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_unix_readlink\fP(\fBnetwib_constbuf\fP *plinkname,
+                                \fBnetwib_buf\fP *ppathname);
+.fi
+.SH MODULE WINDOWS
+.nf
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_io_init_handle\fP
+   Description :
+     Open a Windows HANDLE. This function only exists
+     Windows.
+   Input parameter(s) :
+     h : HANDLE
+   Input/output parameter(s) :
+     closeatend : if HANDLE have to be closed when the io is
+                  closed
+   Output parameter(s) :
+     **ppio : io created
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_io_init_handle\fP(NETWIBHANDLE h,
+                                 \fBnetwib_bool\fP closeatend,
+                                 \fBnetwib_io\fP **ppio);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_windowstype_init\fP
+   Description :
+     Get system version.
+   Input parameter(s) :
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *ptype : system type
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fItypedef\fP enum {
+  \fBNETWIB_WINDOWSTYPE_UNKNOWN\fP = 0, /* Unknown system */
+  \fBNETWIB_WINDOWSTYPE_31\fP,          /* Windows 3.1 */
+  \fBNETWIB_WINDOWSTYPE_95\fP,          /* Windows 95 */
+  \fBNETWIB_WINDOWSTYPE_98\fP,          /* Windows 98 */
+  \fBNETWIB_WINDOWSTYPE_ME\fP,          /* Windows Me */
+  \fBNETWIB_WINDOWSTYPE_NT350\fP,       /* Windows NT 3.5.0 */
+  \fBNETWIB_WINDOWSTYPE_NT351\fP,       /* Windows NT 3.5.1 */
+  \fBNETWIB_WINDOWSTYPE_NT4\fP,         /* Windows NT 4 */
+  \fBNETWIB_WINDOWSTYPE_2000\fP,        /* Windows 2000 */
+  \fBNETWIB_WINDOWSTYPE_XP\fP,          /* Windows XP */
+  \fBNETWIB_WINDOWSTYPE_2003\fP,        /* Windows 2003 */
+  \fBNETWIB_WINDOWSTYPE_2008\fP,        /* Windows 2008 */
+  \fBNETWIB_WINDOWSTYPE_7\fP            /* Windows 7 */
+} \fBnetwib_windowstype\fP;
+\fBnetwib_err\fP \fBnetwib_windowstype_init\fP(\fBnetwib_windowstype\fP *ptype);
+.fi
+.SH SEE ALSO
+.IR netwib (3),
+.IR netwib_dat (3),
+.IR netwib_sys (3),
+.IR netwib_net (3),
+.IR netwib_pkt (3),
+.IR netwib_shw (3),
+.IR netwib_err (3)

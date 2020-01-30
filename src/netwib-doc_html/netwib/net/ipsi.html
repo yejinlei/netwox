@@ -1,0 +1,122 @@
+<HTML><HEAD>
+<TITLE>netwib doc_html (version 5.39.0)</TITLE>
+</HEAD><BODY BGCOLOR="#FFFFFF" TEXT="#000000">
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../net.html">section index</A></H2><HR><BR>
+<PRE>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+typedef struct <FONT COLOR="#000088">netwib_ips_index</FONT> <FONT COLOR="#000088">netwib_ips_index</FONT>;
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_ips_index_init
+   Description :
+     Initialize a <FONT COLOR="#000088">netwib_ips_index</FONT> used to loop through
+     a netwib_ips.
+   Input parameter(s) :
+   Input/output parameter(s) :
+   Output parameter(s) :
+     **ppipsindex : <FONT COLOR="#000088">netwib_ips_index</FONT> allocated and initialized
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_ips_index_init</B>(<FONT COLOR="#000088">netwib_constips</FONT> *pips,
+                                 <FONT COLOR="#000088">netwib_ips_index</FONT> **ppipsindex);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_ips_index_close
+   Description :
+     Close a netwib_ipsindex.
+   Input parameter(s) :
+   Input/output parameter(s) :
+     **ppipsindex : <FONT COLOR="#000088">netwib_ips_index</FONT> closed
+   Output parameter(s) :
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_ips_index_close</B>(<FONT COLOR="#000088">netwib_ips_index</FONT> **ppipsindex);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Types to control a <FONT COLOR="#000088">netwib_ips_index</FONT> */</FONT>
+typedef enum {
+  <FONT COLOR="#000044">NETWIB_IPS_INDEX_CTLTYPE_REWIND</FONT> = 1,  <FONT COLOR="#880000">/* position at beginning */</FONT>
+  <FONT COLOR="#000044">NETWIB_IPS_INDEX_CTLTYPE_INDEX</FONT>        <FONT COLOR="#880000">/* reset with index pos */</FONT>
+} <FONT COLOR="#000088">netwib_ips_index_ctltype</FONT>;
+<FONT COLOR="#880000">/* Those functions permit to set/get parameters (pointer and
+   integer) about a netwib_ips_index. It should not be used directly,
+   but by the defines.
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_ips_index_ctl_set</B>(<FONT COLOR="#000088">netwib_ips_index</FONT> *pipsindex,
+                                    <FONT COLOR="#000088">netwib_ips_index_ctltype</FONT> type,
+                                    <FONT COLOR="#000088">netwib_ptr</FONT> p,
+                                    <FONT COLOR="#000088">netwib_uint32</FONT> ui);
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_ips_index_ctl_get</B>(<FONT COLOR="#000088">netwib_ips_index</FONT> *pipsindex,
+                                    <FONT COLOR="#000088">netwib_ips_index_ctltype</FONT> type,
+                                    <FONT COLOR="#000088">netwib_ptr</FONT> p,
+                                    <FONT COLOR="#000088">netwib_uint32</FONT> *pui);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* <FONT COLOR="#000088">netwib_err</FONT> f(<FONT COLOR="#000088">netwib_ips_index</FONT> *pipsindex); */</FONT>
+<FONT COLOR="#008800">#define <B>netwib_ips_index_ctl_set_rewind</B>(pipsindex) <B>netwib_ips_index_ctl_set</B>(pipsindex,<FONT COLOR="#000044">NETWIB_IPS_INDEX_CTLTYPE_REWIND</FONT>,NULL,0)</FONT>
+<FONT COLOR="#880000">/* <FONT COLOR="#000088">netwib_err</FONT> f(<FONT COLOR="#000088">netwib_ips_index</FONT> *pipsindex,<FONT COLOR="#000088">netwib_ips_index</FONT> *pipsindexref);*/</FONT>
+<FONT COLOR="#008800">#define <B>netwib_ips_index_ctl_set_index</B>(pipsindex,pipsindexref) <B>netwib_ips_index_ctl_set</B>(pipsindex,<FONT COLOR="#000044">NETWIB_IPS_INDEX_CTLTYPE_INDEX</FONT>,pipsindexref,0)</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_ips_index_next_ip
+   Description :
+     Get the next <FONT COLOR="#000088">netwib_ip</FONT> in the list.
+   Input parameter(s) :
+   Input/output parameter(s) :
+     *pipsindex : netwib_ips_index
+   Output parameter(s) :
+     *pip : next netwib_ip
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+     <FONT COLOR="#000044">NETWIB_ERR_DATAEND</FONT> : end of the list reached
+   Note :
+     If one thread changes the <FONT COLOR="#000088">netwib_ips</FONT> between two calls,
+     the next result might be incorrect. Developer have to
+     lock the entire loop (going through each item), or to
+     copy the <FONT COLOR="#000088">netwib_ips</FONT> and to loop on the copy.
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_ips_index_next_ip</B>(<FONT COLOR="#000088">netwib_ips_index</FONT> *pipsindex,
+                                    <FONT COLOR="#000088">netwib_ip</FONT> *pip);
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_ips_index_next_iprange</B>(<FONT COLOR="#000088">netwib_ips_index</FONT> *pipsindex,
+                                         <FONT COLOR="#000088">netwib_ip</FONT> *pinfip,
+                                         <FONT COLOR="#000088">netwib_ip</FONT> *psupip);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_ips_index_this_ip
+   Description :
+     Re-give the last <FONT COLOR="#000088">netwib_ip</FONT> in the list.
+   Input parameter(s) :
+   Input/output parameter(s) :
+     *pipsindex : netwib_ips_index
+   Output parameter(s) :
+     *pip : next netwib_ip
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_ips_index_this_ip</B>(<FONT COLOR="#000088">netwib_ips_index</FONT> *pipsindex,
+                                    <FONT COLOR="#000088">netwib_ip</FONT> *pip);
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_ips_index_this_iprange</B>(<FONT COLOR="#000088">netwib_ips_index</FONT> *pipsindex,
+                                         <FONT COLOR="#000088">netwib_ip</FONT> *pinfip,
+                                         <FONT COLOR="#000088">netwib_ip</FONT> *psupip);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_ips_index_this_del
+   Description :
+     Delete the last given value by a netwib_ips_index_next
+     function.
+   Input parameter(s) :
+   Input/output parameter(s) :
+     *pipsindex : netwib_ips_index
+   Output parameter(s) :
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_ips_index_this_del</B>(<FONT COLOR="#000088">netwib_ips_index</FONT> *pipsindex);
+</PRE><BR><BR><HR><BR>
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../net.html">section index</A></H2>
+</BODY></HTML>

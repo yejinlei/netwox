@@ -1,0 +1,3 @@
+debian/tmp/netwib/usr/lib/* usr/lib/netwib/
+debian/tmp/netwox/usr/bin/* usr/bin/
+netwib_credits.txt usr/share/doc/netwox

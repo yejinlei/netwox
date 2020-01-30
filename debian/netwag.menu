@@ -1,0 +1,4 @@
+?package(netwag):needs="X11" section="Apps/Net"\
+  title="netwag" command="/usr/bin/netwag"\
+  icon="/usr/share/pixmaps/netwag.xpm"\
+  longtitle="Netwag - graphical frontend for netwox toolbox"

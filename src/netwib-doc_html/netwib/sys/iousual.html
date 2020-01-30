@@ -1,0 +1,358 @@
+<HTML><HEAD>
+<TITLE>netwib doc_html (version 5.39.0)</TITLE>
+</HEAD><BODY BGCOLOR="#FFFFFF" TEXT="#000000">
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../sys.html">section index</A></H2><HR><BR>
+<PRE>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000"><B>/***************************************************************
+ * Functions herein are examples of frequently needed          *
+ * netwib_io.                                                  *
+ ***************************************************************/</B></FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000"><B>/***************************************************************
+ *                           FINAL LINKS                       *
+ ***************************************************************/</B></FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_io_init_null
+   Description :
+     Create an io junking data and giving nothing.
+   Input parameter(s) :
+   Input/output parameter(s) :
+   Output parameter(s) :
+     **ppio : io created
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_io_init_null</B>(<FONT COLOR="#000088">netwib_io</FONT> **ppio);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_io_init_mem
+   Description :
+     Create an io storing and reading data from memory.
+   Input parameter(s) :
+     pbufread : buffer where data is read
+     pbufwrite : buffer where data is written
+     *plockbufread : lock used when another thread want to
+                     access pbufread
+     *plockbufwrite : lock used when another thread want to
+                      access pbufwrite
+     closebufsatend : if the buffers are closed when the io
+                      is closed (in locked version, this also
+                      close rwlocks)
+   Input/output parameter(s) :
+   Output parameter(s) :
+     **ppio : io created
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_io_init_mem</B>(<FONT COLOR="#000088">netwib_buf</FONT> *pbufread,
+                              <FONT COLOR="#000088">netwib_buf</FONT> *pbufwrite,
+                              <FONT COLOR="#000088">netwib_bool</FONT> closebufsatend,
+                              <FONT COLOR="#000088">netwib_io</FONT> **ppio);
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_io_init_mem_lock</B>(<FONT COLOR="#000088">netwib_thread_rwlock</FONT> *plockbufread,
+                                   <FONT COLOR="#000088">netwib_buf</FONT> *pbufread,
+                                   <FONT COLOR="#000088">netwib_thread_rwlock</FONT> *plockbufwrite,
+                                   <FONT COLOR="#000088">netwib_buf</FONT> *pbufwrite,
+                                   <FONT COLOR="#000088">netwib_bool</FONT> closebufsatend,
+                                   <FONT COLOR="#000088">netwib_io</FONT> **ppio);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_io_init_tlv
+   Description :
+     Create an io storing and reading data from memory.
+   Input parameter(s) :
+     pbufread : buffer where data is read
+     pbufwrite : buffer where data is written
+     *plockbufread : lock used when another thread want to
+                     access pbufread
+     *plockbufwrite : lock used when another thread want to
+                      access pbufwrite
+     closebufsatend : if the buffers are closed when the io
+                      is closed (in locked version, this also
+                      close rwlocks)
+   Input/output parameter(s) :
+   Output parameter(s) :
+     **ppio : io created
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+   Note :
+     If canslide is set on pbufread or pbufwrite, it will be
+     faster.
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_io_init_tlv</B>(<FONT COLOR="#000088">netwib_buf</FONT> *pbufread,
+                              <FONT COLOR="#000088">netwib_buf</FONT> *pbufwrite,
+                              <FONT COLOR="#000088">netwib_bool</FONT> closebufsatend,
+                              <FONT COLOR="#000088">netwib_io</FONT> **ppio);
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_io_init_tlv_lock</B>(<FONT COLOR="#000088">netwib_thread_rwlock</FONT> *plockbufread,
+                                   <FONT COLOR="#000088">netwib_buf</FONT> *pbufread,
+                                   <FONT COLOR="#000088">netwib_thread_rwlock</FONT> *plockbufwrite,
+                                   <FONT COLOR="#000088">netwib_buf</FONT> *pbufwrite,
+                                   <FONT COLOR="#000088">netwib_bool</FONT> closebufsatend,
+                                   <FONT COLOR="#000088">netwib_io</FONT> **ppio);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_io_init_exec
+   Description :
+     Create an io redirecting read and write requests to
+     a sub process.
+   Input parameter(s) :
+     pbufcommand : command (for example "/bin/ls /")
+     providedway : if user will read or write from the io
+     killonclose : if true, a close kills the process
+     pexitednormally : address of a boolean which will receive :
+                        - <FONT COLOR="#000044">NETWIB_TRUE</FONT> : if program exited normally
+                        - <FONT COLOR="#000044">NETWIB_FALSE</FONT> : else
+                       if NULL, do not set it
+     preturnedvalue : address of a uint32 which will receive
+                      value returned by the program
+                      if NULL, do not set it
+   Input/output parameter(s) :
+   Output parameter(s) :
+     **ppio : io created
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+   Example 1 :
+     /bin/ls a b "c"
+    corresponds to :
+     filename = /bin/ls
+     argv[0] = ls
+     argv[1] = a
+     argv[2] = b
+     argv[3] = c
+   Example 2 :
+     ls "a \"'\t\\a\x41"
+    corresponds to :
+     filename = ls
+     argv[0] = ls
+     argv[1] = a "'_tabulation_\a_0x41_
+     argv[3] = NULL
+    Note : \ sequences recognized inside "" are : abtnr
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_io_init_exec</B>(<FONT COLOR="#000088">netwib_constbuf</FONT> *pbufcommand,
+                               <FONT COLOR="#000088">netwib_io_waytype</FONT> providedway,
+                               <FONT COLOR="#000088">netwib_bool</FONT> killonclose,
+                               <FONT COLOR="#000088">netwib_bool</FONT> *pexitednormally,
+                               <FONT COLOR="#000088">netwib_uint32</FONT> *preturnedvalue,
+                               <FONT COLOR="#000088">netwib_io</FONT> **ppio);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_io_init_shellserver
+   Description :
+     Create an io redirecting read and write requests to
+     a shell.
+     It should be used with netwib_io_init_shellclient.
+     IMPORTANT: It is currently only implemented for Linux.
+   Input parameter(s) :
+     uid : requested user id
+     *pbufterm : TERM environment variable
+     *pbufpath : PATH environment variable
+     killonclose : if true, a close kills the process
+     pexitednormally : address of a boolean which will receive :
+                        - <FONT COLOR="#000044">NETWIB_TRUE</FONT> : if program exited normally
+                        - <FONT COLOR="#000044">NETWIB_FALSE</FONT> : else
+                       if NULL, do not set it
+     preturnedvalue : address of a uint32 which will receive
+                      value returned by the last command executed
+                      in the shell
+                      if NULL, do not set it
+   Input/output parameter(s) :
+   Output parameter(s) :
+     **ppio : io created
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+     <FONT COLOR="#000044">NETWIB_ERR_LONOTIMPLEMENTED</FONT> : not on Linux
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_io_init_shellserver</B>(<FONT COLOR="#000088">netwib_uint32</FONT> uid,
+                                      <FONT COLOR="#000088">netwib_constbuf</FONT> *pbufterm,
+                                      <FONT COLOR="#000088">netwib_bool</FONT> killonclose,
+                                      <FONT COLOR="#000088">netwib_bool</FONT> *pexitednormally,
+                                      <FONT COLOR="#000088">netwib_uint32</FONT> *preturnedvalue,
+                                      <FONT COLOR="#000088">netwib_io</FONT> **ppio);
+<FONT COLOR="#008800">#define <FONT COLOR="#000044">NETWIB_IO_INIT_SHELLSERVER_UID_NONE</FONT> 0xFFFFFFFFu</FONT>
+<FONT COLOR="#008800">#define <FONT COLOR="#000044">NETWIB_IO_INIT_SHELLSERVER_TERM_NONE</FONT> NULL</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_io_init_shellclient
+   Description :
+     Create an io redirecting read and write requests to
+     a console.
+     It should be used with netwib_io_init_shellserver.
+     IMPORTANT: It is currently only implemented for Linux.
+   Input parameter(s) :
+   Input/output parameter(s) :
+   Output parameter(s) :
+     **ppio : io created
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+     <FONT COLOR="#000044">NETWIB_ERR_LONOTIMPLEMENTED</FONT> : not on Linux
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_io_init_shellclient</B>(<FONT COLOR="#000088">netwib_io</FONT> **ppio);
+<FONT COLOR="#880000">/* to obtain term for <B>netwib_io_init_shellserver</B>() */</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_shellclient_term</B>(<FONT COLOR="#000088">netwib_bufext</FONT> *pbufterm);
+
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000"><B>/***************************************************************
+ *                       INTERMEDIARY LINKS                    *
+ ***************************************************************/</B></FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_io_init_data
+   Description :
+     Create several type of io. For example line io can be used
+     like this to read line by line :
+       <B>netwib_er</B>(<B>netwib_io_init_file_read</B>("/tmp/f", &amp;pio));
+       <B>netwib_er</B>(<B>netwib_io_init_data_line</B>(&amp;pioline));
+       <B>netwib_er</B>(<B>netwib_io_plug_read</B>(&amp;pioline, &amp;pio));
+       <B>netwib_er</B>(<B>netwib_io_read</B>(&amp;pioline, &amp;b));
+       etc.
+       <B>netwib_er</B>(<B>netwib_io_close_read</B>(&amp;pioline);
+   Input parameter(s) :
+   Input/output parameter(s) :
+   Output parameter(s) :
+     **ppio : io created
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+typedef enum {
+  <FONT COLOR="#000044">NETWIB_IO_INIT_DATA_TYPE_LINE</FONT> = 1,
+  <FONT COLOR="#000044">NETWIB_IO_INIT_DATA_TYPE_CHUNK</FONT>,
+  <FONT COLOR="#000044">NETWIB_IO_INIT_DATA_TYPE_FIXED</FONT>,
+  <FONT COLOR="#000044">NETWIB_IO_INIT_DATA_TYPE_TRANSPARENT</FONT>
+} <FONT COLOR="#000088">netwib_io_init_data_type</FONT>;
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_io_init_data</B>(<FONT COLOR="#000088">netwib_io_init_data_type</FONT> rdtype,
+                               <FONT COLOR="#000088">netwib_io_init_data_type</FONT> wrtype,
+                               <FONT COLOR="#000088">netwib_io</FONT> **ppio);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* read/write line by line */</FONT>
+<FONT COLOR="#008800">#define <B>netwib_io_init_data_line</B>(ppio) <B>netwib_io_init_data</B>(<FONT COLOR="#000044">NETWIB_IO_INIT_DATA_TYPE_LINE</FONT>,<FONT COLOR="#000044">NETWIB_IO_INIT_DATA_TYPE_LINE</FONT>,ppio)</FONT>
+<FONT COLOR="#880000">/* If write writes '\r\n'(true) or '\n'(false) */</FONT>
+<FONT COLOR="#880000">/* <FONT COLOR="#000088">netwib_err</FONT> f(<FONT COLOR="#000088">netwib_io</FONT> *pio, <FONT COLOR="#000088">netwib_bool</FONT> add_r); */</FONT>
+<FONT COLOR="#008800">#define <B>netwib_io_ctl_set_data_line_msdos</B>(pio,add_r) <B>netwib_io_ctl_set</B>(pio,<FONT COLOR="#000044">NETWIB_IO_WAYTYPE_WRITE</FONT>,<FONT COLOR="#000044">NETWIB_IO_CTLTYPE_DATA_LINE_MSDOS</FONT>,NULL,add_r)</FONT>
+<FONT COLOR="#008800">#define <B>netwib_io_ctl_get_data_line_msdos</B>(pio,padd_r) <B>netwib_io_ctl_get</B>(pio,<FONT COLOR="#000044">NETWIB_IO_WAYTYPE_WRITE</FONT>,<FONT COLOR="#000044">NETWIB_IO_CTLTYPE_DATA_LINE_MSDOS</FONT>,NULL,padd_r)</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* read/write a chunk of data */</FONT>
+<FONT COLOR="#880000">/* note : when end is reached, last returned chunk might be smaller */</FONT>
+<FONT COLOR="#008800">#define <B>netwib_io_init_data_chunk</B>(ppio) <B>netwib_io_init_data</B>(<FONT COLOR="#000044">NETWIB_IO_INIT_DATA_TYPE_CHUNK</FONT>,<FONT COLOR="#000044">NETWIB_IO_INIT_DATA_TYPE_CHUNK</FONT>,ppio)</FONT>
+<FONT COLOR="#880000">/* To change size of read/written data : between minsize and maxsize */</FONT>
+<FONT COLOR="#880000">/* <FONT COLOR="#000088">netwib_err</FONT> f(<FONT COLOR="#000088">netwib_io</FONT> *pio, <FONT COLOR="#000088">netwib_io_waytype</FONT> way, <FONT COLOR="#000088">netwib_uint32</FONT> size); */</FONT>
+<FONT COLOR="#008800">#define <B>netwib_io_ctl_set_data_chunk_minsize</B>(pio,way,minsize) <B>netwib_io_ctl_set</B>(pio,way,<FONT COLOR="#000044">NETWIB_IO_CTLTYPE_DATA_CHUNK_MINSIZE</FONT>,NULL,minsize)</FONT>
+<FONT COLOR="#008800">#define <B>netwib_io_ctl_set_data_chunk_maxsize</B>(pio,way,maxsize) <B>netwib_io_ctl_set</B>(pio,way,<FONT COLOR="#000044">NETWIB_IO_CTLTYPE_DATA_CHUNK_MAXSIZE</FONT>,NULL,maxsize)</FONT>
+<FONT COLOR="#880000">/* <FONT COLOR="#000088">netwib_err</FONT> f(<FONT COLOR="#000088">netwib_io</FONT> *pio, <FONT COLOR="#000088">netwib_io_waytype</FONT> way, <FONT COLOR="#000088">netwib_uint32</FONT> *psize); */</FONT>
+<FONT COLOR="#008800">#define <B>netwib_io_ctl_get_data_chunk_minsize</B>(pio,way,pminsize) <B>netwib_io_ctl_get</B>(pio,way,<FONT COLOR="#000044">NETWIB_IO_CTLTYPE_DATA_CHUNK_MINSIZE</FONT>,NULL,pminsize)</FONT>
+<FONT COLOR="#008800">#define <B>netwib_io_ctl_get_data_chunk_maxsize</B>(pio,way,pmaxsize) <B>netwib_io_ctl_get</B>(pio,way,<FONT COLOR="#000044">NETWIB_IO_CTLTYPE_DATA_CHUNK_MAXSIZE</FONT>,NULL,pmaxsize)</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* read/write fixed size of data */</FONT>
+<FONT COLOR="#880000">/* note : when end is reached, last returned data might be smaller */</FONT>
+<FONT COLOR="#008800">#define <B>netwib_io_init_data_fixed</B>(ppio) <B>netwib_io_init_data</B>(<FONT COLOR="#000044">NETWIB_IO_INIT_DATA_TYPE_FIXED</FONT>,<FONT COLOR="#000044">NETWIB_IO_INIT_DATA_TYPE_FIXED</FONT>,ppio)</FONT>
+<FONT COLOR="#880000">/* To change size of read data. */</FONT>
+<FONT COLOR="#880000">/* <FONT COLOR="#000088">netwib_err</FONT> f(<FONT COLOR="#000088">netwib_io</FONT> *pio, <FONT COLOR="#000088">netwib_io_waytype</FONT> way, <FONT COLOR="#000088">netwib_uint32</FONT> size); */</FONT>
+<FONT COLOR="#008800">#define <B>netwib_io_ctl_set_data_fixed_size</B>(pio,way,size) <B>netwib_io_ctl_set</B>(pio,way,<FONT COLOR="#000044">NETWIB_IO_CTLTYPE_DATA_FIXED_SIZE</FONT>,NULL,size)</FONT>
+<FONT COLOR="#880000">/* <FONT COLOR="#000088">netwib_err</FONT> f(<FONT COLOR="#000088">netwib_io</FONT> *pio, <FONT COLOR="#000088">netwib_io_waytype</FONT> way, <FONT COLOR="#000088">netwib_uint32</FONT> *psize); */</FONT>
+<FONT COLOR="#008800">#define <B>netwib_io_ctl_get_data_fixed_size</B>(pio,way,psize) <B>netwib_io_ctl_get</B>(pio,way,<FONT COLOR="#000044">NETWIB_IO_CTLTYPE_DATA_FIXED_SIZE</FONT>,NULL,psize)</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* transparent : does nothing */</FONT>
+<FONT COLOR="#008800">#define <B>netwib_io_init_data_transparent</B>(ppio) <B>netwib_io_init_data</B>(<FONT COLOR="#000044">NETWIB_IO_INIT_DATA_TYPE_TRANSPARENT</FONT>,<FONT COLOR="#000044">NETWIB_IO_INIT_DATA_TYPE_TRANSPARENT</FONT>,ppio)</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* To change io type */</FONT>
+<FONT COLOR="#880000">/* <FONT COLOR="#000088">netwib_err</FONT> f(<FONT COLOR="#000088">netwib_io</FONT> *pio, <FONT COLOR="#000088">netwib_io_init_data_type</FONT> type); */</FONT>
+<FONT COLOR="#008800">#define <B>netwib_io_ctl_set_data_type</B>(pio,way,type) <B>netwib_io_ctl_set</B>(pio,way,<FONT COLOR="#000044">NETWIB_IO_CTLTYPE_DATA_TYPE</FONT>,NULL,type)</FONT>
+<FONT COLOR="#880000">/* <FONT COLOR="#000088">netwib_err</FONT> f(<FONT COLOR="#000088">netwib_io</FONT> *pio, <FONT COLOR="#000088">netwib_io_init_data_type</FONT> *ptype); */</FONT>
+<FONT COLOR="#008800">#define <B>netwib_io_ctl_get_data_type</B>(pio,way,ptype) <B>netwib_io_ctl_get</B>(pio,way,<FONT COLOR="#000044">NETWIB_IO_CTLTYPE_DATA_TYPE</FONT>,NULL,ptype)</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_io_init_storage
+   Description :
+     Create an io buffering data. It can be plugged in front
+     of low level io not supporting unread for example.
+   Input parameter(s) :
+   Input/output parameter(s) :
+   Output parameter(s) :
+     **ppio : io created
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_io_init_storage</B>(<FONT COLOR="#000088">netwib_io</FONT> **ppio);
+<FONT COLOR="#008800">#define <B>netwib_io_ctl_set_storage_flush</B>(pio) <B>netwib_io_ctl_set</B>(pio,<FONT COLOR="#000044">NETWIB_IO_WAYTYPE_SUPPORTED</FONT>,<FONT COLOR="#000044">NETWIB_IO_CTLTYPE_STORAGE_FLUSH</FONT>,NULL,0)</FONT>
+
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000"><B>/***************************************************************
+ *                         MULTIPLEX LINKS                     *
+ ***************************************************************/</B></FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_io_init_rdwr
+   Description :
+     Create an io redirecting read an write requests to two
+     distinct io.
+   Input parameter(s) :
+     preadio : io where data is read
+     pwriteio : io where data is written
+     closeiosatend : if the io are closed when the io
+                     is closed
+   Input/output parameter(s) :
+   Output parameter(s) :
+     **ppio : io created
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_io_init_rdwr</B>(<FONT COLOR="#000088">netwib_io</FONT> *preadio,
+                               <FONT COLOR="#000088">netwib_io</FONT> *pwriteio,
+                               <FONT COLOR="#000088">netwib_bool</FONT> closeiosatend,
+                               <FONT COLOR="#000088">netwib_io</FONT> **ppio);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_io_init_tee
+   Description :
+     Write data to 2 io.
+     Read data from 2 io.
+   Input parameter(s) :
+     pio1 : first io where data is read/written
+     pio2 : second io where data is read/written
+     closeiosatend : if pio1/pio2 are closed when the io
+                     is closed
+   Input/output parameter(s) :
+   Output parameter(s) :
+     **ppio : io created
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_io_init_tee</B>(<FONT COLOR="#000088">netwib_io</FONT> *pio1,
+                              <FONT COLOR="#000088">netwib_io</FONT> *pio2,
+                              <FONT COLOR="#000088">netwib_bool</FONT> closeiosatend,
+                              <FONT COLOR="#000088">netwib_io</FONT> **ppio);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_io_init_debug
+   Description :
+     Display information for each request.
+   Input parameter(s) :
+     pnormalio : io where normal data is read/written
+     pdebugio : io where debugging data is written
+     closeiosatend : if io are closed when the io
+                     is closed
+   Input/output parameter(s) :
+   Output parameter(s) :
+     **ppio : io created
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_io_init_debug</B>(<FONT COLOR="#000088">netwib_io</FONT> *pnormalio,
+                                <FONT COLOR="#000088">netwib_io</FONT> *pdebugio,
+                                <FONT COLOR="#000088">netwib_bool</FONT> closeiosatend,
+                                <FONT COLOR="#000088">netwib_io</FONT> **ppio);
+
+</PRE><BR><BR><HR><BR>
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../sys.html">section index</A></H2>
+</BODY></HTML>

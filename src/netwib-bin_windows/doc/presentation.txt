@@ -1,0 +1,43 @@
+          Laurent CONSTANTIN's network library (netwib)
+               -----------------------------------
+
+                  -----------------------------
+                  |   PRESENTATION OF NETWIB  |
+                  -----------------------------
+
+Netwib is a network library providing :
+ - network features :
+    + address conversion
+    + udp/tcp clients/servers
+    + packet encoding/decoding/displaying
+    + spoofing
+    + sniffing
+    + etc.
+ - and general features :
+    + data conversion
+    + chained list, hash
+    + portable threads
+    + etc.
+Using all these functions, a network program can be quickly created.
+
+Netwib is available under the GNU GPL license. It was successfully
+installed under Linux, Windows, FreeBSD, NetBSD, OpenBSD, MacOS,
+Solaris and HP-UX.
+
+This library has two main drawbacks:
+ - In order to provide new features, functions prototypes may vary
+   between versions. So, a program created with version 5.1.0 might not
+   compile with version 5.5.0. To move around this problem, several
+   versions of netwib can be simultaneously installed on the same
+   system.
+ - Netwib's features correspond to least common denominator of functions
+   available on systems. This ensures a program compiled under one
+   system will also compile on another. However, this design choice does
+   not permit advanced features.
+So, netwib is not suitable for long term projects. It is for small
+projects or quick hacks.
+
+Download and read netwib-5.39.0-doc_html.tgz to obtain information about
+netwib.
+http://ntwib.sourceforge.net/
+

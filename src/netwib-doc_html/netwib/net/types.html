@@ -1,0 +1,54 @@
+<HTML><HEAD>
+<TITLE>netwib doc_html (version 5.39.0)</TITLE>
+</HEAD><BODY BGCOLOR="#FFFFFF" TEXT="#000000">
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../net.html">section index</A></H2><HR><BR>
+<PRE>
+
+<FONT COLOR="#008800">#ifndef <FONT COLOR="#000044">NETWIB_NET_TYPES_INCLUDED</FONT></FONT>
+<FONT COLOR="#008800">#define <FONT COLOR="#000044">NETWIB_NET_TYPES_INCLUDED</FONT> 1</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* to store an Ethernet address */</FONT>
+<FONT COLOR="#008800">#define <FONT COLOR="#000044">NETWIB_ETH_LEN</FONT> 6</FONT>
+typedef struct {
+  <FONT COLOR="#000088">netwib_byte</FONT> b[<FONT COLOR="#000044">NETWIB_ETH_LEN</FONT>];
+} <FONT COLOR="#000088">netwib_eth</FONT>;
+typedef const <FONT COLOR="#000088">netwib_eth</FONT> <FONT COLOR="#000088">netwib_consteth</FONT>;
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* to store an IPv4 address */</FONT>
+<FONT COLOR="#008800">#define <FONT COLOR="#000044">NETWIB_IP4_LEN</FONT> 4</FONT>
+typedef <FONT COLOR="#000088">netwib_uint32</FONT> <FONT COLOR="#000088">netwib_ip4</FONT>;
+
+<FONT COLOR="#880000">/* to store an IPv6 address */</FONT>
+<FONT COLOR="#008800">#define <FONT COLOR="#000044">NETWIB_IP6_LEN</FONT> 16</FONT>
+typedef struct {
+  <FONT COLOR="#000088">netwib_byte</FONT> b[<FONT COLOR="#000044">NETWIB_IP6_LEN</FONT>];
+} <FONT COLOR="#000088">netwib_ip6</FONT>;
+typedef const <FONT COLOR="#000088">netwib_ip6</FONT> <FONT COLOR="#000088">netwib_constip6</FONT>;
+
+<FONT COLOR="#880000">/* to store an IP address */</FONT>
+typedef enum {
+  <FONT COLOR="#000044">NETWIB_IPTYPE_UNKNOWN</FONT> = 0,
+  <FONT COLOR="#000044">NETWIB_IPTYPE_IP4</FONT>,
+  <FONT COLOR="#000044">NETWIB_IPTYPE_IP6</FONT>
+} <FONT COLOR="#000088">netwib_iptype</FONT>;
+typedef struct {
+  <FONT COLOR="#000088">netwib_iptype</FONT> iptype;
+  union {
+    <FONT COLOR="#000088">netwib_ip4</FONT> ip4;
+    <FONT COLOR="#000088">netwib_ip6</FONT> ip6;
+  } ipvalue;
+} <FONT COLOR="#000088">netwib_ip</FONT>;
+typedef const <FONT COLOR="#000088">netwib_ip</FONT> <FONT COLOR="#000088">netwib_constip</FONT>;
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* to store a port */</FONT>
+typedef <FONT COLOR="#000088">netwib_uint32</FONT> <FONT COLOR="#000088">netwib_port</FONT>;
+
+<FONT COLOR="#008800">#endif</FONT>
+</PRE><BR><BR><HR><BR>
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../net.html">section index</A></H2>
+</BODY></HTML>

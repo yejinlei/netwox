@@ -1,0 +1,594 @@
+                        Network toolbox netwag
+
+              -------------------------------------------
+              |              KNOWN PROBLEMS             |
+              -------------------------------------------
+
+This file describes known problems (incompatibilities, unsupported
+features, errors, etc.).
+If you seek help (usage help, examples, etc.), it's better to read 
+netwox-5.39.0-doc_html.tgz or netwag-5.39.0-doc_html.tgz. You 
+can also use "man netwox" or "man netwag".
+
+Problems described in this file are (if you encounter an unknown problem,
+thanks for contacting me, as explained in ./doc/problemreport.txt):
+
+PROBLEMS CAUSED BY THE SYSTEM
+ 1: [Linux] Segmentation fault while converting from IP address to ethernet
+    address. [problem in /etc/nsswitch.conf]
+ 2: [Linux] Segmentation fault while converting from IP address to ethernet
+    address. [problem in /etc/ethers]
+ 3: While spoofing at IP level, some packets refuse to be emitted.
+ 4: While spoofing at IP level, some packets emitted doesn't have the 
+    same values in the header that the ones we specified.
+ 5: Error 1001: error in sendto()
+ 6: [Linux] When we send a lot of packets at IP level (with 
+    netwib_io_init_spoof_ip), there is a saturation of the system.
+ 7: [FreeBSD] cannot sniff.
+ 8: [FreeBSD] cannot spoof.
+ 9: [FreeBSD] /dev/bpfii: Device not configured.
+10: [FreeBSD] /dev/bpfii: No such file or directory.
+11: [xBSD] Packets emitted to the network always have the ethernet address of
+    the board, instead of having the address specified in the packet.
+12: [Linux] The computer local's address is added and the end of an IP option
+    of type "record route" or "timestamp".
+13: [Linux] The sniff doesn't work.
+14: [Linux] Display of an error in module net-pf-17 in /var/log/messages.
+15: [Unix] Netwag start is very slow (more than 2 seconds).
+16: [Unix] Double-clicking on a tool in netwag does not open the Form notebook.
+
+PROBLEMS CAUSED BY LIBPCAP OR WINPCAP
+17: [Linux] Display of "linux socket: Too many open files" while calling exit().
+18: [Linux] Display of "kernel: program uses obsolete (PF_INET,SOCK_PACKET)"
+    in "/var/log/messages". This is a warning only.
+
+PROBLEMS CAUSED BY TCL/TK
+19: Error: invalid command name tk_chooseDirectory.
+
+PROBLEMS CAUSED BY NETWIB'S DESIGN
+20: Network configuration is incorrect.
+21: Error messages contains inaccurate hints
+22: Netwib is slow.
+
+PROBLEMS CAUSED BY NETWOX'S DESIGN
+23: [Unix] Netwox can be insecure.
+
+
+
+-------------------------------------------------------------------------------
+Problem 1:
+  Problem synthesis:
+    Segmentation fault while converting from IP address to ethernet
+    address. [problem in /etc/nsswitch.conf]
+  Environment affected by the problem:
+    Glibc-2.?? (<2.2.1) with "nisplus" or "db" in /etc/nsswitch.conf
+  What's causing the problem:
+    The problem arises when calling the function ether_hostton, and when
+    the entry "nisplus" or "db" is in /etc/nsswitch.conf.
+    Indeed, there is an error in glibc source (glibc-2.1.3):
+      nis/nss_nisplus/nisplus-ethers.c, line 234: 
+        there is "if (name != NULL)" instead of "if (name == NULL)"
+    Note: an email was sent to glibc developers. They applied a patch
+          in glibc 2.2.1.
+  Solution 1:
+    Edit /etc/nsswitch.conf to replace the line:
+         ethers: _here_nisplus_or_nis_or_db_is_written_ files
+    by:
+         ethers: files
+    Indeed, the problems disappears when removing "nis", "nisplus" or "db".
+    You should then execute "genemake" again (and compile and install)
+    to ensure that netwib will use ether_hostton.
+  Solution 2:
+    Install glibc > 2.2.1.
+
+-------------------------------------------------------------------------------
+Problem 2:
+  Problem synthesis:
+    Segmentation fault while converting from IP address to ethernet
+    address. [problem in /etc/ethers]
+  Environment affected by the problem:
+    /etc/ethers empty
+  What's causing the problem:
+    The problem arises when /etc/ethers exists, but is empty.
+    Indeed, there is an error in glibc source (glibc-2.1.3):
+      inet/ether_hton.c, line 76:
+        fct has only four parameters, instead of five
+    Note: an email was sent to glibc developers. They applied a patch
+          in glibc 2.2.1.
+  Solution 1:
+    Remove the file /etc/ethers if it doesn't contain any line.
+  Solution 2:
+    Install glibc > 2.2.1.
+
+-------------------------------------------------------------------------------
+Problem 3:
+  Problem synthesis:
+    While spoofing at IP level, some packets refuse to be emitted.
+  Environment affected by the problem:
+    Linux with IP firewalling
+    Solaris
+    FreeBSD
+    [I guess the problem exists in almost every environment]
+  What's causing the problem:
+    Commonly, there are two levels of spoof:
+     - ethernet level: we specify ethernet address, ip address, etc.
+     - ip level: we specify ip address, etc. and the system is in charge
+                 of finding the corresponding ethernet address
+    The problem exists because some systems try to ensure that the
+    packet is legitimate before sending it.
+    If the system thinks the packet is incorrect, it will throw it, or 
+    it will modify our values before sending it.
+  Solution 1:
+    A generic solution consists in spoofing at ethernet level, to
+    move around the system using netwib_io_init_spoof_ipeth or
+    netwib_io_init_spoof_eth.
+  Solution 2:
+    Under Linux, you have to compile the kernel without IP firewalling
+    to be allowed to emit incorrect packets.
+
+-------------------------------------------------------------------------------
+Problem 4:
+  Problem synthesis:
+    While spoofing at IP level, some packets emitted doesn't have the 
+    same values in the header that the ones we specified.
+  Environment affected by the problem:
+    Linux with IP firewalling
+    Solaris
+    FreeBSD
+    [I guess the problem exists in almost every environment]
+  What's causing the problem:
+    Commonly, there are two levels of spoof:
+     - ethernet level: we specify ethernet address, ip address, etc.
+     - ip level: we specify ip address, etc. and the system is in charge
+                 of finding the corresponding ethernet address
+    The problem exists because some systems try to ensure that the
+    packet is legitimate before sending it.
+    If the system thinks the packet is incorrect, it will throw it, or 
+    it will modify our values before sending it.
+  Solution 1:
+    A generic solution consists in spoofing at ethernet level, to
+    move around the system using netwib_io_init_spoof_ipeth or
+    netwib_io_init_spoof_eth.
+  Solution 2:
+    Under Linux, you have to compile the kernel without IP firewalling
+    to be allowed to emit incorrect packets.
+
+-------------------------------------------------------------------------------
+Problem 5:
+  Problem synthesis:
+    Error 1001: error in sendto()
+  Environment affected by the problem:
+    Linux with IP firewalling
+    Solaris
+    FreeBSD
+    [I guess the problem exists in almost every environment]
+  What's causing the problem:
+    Commonly, there are two levels of spoof:
+     - ethernet level: we specify ethernet address, ip address, etc.
+     - ip level: we specify ip address, etc. and the system is in charge
+                 of finding the corresponding ethernet address
+    The problem exists because some systems try to ensure that the
+    packet is legitimate before sending it.
+    If the system thinks the packet is incorrect, it will throw it, or 
+    it will modify our values before sending it.
+  Solution 1:
+    A generic solution consists in spoofing at ethernet level, to
+    move around the system using netwib_io_init_spoof_ipeth or
+    netwib_io_init_spoof_eth.
+  Solution 2:
+    Under Linux, you have to compile the kernel without IP firewalling
+    to be allowed to emit incorrect packets.
+
+-------------------------------------------------------------------------------
+Problem 6:
+  Problem synthesis:
+    When we send a lot of packets at IP level (with 
+    netwib_io_init_spoof_ip), there is a saturation of the system.
+  Environment affected by the problem:
+    Linux
+    probably other systems
+  What's causing the problem:
+    When using the function netwib_io_init_spoof_ip, we give the packet to the
+    system, and we leave it doing its jobs.
+    If the ethernet destination/router address cannot be determined,
+    the system keeps the packet. Theses packets, for which system thinks
+    it we be able to send them later, will take memory.
+    If we are trying to do a denial of service, and the packets stay in our
+    system, which will saturate (for example, in 10 seconds).
+    So we have to ensure the packets are really sent when we do a denial
+    of service.
+    On powerful computers, I also saw the system accepting more packets
+    than it could really send. This is another cause of saturation.
+  Solution 1:
+    (destination computer is on the LAN)
+     - If the destination computer exists on the LAN, verify it is
+       in the ARP cache ("arp -an"). Otherwise, try to ping it.
+     - If the destination computer doesn't exists, you have to create a
+       fake arp entry ("arp -s computer a:a:a:a:a:a").
+  Solution 2:
+    (destination computer is after a router)
+     - First, the router must be in the ARP cache ("arp -an").
+       Otherwise, try to ping it.
+     - Then, verify your routes ("netstat -rn") and try to ping the 
+       destination.
+  Solution 3:
+    (configuration OK, but powerful computer)
+    The main problem is that there is no way to known if the kernel
+    is saturating because of our packets. When there is the error
+    (errno==ENOBUFS), it is far too late. 
+    One solution is to slow down the sending process using 
+    netwib_time_sleep_sec. For example, we can sleep after each thousand
+    packets sent. But, the sleep time depends on the system (cpu, 
+    memory, network board, etc.).
+    If you find a good solution to this problem, please contact me.
+
+-------------------------------------------------------------------------------
+Problem 7:
+  Problem synthesis:
+    cannot sniff.
+  Environment affected by the problem:
+    FreeBSD
+  What's causing the problem:
+    bpf is not compiled in the kernel, or only a few bpfii are
+    available. So we cannot sniff or spoof at Ethernet level.
+  Solution:
+    You have to compile your kernel with bpf support writing the following
+    in /usr/src/sys/i386/KERNEL:
+        "pseudo-device bpfilter 4"
+    Then, you have to create the bpfii
+        cd /dev
+        sh MAKEDEV bpf0    (if it doesn't already exists)
+        sh MAKEDEV bpf1
+        sh MAKEDEV bpf2
+        sh MAKEDEV bpf3
+    Note: in this example, 4 bpf are created; we can use more.
+
+-------------------------------------------------------------------------------
+Problem 8:
+  Problem synthesis:
+    cannot spoof.
+  Environment affected by the problem:
+    FreeBSD
+  What's causing the problem:
+    bpf is not compiled in the kernel, or only a few bpfii are
+    available. So we cannot sniff or spoof at Ethernet level.
+  Solution:
+    You have to compile your kernel with bpf support writing the following
+    in /usr/src/sys/i386/KERNEL:
+        "pseudo-device bpfilter 4"
+    Then, you have to create the bpfii
+        cd /dev
+        sh MAKEDEV bpf0    (if it doesn't already exists)
+        sh MAKEDEV bpf1
+        sh MAKEDEV bpf2
+        sh MAKEDEV bpf3
+    Note: in this example, 4 bpf are created; we can use more.
+
+-------------------------------------------------------------------------------
+Problem 9:
+  Problem synthesis:
+    /dev/bpfii: Device not configured.
+  Environment affected by the problem:
+    FreeBSD
+  What's causing the problem:
+    bpf is not compiled in the kernel, or only a few bpfii are
+    available. So we cannot sniff or spoof at Ethernet level.
+  Solution:
+    You have to compile your kernel with bpf support writing the following
+    in /usr/src/sys/i386/KERNEL:
+        "pseudo-device bpfilter 4"
+    Then, you have to create the bpfii
+        cd /dev
+        sh MAKEDEV bpf0    (if it doesn't already exists)
+        sh MAKEDEV bpf1
+        sh MAKEDEV bpf2
+        sh MAKEDEV bpf3
+    Note: in this example, 4 bpf are created; we can use more.
+
+-------------------------------------------------------------------------------
+Problem 10:
+  Problem synthesis:
+    /dev/bpfii: No such file or directory.
+  Environment affected by the problem:
+    FreeBSD
+  What's causing the problem:
+    bpf is not compiled in the kernel, or only a few bpfii are
+    available. So we cannot sniff or spoof at Ethernet level.
+  Solution:
+    You have to compile your kernel with bpf support writing the following
+    in /usr/src/sys/i386/KERNEL:
+        "pseudo-device bpfilter 4"
+    Then, you have to create the bpfii
+        cd /dev
+        sh MAKEDEV bpf0    (if it doesn't already exists)
+        sh MAKEDEV bpf1
+        sh MAKEDEV bpf2
+        sh MAKEDEV bpf3
+    Note: in this example, 4 bpf are created; we can use more.
+
+-------------------------------------------------------------------------------
+Problem 11:
+  Problem synthesis:
+    Packets emitted to the network always have the ethernet address of
+    the board, instead of having the address specified in the packet.
+  Environment affected by the problem:
+    FreeBSD 3.1, 3.5, OpenBSD 2.x [FreeBSD 4.x is not concerned]
+  What's causing the problem:
+    The kernel doesn't allow to spoof ethernet address.
+  Solution:
+    The directory ../src/port/freebsd (or ../src/port/openbsd)
+    contains a kernel patch/module. The patch has to be applied,
+    or the module has to be activated. Read the README file present
+    in such directories.
+
+-------------------------------------------------------------------------------
+Problem 12:
+  Problem synthesis:
+    The computer local's address is added and the end of an IP option
+    of type "record route" or "timestamp".
+  Environment affected by the problem:
+    Linux kernel inferior to 2.1
+  What's causing the problem:
+    While sniffing a packet containing IP options "record route" or
+    "timestamp", which is done by libpcap, the local computer adds
+    its own address at the end of the list.
+    This seems to be logical, but when we sniff we want to see what
+    is really on the network.
+    The libpcap library uses a {PF_INET,SOCK_PACKET} socket, and this
+    implementation is incorrect.
+  Solution 1:
+    Kernel after 2.1 doesn't have this problem.
+  Solution 2:
+    Install libpcap > 0.6 available at http://www.tcpdump.org/.
+
+-------------------------------------------------------------------------------
+Problem 13:
+  Problem synthesis:
+    The sniff doesn't work.
+  Environment affected by the problem:
+    Linux
+  What's causing the problem:
+    The kernel has to be compiled with "packet socket" (CONFIG_PACKET)
+    to be able to sniff.
+  Solution:
+    You have to compile your kernel with "packet socket":
+     - select 'Packet socket' in the menu 'Networking options'
+       of 'make xconfig', or
+     - edit /usr/src/linux/.config to define:
+       CONFIG_PACKET=y
+    The kernel then needs to be compiled and installed.
+
+-------------------------------------------------------------------------------
+Problem 14:
+  Problem synthesis:
+    Display of an error in module net-pf-17 in /var/log/messages.
+  Environment affected by the problem:
+    Linux
+  What's causing the problem:
+    The kernel has to be compiled with "packet socket" (CONFIG_PACKET)
+    to be able to sniff.
+  Solution:
+    You have to compile your kernel with "packet socket":
+     - select 'Packet socket' in the menu 'Networking options'
+       of 'make xconfig', or
+     - edit /usr/src/linux/.config to define:
+       CONFIG_PACKET=y
+    The kernel then needs to be compiled and installed.
+
+-------------------------------------------------------------------------------
+Problem 15:
+  Problem synthesis:
+    Netwag start is very slow (more than 2 seconds).
+  Environment affected by the problem:
+    System with XFree86 mis-configured
+  What's causing the problem:
+    XFree86 font is badly configured.
+    To check it, run:
+    wish
+    % label .l
+    .l
+    % exit
+    If there is a delay between "label .l" and "exit", the system
+    have the problem.
+  Solution:
+    Install a correct font. For example, under Debian 3.0, install
+    xfonts-100dpi and restart X.
+
+-------------------------------------------------------------------------------
+Problem 16:
+  Problem synthesis:
+    Double-clicking on a tool in netwag does not open the Form notebook.
+  Environment affected by the problem:
+    Gnome under Solaris 9
+  What's causing the problem:
+    Tcl/Tk does not correctly deal with double-click: the event
+    is never generated.
+  Solution:
+    Press Control or Shift during double-click.
+
+-------------------------------------------------------------------------------
+Problem 17:
+  Problem synthesis:
+    Display of "linux socket: Too many open files" while calling exit().
+  Environment affected by the problem:
+    Linux with libpcap 0.5
+  What's causing the problem:
+    The function "linux_restore_ifr" of "pcap-linux.c" is called
+    at the end of the program ("atexit()").
+    This function uses a file descriptor, but never closes it.
+    Note: An email was sent to libpcap's developers.
+  Solution 1:
+    Install libpcap > 0.6 available at http://www.tcpdump.org/.
+  Solution 2:
+    If you use libpcap<0.6, you have to modify the function 
+    "linux_restore_ifr" of "pcap-linux.c":
+      void linux_restore_ifr(void)
+      { register int fd;
+        fd = socket(PF_INET, SOCK_PACKET, htons(0x0003));
+        if (fd < 0)
+          fprintf(stderr, "linux socket: %s", pcap_strerror(errno));
+        else if (ioctl(fd, SIOCSIFFLAGS, &saved_ifr) < 0)
+          fprintf(stderr, "linux SIOCSIFFLAGS: %s", pcap_strerror(errno));
+        /*and here, a close was missing*/
+        close(fd); /*added by Laurent, in libpcap*/
+      }
+      Then you have to compile and install libpcap.
+
+-------------------------------------------------------------------------------
+Problem 18:
+  Problem synthesis:
+    Display of "kernel: program uses obsolete (PF_INET,SOCK_PACKET)"
+    in "/var/log/messages". This is a warning only.
+  Environment affected by the problem:
+    Linux kernel superior to 2.1
+    libpcap up to 0.5rel2
+  What's causing the problem:
+    The libpcap library uses a {PF_INET,SOCK_PACKET} socket.
+    This kind of socket is considered as obsolete by the kernel.
+    Note: an email was sent to libpcap's developers.
+  Solution 1:
+    As this is a warning only message, it can be ignored.
+  Solution 2:
+    Install libpcap > 0.6 available at http://www.tcpdump.org/.
+
+-------------------------------------------------------------------------------
+Problem 19:
+  Problem synthesis:
+    Error: invalid command name tk_chooseDirectory.
+  Environment affected by the problem:
+    Tcl/Tk < 8.3
+  What's causing the problem:
+    Function tk_chooseDirectory does not exist in Tk versions
+    inferior to 8.3. Implementing it requires some work. As this
+    only suppress a small feature (in Form notebook, for a directory
+    pressing 'd' brings the error message), I choose to not implement
+    it.
+  Solution 1:
+    Ignore this message, and enter the directory name by hand.
+  Solution 2:
+    Upgrade Tcl/Tk to version 8.3 or greater.
+
+-------------------------------------------------------------------------------
+Problem 20:
+  Problem synthesis:
+    Network configuration is incorrect.
+  Environment affected by the problem:
+    All
+  What's causing the problem:
+    Obtaining the configuration (device, arp cache, routes) of the 
+    local computer is an important step of netwib. Several tools need
+    this configuration to be accurate.
+    Different kinds of network cards, modems, operating systems, etc.
+    exist. So, it's possible that your computer contains unrecognized
+    hardware. In this case, several netwox tools would be 
+    unusable.
+    For these reasons, the first tool to use is 'netwox 1' to
+    ensure correct configuration setting.
+    Here is a correct example (taken on Linux):
+    ################################### Devices ################################
+    nu dev   ethernet_hwtype   mtu   real_device_name
+    1  Lo0   loopback          3924  lo
+    2  Eth0  aa:aa:aa:aa:aa:aa 1500  eth0
+    3  Eth1  bb:bb:bb:bb:bb:bb 1500  eth1
+    ##################################### IP ###################################
+    nu ip             /netmask                    ppp point_to_point_with
+    1  127.0.0.1      /255.0.0.0                  0
+    2  192.168.1.1    /255.255.255.0              0
+    3  192.168.2.1    /255.255.255.0              0
+    3  192.168.3.1    /255.255.255.0              0
+    ############################## ArpCache/Neighbor ###########################
+    nu ethernet          ip
+    2  aa:aa:aa:aa:aa:aa 192.168.1.1
+    3  bb:bb:bb:bb:bb:bb 192.168.2.1
+    3  bb:bb:bb:bb:bb:bb 192.168.3.1
+    2  cc:cc:cc:cc:cc:cc 192.168.1.254
+    #################################### Routes ################################
+    nu destination    /netmask         source              gateway        metric
+    1  127.0.0.1      /255.255.255.255 local                                   0
+    2  192.168.1.1    /255.255.255.255 local                                   0
+    3  192.168.2.1    /255.255.255.255 local                                   0
+    3  192.168.3.1    /255.255.255.255 local                                   0
+    2  192.168.10.0   /255.255.255.0   192.168.1.1                             0
+    3  192.168.21.0   /255.255.255.0   192.168.2.1                             0
+    3  192.168.31.0   /255.255.255.0   192.168.1.1                             0
+    1  127.0.0.0      /255.0.0.0       127.0.0.1                               0
+    2  0.0.0.0        /0.0.0.0         192.168.1.1        192.168.1.254        0
+    In this example, we see the loopback device (lo, or Lo0, number 1), and
+    two network cards (eth0 and eth1, respectively number 2 and 3).
+    Network card 2 has IP address 192.168.1.1, and network card 3 has two
+    IP addresses (192.168.2.1 and 192.168.3.1).
+    The arp table contains permanent entries, and the dynamic entry for
+    the router 192.168.1.254.
+    The routing table first contains entries to access local devices, then
+    network connected to the local devices, and finally the default router
+    192.168.1.254.
+  Solution:
+    As I cannot have access to your hardware, you have to send me information
+    about your configuration in order to help netwib's improvements.
+    Run:
+      netwox 2 > resultfile
+    Then, send me the file 'resultfile', along with configuration information
+    (ifconfig, ipconfig /all, arp -a, route print, netstat -rn, 
+    winipcfg /all /batch file.out, winipcfg, network card type, modem type,
+    etc.). Thanks.
+
+-------------------------------------------------------------------------------
+Problem 21:
+  Problem synthesis:
+    Error messages contains inaccurate hints
+  Environment affected by the problem:
+    All
+  What's causing the problem:
+    Implementing a cross platform compatible error handling is almost
+    impossible (errno, h_errno, GetLatError, WSAGetLastError). The
+    solution chosen in netwib is to leave those error codes untouched.
+    So, if they were previously set by another error, this error
+    will still be present. For example:
+     Error 1099: error in foobar()
+      hint: errno = 19 = No such device
+      hint: h_errno = 2 = Host name lookup failure
+    If function foobar sets errno read errno, else read h_errno.
+  Solution:
+    Just ignore the hint which seems inaccurate.
+
+-------------------------------------------------------------------------------
+Problem 22:
+  Problem synthesis:
+    Netwib is slow.
+  Environment affected by the problem:
+    All
+  What's causing the problem:
+    I choose to create a modular library, easy to use.
+    One of the consequence is the high level structuration of netwib.
+    So, it is slower than a low level programming interface.
+  Solution 1:
+    Using records (netwib_io_init_record_xyz), you can construct your packets,
+    save them, and then send them.
+  Solution 2:
+    You can also use only low level functions of netwib, and create
+    your specific code around.
+    If its still too slow, you should not use netwib and use directly
+    system's functions, or buy a new computer ;)
+
+-------------------------------------------------------------------------------
+Problem 23:
+  Problem synthesis:
+    Netwox can be insecure.
+  Environment affected by the problem:
+    All
+  What's causing the problem:
+    Some tools require root privileges (for example capturing
+    packets with tool 7). A bug occurring with root privileges can
+    compromise the system. In order to protect system, programs
+    generally separate privileges in two distinct process (or loose
+    privileges if they are not needed anymore). This kind of
+    architecture is too complicated to implement for simple tools
+    such as netwox ones.
+  Solution 1:
+    Netwox or netwag can be run in chroot jails. You can create
+    your own jail, or take ideas from script
+    netwox-src/misc/unix/chroot/chroot.sh (Linux). As a
+    final note, tcpdump, Ethereal, nmap, etc are not separating
+    privileges. So, they can also be added in the same jail.
+  Solution 2:
+    Use capabilities.

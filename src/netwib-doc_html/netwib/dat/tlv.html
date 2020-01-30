@@ -1,0 +1,198 @@
+<HTML><HEAD>
+<TITLE>netwib doc_html (version 5.39.0)</TITLE>
+</HEAD><BODY BGCOLOR="#FFFFFF" TEXT="#000000">
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../dat.html">section index</A></H2><HR><BR>
+<PRE>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* We need a forward declaration for netwib_eth, <FONT COLOR="#000088">netwib_ip4</FONT> and
+   netwib_port.
+*/</FONT>
+<FONT COLOR="#008800">#include "../net/types.h"</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000"><B>/***************************************************************
+ * This module permits to store TLV in a netwib_buf. A TLV is  *
+ * a data block containing :                                   *
+ *  - Type : <FONT COLOR="#000088">netwib_tlvtype</FONT>                                    *
+ *  - Length : length of value                                 *
+ *  - Value : value of type 'type'                             *
+ ***************************************************************/</B></FONT>
+
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+typedef enum {
+  <FONT COLOR="#000044">NETWIB_TLVTYPE_BUF</FONT> = 1,     <FONT COLOR="#880000">/* data */</FONT>
+  <FONT COLOR="#000044">NETWIB_TLVTYPE_UINT</FONT>,        <FONT COLOR="#880000">/* <FONT COLOR="#000088">netwib_uint32</FONT> 16 or 8 */</FONT>
+  <FONT COLOR="#000044">NETWIB_TLVTYPE_ETH</FONT>,         <FONT COLOR="#880000">/* <FONT COLOR="#000088">netwib_eth</FONT> */</FONT>
+  <FONT COLOR="#000044">NETWIB_TLVTYPE_IP</FONT>,          <FONT COLOR="#880000">/* <FONT COLOR="#000088">netwib_ip</FONT> */</FONT>
+  <FONT COLOR="#000044">NETWIB_TLVTYPE_END</FONT> = 100,   <FONT COLOR="#880000">/* end */</FONT>
+  <FONT COLOR="#880000">/* start of free numbers for user */</FONT>
+  <FONT COLOR="#000044">NETWIB_TLVTYPE_USER_BEGIN</FONT> = <FONT COLOR="#000044">NETWIB_ENUM_USER_BEGIN</FONT>
+} <FONT COLOR="#000088">netwib_tlvtype</FONT>;
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_tlv_append_xyz
+   Description :
+     Add a TLV to a buf.
+   Input parameter(s) :
+     ...
+   Input/output parameter(s) :
+     *pbuf : <FONT COLOR="#000088">netwib_buf</FONT> updated
+   Output parameter(s) :
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+   The <FONT COLOR="#000088">netwib_tlv_append_buf</FONT> function supports <FONT COLOR="#000044">NETWIB_BUF_FLAGS_SENSITIVE</FONT>.
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_tlv_append_buf</B>(<FONT COLOR="#000088">netwib_constbuf</FONT> *pbuf,
+                                 <FONT COLOR="#000088">netwib_buf</FONT> *ptlv);
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_tlv_append_uint32</B>(<FONT COLOR="#000088">netwib_uint32</FONT> ui,
+                                    <FONT COLOR="#000088">netwib_buf</FONT> *ptlv);
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_tlv_append_uint64</B>(<FONT COLOR="#000088">netwib_uint64</FONT> ui,
+                                    <FONT COLOR="#000088">netwib_buf</FONT> *ptlv);
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_tlv_append_eth</B>(<FONT COLOR="#000088">netwib_consteth</FONT> *peth,
+                                 <FONT COLOR="#000088">netwib_buf</FONT> *ptlv);
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_tlv_append_ip</B>(<FONT COLOR="#000088">netwib_constip</FONT> *pip,
+                                <FONT COLOR="#000088">netwib_buf</FONT> *ptlv);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_tlv_append_end
+   Description :
+     Indicates the end of data. It is for example used after
+     several <FONT COLOR="#000088">netwib_tlv_append_data</FONT> to indicates the end of data.
+   Input parameter(s) :
+   Input/output parameter(s) :
+     *pbuf : <FONT COLOR="#000088">netwib_buf</FONT> updated
+   Output parameter(s) :
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_tlv_append_end</B>(<FONT COLOR="#000088">netwib_buf</FONT> *ptlv);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_tlv_append_newtype
+   Description :
+     Add a user defined TLV.
+   Input parameter(s) :
+     type : type
+     *pvalue : buffer containing the value
+   Input/output parameter(s) :
+     *pbuf : <FONT COLOR="#000088">netwib_buf</FONT> updated
+   Output parameter(s) :
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_tlv_append_newtype</B>(<FONT COLOR="#000088">netwib_tlvtype</FONT> type,
+                                     <FONT COLOR="#000088">netwib_constbuf</FONT> *pvalue,
+                                     <FONT COLOR="#000088">netwib_buf</FONT> *ptlv);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_tlv_xyzpend_tlv
+   Description :
+     Add a predefined TLV.
+   Input parameter(s) :
+     *pnewtlv : buffer containing the preformed tlv
+   Input/output parameter(s) :
+     *pbuf : <FONT COLOR="#000088">netwib_buf</FONT> updated
+   Output parameter(s) :
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+   Both functions supports <FONT COLOR="#000044">NETWIB_BUF_FLAGS_SENSITIVE</FONT>.
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_tlv_append_tlv</B>(<FONT COLOR="#000088">netwib_constbuf</FONT> *pnewtlv,
+                                 <FONT COLOR="#000088">netwib_buf</FONT> *ptlv);
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_tlv_prepend_tlv</B>(<FONT COLOR="#000088">netwib_constbuf</FONT> *pnewtlv,
+                                  <FONT COLOR="#000088">netwib_buf</FONT> *ptlv);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_tlv_entry_typelen
+   Description :
+     Obtain type and length of current TLV.
+   Input parameter(s) :
+     *pbuf : <FONT COLOR="#000088">netwib_buf</FONT> containing the TLV
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *ptype : type
+     *plength : length
+     *pskipsize : size to skip this entry
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_tlv_entry_typelen</B>(<FONT COLOR="#000088">netwib_constbuf</FONT> *ptlv,
+                                    <FONT COLOR="#000088">netwib_tlvtype</FONT> *ptype,
+                                    <FONT COLOR="#000088">netwib_uint32</FONT> *plength,
+                                    <FONT COLOR="#000088">netwib_uint32</FONT> *pskipsize);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_tlv_decode_xyz
+   Description :
+     Decode a TLV from a buf.
+   Input parameter(s) :
+     *pbuf : <FONT COLOR="#000088">netwib_buf</FONT> containing the TLV
+   Input/output parameter(s) :
+     ...
+   Output parameter(s) :
+     *pskipsize : size to skip this entry
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+   The <FONT COLOR="#000088">netwib_tlv_decode_buf</FONT> function supports <FONT COLOR="#000044">NETWIB_BUF_FLAGS_SENSITIVE</FONT>.
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_tlv_decode_buf</B>(<FONT COLOR="#000088">netwib_constbuf</FONT> *ptlv,
+                                 <FONT COLOR="#000088">netwib_bufext</FONT> *pbuf,
+                                 <FONT COLOR="#000088">netwib_uint32</FONT> *pskipsize);
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_tlv_decode_uint32</B>(<FONT COLOR="#000088">netwib_constbuf</FONT> *ptlv,
+                                    <FONT COLOR="#000088">netwib_uint32</FONT> *pui,
+                                    <FONT COLOR="#000088">netwib_uint32</FONT> *pskipsize);
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_tlv_decode_uint64</B>(<FONT COLOR="#000088">netwib_constbuf</FONT> *ptlv,
+                                    <FONT COLOR="#000088">netwib_uint64</FONT> *pui,
+                                    <FONT COLOR="#000088">netwib_uint32</FONT> *pskipsize);
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_tlv_decode_eth</B>(<FONT COLOR="#000088">netwib_constbuf</FONT> *ptlv,
+                                 <FONT COLOR="#000088">netwib_eth</FONT> *peth,
+                                 <FONT COLOR="#000088">netwib_uint32</FONT> *pskipsize);
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_tlv_decode_ip</B>(<FONT COLOR="#000088">netwib_constbuf</FONT> *ptlv,
+                                <FONT COLOR="#000088">netwib_ip</FONT> *pip,
+                                <FONT COLOR="#000088">netwib_uint32</FONT> *pskipsize);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_tlv_decode_newtype
+   Description :
+     Decode a user defined TLV from a buf.
+   Input parameter(s) :
+     *pbuf : <FONT COLOR="#000088">netwib_buf</FONT> containing the TLV
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *ptype : type
+     *plength : length
+     *pvalue : buffer containing the value
+     *pskipsize : size to skip this entry
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_tlv_decode_newtype</B>(<FONT COLOR="#000088">netwib_constbuf</FONT> *ptlv,
+                                     <FONT COLOR="#000088">netwib_tlvtype</FONT> *ptype,
+                                     <FONT COLOR="#000088">netwib_uint32</FONT> *plength,
+                                     <FONT COLOR="#000088">netwib_bufext</FONT> *pvalue,
+                                     <FONT COLOR="#000088">netwib_uint32</FONT> *pskipsize);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_tlv_decode_tlv
+   Description :
+     Decode a TLV from a buf.
+   Input parameter(s) :
+     *pbuf : <FONT COLOR="#000088">netwib_buf</FONT> containing the TLV
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pbuf : <FONT COLOR="#000088">netwib_buf</FONT> containing the first entry
+     *pskipsize : size to skip this entry
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+   This function supports <FONT COLOR="#000044">NETWIB_BUF_FLAGS_SENSITIVE</FONT>.
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_tlv_decode_tlv</B>(<FONT COLOR="#000088">netwib_constbuf</FONT> *ptlv,
+                                 <FONT COLOR="#000088">netwib_bufext</FONT> *pfirsttlv,
+                                 <FONT COLOR="#000088">netwib_uint32</FONT> *pskipsize);
+</PRE><BR><BR><HR><BR>
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../dat.html">section index</A></H2>
+</BODY></HTML>

@@ -1,0 +1,42 @@
+<HTML>
+ <HEAD>
+ <TITLE>Tool 74: Flood a host with random fragments</TITLE>
+ </HEAD>
+ <BODY BGCOLOR="#FFFFFF">
+  <CENTER>   <H3>Tool 74: Flood a host with random fragments</H3>
+  </CENTER>
+
+  <P><H3>Description:</H3>
+   <PRE>
+  This tool sends a lot of random IP fragments to a host.
+  It permits to check how a firewall behaves when receiving fragments
+  which have to be ignored.
+  
+  This tool may need to be run with admin privilege in order to spoof.
+   </PRE>
+
+  <P><H3>Usage:</H3>
+  &nbsp;&nbsp;netwox 74 -i ip [-p uint32]<BR>
+
+  <P><H3>Parameters:</H3>
+<TABLE BORDER=1 CELLPADDING=4>
+ <TR>
+  <TD ALIGN=middle><I>parameter</I></TD>
+  <TD ALIGN=middle><I>description</I></TD>
+  <TD ALIGN=middle><I>example</I></TD>
+ </TR>
+ <TR><TD><TT>-i|--dst-ip ip</TD>
+<TD>destination IP address</TD>
+<TD>5.6.7.8</TD></TR>
+<TR><TD><TT>-p|--protocol uint32</TD>
+<TD>protocol (0=rand)</TD>
+<TD>0 </TD></TR>
+</TABLE>
+
+  <P><H3>Examples:</H3>
+  &nbsp;&nbsp;netwox 74 -i "5.6.7.8"<BR>
+<BR>
+  &nbsp;&nbsp;netwox 74 --dst-ip "5.6.7.8"<BR>
+<BR>
+ </BODY>
+ </HTML>

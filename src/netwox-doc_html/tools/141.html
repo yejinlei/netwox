@@ -1,0 +1,87 @@
+<HTML>
+ <HEAD>
+ <TITLE>Tool 141: Spoof EthernetIp6Udp packet</TITLE>
+ </HEAD>
+ <BODY BGCOLOR="#FFFFFF">
+  <CENTER>   <H3>Tool 141: Spoof EthernetIp6Udp packet</H3>
+  </CENTER>
+
+  <P><H3>Description:</H3>
+   <PRE>
+  This tool sends a fake packet on the network.
+  Each parameter name should be self explaining.
+  
+  This tool may need to be run with admin privilege in order to spoof.
+   </PRE>
+
+  <P><H3>Synonyms:</H3>
+  &nbsp;&nbsp;frame, hping, mac, send<BR>
+
+  <P><H3>Usage:</H3>
+  &nbsp;&nbsp;netwox 141 [-d device] [-a eth] [-b eth] [-c uint32] [-l uint32] [-f uint32] [-g uint32] [-h ip] [-i ip] [-j ip6exts] [-o port] [-p port] [-q mixed_data] [-r uint32] [-e uint32] [-s uint32] [-t uint32]<BR>
+
+  <P><H3>Parameters:</H3>
+<TABLE BORDER=1 CELLPADDING=4>
+ <TR>
+  <TD ALIGN=middle><I>parameter</I></TD>
+  <TD ALIGN=middle><I>description</I></TD>
+  <TD ALIGN=middle><I>example</I></TD>
+ </TR>
+ <TR><TD><TT>-d|--device device</TD>
+<TD>device for spoof</TD>
+<TD>Eth0</TD></TR>
+<TR><TD><TT>-a|--eth-src eth</TD>
+<TD>Ethernet src</TD>
+<TD>E0:69:95:6F:ED:9A</TD></TR>
+<TR><TD><TT>-b|--eth-dst eth</TD>
+<TD>Ethernet dst</TD>
+<TD>0:8:9:a:b:c</TD></TR>
+<TR><TD><TT>-c|--ip6-trafficclass uint32</TD>
+<TD>IP6 traffic class</TD>
+<TD>0</TD></TR>
+<TR><TD><TT>-l|--ip6-flowlabel uint32</TD>
+<TD>IP6 flow label</TD>
+<TD>0</TD></TR>
+<TR><TD><TT>-f|--ip6-protocol uint32</TD>
+<TD>IP6 next_header/protocol</TD>
+<TD>0</TD></TR>
+<TR><TD><TT>-g|--ip6-ttl uint32</TD>
+<TD>IP6 hop_limit/ttl</TD>
+<TD>0</TD></TR>
+<TR><TD><TT>-h|--ip6-src ip</TD>
+<TD>IP6 src</TD>
+<TD>fe80::6aa3:c4ff:feea:768a</TD></TR>
+<TR><TD><TT>-i|--ip6-dst ip</TD>
+<TD>IP6 dst</TD>
+<TD>fec0:0:0:1::2</TD></TR>
+<TR><TD><TT>-j|--ip6-exts ip6exts</TD>
+<TD>IP6 extensions</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-o|--udp-src port</TD>
+<TD>UDP src</TD>
+<TD>1234</TD></TR>
+<TR><TD><TT>-p|--udp-dst port</TD>
+<TD>UDP dst</TD>
+<TD>80</TD></TR>
+<TR><TD><TT>-q|--udp-data mixed_data</TD>
+<TD>mixed data</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-r|--eth-type uint32</TD>
+<TD>Ethernet type</TD>
+<TD>2048</TD></TR>
+<TR><TD><TT>-e|--ip6-payloadlength uint32</TD>
+<TD>IP6 payload length</TD>
+<TD>0</TD></TR>
+<TR><TD><TT>-s|--udp-len uint32</TD>
+<TD>UDP length</TD>
+<TD>0</TD></TR>
+<TR><TD><TT>-t|--udp-checksum uint32</TD>
+<TD>UDP checksum</TD>
+<TD>0 </TD></TR>
+</TABLE>
+
+  <P><H3>Example:</H3>
+  &nbsp;&nbsp;netwox 141<BR>
+<BR>
+ </BODY>
+ </HTML>

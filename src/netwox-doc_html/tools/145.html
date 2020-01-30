@@ -1,0 +1,102 @@
+<HTML>
+ <HEAD>
+ <TITLE>Tool 145: Spoof Ip6Udp packet</TITLE>
+ </HEAD>
+ <BODY BGCOLOR="#FFFFFF">
+  <CENTER>   <H3>Tool 145: Spoof Ip6Udp packet</H3>
+  </CENTER>
+
+  <P><H3>Description:</H3>
+   <PRE>
+  This tool sends a fake packet on the network.
+  Each parameter name should be self explaining.
+  Parameter --spoofip indicates how to generate link layer for spoofing.
+  Values 'best', 'link' or 'raw' are common choices for --spoofip. Here
+  is the list of accepted values:
+   - 'raw' means to spoof at IP4/IP6 level (it uses system IP stack). If
+     a firewall is installed, or on some systems, this might not work.
+   - 'linkf' means to spoof at link level (currently, only Ethernet is
+     supported). The 'f' means to Fill source Ethernet address.
+     However, if source IP address is spoofed, it might be impossible
+     to Fill it. So, linkf will not work: use linkb or linkfb instead.
+   - 'linkb' means to spoof at link level. The 'b' means to left a Blank
+     source Ethernet address (0:0:0:0:0:0, do not try to Fill it).
+   - 'linkfb' means to spoof at link level. The 'f' means to try to Fill
+     source Ethernet address, but if it is not possible, it is left
+     Blank.
+   - 'rawlinkf' means to try 'raw', then try 'linkf'
+   - 'rawlinkb' means to try 'raw', then try 'linkb'
+   - 'rawlinkfb' means to try 'raw', then try 'linkfb'
+   - 'linkfraw' means to try 'linkf', then try 'raw'
+   - 'linkbraw' means to try 'linkb', then try 'raw'
+   - 'linkfbraw' means to try 'linkfb', then try 'raw'
+   - 'link' is an alias for 'linkfb'
+   - 'rawlink' is an alias for 'rawlinkfb'
+   - 'linkraw' is an alias for 'linkfbraw'
+   - 'best' is an alias for 'linkraw'. It should work in all cases.
+  
+  This tool may need to be run with admin privilege in order to spoof.
+   </PRE>
+
+  <P><H3>Synonyms:</H3>
+  &nbsp;&nbsp;hping, send<BR>
+
+  <P><H3>Usage:</H3>
+  &nbsp;&nbsp;netwox 145 [-c uint32] [-l uint32] [-f uint32] [-g uint32] [-h ip] [-i ip] [-j ip6exts] [-o port] [-p port] [-q mixed_data] [-a spoofip] [-e uint32] [-s uint32] [-t uint32]<BR>
+
+  <P><H3>Parameters:</H3>
+<TABLE BORDER=1 CELLPADDING=4>
+ <TR>
+  <TD ALIGN=middle><I>parameter</I></TD>
+  <TD ALIGN=middle><I>description</I></TD>
+  <TD ALIGN=middle><I>example</I></TD>
+ </TR>
+ <TR><TD><TT>-c|--ip6-trafficclass uint32</TD>
+<TD>IP6 traffic class</TD>
+<TD>0</TD></TR>
+<TR><TD><TT>-l|--ip6-flowlabel uint32</TD>
+<TD>IP6 flow label</TD>
+<TD>0</TD></TR>
+<TR><TD><TT>-f|--ip6-protocol uint32</TD>
+<TD>IP6 next_header/protocol</TD>
+<TD>0</TD></TR>
+<TR><TD><TT>-g|--ip6-ttl uint32</TD>
+<TD>IP6 hop_limit/ttl</TD>
+<TD>0</TD></TR>
+<TR><TD><TT>-h|--ip6-src ip</TD>
+<TD>IP6 src</TD>
+<TD>fe80::6aa3:c4ff:feea:768a</TD></TR>
+<TR><TD><TT>-i|--ip6-dst ip</TD>
+<TD>IP6 dst</TD>
+<TD>fec0:0:0:1::2</TD></TR>
+<TR><TD><TT>-j|--ip6-exts ip6exts</TD>
+<TD>IP6 extensions</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-o|--udp-src port</TD>
+<TD>UDP src</TD>
+<TD>1234</TD></TR>
+<TR><TD><TT>-p|--udp-dst port</TD>
+<TD>UDP dst</TD>
+<TD>80</TD></TR>
+<TR><TD><TT>-q|--udp-data mixed_data</TD>
+<TD>mixed data</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-a|--spoofip spoofip</TD>
+<TD>IP spoof initialization type</TD>
+<TD>best</TD></TR>
+<TR><TD><TT>-e|--ip6-payloadlength uint32</TD>
+<TD>IP6 payload length</TD>
+<TD>0</TD></TR>
+<TR><TD><TT>-s|--udp-len uint32</TD>
+<TD>UDP length</TD>
+<TD>0</TD></TR>
+<TR><TD><TT>-t|--udp-checksum uint32</TD>
+<TD>UDP checksum</TD>
+<TD>0 </TD></TR>
+</TABLE>
+
+  <P><H3>Example:</H3>
+  &nbsp;&nbsp;netwox 145<BR>
+<BR>
+ </BODY>
+ </HTML>

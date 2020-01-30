@@ -1,0 +1,48 @@
+:
+
+### Values in this file should not need to be modified, but for
+### some usages they can be changed.
+
+# In this file, a '#' is a start of comment.
+
+##########################################################################
+### installation prefix directory of netwib
+NETWIBDEF_INSTPREFIX=/usr/local
+
+### installation destination directory of netwib
+NETWIBDEF_INSTDESTDIR=""
+
+### compute directories where netwib will_be|is_currently installed
+NETWIBDEF_INSTINCLUDE=${NETWIBDEF_INSTPREFIX}/include
+NETWIBDEF_INSTLIB=${NETWIBDEF_INSTPREFIX}/lib
+NETWIBDEF_INSTBIN=${NETWIBDEF_INSTPREFIX}/bin
+NETWIBDEF_INSTDINCLUDE=${NETWIBDEF_INSTDESTDIR}${NETWIBDEF_INSTINCLUDE}
+NETWIBDEF_INSTDLIB=${NETWIBDEF_INSTDESTDIR}${NETWIBDEF_INSTLIB}
+NETWIBDEF_INSTDBIN=${NETWIBDEF_INSTDESTDIR}${NETWIBDEF_INSTBIN}
+
+##########################################################################
+### directories where netwox will be installed
+NETWOXDEF_INSTPREFIX=/usr/local
+NETWOXDEF_INSTBIN=${NETWOXDEF_INSTPREFIX}/bin
+NETWOXDEF_INSTMAN=${NETWOXDEF_INSTPREFIX}/man
+NETWOXDEF_INSTMAN1=${NETWOXDEF_INSTMAN}/man1
+
+### installation destination directory
+NETWOXDEF_INSTDESTDIR=""
+
+##########################################################################
+### programs
+NETWOXDEF_PROGCC=gcc
+NETWOXDEF_PROGAR=ar
+NETWOXDEF_PROGRANLIB=ranlib
+NETWOXDEF_PROGFIND=find
+NETWOXDEF_PROGSED=sed
+NETWOXDEF_PROGTR=tr
+NETWOXDEF_PROGSORT=sort
+
+##########################################################################
+### compiler options
+NETWOXDEF_PROGCC_OPT="-Wall -O2"
+NETWOXDEF_PROGCC_INC=""
+NETWOXDEF_PROGCC_LIB=""
+

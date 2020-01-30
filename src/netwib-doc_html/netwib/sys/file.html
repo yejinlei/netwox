@@ -1,0 +1,108 @@
+<HTML><HEAD>
+<TITLE>netwib doc_html (version 5.39.0)</TITLE>
+</HEAD><BODY BGCOLOR="#FFFFFF" TEXT="#000000">
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../sys.html">section index</A></H2><HR><BR>
+<PRE>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+typedef enum {
+  <FONT COLOR="#000044">NETWIB_FILE_INITTYPE_READ</FONT> = 1,    <FONT COLOR="#880000">/* open the file for reading */</FONT>
+  <FONT COLOR="#000044">NETWIB_FILE_INITTYPE_WRITE</FONT>,       <FONT COLOR="#880000">/* open the file for writing */</FONT>
+  <FONT COLOR="#000044">NETWIB_FILE_INITTYPE_APPEND</FONT>,      <FONT COLOR="#880000">/* open the file for appending */</FONT>
+  <FONT COLOR="#000044">NETWIB_FILE_INITTYPE_RDWR</FONT>         <FONT COLOR="#880000">/* open the file for reading and writing */</FONT>
+} <FONT COLOR="#000088">netwib_file_inittype</FONT>;
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_io_init_file
+   Description :
+     Open a file.
+   Input parameter(s) :
+     *pfilename : file name
+     textmode : (useful under Windows and ignored under Unix)
+                if file has to be opened in text mode ("\n" are
+                converted to "\r\n" for output; "\r\n" are
+                converted to "\n" for input)
+   Input/output parameter(s) :
+   Output parameter(s) :
+     **ppio : io created
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_io_init_file</B>(<FONT COLOR="#000088">netwib_constbuf</FONT> *pfilename,
+                               <FONT COLOR="#000088">netwib_file_inittype</FONT> type,
+                               <FONT COLOR="#000088">netwib_bool</FONT> textmode,
+                               <FONT COLOR="#000088">netwib_io</FONT> **ppio);
+<FONT COLOR="#008800">#define <B>netwib_io_init_file_read</B>(filename,ppio) <B>netwib_io_init_file</B>(filename,<FONT COLOR="#000044">NETWIB_FILE_INITTYPE_READ</FONT>,<FONT COLOR="#000044">NETWIB_FALSE</FONT>,ppio)</FONT>
+<FONT COLOR="#008800">#define <B>netwib_io_init_file_write</B>(filename,ppio) <B>netwib_io_init_file</B>(filename,<FONT COLOR="#000044">NETWIB_FILE_INITTYPE_WRITE</FONT>,<FONT COLOR="#000044">NETWIB_FALSE</FONT>,ppio)</FONT>
+<FONT COLOR="#008800">#define <B>netwib_io_init_file_append</B>(filename,ppio) <B>netwib_io_init_file</B>(filename,<FONT COLOR="#000044">NETWIB_FILE_INITTYPE_APPEND</FONT>,<FONT COLOR="#000044">NETWIB_FALSE</FONT>,ppio)</FONT>
+<FONT COLOR="#008800">#define <B>netwib_io_init_file_rdwr</B>(filename,ppio) <B>netwib_io_init_file</B>(filename,<FONT COLOR="#000044">NETWIB_FILE_INITTYPE_RDWR</FONT>,<FONT COLOR="#000044">NETWIB_FALSE</FONT>,ppio)</FONT>
+<FONT COLOR="#008800">#define <B>netwib_io_init_file_textread</B>(filename,ppio) <B>netwib_io_init_file</B>(filename,<FONT COLOR="#000044">NETWIB_FILE_INITTYPE_READ</FONT>,<FONT COLOR="#000044">NETWIB_TRUE</FONT>,ppio)</FONT>
+<FONT COLOR="#008800">#define <B>netwib_io_init_file_textwrite</B>(filename,ppio) <B>netwib_io_init_file</B>(filename,<FONT COLOR="#000044">NETWIB_FILE_INITTYPE_WRITE</FONT>,<FONT COLOR="#000044">NETWIB_TRUE</FONT>,ppio)</FONT>
+<FONT COLOR="#008800">#define <B>netwib_io_init_file_textappend</B>(filename,ppio) <B>netwib_io_init_file</B>(filename,<FONT COLOR="#000044">NETWIB_FILE_INITTYPE_APPEND</FONT>,<FONT COLOR="#000044">NETWIB_TRUE</FONT>,ppio)</FONT>
+<FONT COLOR="#008800">#define <B>netwib_io_init_file_textrdwr</B>(filename,ppio) <B>netwib_io_init_file</B>(filename,<FONT COLOR="#000044">NETWIB_FILE_INITTYPE_RDWR</FONT>,<FONT COLOR="#000044">NETWIB_TRUE</FONT>,ppio)</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* set current position from beginning of file */</FONT>
+<FONT COLOR="#880000">/* <FONT COLOR="#000088">netwib_err</FONT> f(<FONT COLOR="#000088">netwib_io</FONT> *pio, <FONT COLOR="#000088">netwib_int32</FONT> pos); */</FONT>
+<FONT COLOR="#008800">#define <B>netwib_file_ctl_set_seek_begin</B>(pio,pos) <B>netwib_io_ctl_set</B>(pio,<FONT COLOR="#000044">NETWIB_IO_WAYTYPE_SUPPORTED</FONT>,<FONT COLOR="#000044">NETWIB_IO_CTLTYPE_FILE_SEEK_BEGIN</FONT>,NULL,(netwib_uint32)pos)</FONT>
+<FONT COLOR="#880000">/* <FONT COLOR="#000088">netwib_err</FONT> f(<FONT COLOR="#000088">netwib_io</FONT> *pio, const <FONT COLOR="#000088">netwib_int64</FONT> *ppos); */</FONT>
+<FONT COLOR="#008800">#define <B>netwib_file_ctl_set_seek64_begin</B>(pio,ppos) <B>netwib_io_ctl_set</B>(pio,<FONT COLOR="#000044">NETWIB_IO_WAYTYPE_SUPPORTED</FONT>,<FONT COLOR="#000044">NETWIB_IO_CTLTYPE_FILE_SEEK_BEGIN</FONT>,ppos,0)</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* set current position from current position of file */</FONT>
+<FONT COLOR="#880000">/* <FONT COLOR="#000088">netwib_err</FONT> f(<FONT COLOR="#000088">netwib_io</FONT> *pio, <FONT COLOR="#000088">netwib_int32</FONT> pos); */</FONT>
+<FONT COLOR="#008800">#define <B>netwib_file_ctl_set_seek_current</B>(pio,pos) <B>netwib_io_ctl_set</B>(pio,<FONT COLOR="#000044">NETWIB_IO_WAYTYPE_SUPPORTED</FONT>,<FONT COLOR="#000044">NETWIB_IO_CTLTYPE_FILE_SEEK_CURRENT</FONT>,NULL,(netwib_uint32)pos)</FONT>
+<FONT COLOR="#880000">/* <FONT COLOR="#000088">netwib_err</FONT> f(<FONT COLOR="#000088">netwib_io</FONT> *pio, const <FONT COLOR="#000088">netwib_int64</FONT> *ppos); */</FONT>
+<FONT COLOR="#008800">#define <B>netwib_file_ctl_set_seek64_current</B>(pio,ppos) <B>netwib_io_ctl_set</B>(pio,<FONT COLOR="#000044">NETWIB_IO_WAYTYPE_SUPPORTED</FONT>,<FONT COLOR="#000044">NETWIB_IO_CTLTYPE_FILE_SEEK_CURRENT</FONT>,ppos,0)</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* set current position from end of file */</FONT>
+<FONT COLOR="#880000">/* <FONT COLOR="#000088">netwib_err</FONT> f(<FONT COLOR="#000088">netwib_io</FONT> *pio, <FONT COLOR="#000088">netwib_int32</FONT> pos); */</FONT>
+<FONT COLOR="#008800">#define <B>netwib_file_ctl_set_seek_end</B>(pio,pos) <B>netwib_io_ctl_set</B>(pio,<FONT COLOR="#000044">NETWIB_IO_WAYTYPE_SUPPORTED</FONT>,<FONT COLOR="#000044">NETWIB_IO_CTLTYPE_FILE_SEEK_END</FONT>,NULL,(netwib_uint32)pos)</FONT>
+<FONT COLOR="#880000">/* <FONT COLOR="#000088">netwib_err</FONT> f(<FONT COLOR="#000088">netwib_io</FONT> *pio, const <FONT COLOR="#000088">netwib_int64</FONT> *ppos); */</FONT>
+<FONT COLOR="#008800">#define <B>netwib_file_ctl_set_seek64_end</B>(pio,ppos) <B>netwib_io_ctl_set</B>(pio,<FONT COLOR="#000044">NETWIB_IO_WAYTYPE_SUPPORTED</FONT>,<FONT COLOR="#000044">NETWIB_IO_CTLTYPE_FILE_SEEK_END</FONT>,ppos,0)</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* get current position from beginning of file */</FONT>
+<FONT COLOR="#880000">/* <FONT COLOR="#000088">netwib_err</FONT> f(<FONT COLOR="#000088">netwib_io</FONT> *pio, <FONT COLOR="#000088">netwib_int32</FONT> *ppos); */</FONT>
+<FONT COLOR="#008800">#define <B>netwib_file_ctl_get_tell</B>(pio,ppos) <B>netwib_io_ctl_get</B>(pio,<FONT COLOR="#000044">NETWIB_IO_WAYTYPE_SUPPORTED</FONT>,<FONT COLOR="#000044">NETWIB_IO_CTLTYPE_FILE_TELL</FONT>,NULL,(netwib_uint32*)ppos)</FONT>
+<FONT COLOR="#880000">/* <FONT COLOR="#000088">netwib_err</FONT> f(<FONT COLOR="#000088">netwib_io</FONT> *pio, <FONT COLOR="#000088">netwib_int64</FONT> *ppos); */</FONT>
+<FONT COLOR="#008800">#define <B>netwib_file_ctl_get_tell64</B>(pio,ppos) <B>netwib_io_ctl_get</B>(pio,<FONT COLOR="#000044">NETWIB_IO_WAYTYPE_SUPPORTED</FONT>,<FONT COLOR="#000044">NETWIB_IO_CTLTYPE_FILE_TELL</FONT>,ppos,NULL)</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* truncate file to indicated size */</FONT>
+<FONT COLOR="#880000">/* <FONT COLOR="#000088">netwib_err</FONT> f(<FONT COLOR="#000088">netwib_io</FONT> *pio, <FONT COLOR="#000088">netwib_int32</FONT> pos); */</FONT>
+<FONT COLOR="#008800">#define <B>netwib_file_ctl_set_truncate</B>(pio,pos) <B>netwib_io_ctl_set</B>(pio,<FONT COLOR="#000044">NETWIB_IO_WAYTYPE_SUPPORTED</FONT>,<FONT COLOR="#000044">NETWIB_IO_CTLTYPE_FILE_TRUNCATE</FONT>,NULL,(netwib_uint32)pos)</FONT>
+<FONT COLOR="#880000">/* <FONT COLOR="#000088">netwib_err</FONT> f(<FONT COLOR="#000088">netwib_io</FONT> *pio, const <FONT COLOR="#000088">netwib_int64</FONT> *ppos); */</FONT>
+<FONT COLOR="#008800">#define <B>netwib_file_ctl_set_truncate64</B>(pio,ppos) <B>netwib_io_ctl_set</B>(pio,<FONT COLOR="#000044">NETWIB_IO_WAYTYPE_SUPPORTED</FONT>,<FONT COLOR="#000044">NETWIB_IO_CTLTYPE_FILE_TRUNCATE</FONT>,ppos,0)</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_io_init_filetemp
+   Description :
+     Open a temporary file, and give back the chosen file name.
+   Input parameter(s) :
+     textmode : (useful under Windows and ignored under Unix)
+                if file has to be opened in text mode ("\n" are
+                converted to "\r\n")
+   Input/output parameter(s) :
+     *pfilename : file name
+                  If its size is 0, choose a filename in
+                  system's temporary directory.
+                  If it contains something, append 6 random
+                  characters to create the file name. So, it must
+                  end with '/' to be interpreted as a directory.
+                  The chosen filename is set in this variable.
+   Output parameter(s) :
+     **ppio : io created
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_io_init_filetemp</B>(<FONT COLOR="#000088">netwib_bool</FONT> textmode,
+                                   <FONT COLOR="#000088">netwib_buf</FONT> *pfilename,
+                                   <FONT COLOR="#000088">netwib_io</FONT> **ppio);
+
+</PRE><BR><BR><HR><BR>
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../sys.html">section index</A></H2>
+</BODY></HTML>

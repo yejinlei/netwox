@@ -1,0 +1,39 @@
+                    Installation under Windows
+
+There are 2 ways to install netwib, netwox and netwag :
+ - automatic installation:
+     This is easy.
+ - step by step installation:
+     If automatic installation does not work, use a step by step
+     procedure to spot the problem.
+
+
+Automatic:
+==========
+  - Install WinPCAP version >= 3.0 yourself from http://winpcap.polito.it/
+  - Install Tcl/Tk yourself from ftp://ftp.activestate.com/ActiveTcl/Windows/
+  - Run netwib/netwox/netwag automatic installer :
+      ./installwindows.exe  [it asks some questions]
+
+
+Step by step:
+=============
+
+WINPCAP
+  - Install WinPCAP version >= 3.0 yourself from http://winpcap.polito.it/
+TCL/TK
+  - Install Tcl/Tk yourself from ftp://ftp.activestate.com/ActiveTcl/Windows/
+NETWIB (for developers only)
+  - Read src/netwib-bin_windows/INSTALL.TXT, and install it.
+  - Copy src/netwib-doc_html/ where you want.
+NETWOX
+  - Read src/netwox-bin_windows/INSTALL.TXT, and install it.
+  - Copy src/netwox-doc_html/ where you want.
+NETWAG
+  - Read src/netwag-bin_windows/INSTALL.TXT, and install it.
+  - Copy src/netwag-doc_html/ where you want.
+END
+  - Now, you can run:
+      netwag539  [Read netwag-doc_html/html/lessons.html]
+      netwox539  [Read netwox-doc_html/html/examples.html]
+

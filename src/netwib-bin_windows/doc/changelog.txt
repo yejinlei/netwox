@@ -1,0 +1,899 @@
+             Laurent CONSTANTIN's network library (netwib)
+
+
+            ----------------------------------------------
+            |              NETWIB 's CHANGELOG           |
+            ----------------------------------------------
+
+
+---------------------------------------------------------------------
+Version 5.39.0 - 8-Jul-2012
+
+ ++ fixed bugs ++
+  - The function netwib_decodetype_init_kbd() returned an incorrect
+    netwib_decodetype (incremented by one).
+  - On a recent Linux kernel, netwib_ip_init_eth() always returned
+    the NETWIB_ERR_FUIOCTL error, because SIOCGRARP is not
+    supported.
+
+ ++ minor evolutions ++
+  - Update the url of the website: http://ntwib.sourceforge.net/
+  - Corrected minor compiler warnings.
+  - Add NETWIB_WINDOWSTYPE_2008 and NETWIB_WINDOWSTYPE_7 for
+    netwib_windowstype_init().
+  - On a recent Windows, we can have more than 20 devices, so we
+    add the description in netwib_conf_devices.device, in order to
+    show users why there are so many unknown devices on their
+    systems.
+
+ ++ compiler change ++
+  - The Windows library (netwib.dll) is now compiled with Dev-C++
+    (Mingw32), instead of Microsoft Visual. So, there is no
+    "netwib[version].lib" anymore, which is replaced by
+    "libnetwib[version].a". If you need this file, just recompile
+    netwib with Microsoft Visual from sources as described in
+    netwib-src/INSTALLWINDOWS.TXT.
+
+
+---------------------------------------------------------------------
+Version 5.38.0 - 14-Feb-2010
+
+ ++ minor evolutions ++
+  - Add netwib__debug_ctrlc_pressed_break() to find memory leaks
+    in debug mode.
+  - Limit the number of recursive directories which can be created
+    with netwib_dirname_create() to 100.
+
+
+---------------------------------------------------------------------
+Version 5.37.0 - 19-Dec-2009
+
+ ++ fixed bugs ++
+  - Suppress gcc 4.3 warnings about unused functions.
+
+ ++ major evolutions ++
+  - Change GPLv2 to GPLv3.
+
+
+---------------------------------------------------------------------
+Version 5.36.0 - 01-Nov-2008
+
+ ++ fixed bugs ++
+  - If a netwib_ips, netwib_eths or netwib_port contains too many
+    values, a crash occurs. This crash is caused by the usage of a
+    pointer which is not valid.
+  - Installation directories were not created with mode 0755, so if
+    root has a strict umask, users could not read the files in the
+    directories.
+  - The state of a netwib_io on a record was not initialized.
+
+
+---------------------------------------------------------------------
+Version 5.35.0 - 05-Oct-2006
+
+ ++ fixed bugs ++
+  - Memory leak in netwib_dir_init() in cases where the dirname
+    buffer could not be expanded.
+
+ ++ major evolutions ++
+  - Following functions were renamed, to homogenize their names
+    ("string" instead of "text" or "str"):
+     netwib_buf_cmp_str() to netwib_buf_cmp_string()
+     netwib_buf_casecmp_str() to netwib_buf_casecmp_string()
+     netwib_buf_init_ext_text() to netwib_buf_init_ext_string()
+     netwib_buf_append_text() to netwib_buf_append_string()
+  - Function netwib_buf_ref_string() was renamed to
+    netwib_constbuf_ref_string() because it has a constant parameter.
+    The new netwib_buf_ref_string() function has a non constant
+    parameter. The macro netwib__constbuf_ref_string() is now public
+    to manage an intermediary storage for appending the needed '\0'.
+  - Type NETWIB_DECODETYPE_QUOTED for netwib_buf_decode() function
+    is replaced by netwib_buf_decode_quoted() function.
+  - Creation of NETWIB_BUF_FLAGS_SENSITIVE flags to wipe memory of
+    sensitive buffers.
+
+ ++ minor evolutions ++
+  - Creation of netwib_io_init_shellserver() and shellclient() to
+    provide a bash shell with a tty and readline. It is currently
+    only implemented for Linux.
+  - Add netwib_hash_ctl_get_count().
+
+ ++ internal evolutions (not seen by end users) ++
+  - Improvement in netwib_ring_index and netwib_hash_index to manage
+    ring/hash changes during index looping. The supported functions,
+    and their behavior, are commented in ringi.h and hashi.h.
+
+
+---------------------------------------------------------------------
+Version 5.34.0 - 05-Apr-2006
+
+ ++ fixed bugs ++
+  - During compilation of libnetwib.so dynamic library, GCCLIB was
+    missing.
+
+ ++ major evolutions ++
+  - Support of Tru64 Unix.
+
+ ++ minor evolutions ++
+  - New functions netwib_buf_casecmp(), netwib_buf_cmp_str() and
+    netwib_buf_casecmp_str().
+
+ ++ internal evolutions (not seen by end users) ++
+    None in this version
+
+
+---------------------------------------------------------------------
+Version 5.33.0 - 20-December-2005
+
+ ++ fixed bugs ++
+    None in this version
+
+ ++ major evolutions ++
+  - Rewrite of uint64 module to have common defines supporting 64
+    and 32 bit processors.
+
+ ++ minor evolutions ++
+    None in this version
+
+ ++ internal evolutions (not seen by end users) ++
+  - Support of gcc 4.0 compiler.
+
+
+---------------------------------------------------------------------
+Version 5.32.0 - 24-November-2005
+
+ ++ fixed bugs ++
+  - Under Linux without IPv6 support, arp cache contains
+    00:00:00:00:00:00 Ethernet addresses for unresolved entries.
+  - In netwib_io_init_sniff_tcpreord(), only 8 of the 16 bits of
+    TCP destination port were used to compare TCP sessions. This
+    leads to a loss of packets.
+
+ ++ major evolutions ++
+    None in this version
+
+ ++ minor evolutions ++
+    None in this version
+
+ ++ internal evolutions (not seen by end users) ++
+  - Improve netwib_io_init_sniff_tcpreord() function.
+
+
+---------------------------------------------------------------------
+Version 5.31.0 - 12-October-2005
+
+ ++ fixed bugs ++
+  - Security: netwib_dir module contained a low risk vulnerability
+    exploitable if:
+     * netwib is used in a suid/sgid program and
+     * this program is run on a system with a special filesystem
+       (notes: I've never seen a filesystem matching the requested
+        criteria. None of netwib users have a such system, otherwise
+        they would have experienced a crash and reported it. So I
+        think this vulnerability is almost never exploitable)
+    Netwox is not vulnerable because it is not installed suid/sgid.
+    Thanks to Ben Hutchings for reporting the problem. He found a
+    generic problem affecting a lot of programs, but netwib code
+    is special, and thus not affected as other programs.
+    Netwib_dir module was partially rewritten to correct this
+    problem and to improve its performance.
+  - Memory leak in netwib_dir_init() if directory does not exists.
+
+ ++ major evolutions ++
+  - Function netwib_io_init_file() now supports reading and writing.
+
+ ++ minor evolutions ++
+  - New macro netwib_sock_ctl_get_socktype() obtains socket type.
+  - Output value for netwib_ABC_compare_pf functions has a default
+    value of NETWIB_CMP_LT.
+  - Output value for netwib_ABC_criteria_pf functions has a default
+    value of NETWIB_FALSE.
+  - Function netwib_io_init_filetemp() opens file for read and write,
+    instead of write only.
+  - New macro netwib_file_ctl_set_truncate() truncates a file.
+
+ ++ internal evolutions (not seen by end users) ++
+    None in this version
+
+
+---------------------------------------------------------------------
+Version 5.30.0 - 30-March-2005
+ ++ important ++
+    Netw project is still paused.
+
+ ++ fixed bugs ++
+  - Macros netwib_c2_uint16_2, netwib_c2_uint32_4, netwib_c2_uint64_8
+    netwib_c2_uint64_set_8 and netwib_c2_uint64_set_32 did not work
+    if parameters were signed.
+
+ ++ major evolutions ++
+    None in this version
+
+ ++ minor evolutions ++
+  - A new macro netwib_sock_ctl_set_multicastttl() permits to set
+    TTL for multicast packets.
+
+ ++ internal evolutions (not seen by end users) ++
+    None in this version
+
+
+---------------------------------------------------------------------
+Version 5.29.0 - 21-February-2005
+ ++ important ++
+    As some of you noticed, netw project paused since January 1st.
+    This is due to my professional/enterprise project where I have to
+    do a lot of private work. It should end on september, so I expect
+    to be back on netw on october. In the meantime, bugs will be
+    corrected, but no major tool is expected. Note: don't worry, my
+    boss is not forcing me to work on WE, but I want this project to
+    take a giant step :-)
+
+ ++ fixed bugs ++
+    None in this version
+
+ ++ major evolutions ++
+    None in this version
+
+ ++ minor evolutions ++
+    None in this version
+
+ ++ internal evolutions (not seen by end users) ++
+    None in this version
+
+
+---------------------------------------------------------------------
+Version 5.28.0 - 05-January-2005
+ ++ fixed bugs ++
+    None in this version
+
+ ++ major evolutions ++
+  - Rewrite of module sys/path, to provide functions easier to use.
+    Their parameters are not required to be canonized anymore.
+
+ ++ minor evolutions ++
+    None in this version
+
+ ++ internal evolutions (not seen by end users) ++
+    None in this version
+
+
+---------------------------------------------------------------------
+Version 5.27.0 - 30-November-2004
+ ++ fixed bugs ++
+    None in this version
+
+ ++ major evolutions ++
+    None in this version
+
+ ++ minor evolutions ++
+    None in this version
+
+ ++ internal evolutions (not seen by end users) ++
+    None in this version
+
+
+---------------------------------------------------------------------
+Version 5.26.0 - 25-October-2004
+ ++ fixed bugs ++
+  - Under Solaris, network devices with two or more IP addresses were
+    not retrieved in network configuration. The first address was set
+    but not the others.
+  - Under BSD, additional routing table entries were not retrieved.
+    It was due to specially formed socket addresses not been decoded.
+
+ ++ major evolutions ++
+    None in this version
+
+ ++ minor evolutions ++
+  - Creation of function netwib_show_array_fmt32 which is frequently
+    used.
+
+ ++ internal evolutions (not seen by end users) ++
+  - Timezone selection is done in netwib_init().
+
+
+---------------------------------------------------------------------
+Version 5.25.0 - 27-September-2004
+ ++ fixed bugs ++
+  - A change introduced in version 5.24.0 caused a compiler error on
+    computers without 64 bit integers support. It was necessary to
+    edit netwib source to correct the error in order to compile.
+
+ ++ major evolutions ++
+  - A new error code was created: NETWIB_ERR_DATAMISSING. It is used
+    by packet decoding functions to indicate packet could not be
+    decoded because of insufficient data (!= malformed data).
+
+ ++ minor evolutions ++
+  - Creation of defines to simplify uint64 conversion.
+
+ ++ internal evolutions (not seen by end users) ++
+    None in this version
+
+
+---------------------------------------------------------------------
+Version 5.24.0 - 12-September-2004
+ ++ fixed bugs ++
+    None in this version
+
+ ++ major evolutions ++
+  - Lists of addresses or ports (netwib_ips, netwib_eths or
+    netwib_ports) can be sorted, or not, depending on user choice.
+
+ ++ minor evolutions ++
+  - Random number generator uses a 64 bit linear congruential
+    generator (before, it was a 31 bit generator). It provides a
+    longer period.
+
+ ++ internal evolutions (not seen by end users) ++
+    None in this version
+
+
+---------------------------------------------------------------------
+Version 5.23.0 - 30-August-2004
+ ++ fixed bugs ++
+  - Under Yellow Dog Linux, a crash occurred in netwib_buf_append_fmt
+    and similar functions. It was due to a va_list passed as value
+    to sub-functions, instead of passed as reference/pointer. A
+    va_list is special and should be treated as opaque. Thanks to
+    Joseph E. Sacco for reporting and solving the problem.
+
+ ++ major evolutions ++
+    None in this version
+
+ ++ minor evolutions ++
+    None in this version
+
+ ++ internal evolutions (not seen by end users) ++
+    None in this version
+
+
+---------------------------------------------------------------------
+Version 5.22.0 - 15-August-2004
+ ++ fixed bugs ++
+  - Functions netwib_c_memmem and netwib_c_memcasemem crashed trying
+    to read past end of buffers.
+  - On systems where poll() does not exists (Windows for example),
+    selecting an infinite wait on file descriptor caused a NULL
+    pointer to be used. This crashed the program.
+
+ ++ major evolutions ++
+    None in this version
+
+ ++ minor evolutions ++
+    None in this version
+
+ ++ related note ++
+  - In you install Windows XP SP2, it's no more possible to send a
+    raw TCP packet, or to spoof an UDP packet. In those cases, use
+    --spoofip "link" (or "best").
+
+ ++ internal evolutions (not seen by end users) ++
+  - genemake supports compiler options. Read doc/installspecial.txt
+    for instructions for packages creation.
+
+
+---------------------------------------------------------------------
+Version 5.21.0 - 1-August-2004
+ ++ fixed bugs ++
+    None in this version
+
+ ++ major evolutions ++
+    None in this version
+
+ ++ minor evolutions ++
+  - Creation of function netwib_io_init_filetemp.
+
+ ++ internal evolutions (not seen by end users) ++
+    None in this version
+
+
+---------------------------------------------------------------------
+Version 5.20.0 - 18-July-2004
+ ++ fixed bugs ++
+    None in this version
+
+ ++ major evolutions ++
+  - Reorganization of error codes.
+  - Functions netwib_show_abc were renamed to netwib_abc_show.
+
+ ++ minor evolutions ++
+    None in this version
+
+ ++ internal evolutions (not seen by end users) ++
+    None in this version
+
+
+---------------------------------------------------------------------
+Version 5.19.0 - 5-July-2004
+ ++ fixed bugs ++
+  - Memory leak in netwib_io_init_sock when an error occurred.
+
+ ++ major evolutions ++
+  - Program genemake guesses system and architecture, without the
+    need to edit config.dat.
+  - Creation of netwib_int64 and netwib_uint64 types containing 64
+    bit integers where available (natively on 64 bit computers, or
+    using compiler extensions on 32 bit computers).
+  - Creation of netwib_uintptr of same size as pointers, whereas
+    netwib_intmax can now store a 64 bit integer even on 32 bit
+    computers.
+
+ ++ minor evolutions ++
+  - Creation of function netwib_buf_append_localtime to display a
+    localtime.
+  - Field yday in netwib_localtime corresponds to the real day
+    number, and not the offset since January 1.
+  - Function netwib_pathstat_init replaces function
+    netwib_pathnametype_init.
+  - Flag NETWIB_BUF_FLAGS_NEEDTOALLOC was somewhat redundant with
+    NETWIB_BUF_FLAGS_CANALLOC.
+
+ ++ internal evolutions (not seen by end users) ++
+    None in this version
+
+
+---------------------------------------------------------------------
+Version 5.18.0 - 1-June-2004
+ ++ bugs fixed ++
+    None in this version
+
+ ++ major evolutions ++
+  - IMPORTANT: netwib's license changed from LGPL to GPL (netwox and
+    netwag are already GPL). In a world were more and more commercial
+    enterprises earn money using Open Source developers' work, but
+    never contribute to community, I do not think LGPL is appropriate
+    anymore for netwib. If you want to use netwib/ox/ag in a
+    commercial application, just contribute, and I'll arrange a
+    special license for your needs.
+  - Test suite, previously located in netw-5.x.y-test.tgz, is now
+    in netw-ib-ox-ag-5.x.y.tgz.
+
+ ++ minor evolutions ++
+    None in this version
+
+ ++ internal evolutions (not seen by end users) ++
+    None in this version
+
+---------------------------------------------------------------------
+Version 5.17.0 - 24-May-2004
+ ++ bugs fixed ++
+  - In netwib_pkt_decode_layer_ip, if totlen was less than IP header
+    size, function crashed.
+  - Function netwib_pkt_append_iphdr recomputed ihl, which is
+    normally netwib_pkt_append_layer_ip 's job. This didn't cause
+    problem, but it was not its documented behavior.
+  - Function netwib_pkt_append_tcphdr recomputed doff, which is
+    normally netwib_pkt_append_layer_tcp 's job. This didn't cause
+    problem, but it was not its documented behavior.
+
+ ++ major evolutions ++
+    None in this version
+
+ ++ minor evolutions ++
+  - Function netwib_kbd_press has one more parameter containing
+    pressed key.
+
+ ++ internal evolutions (not seen by end users) ++
+    None in this version
+
+
+---------------------------------------------------------------------
+Version 5.16.0 - 10-May-2004
+ ++ bugs fixed ++
+  - Function netwib_time_decode_localtime increases zone offset by
+    one hour when daylight saving time is set. It is necessary for
+    gloval timezone variable, but it was not for tm_gmtoff.
+
+ ++ major evolutions ++
+    None in this version
+
+ ++ minor evolutions ++
+  - Function netwib_pathname_exists now detects paths containing a
+    file.
+
+ ++ internal evolutions (not seen by end users) ++
+    None in this version
+
+
+---------------------------------------------------------------------
+Version 5.15.0 - 21-Apr-2004
+ ++ bugs fixed ++
+  - Files in netwib-5.14.0-bin_windows were generated using version
+    5.13.0 of netwib. A methodology change was made to ensure this
+    stupid mistake will not happen again. Thanks to Suresh Ravindran
+    for reporting this bug.
+
+ ++ major evolutions ++
+    None in this version
+
+ ++ minor evolutions ++
+    None in this version
+
+ ++ internal evolutions (not seen by end users) ++
+    None in this version
+
+
+---------------------------------------------------------------------
+Version 5.14.0 - 14-Apr-2004
+ ++ bugs fixed ++
+  - When local host did not have an IPv6 address configured,
+    function netwib_eth_init_ip did not work to convert an IPv6
+    address.
+
+ ++ major evolutions ++
+  - Creation of netwib_array to store a dynamic array of structures.
+
+ ++ minor evolutions ++
+    None in this version
+
+ ++ internal evolutions (not seen by end users) ++
+  - Improvement of error messages.
+
+
+---------------------------------------------------------------------
+Version 5.13.0 - 05-Apr-2004
+ ++ bugs fixed ++
+  - In netwib_sock_tcp_mulser, information for threads was located
+    in a shared memory. So, when several threads were starting
+    they were using the same information. Unreliable behavior then
+    occurred. Thanks to Christophe Delahaye for reporting problem.
+  - In netwib_io_unplug_next, a break was missing for case
+    NETWIB_IO_WAYTYPE_SUPPORTED.
+  - In netwib_tlv_decode_ip, a break was missing for case
+    NETWIB_IP6_LEN.
+
+ ++ major evolutions ++
+    None in this version
+
+ ++ minor evolutions ++
+  - Function netwib_threadlist_close now waits for threads' end
+    before closing resources.
+  - When using function netwox_sock_tcp_mulser, user does not need
+    anymore to close the io.
+  - Creation of manpages for sections : netwib_dat, netwib_sys,
+    netwib_net, netwib_pkt and netwib_shw.
+  - Simplification of netwib_ip_encodetype and netwib_ip_decodetype.
+
+ ++ internal evolutions (not seen by end users) ++
+    None in this version
+
+
+---------------------------------------------------------------------
+Version 5.12.0 - 30-Mar-2004
+ ++ bugs fixed ++
+    None in this version
+
+ ++ major evolutions ++
+    None in this version
+
+ ++ minor evolutions ++
+    None in this version
+
+ ++ internal evolutions (not seen by end users) ++
+  - Suppress genemake warning occurring because "a == b" is valid
+    only in bash. In classic bourne shell, the correct syntax is
+    "a = b". This warning was introduced in version 5.9.0, after
+    cosmetics changes in genemake.
+  - Suppress compilation error for some Mac OS X. It is related to
+    special installations on libnet, not defining expected defines.
+
+
+---------------------------------------------------------------------
+Version 5.11.0 - 22-Mar-2004
+ ++ bugs fixed ++
+    None in this version
+
+ ++ major evolutions ++
+    None in this version
+
+ ++ minor evolutions ++
+  - Suppress minor compilation warnings on very pedantic compilers.
+
+ ++ internal evolutions (not seen by end users) ++
+    None in this version
+
+
+---------------------------------------------------------------------
+Version 5.10.0 - 3-Mar-2004
+ ++ bugs fixed ++
+  - Function netwib_show_array_data entered an infinite loop when
+    title parameter was too long.
+
+ ++ major evolutions ++
+    None in this version
+
+ ++ minor evolutions ++
+    None in this version
+
+ ++ internal evolutions (not seen by end users) ++
+  - Waiting functions ensure absolute time is not elapsed before
+    checking for en event.
+  - optimization of NETWIB_BUF_FLAGS_CANSLIDE implementation.
+
+
+---------------------------------------------------------------------
+Version 5.9.0 - 16-Feb-2004
+ ++ bugs fixed ++
+    None in this version
+
+ ++ major evolutions ++
+  - Under Windows, WinPCAP is now loaded dynamically. So, on
+    computers where WinPCAP is not installed, netwib still works
+    (except for sniff and spoof of course). It also solves a problem
+    of incompatibility between WinPCAP 3.0 and 3.1.
+
+ ++ minor evolutions ++
+    None in this version
+
+ ++ internal evolutions (not seen by end users) ++
+    None in this version
+
+
+---------------------------------------------------------------------
+Version 5.8.0 - 2-Feb-2004
+ ++ bugs fixed ++
+    None in this version
+
+ ++ major evolutions ++
+  - MacOS is now supported.
+  - NetBSD-current is now supported.
+  - HP-UX is now supported.
+
+ ++ minor evolutions ++
+  - Under Windows, project can be compiled with Dev-C++/Mingw32.
+
+ ++ internal evolutions (not seen by end users) ++
+    None in this version
+
+
+---------------------------------------------------------------------
+Version 5.7.0 - 22-Jan-2004
+ ++ bugs fixed ++
+    None in this version
+
+ ++ major evolutions ++
+  - Support of IPv6 packet creation and decoding. This caused several
+    major changes in old structures and functions.
+  - Simplification of icmp4 module.
+  - Creation of icmp6 module.
+  - Creation of tcpopt/tcpopts modules.
+
+ ++ minor evolutions ++
+  - Gcc flag "-ansi" is not used anymore. It caused problems with
+    libnet 1.1.1.
+
+ ++ internal evolutions (not seen by end users) ++
+    None in this version
+
+
+---------------------------------------------------------------------
+Version 5.6.0 - 14-Dec-2003
+ ++ bugs fixed ++
+  - Under Linux, when a network card had no IP address but was up
+    (ifconfig eth0 0.0.0.0 up), it was not listed in the device
+    configuration. Thanks to Jens-Harald Johansen for reporting the
+    problem.
+  - Functions netwib_char_init_kbd and netwib_io_init_kbd did not
+    reset the keyboard state. For example, Control-D was then
+    ignored.
+  - Under Unix, function netwib_thread_wait did not free thread
+    resources when waiting for a thread for a non infinite duration.
+
+ ++ major evolutions ++
+  - Creation of section shw where all functions displaying packet
+    were put. They were renamed from netwib_buf_append_tcphdr
+    to netwib_show_tcphdr.
+
+ ++ minor evolutions ++
+  - Function netwib_ip_init_buf has one more parameter to specify
+    the type of IP address to decode.
+  - Creation of NETWIB_ENCODETYPE_QUOTED and
+    NETWIB_DECODETYPE_QUOTED.
+  - Creation of function netwib_c_memcasecmp.
+
+ ++ internal evolutions (not seen by end users) ++
+  - Rewrite of bufpool.c.
+
+
+---------------------------------------------------------------------
+Version 5.5.0 - 11-Nov-2003
+
+ ++ bugs fixed ++
+  - Calling netwib_io_write on a TCP socket could result in a SIGPIPE
+    sent to program (because send() wasn't called with MSG_NOSIGNAL
+    flag on systems where this flag is supported).
+
+ ++ major evolutions ++
+  - Creation of flag NETWIB_BUF_FLAGS_NEEDTOALLOC to create an
+    optional buffer. This type of buffer is allocated only when
+    it is really needed.
+  - Module bufpool now supports memory shared between several
+    threads.
+
+ ++ minor evolutions ++
+    None in this version
+
+ ++ internal evolutions (not seen by end users) ++
+  - Improvements in genemake file to support a more generic
+    installation. Thanks to Olivier Thauvin.
+  - Functions using netwib_buf_ref_string on parameters now use
+    an internal buffer.
+
+
+---------------------------------------------------------------------
+Version 5.4.0 - 28-Oct-2003
+
+ ++ bugs fixed ++
+    None in this version
+
+ ++ major evolutions ++
+  - Function netwib_buf_append_char was renamed to
+    netwib_buf_append_byte.
+  - Function netwib_io_init_sock_tcp_ser is no more blocking
+    awaiting for a client to connect. Function netwib_io_wait can
+    now be used for waiting.
+
+ ++ minor evolutions ++
+  - Support for gcc 3.3.2 (and others) having -fstrict-aliasing in
+    default O2 optimization. Flag -fno-strict-aliasing is now set.
+    Note: ISO C changed to be more strict. However, this leads to
+    complex code when two types are not exactly the same (forced
+    usage of unions instead of cast). The major problem for netwib
+    is allocator functions and ring/hash functions. Those functions
+    are clean (there is no bug) but when the compiler optimize them,
+    it introduce bugs... After looking around to see how other
+    projects are dealing with this, I found that most of them are
+    deactivating the optimization feature. So, I'll do as my
+    friends : gcc -O2 -fno-strict-aliasing.
+  - Function netwib_dir_next now returns canonized filenames.
+  - Creation of function netwib_unix_symlink.
+
+ ++ internal evolutions (not seen by end users) ++
+  - Under Windows, function LoadLibrary is now wrapped in a common
+    function searching in system directories first. This is better
+    for users loading netwib at run time, but it does not help
+    when a program, such as netwox, is linked with netwib.
+  - Several files contained tabulations instead of spaces.
+
+
+---------------------------------------------------------------------
+Version 5.3.0 - 19-Oct-2003
+
+ ++ bugs fixed ++
+  - Under Windows, functions netwib_filename_rename and
+    netwib_dirname_rename did not work if destination file previously
+    existed. This bug is the same as the one corrected in 5.2.0. This
+    is not really clear to me, nor in msdn documentation, but rename
+    can return errno EEXIST or EACCES depending on context. So now I
+    just hope all error cases are checked :)
+  - In functions displaying packets, if an header is not decoded,
+    it is printed as data. However, a transition was not printed in
+    this case. So, a space or a newline was not printed between the
+    header and the data.
+  - UDP header decoding had an useless/invalid test causing valid
+    headers to be rejected.
+
+ ++ major evolutions ++
+  - A netwib_buf can be configured using a bitfield. A new kind of
+    buffer management is provided : if an external array is too
+    short, an allocated memory is used instead.
+  - Several performance improvements in sys/io module.
+
+ ++ minor evolutions ++
+  - Creation of functions netwib_buf_append_pkt_data and
+    netwib_pkt_data_display.
+  - In netwib_localtime, a new parameter, named zoneoffset,
+    corresponds to offset between localtime and GMT.
+
+ ++ internal evolutions (not seen by end users) ++
+  - Use of the new feature provided by dat/buf module.
+  - Use of the new features provided by sys/io module.
+
+
+---------------------------------------------------------------------
+Version 5.2.0 - 05-Oct-2003
+
+ ++ bugs fixed ++
+  - Under Windows, functions netwib_filename_rename and
+    netwib_dirname_rename did not work if destination file previously
+    existed.
+  - In function netwib_threadlist_wait, when waiting for an infinite
+    time (NETWIB_TIME_INFINITE), parameter pevent was not set.
+  - In function netwib_io_init_sock, there was a memory leak if
+    the socket could not be opened.
+
+ ++ major evolutions ++
+    None in this version
+
+ ++ minor evolutions ++
+  - Function netwib_buf_append_rand have two mode parameters.
+    Creation of defines netwib_uint32_init_rand_all and
+    netwib_buf_append_rand_all.
+  - Function netwib_buf_init_ext_text can now be initialized
+    with a NULL pointer. It will store an empty buffer.
+
+ ++ internal evolutions (not seen by end users) ++
+    None in this version
+
+
+---------------------------------------------------------------------
+Version 5.1.0 - 23-Sep-2003
+
+ ++ bugs fixed ++
+  - Functions netwib_c_memmem, netwib_c_strcasecmp,
+    netwib_c_strcasestr and netwib_c_strncasecmp were not exported
+    in netwib51.dll. So, they were not available under Windows.
+  - In netwib-doc_html, links were missing in section files, so
+    it was not possible to navigate in the different modules.
+  - Function netwib_eth_init_ip always returned NETWIB_ERR_OK (even
+    if address was not resolved).
+  - When not called after a configuration function, functions
+    netwib_eth_init_ip and netwib_ip_init_eth could not resolve
+    address of a local device.
+  - Under Linux, netwib_ips_add_buf could not add the local
+    IP address (because getaddrinfo also returned an AF_UNIX).
+  - In netwib_buf_append_icmp4code, "unknown" was displayed even
+    if code was 0 for NETWIB_ICMP4TYPE_ECHOREP/SRCQUENCH/ECHOREQ/
+    TIMESTAMPREQ/TIMESTAMPREP/INFOREQ/INFOREP.
+  - Functions netwib_encodetype_init_kbd and
+    netwib_record_encodetype_init_kbd returned pressed key number
+    instead of associated encodetype value.
+  - Function netwib_buf_encode did not store last line
+    for NETWIB_ENCODETYPE_DUMP/MIXEDH_WRAP.
+  - Function netwib_io_init_file did not truncate the file
+    when opening it in write mode.
+  - Function netwib_buf_append_pkt_ip displayed udp/tcp/icmp
+    fragments as normal packets.
+
+ ++ major evolutions ++
+  - Name changed to netwib.
+  - Parts of module dat/buf.c were rewritten to improve its
+    performance and ease of use.
+  - Meaning of netwib_time in netwib_io_wait has changed. Before,
+    it corresponded to a duration (ie 3 seconds). Now, it is
+    the absolute ending time (ie 2003/08/15 at 13:23:10). Like
+    this, it is more efficient and easier to use (even if it
+    does not at first sight). All other functions having a wait
+    parameter have also changed.
+
+ ++ minor evolutions ++
+  - Define NETWIB_CHAR_INIT_KBD_NODEF was missing, so developer had
+    to use 0 instead.
+  - Function netwib_fmt_display now displays a netwib_bool as
+    "true" "false" "yes" "no" etc. instead of only "0"/"1".
+  - Function netwib_fmt_display now displays a netwib_cmp as
+    "<" "=" ">" "lt" "eq" etc. instead of only "-1"/"0"/"+1".
+  - In function netwib_fmt_decode, "%$" can be used to indicate
+    string end.
+  - Function netwib_io_init_sniff_ip now has one more parameter
+    named ipreas.
+  - Function netwib_io_init_spoof_ip now has one more parameter
+    named inittype.
+  - Creation of functions netwib_time_init_localtime and
+    netwib_time_decode_localtime.
+  - Creation of functions netwib_device_hwtype_init_kbd and
+    netwib_device_dlttype_init_kbd.
+  - Creation of function netwib_pkt_convert.
+  - Now, a record file not ending with an empty line is accepted.
+    Before, last packet was not read if user edited file by hand
+    and forgot to put the newline.
+  - Creation of function netwib_c_memcasemem.
+  - Function netwib_buf_append_ips has one more parameter to
+    specify how to display a netwib_ips.
+  - Creation of type NETWIB_DECODETYPE_DATA.
+  - Creation of function netwib_wait_init_thread_cond.
+  - Creation of function netwib_buf_append_rand.
+  - Creation of module dat/bufpool, to deal with a pool of buffers.
+  - Creation of function netwib_io_init_data.
+
+ ++ internal evolutions (not seen by end users) ++
+  - Due to several incompatibility problems between systems,
+    sys/priv/kbd.c was partially rewritten. Changes in
+    character echo or line reading are now immediate.
+  - Simplification of net/priv/sa.c dealing with sockaddr.
+
+
+---------------------------------------------------------------------
+Version 5.0.0 - 6-Jul-2003
+  This version is a full rewrite. Everything changed.

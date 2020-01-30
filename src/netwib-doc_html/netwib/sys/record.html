@@ -1,0 +1,99 @@
+<HTML><HEAD>
+<TITLE>netwib doc_html (version 5.39.0)</TITLE>
+</HEAD><BODY BGCOLOR="#FFFFFF" TEXT="#000000">
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../sys.html">section index</A></H2><HR><BR>
+<PRE>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000"><B>/***************************************************************
+ * A record is a file where we can save and read data.         *
+ * Each data is separated by an empty newline.                 *
+ ***************************************************************/</B></FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+typedef enum {
+  <FONT COLOR="#000044">NETWIB_RECORD_ENCODETYPE_HEXA0</FONT> = <FONT COLOR="#000044">NETWIB_ENCODETYPE_HEXA0</FONT>,
+  <FONT COLOR="#000044">NETWIB_RECORD_ENCODETYPE_HEXA1</FONT> = <FONT COLOR="#000044">NETWIB_ENCODETYPE_HEXA1</FONT>,
+  <FONT COLOR="#000044">NETWIB_RECORD_ENCODETYPE_HEXA2</FONT> = <FONT COLOR="#000044">NETWIB_ENCODETYPE_HEXA2</FONT>,
+  <FONT COLOR="#000044">NETWIB_RECORD_ENCODETYPE_HEXA4</FONT> = <FONT COLOR="#000044">NETWIB_ENCODETYPE_HEXA4</FONT>,
+  <FONT COLOR="#000044">NETWIB_RECORD_ENCODETYPE_MIXED0</FONT> = <FONT COLOR="#000044">NETWIB_ENCODETYPE_MIXED0</FONT>,
+  <FONT COLOR="#000044">NETWIB_RECORD_ENCODETYPE_MIXED1</FONT> = <FONT COLOR="#000044">NETWIB_ENCODETYPE_MIXED1</FONT>,
+  <FONT COLOR="#000044">NETWIB_RECORD_ENCODETYPE_HEXA0_WRAP</FONT> = <FONT COLOR="#000044">NETWIB_ENCODETYPE_HEXA0_WRAP</FONT>,
+  <FONT COLOR="#000044">NETWIB_RECORD_ENCODETYPE_HEXA1_WRAP</FONT> = <FONT COLOR="#000044">NETWIB_ENCODETYPE_HEXA1_WRAP</FONT>,
+  <FONT COLOR="#000044">NETWIB_RECORD_ENCODETYPE_HEXA2_WRAP</FONT> = <FONT COLOR="#000044">NETWIB_ENCODETYPE_HEXA2_WRAP</FONT>,
+  <FONT COLOR="#000044">NETWIB_RECORD_ENCODETYPE_HEXA4_WRAP</FONT> = <FONT COLOR="#000044">NETWIB_ENCODETYPE_HEXA4_WRAP</FONT>,
+  <FONT COLOR="#000044">NETWIB_RECORD_ENCODETYPE_MIXED0_WRAP</FONT> = <FONT COLOR="#000044">NETWIB_ENCODETYPE_MIXED0_WRAP</FONT>,
+  <FONT COLOR="#000044">NETWIB_RECORD_ENCODETYPE_MIXED1_WRAP</FONT> = <FONT COLOR="#000044">NETWIB_ENCODETYPE_MIXED1_WRAP</FONT>,
+  <FONT COLOR="#000044">NETWIB_RECORD_ENCODETYPE_DUMP</FONT> = <FONT COLOR="#000044">NETWIB_ENCODETYPE_DUMP</FONT>,
+  <FONT COLOR="#000044">NETWIB_RECORD_ENCODETYPE_MIXED0H_WRAP</FONT> = <FONT COLOR="#000044">NETWIB_ENCODETYPE_MIXED0H_WRAP</FONT>,
+  <FONT COLOR="#000044">NETWIB_RECORD_ENCODETYPE_MIXED1H_WRAP</FONT> = <FONT COLOR="#000044">NETWIB_ENCODETYPE_MIXED1H_WRAP</FONT>,
+  <FONT COLOR="#000044">NETWIB_RECORD_ENCODETYPE_BIN</FONT> = 1000,  <FONT COLOR="#880000">/* binary */</FONT>
+  <FONT COLOR="#000044">NETWIB_RECORD_ENCODETYPE_PCAP</FONT>,        <FONT COLOR="#880000">/* libpcap format */</FONT>
+  <FONT COLOR="#880000">/* aliases */</FONT>
+  <FONT COLOR="#000044">NETWIB_RECORD_ENCODETYPE_HEXA</FONT> = <FONT COLOR="#000044">NETWIB_RECORD_ENCODETYPE_HEXA1</FONT>,
+  <FONT COLOR="#000044">NETWIB_RECORD_ENCODETYPE_MIXED</FONT> = <FONT COLOR="#000044">NETWIB_RECORD_ENCODETYPE_MIXED1</FONT>,
+  <FONT COLOR="#000044">NETWIB_RECORD_ENCODETYPE_HEXA_WRAP</FONT> = <FONT COLOR="#000044">NETWIB_RECORD_ENCODETYPE_HEXA1_WRAP</FONT>,
+  <FONT COLOR="#000044">NETWIB_RECORD_ENCODETYPE_MIXED_WRAP</FONT> = <FONT COLOR="#000044">NETWIB_RECORD_ENCODETYPE_MIXED1_WRAP</FONT>,
+  <FONT COLOR="#000044">NETWIB_RECORD_ENCODETYPE_MIXEDH_WRAP</FONT> = <FONT COLOR="#000044">NETWIB_RECORD_ENCODETYPE_MIXED1H_WRAP</FONT>
+} <FONT COLOR="#000088">netwib_record_encodetype</FONT>;
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_record_encodetype_init_kbd
+   Description :
+     Initialize a <FONT COLOR="#000088">netwib_encodetype</FONT> with data entered through keyboard.
+   Input parameter(s) :
+     *pmessage : message to print before
+     displayonlymostuseful : only most useful values are shown
+     defaultencodetype : default encodetype to use if user enters nothing
+                      (if 0xFFFFFFFFu, means no default)
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pencodetype : <FONT COLOR="#000088">netwib_encodetype</FONT> initialized
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_record_encodetype_init_kbd</B>(<FONT COLOR="#000088">netwib_constbuf</FONT> *pmessage,
+                                             <FONT COLOR="#000088">netwib_bool</FONT> displayonlymostuseful,
+                                             <FONT COLOR="#000088">netwib_record_encodetype</FONT> defaultencodetype,
+                                             <FONT COLOR="#000088">netwib_record_encodetype</FONT> *pencodetype);
+<FONT COLOR="#008800">#define <FONT COLOR="#000044">NETWIB_RECORD_ENCODETYPE_INIT_KBD_NODEF</FONT> (netwib_record_encodetype)0xFFFFFFFFu</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_buf_append_record_encodetype
+   Description :
+     Append the description text of an encodetype.
+   Input parameter(s) :
+     encodetype : <FONT COLOR="#000088">netwib_record_encodetype</FONT> to append
+   Input/output parameter(s) :
+     *pbuf : buffer where text is appended
+   Output parameter(s) :
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_buf_append_record_encodetype</B>(<FONT COLOR="#000088">netwib_record_encodetype</FONT> encodetype,
+                                               <FONT COLOR="#000088">netwib_buf</FONT> *pbuf);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_io_init_record
+   Description :
+     Open a record.
+   Input parameter(s) :
+     *precordname : filename of the record
+   Input/output parameter(s) :
+   Output parameter(s) :
+     **ppio : io created
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_io_init_record</B>(<FONT COLOR="#000088">netwib_constbuf</FONT> *precordname,
+                                 <FONT COLOR="#000088">netwib_file_inittype</FONT> inittype,
+                                 <FONT COLOR="#000088">netwib_record_encodetype</FONT> encodetype,
+                                 <FONT COLOR="#000088">netwib_io</FONT> **ppio);
+<FONT COLOR="#008800">#define <B>netwib_io_init_record_read</B>(recordname,ppio) <B>netwib_io_init_record</B>(recordname,<FONT COLOR="#000044">NETWIB_FILE_INITTYPE_READ</FONT>,<FONT COLOR="#000044">NETWIB_RECORD_ENCODETYPE_INIT_KBD_NODEF</FONT>,ppio)</FONT>
+<FONT COLOR="#008800">#define <B>netwib_io_init_record_write</B>(recordname,encodetype,ppio) <B>netwib_io_init_record</B>(recordname,<FONT COLOR="#000044">NETWIB_FILE_INITTYPE_WRITE</FONT>,encodetype,ppio)</FONT>
+<FONT COLOR="#008800">#define <B>netwib_io_init_record_append</B>(recordname,ppio) <B>netwib_io_init_record</B>(recordname,<FONT COLOR="#000044">NETWIB_FILE_INITTYPE_APPEND</FONT>,<FONT COLOR="#000044">NETWIB_RECORD_ENCODETYPE_INIT_KBD_NODEF</FONT>,ppio)</FONT>
+</PRE><BR><BR><HR><BR>
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../sys.html">section index</A></H2>
+</BODY></HTML>

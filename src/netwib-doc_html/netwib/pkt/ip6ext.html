@@ -1,0 +1,124 @@
+<HTML><HEAD>
+<TITLE>netwib doc_html (version 5.39.0)</TITLE>
+</HEAD><BODY BGCOLOR="#FFFFFF" TEXT="#000000">
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../pkt.html">section index</A></H2><HR><BR>
+<PRE>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000"><B>/***************************************************************
+ * Following functions work on extension headers of IPv6.      *
+ ***************************************************************/</B></FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* IPv6 Hop-by-Hop Options extension header */</FONT>
+typedef struct {
+  <FONT COLOR="#000088">netwib_bufext</FONT> options;
+} <FONT COLOR="#000088">netwib_ip6ext_hopopts</FONT>;
+typedef const <FONT COLOR="#000088">netwib_ip6ext_hopopts</FONT> <FONT COLOR="#000088">netwib_constip6ext_hopopts</FONT>;
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* IPv6 Destination Options extension header */</FONT>
+typedef struct {
+  <FONT COLOR="#000088">netwib_bufext</FONT> options;
+} <FONT COLOR="#000088">netwib_ip6ext_dstopts</FONT>;
+typedef const <FONT COLOR="#000088">netwib_ip6ext_dstopts</FONT> <FONT COLOR="#000088">netwib_constip6ext_dstopts</FONT>;
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* IPv6 Routing extension header */</FONT>
+typedef struct {
+  <FONT COLOR="#000088">netwib_uint8</FONT> routingtype;
+  <FONT COLOR="#000088">netwib_uint8</FONT> segmentsleft;
+  <FONT COLOR="#000088">netwib_bufext</FONT> data;
+} <FONT COLOR="#000088">netwib_ip6ext_routing</FONT>;
+typedef const <FONT COLOR="#000088">netwib_ip6ext_routing</FONT> <FONT COLOR="#000088">netwib_constip6ext_routing</FONT>;
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* IPv6 Fragment extension header */</FONT>
+typedef struct {
+  <FONT COLOR="#000088">netwib_uint16</FONT> fragmentoffset;
+  <FONT COLOR="#000088">netwib_bool</FONT> reservedb1;
+  <FONT COLOR="#000088">netwib_bool</FONT> reservedb2;
+  <FONT COLOR="#000088">netwib_bool</FONT> morefrag;
+  <FONT COLOR="#000088">netwib_uint32</FONT> id;
+} <FONT COLOR="#000088">netwib_ip6ext_fragment</FONT>;
+typedef const <FONT COLOR="#000088">netwib_ip6ext_fragment</FONT> <FONT COLOR="#000088">netwib_constip6ext_fragment</FONT>;
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* IPv6 Authentication Header extension header (rfc 2402) */</FONT>
+typedef struct {
+  <FONT COLOR="#000088">netwib_uint16</FONT> reserved;
+  <FONT COLOR="#000088">netwib_uint32</FONT> spi;
+  <FONT COLOR="#000088">netwib_uint32</FONT> seqnum;
+  <FONT COLOR="#000088">netwib_bufext</FONT> data;
+} <FONT COLOR="#000088">netwib_ip6ext_ah</FONT>;
+typedef const <FONT COLOR="#000088">netwib_ip6ext_ah</FONT> <FONT COLOR="#000088">netwib_constip6ext_ah</FONT>;
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Generic IPv6 extension header */</FONT>
+typedef struct {
+  <FONT COLOR="#000088">netwib_ipproto</FONT> proto;
+  union {
+    <FONT COLOR="#000088">netwib_ip6ext_hopopts</FONT> hopopts;
+    <FONT COLOR="#000088">netwib_ip6ext_dstopts</FONT> dstopts;
+    <FONT COLOR="#000088">netwib_ip6ext_routing</FONT> routing;
+    <FONT COLOR="#000088">netwib_ip6ext_fragment</FONT> fragment;
+    <FONT COLOR="#000088">netwib_ip6ext_ah</FONT> ah;
+  } ext;
+  <FONT COLOR="#000088">netwib_ipproto</FONT> nextproto;
+} <FONT COLOR="#000088">netwib_ip6ext</FONT>;
+typedef const <FONT COLOR="#000088">netwib_ip6ext</FONT> <FONT COLOR="#000088">netwib_constip6ext</FONT>;
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_ip6ext_initdefault
+   Description :
+     Initialize a <FONT COLOR="#000088">netwib_ip6ext</FONT> with default values.
+   Input parameter(s) :
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pip6ext : <FONT COLOR="#000088">netwib_ip6ext</FONT> to initialize
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_ip6ext_initdefault</B>(<FONT COLOR="#000088">netwib_ipproto</FONT> proto,
+                                     <FONT COLOR="#000088">netwib_ip6ext</FONT> *pip6ext);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_pkt_append_ip6ext
+   Description :
+     Initialize physical data from a netwib_ip6ext.
+   Input parameter(s) :
+     ip6ext : netwib_ip6ext
+   Input/output parameter(s) :
+     *ppht : buffer to initialize
+   Output parameter(s) :
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_pkt_append_ip6ext</B>(<FONT COLOR="#000088">netwib_constip6ext</FONT> *pip6ext,
+                                    <FONT COLOR="#000088">netwib_buf</FONT> *ppkt);
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_pkt_prepend_ip6ext</B>(<FONT COLOR="#000088">netwib_constip6ext</FONT> *pip6ext,
+                                     <FONT COLOR="#000088">netwib_buf</FONT> *ppkt);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_pkt_decode_ip6ext
+   Description :
+     Decode a <FONT COLOR="#000088">netwib_ip6ext</FONT> from data coming from wire.
+   Input parameter(s) :
+     pktproto : protocol of the <FONT COLOR="#000088">netwib_ip6ext</FONT> in ppkt
+     *ppkt : buffer containing physical data
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pip6ext : <FONT COLOR="#000088">netwib_ip6ext</FONT> to initialize
+     *pskipsize : size to skip this header
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_pkt_decode_ip6ext</B>(<FONT COLOR="#000088">netwib_ipproto</FONT> pktproto,
+                                    <FONT COLOR="#000088">netwib_constbuf</FONT> *ppkt,
+                                    <FONT COLOR="#000088">netwib_ip6ext</FONT> *pip6ext,
+                                    <FONT COLOR="#000088">netwib_uint32</FONT> *pskipsize);
+</PRE><BR><BR><HR><BR>
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../pkt.html">section index</A></H2>
+</BODY></HTML>

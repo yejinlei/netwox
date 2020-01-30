@@ -1,0 +1,125 @@
+<HTML><HEAD>
+<TITLE>netwib doc_html (version 5.39.0)</TITLE>
+</HEAD><BODY BGCOLOR="#FFFFFF" TEXT="#000000">
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../shw.html">section index</A></H2><HR><BR>
+<PRE>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000"><B>/***************************************************************
+ * An array permits to show a packet. Generally, one line      *
+ * corresponds to 32bits/4bytes, as seen in RFCs               *
+ ***************************************************************/</B></FONT>
+<FONT COLOR="#880000">/*
+For example :
+._______________________________________________________________.
+|0|1|1|0|0|1|1|0|0|1|1|0|0|1|1|0|0|1|1|0|0|1|1|0|0|1|1|0|0|1|1|0|
+|_3_|_3_|_3_|_3_|_3_|_3_|_3_|_3_|_3_|_3_|_3_|_3_|_3_|_3_|_3_|_3_|
+|0xF=15_|__0xF__|__15___|0xF=15_|__0xF__|__15___|0xF=15_|__0xF__|
+|_0x80=128='c'__|_0x80=128='c'__|_0x80=128='c'__|_0x80=128='c'__|
+| data: 0123456789012345678901234567890123456789012345678901234 |
+|       0123456789012345678901234567890123456789012345678901234 |
+|_______________________________________________________________|
+
+Ethernet________________________________________________________.
+| 00:00:01:02:03:04-&gt;00:00:05:06:97:08 type:0x0800              |
+|_______________________________________________________________|
+IP______________________________________________________________.
+|version|  ihl  |      tos      |            totlen             |
+|___4___|___5___|____0x00=0_____|___________0x0054=84___________|
+|              id               |r|D|M|       offsetfrag        |
+|___________0x0008=8____________|0|0|0|________0x0000=0_________|
+|      ttl      |   protocol    |           checksum            |
+|___0xFF=255____|____0x01=1_____|____________0x2551_____________|
+|                            source                             |
+|_________________________192.168.1.1___________________________|
+|                          destination                          |
+|_________________________192.168.1.2___________________________|
+ICMP4_echo reply________________________________________________.
+|     type      |     code      |           checksum            |
+|____0x00=0_____|____0x00=0_____|_________0xC6A9=50857__________|
+
+*/</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* "._________________." or "Title_____________." */</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_show_array_head</B>(<FONT COLOR="#000088">netwib_conststring</FONT> title,
+                                  <FONT COLOR="#000088">netwib_buf</FONT> *pbuf);
+<FONT COLOR="#880000">/* "|_________________|" */</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_show_array_tail</B>(<FONT COLOR="#000088">netwib_buf</FONT> *pbuf);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* "|" */</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_show_array_line_begin</B>(<FONT COLOR="#000088">netwib_buf</FONT> *pbuf);
+<FONT COLOR="#880000">/* "\n" */</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_show_array_line_end</B>(<FONT COLOR="#000088">netwib_buf</FONT> *pbuf);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* centered text surrounded by spaces and ending with "|" */</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_show_array_text</B>(<FONT COLOR="#000088">netwib_uint32</FONT> size,
+                                  <FONT COLOR="#000088">netwib_conststring</FONT> txt,
+                                  <FONT COLOR="#000088">netwib_buf</FONT> *pbuf);
+<FONT COLOR="#880000">/* num32 is special : line_begin and line_end are internally called */</FONT>
+<FONT COLOR="#008800">#define <B>netwib_show_array_text32</B>(text,pbuf) <B>netwib_show_array_text</B>(32,text,pbuf)</FONT>
+<FONT COLOR="#008800">#define <B>netwib_show_array_text16</B>(text,pbuf) <B>netwib_show_array_text</B>(16,text,pbuf)</FONT>
+<FONT COLOR="#008800">#define <B>netwib_show_array_text8</B>(text,pbuf) <B>netwib_show_array_text</B>(8,text,pbuf)</FONT>
+<FONT COLOR="#008800">#define <B>netwib_show_array_text4</B>(text,pbuf) <B>netwib_show_array_text</B>(4,text,pbuf)</FONT>
+<FONT COLOR="#008800">#define <B>netwib_show_array_text1</B>(text,pbuf) <B>netwib_show_array_text</B>(1,text,pbuf)</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* centered number surrounded by "_" and ending with "|" */</FONT>
+typedef enum {
+  <FONT COLOR="#000044">NETWIB_SHOW_ARRAY_NUMTYPE_BIN</FONT> = 1,
+  <FONT COLOR="#000044">NETWIB_SHOW_ARRAY_NUMTYPE_DEC</FONT>,
+  <FONT COLOR="#000044">NETWIB_SHOW_ARRAY_NUMTYPE_HEXA</FONT>,
+  <FONT COLOR="#000044">NETWIB_SHOW_ARRAY_NUMTYPE_CHAR</FONT>,
+  <FONT COLOR="#000044">NETWIB_SHOW_ARRAY_NUMTYPE_DECCHAR</FONT>,
+  <FONT COLOR="#000044">NETWIB_SHOW_ARRAY_NUMTYPE_HEXADEC</FONT>,
+  <FONT COLOR="#000044">NETWIB_SHOW_ARRAY_NUMTYPE_HEXACHAR</FONT>,
+  <FONT COLOR="#000044">NETWIB_SHOW_ARRAY_NUMTYPE_HEXADECCHAR</FONT>
+} <FONT COLOR="#000088">netwib_show_array_numtype</FONT>;
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_show_array_num</B>(<FONT COLOR="#000088">netwib_uint32</FONT> size,
+                                 <FONT COLOR="#000088">netwib_uint32</FONT> ui,
+                                 <FONT COLOR="#000088">netwib_show_array_numtype</FONT> type,
+                                 <FONT COLOR="#000088">netwib_buf</FONT> *pbuf);
+<FONT COLOR="#880000">/* num32 is special : line_begin and line_end are internally called */</FONT>
+<FONT COLOR="#008800">#define <B>netwib_show_array_num32</B>(ui,type,pbuf) <B>netwib_show_array_num</B>(32,ui,type,pbuf)</FONT>
+<FONT COLOR="#008800">#define <B>netwib_show_array_num16</B>(ui,type,pbuf) <B>netwib_show_array_num</B>(16,ui,type,pbuf)</FONT>
+<FONT COLOR="#008800">#define <B>netwib_show_array_num8</B>(ui,type,pbuf) <B>netwib_show_array_num</B>(8,ui,type,pbuf)</FONT>
+<FONT COLOR="#008800">#define <B>netwib_show_array_num4</B>(ui,type,pbuf) <B>netwib_show_array_num</B>(4,ui,type,pbuf)</FONT>
+<FONT COLOR="#008800">#define <B>netwib_show_array_num1</B>(ui,pbuf) <B>netwib_show_array_num</B>(1,ui,<FONT COLOR="#000044">NETWIB_SHOW_ARRAY_NUMTYPE_DEC</FONT>,pbuf)</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+typedef enum {
+  <FONT COLOR="#000044">NETWIB_SHOW_ARRAY_ALIGN_LEFT</FONT>,
+  <FONT COLOR="#000044">NETWIB_SHOW_ARRAY_ALIGN_CENTER</FONT>,
+  <FONT COLOR="#000044">NETWIB_SHOW_ARRAY_ALIGN_RIGHT</FONT>
+} <FONT COLOR="#000088">netwib_show_array_align</FONT>;
+<FONT COLOR="#880000">/* if size==32, line_begin and line_end are internally called */</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_show_array_fmt</B>(<FONT COLOR="#000088">netwib_uint32</FONT> size,
+                                 <FONT COLOR="#000088">netwib_show_array_align</FONT> align,
+                                 <FONT COLOR="#000088">netwib_char</FONT> fillchar, <FONT COLOR="#880000">/* ie ' ' or '_' */</FONT>
+                                 <FONT COLOR="#000088">netwib_buf</FONT> *pbuf,
+                                 <FONT COLOR="#000088">netwib_conststring</FONT> fmt,
+                                 ...);
+<FONT COLOR="#880000">/* size==32, align==<FONT COLOR="#000044">NETWIB_SHOW_ARRAY_ALIGN_LEFT</FONT> and fillchar==' ' */</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_show_array_fmt32</B>(<FONT COLOR="#000088">netwib_buf</FONT> *pbuf,
+                                   <FONT COLOR="#000088">netwib_conststring</FONT> fmt,
+                                   ...);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/*
+ data wrapped to fit in the array. For example :
+    |title: 0123456789012345678901234567890123456789012 |
+    |       3456789012345678901234567801234567890123456 |
+    |_______567890123456789012345678____________________|
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_show_array_data</B>(<FONT COLOR="#000088">netwib_conststring</FONT> title,
+                                  <FONT COLOR="#000088">netwib_constbuf</FONT> *pdata,
+                                  <FONT COLOR="#000088">netwib_encodetype</FONT> encodetype,
+                                  <FONT COLOR="#000088">netwib_char</FONT> fillchar, <FONT COLOR="#880000">/* ie ' ' or '_' */</FONT>
+                                  <FONT COLOR="#000088">netwib_buf</FONT> *pbuf);
+</PRE><BR><BR><HR><BR>
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../shw.html">section index</A></H2>
+</BODY></HTML>

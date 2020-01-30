@@ -1,0 +1,107 @@
+<HTML><HEAD>
+<TITLE>netwib doc_html (version 5.39.0)</TITLE>
+</HEAD><BODY BGCOLOR="#FFFFFF" TEXT="#000000">
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../dat.html">section index</A></H2><HR><BR>
+<PRE>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000"><B>/***************************************************************
+ * A <FONT COLOR="#000088">netwib_array</FONT> permits to store a dynamic number of items.  *
+ * Those items all have the same size.                         *
+ *                                                             *
+ * The common implementation of such storage is :              *
+ *   p = malloc(numitems*sizeof(item));                        *
+ *   p[1] = ...;                                               *
+ * However, if sizeof(item) is not a multiple of the processor *
+ * size, a bus error occurs on strict processors (Alpha,       *
+ * Sparc). For example, storing 5 items of size 3 can be       *
+ * represented in memory (start at address 0x76543210) :       *
+ *   .- address 0x76543210                                     *
+ *   ABCABCABCABCABC                                           *
+ * The second item is at address 0x76543213 (0x76543210+3)     *
+ * which is invalid and causes a bus error.                    *
+ * The second drawback of this common implementation is memory *
+ * management is not efficient, because when p contains a lot  *
+ * of items, this big buffer has to be reallocated.            *
+ *                                                             *
+ * Netwib's implementation is different. Instead of creating   *
+ * an array of items, netwib creates an array of pointers to   *
+ * items. This solves both above problems.                     *
+ *                                                             *
+ * Usage example:                                              *
+ *   <FONT COLOR="#000088">netwib_array</FONT> a;                                           *
+ *   struct foobar *pfb;                                       *
+ *   <B>netwib_er</B>(<B>netwib_array_init</B>(sizeof(struct foobar),3,&amp;a)); *
+ *   pfb = (struct foobar *)a.p[0];                            *
+ *   pfb-&gt;...;                                                 *
+ *   for (i = 0; i &lt; a.size; i++) {                            *
+ *     pfb = (struct foobar *)a.p[i];                          *
+ *     pfb-&gt;...;                                               *
+ *   }                                                         *
+ *   <B>netwib_er</B>(<B>netwib_array_ctl_set_size</B>(&amp;a, 6));              *
+ *   pfb = (struct foobar *)a.p[5];                            *
+ *   <B>netwib_er</B>(<B>netwib_array_close</B>(&amp;a));                        *
+ ***************************************************************/</B></FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+typedef struct {
+  <FONT COLOR="#000088">netwib_ptr</FONT> *p;      <FONT COLOR="#880000">/* array of pointers to items */</FONT>
+  <FONT COLOR="#000088">netwib_uint32</FONT> size; <FONT COLOR="#880000">/* size of p array (0 -&gt; size-1) */</FONT>
+  <FONT COLOR="#000088">netwib_ptr</FONT> opaque;  <FONT COLOR="#880000">/* internal storage is here. Do not use. */</FONT>
+} <FONT COLOR="#000088">netwib_array</FONT>;
+typedef const <FONT COLOR="#000088">netwib_array</FONT> <FONT COLOR="#000088">netwib_constarray</FONT>;
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_array_init
+   Description :
+     Initialize a netwib_array.
+   Input parameter(s) :
+     itemsize : size of items to store
+     initialsize : initial number of items to store
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *parray : <FONT COLOR="#000088">netwib_array</FONT> initialized
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_array_init</B>(<FONT COLOR="#000088">netwib_uint32</FONT> itemsize,
+                             <FONT COLOR="#000088">netwib_uint32</FONT> initialsize,
+                             <FONT COLOR="#000088">netwib_array</FONT> *parray);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_array_close
+   Description :
+     Close a netwib_array.
+   Input parameter(s) :
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *parray : <FONT COLOR="#000088">netwib_array</FONT> to close
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_array_close</B>(<FONT COLOR="#000088">netwib_array</FONT> *parray);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Types to control a <FONT COLOR="#000088">netwib_array</FONT> */</FONT>
+typedef enum {
+  <FONT COLOR="#000044">NETWIB_ARRAY_CTLTYPE_SIZE</FONT> = 1   <FONT COLOR="#880000">/* request an array to grow
+                                     or shrink */</FONT>
+} <FONT COLOR="#000088">netwib_array_ctltype</FONT>;
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_array_ctl_set</B>(<FONT COLOR="#000088">netwib_array</FONT> *parray,
+                                <FONT COLOR="#000088">netwib_array_ctltype</FONT> type,
+                                <FONT COLOR="#000088">netwib_ptr</FONT> p,
+                                <FONT COLOR="#000088">netwib_uint32</FONT> ui);
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_array_ctl_get</B>(<FONT COLOR="#000088">netwib_array</FONT> *parray,
+                                <FONT COLOR="#000088">netwib_array_ctltype</FONT> type,
+                                <FONT COLOR="#000088">netwib_ptr</FONT> p,
+                                <FONT COLOR="#000088">netwib_uint32</FONT> *pui);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* <FONT COLOR="#000088">netwib_err</FONT> f(<FONT COLOR="#000088">netwib_array</FONT> *parray, <FONT COLOR="#000088">netwib_uint32</FONT> newsize); */</FONT>
+<FONT COLOR="#008800">#define <B>netwib_array_ctl_set_size</B>(parray,newsize) <B>netwib_array_ctl_set</B>(parray,<FONT COLOR="#000044">NETWIB_ARRAY_CTLTYPE_SIZE</FONT>,NULL,newsize)</FONT>
+<FONT COLOR="#008800">#define <B>netwib_array_ctl_get_size</B>(parray,pnewsize) <B>netwib_array_ctl_get</B>(parray,<FONT COLOR="#000044">NETWIB_ARRAY_CTLTYPE_SIZE</FONT>,NULL,pnewsize)</FONT>
+</PRE><BR><BR><HR><BR>
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../dat.html">section index</A></H2>
+</BODY></HTML>

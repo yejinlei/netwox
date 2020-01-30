@@ -1,0 +1,69 @@
+<HTML>
+ <HEAD>
+ <TITLE>Tool 68: Scan TCP (EthIp spoof)</TITLE>
+ </HEAD>
+ <BODY BGCOLOR="#FFFFFF">
+  <CENTER>   <H3>Tool 68: Scan TCP (EthIp spoof)</H3>
+  </CENTER>
+
+  <P><H3>Description:</H3>
+   <PRE>
+  This tool checks if several TCP ports are open on host.
+  This tool sends a TCP SYN to a computer. If host permits TCP, it will
+  send back a TCP SYN-ACK (if port is open), or a TCP RST (if port is
+  closed).
+  This tool also permits to use fake Ethernet and IP addresses.
+  
+  This tool may need to be run with admin privilege in order to sniff
+  and spoof.
+   </PRE>
+
+  <P><H3>Synonyms:</H3>
+  &nbsp;&nbsp;nmap<BR>
+
+  <P><H3>Usage:</H3>
+  &nbsp;&nbsp;netwox 68 -i ips -p ports [-d device] [-E eth] [-I ip] [-m uint32] [-M uint32] [-u|+u] [-n uint32]<BR>
+
+  <P><H3>Parameters:</H3>
+<TABLE BORDER=1 CELLPADDING=4>
+ <TR>
+  <TD ALIGN=middle><I>parameter</I></TD>
+  <TD ALIGN=middle><I>description</I></TD>
+  <TD ALIGN=middle><I>example</I></TD>
+ </TR>
+ <TR><TD><TT>-i|--ips ips</TD>
+<TD>list/range of IP addresses</TD>
+<TD>1.2.3.4,5.6.7.8</TD></TR>
+<TR><TD><TT>-p|--ports ports</TD>
+<TD>list/range of port number</TD>
+<TD>all</TD></TR>
+<TR><TD><TT>-d|--device device</TD>
+<TD>spoof device</TD>
+<TD>Eth0</TD></TR>
+<TR><TD><TT>-E|--src-eth eth</TD>
+<TD>source ethernet address</TD>
+<TD>0:a:a:a:a:a</TD></TR>
+<TR><TD><TT>-I|--src-ip ip</TD>
+<TD>source IP address</TD>
+<TD>1.2.3.4</TD></TR>
+<TR><TD><TT>-m|--min-ms uint32</TD>
+<TD>min millisecond delay between packets</TD>
+<TD>0</TD></TR>
+<TR><TD><TT>-M|--max-ms uint32</TD>
+<TD>max millisecond wait for answers</TD>
+<TD>5000</TD></TR>
+<TR><TD><TT>-u|--disp-useful|+u|--no-disp-useful</TD>
+<TD>only display useful info</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-n|--numtargets uint32</TD>
+<TD>number of simultaneous targets</TD>
+<TD>20 </TD></TR>
+</TABLE>
+
+  <P><H3>Examples:</H3>
+  &nbsp;&nbsp;netwox 68 -i "1.2.3.4,5.6.7.8" -p "all"<BR>
+<BR>
+  &nbsp;&nbsp;netwox 68 --ips "1.2.3.4,5.6.7.8" --ports "all"<BR>
+<BR>
+ </BODY>
+ </HTML>

@@ -1,0 +1,165 @@
+<HTML><HEAD>
+<TITLE>netwib doc_html (version 5.39.0)</TITLE>
+</HEAD><BODY BGCOLOR="#FFFFFF" TEXT="#000000">
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../net.html">section index</A></H2><HR><BR>
+<PRE>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000"><B>/***************************************************************
+ * Netwib supports Ethernet cards(netwib_device_hwtype=ETHER), *
+ * Loopback(LOOPBACK) and Serial Modems(PPP).                  *
+ * Unfortunately, these are not supported on every system as   *
+ * described in this table.                                    *
+ *                                                             *
+ *       Device    LINK       LINK_dlt   IP4        IP6        *
+ *       hwtype    supported? to_use     supported? supported? *
+ *  FreeBSD :                                                  *
+ *       ETHER     yes        ETHER      yes        ?[3]       *
+ *       LOOPBACK  yes        NULL       yes        ?[3]       *
+ *       PPP       ?[3]       ?[3]       yes        ?[3]       *
+ *  Linux :                                                    *
+ *       ETHER     yes        ETHER      yes        yes[4]     *
+ *       LOOPBACK  no         -          yes        yes[4]     *
+ *       PPP       ?[3]       ?[3]       yes        yes[4]     *
+ *  OpenBSD :                                                  *
+ *       ETHER     yes        ETHER      yes        ?[3]       *
+ *       LOOPBACK  no         -          yes        ?[3]       *
+ *       PPP       ?[3]       ?[3]       yes        ?[3]       *
+ *  Solaris :                                                  *
+ *       ETHER     yes        ETHER      yes        ?[3]       *
+ *       LOOPBACK  no         -          no[1]      no[1]      *
+ *       PPP       ?[3]       ?[3]       yes        ?[3]       *
+ *  Windows 95 :                                               *
+ *       ETHER     yes        ETHER      no         no         *
+ *       LOOPBACK  no         -          no         no         *
+ *       PPP       no         no         no         no         *
+ *  Windows 98 :                                               *
+ *       ETHER     yes        ETHER      no         no         *
+ *       LOOPBACK  no         -          no         no         *
+ *       PPP       no         no         no         no         *
+ *  Windows Me :                                               *
+ *       ETHER     yes        ETHER      no         no         *
+ *       LOOPBACK  no         -          no         no         *
+ *       PPP       ?[3]       ?[3]       no         no         *
+ *  Windows NT4 :                                              *
+ *       ETHER     yes        ETHER      no         no         *
+ *       LOOPBACK  no         -          no         no         *
+ *       PPP       no         no         no         no         *
+ *  Windows 2000 :                                             *
+ *       ETHER     yes        ETHER      yes        ?[3]       *
+ *       LOOPBACK  no         -          no         no         *
+ *       PPP       ?[3]       ?[3]       yes        ?[3]       *
+ *  Windows XP :                                               *
+ *       ETHER     yes        ETHER      yes        yes[4]     *
+ *       LOOPBACK  no         -          no         no         *
+ *       PPP       ?[3]       ?[3]       ?[2]       ?[3]       *
+ *                                                             *
+ * Notes :                                                     *
+ *  1 : not sure                                               *
+ *  2 : not tested                                             *
+ *  3 : I'll summarize this info later...                      *
+ *  4 : on systems where IPv6 is supported                     *
+ ***************************************************************/</B></FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_io_init_spoof
+   Description :
+     Open a spoof session.
+   Input parameter(s) :
+     *pdevice : device where we spoof
+   Input/output parameter(s) :
+   Output parameter(s) :
+     **ppio : io created
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+typedef enum {
+  <FONT COLOR="#000044">NETWIB_SPOOF_INITTYPE_LINK</FONT> = 1,    <FONT COLOR="#880000">/* spoof at link level */</FONT>
+  <FONT COLOR="#000044">NETWIB_SPOOF_INITTYPE_IP4</FONT>,         <FONT COLOR="#880000">/* spoof at IP4 level */</FONT>
+  <FONT COLOR="#000044">NETWIB_SPOOF_INITTYPE_IP6</FONT>          <FONT COLOR="#880000">/* spoof at IP6 level */</FONT>
+} <FONT COLOR="#000088">netwib_spoof_inittype</FONT>;
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_io_init_spoof</B>(<FONT COLOR="#000088">netwib_spoof_inittype</FONT> inittype,
+                                <FONT COLOR="#000088">netwib_constbuf</FONT> *pdevice,
+                                <FONT COLOR="#000088">netwib_io</FONT> **ppio);
+<FONT COLOR="#008800">#define <B>netwib_io_init_spoof_link</B>(device,ppio) <B>netwib_io_init_spoof</B>(<FONT COLOR="#000044">NETWIB_SPOOF_INITTYPE_LINK</FONT>,device,ppio)</FONT>
+<FONT COLOR="#008800">#define <B>netwib_io_init_spoof_ip4</B>(ppio) <B>netwib_io_init_spoof</B>(<FONT COLOR="#000044">NETWIB_SPOOF_INITTYPE_IP4</FONT>,NULL,ppio)</FONT>
+<FONT COLOR="#008800">#define <B>netwib_io_init_spoof_ip6</B>(ppio) <B>netwib_io_init_spoof</B>(<FONT COLOR="#000044">NETWIB_SPOOF_INITTYPE_IP6</FONT>,NULL,ppio)</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* obtain the DLT needed to spoof at link level */</FONT>
+<FONT COLOR="#880000">/* <FONT COLOR="#000088">netwib_err</FONT> f(<FONT COLOR="#000088">netwib_io</FONT> *pio, <FONT COLOR="#000088">netwib_device_dlttype</FONT> *pdlt); */</FONT>
+<FONT COLOR="#008800">#define <B>netwib_spoof_ctl_get_dlt</B>(pio,pdlt) <B>netwib_io_ctl_get</B>(pio,<FONT COLOR="#000044">NETWIB_IO_WAYTYPE_SUPPORTED</FONT>,<FONT COLOR="#000044">NETWIB_IO_CTLTYPE_SPOOF_DLT</FONT>,NULL,(netwib_uint32*)pdlt)</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000"><B>/***************************************************************
+ * This io permits to spoof at IP4/6 level (DLTTYPE_RAW).      *
+ ***************************************************************/</B></FONT>
+typedef enum {
+  <FONT COLOR="#000044">NETWIB_SPOOF_IP_INITTYPE_UNKNOWN</FONT> = 0,
+  <FONT COLOR="#000044">NETWIB_SPOOF_IP_INITTYPE_RAW</FONT>,   <FONT COLOR="#880000">/* use only IP4/6 level */</FONT>
+  <FONT COLOR="#000044">NETWIB_SPOOF_IP_INITTYPE_LINKF</FONT>, <FONT COLOR="#880000">/* add a link header and spoof
+                                     at link level (source ad
+                                     is filled) */</FONT>
+  <FONT COLOR="#000044">NETWIB_SPOOF_IP_INITTYPE_LINKB</FONT>, <FONT COLOR="#880000">/* add a link header and spoof
+                                     at link level (source ad
+                                     is blank (0:0:0:0:0:0)) */</FONT>
+  <FONT COLOR="#000044">NETWIB_SPOOF_IP_INITTYPE_LINKFB</FONT>, <FONT COLOR="#880000">/* add a link header and spoof
+                                      at link level (source ad
+                                      can be blank) */</FONT>
+  <FONT COLOR="#000044">NETWIB_SPOOF_IP_INITTYPE_RAWLINKF</FONT>, <FONT COLOR="#880000">/* try IP4/6 level. If doesn't
+                                        work, use link */</FONT>
+  <FONT COLOR="#000044">NETWIB_SPOOF_IP_INITTYPE_RAWLINKB</FONT>,
+  <FONT COLOR="#000044">NETWIB_SPOOF_IP_INITTYPE_RAWLINKFB</FONT>,
+  <FONT COLOR="#000044">NETWIB_SPOOF_IP_INITTYPE_LINKFRAW</FONT>, <FONT COLOR="#880000">/* try link level. If doesn't
+                                        work, use IP4/6 */</FONT>
+  <FONT COLOR="#000044">NETWIB_SPOOF_IP_INITTYPE_LINKBRAW</FONT>,
+  <FONT COLOR="#000044">NETWIB_SPOOF_IP_INITTYPE_LINKFBRAW</FONT>,
+  <FONT COLOR="#000044">NETWIB_SPOOF_IP_INITTYPE_LINK</FONT> = <FONT COLOR="#000044">NETWIB_SPOOF_IP_INITTYPE_LINKFB</FONT>,
+  <FONT COLOR="#000044">NETWIB_SPOOF_IP_INITTYPE_RAWLINK</FONT> = <FONT COLOR="#000044">NETWIB_SPOOF_IP_INITTYPE_RAWLINKFB</FONT>,
+  <FONT COLOR="#000044">NETWIB_SPOOF_IP_INITTYPE_LINKRAW</FONT> = <FONT COLOR="#000044">NETWIB_SPOOF_IP_INITTYPE_LINKFBRAW</FONT>,
+  <FONT COLOR="#000044">NETWIB_SPOOF_IP_INITTYPE_BEST</FONT> = <FONT COLOR="#000044">NETWIB_SPOOF_IP_INITTYPE_LINKRAW</FONT>
+} <FONT COLOR="#000088">netwib_spoof_ip_inittype</FONT>;
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_io_init_spoof_ip</B>(<FONT COLOR="#000088">netwib_spoof_ip_inittype</FONT> inittype,
+                                   <FONT COLOR="#000088">netwib_io</FONT> **ppio);
+<FONT COLOR="#008800">#define <B>netwib_io_init_spoof_ip_best</B>(ppio) <B>netwib_io_init_spoof_ip</B>(<FONT COLOR="#000044">NETWIB_SPOOF_IP_INITTYPE_BEST</FONT>,<FONT COLOR="#000044">NETWIB_PKT_FIELDTYPE_BEST</FONT>,ppio)</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_buf_append_spoof_ip_inittype
+   Description :
+     Obtains the buf string corresponding to a type.
+   Input parameter(s) :
+     type : type
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pbuf : <FONT COLOR="#000088">netwib_buf</FONT> set with the buf string
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_buf_append_spoof_ip_inittype</B>(<FONT COLOR="#000088">netwib_spoof_ip_inittype</FONT> type,
+                                               <FONT COLOR="#000088">netwib_buf</FONT> *pbuf);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_spoof_ip_inittype_init_kbd
+   Description :
+     Initialize a <FONT COLOR="#000088">netwib_spoof_ip_inittype</FONT> with data entered
+     through keyboard.
+   Input parameter(s) :
+     *pmessage : message to print before
+     defaulttype : default type to use if user enters
+                   nothing (if <FONT COLOR="#000044">NETWIB_SPOOF_IP_INITTYPE_UNKNOWN</FONT>,
+                   means no default)
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *phwtype : <FONT COLOR="#000088">netwib_hwtype</FONT> initialized
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_spoof_ip_inittype_init_kbd</B>(<FONT COLOR="#000088">netwib_constbuf</FONT> *pmessage,
+                                             <FONT COLOR="#000088">netwib_spoof_ip_inittype</FONT> defaulttype,
+                                             <FONT COLOR="#000088">netwib_spoof_ip_inittype</FONT> *ptype);
+<FONT COLOR="#008800">#define <FONT COLOR="#000044">NETWIB_SPOOF_IP_INITTYPE_INIT_KBD_NODEF</FONT> <FONT COLOR="#000044">NETWIB_SPOOF_IP_INITTYPE_UNKNOWN</FONT></FONT>
+</PRE><BR><BR><HR><BR>
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../net.html">section index</A></H2>
+</BODY></HTML>

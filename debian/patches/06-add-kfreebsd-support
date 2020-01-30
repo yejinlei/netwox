@@ -1,0 +1,16 @@
+Description: Add platform detection support for Debian GNU/kFreeBSD
+ This patch adds platform detection for Debian systems running on
+ the FreeBSD kernel, also called Debian GNU/kFreeBSD.
+ .
+
+--- netw-ib-ox-ag-5.39.0.orig/src/netwib-src/src/genemake
++++ netw-ib-ox-ag-5.39.0/src/netwib-src/src/genemake
+@@ -39,7 +39,7 @@ case $unames in
+   "AIX" )
+     NETWIBDEF_SYSNAME="AIX"
+     ;;
+-  "FreeBSD" )
++  "FreeBSD" | "GNU/kFreeBSD" )
+     NETWIBDEF_SYSNAME="FreeBSD"
+     ;;
+   "HP-UX" )

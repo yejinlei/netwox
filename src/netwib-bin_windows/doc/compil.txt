@@ -1,0 +1,64 @@
+
+This file explains how to compile a program with netwib.
+
+
+If you want to create your own program using Visual C++ 6 (for Dev-C++
+compiler, the procedure is quite similar), follow those steps :
+
+ - open Microsoft Visual C++ 6
+
+ - Menu File - New
+   + select "Win32 Console Application"
+   + project name "netwibtest"
+   + location "c:\netwib539\netwibtest"
+   + button OK
+   + create "an empty project"
+   + button Finish
+
+ - Menu File - New
+   + select "C/C++ source file"
+   + file name "t1.c"
+   + enter in this file :
+       #include <netwib.h>
+       #include <stdio.h>
+       int main(void)
+       { netwib_init();
+         netwib_er(netwib_fmt_display("Hello\n"));
+         netwib_close();
+         return(0);
+       }
+
+ - Menu Project - Settings
+   + select "C/C++"
+   + select the category "preprocessor"
+   + additional include directories "c:\netwib539\include\"
+   + button OK
+
+ - Menu Project - Settings [this step is very important]
+   + select "C/C++"
+   + select the category "code generation"
+   + use run-time library "Multithreaded DLL"
+   + button OK
+
+ - Menu Project - Settings
+   + select "Link"
+   + select the category "general"
+   + in "Object/library modules", add at the end "netwib539.lib"
+   + button OK
+
+ - Menu Project - Settings
+   + select "Link"
+   + select the category "input"
+   + additional libraries path "c:\netwib539\lib\"
+   + button OK
+
+ - press F7
+
+ - open a msdos console in "c:\netwib539\netwibtest\Debug" :
+   + button Start - Menu Run - "command" (or "cmd")
+   + cd c:\netwib539\netwibtest\Debug
+
+ - run netwibtest.exe :
+   + netwibtest
+   The text displayed should be Hello.
+

@@ -1,0 +1,42 @@
+          Laurent CONSTANTIN's network library (netwib)
+               -----------------------------------
+
+                   ----------------------------
+                   |   INTEGRATION OF NETWIB  |
+                   ----------------------------
+
+Netwib allows for easy creation of network programs. In order to
+achieve this, it contains several high level features, hiding some
+actions.
+However, when netwib is expected to be integrated in a complex program :
+ - hidden features might interfere with those wanted by the
+   developer, or
+ - access to low level resources might by difficult if not impossible.
+
+
+Here are some points to analyze before integrating netwib in a big program :
+
+ - Netwib is designed for text programs (console).
+   Netwib can be used in graphical mode, but functions xyz_display and
+   xyz_kbd_xyz will not work.
+   Under Windows, programs using netwib539.dll have to be compiled with the
+   type "Win32 Console Application" under Visual C++ or "Win32 Console"
+   under Dev-C++.
+
+ - Events of kind sniff, spoof, etc. can only be accessed through the use
+   of a netwib_wait (so functions select (Unix) or WaitForxyzObjects (Windows)
+   cannot be used).
+   So user'events have to be converted to netwib_wait. There are two ways
+   to do it :
+    - use netwib_wait_init_function_event, or
+    - use netwib_io_init_fd or netwib_io_init_handle to initialize
+      a netwib_io. Then, use netwib_wait_init_io_xyz.
+
+ - Under Unix, file descriptors do not have the flag "close on exec".
+   Developers might want to set it on concerned descriptors before
+   calling a sensitive external program.
+
+
+Do not hesitate to ask me questions about integration of particular
+programs.
+

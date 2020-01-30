@@ -1,0 +1,27 @@
+
+This file explains how to compile a program with netwib.
+
+If you want to compile netwib, you're not reading the good file. Read 
+../INSTALLUNIX.TXT.
+
+
+To compile a program with netwib :
+
+ - add "#include <netwib.h>" at the top of your C file
+   Here is an example :
+       #include <netwib.h>
+       #include <stdio.h>
+       int main(void)
+       { netwib_init();
+         netwib_er(netwib_fmt_display("Hello\n"));
+         netwib_close();
+         return(0);
+       }
+
+ - compile with :
+     gcc -o file file.c `netwib-config --cflags --libs`
+     gcc -o file file.c `netwib-config -cl`
+
+ - run it with :
+     ./file
+

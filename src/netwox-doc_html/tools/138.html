@@ -1,0 +1,42 @@
+<HTML>
+ <HEAD>
+ <TITLE>Tool 138: Web spider (use configuration file created by tool 137)</TITLE>
+ </HEAD>
+ <BODY BGCOLOR="#FFFFFF">
+  <CENTER>   <H3>Tool 138: Web spider (use configuration file created by tool 137)</H3>
+  </CENTER>
+
+  <P><H3>Description:</H3>
+   <PRE>
+  This tool spiders a HTTP or FTP url. 'Spidering' an url means to
+  download the url, read the new urls it contains, download them, and so
+  on recursively.
+  It needs a configuration file created with tool 137.
+  It decides which url to download base on rules in configuration file.
+   </PRE>
+
+  <P><H3>Synonyms:</H3>
+  &nbsp;&nbsp;curl, wget<BR>
+
+  <P><H3>Usage:</H3>
+  &nbsp;&nbsp;netwox 138 -f file<BR>
+
+  <P><H3>Parameters:</H3>
+<TABLE BORDER=1 CELLPADDING=4>
+ <TR>
+  <TD ALIGN=middle><I>parameter</I></TD>
+  <TD ALIGN=middle><I>description</I></TD>
+  <TD ALIGN=middle><I>example</I></TD>
+ </TR>
+ <TR><TD><TT>-f|--conffile file</TD>
+<TD>configuration file</TD>
+<TD>srcfile.txt </TD></TR>
+</TABLE>
+
+  <P><H3>Examples:</H3>
+  &nbsp;&nbsp;netwox 138 -f "srcfile.txt"<BR>
+<BR>
+  &nbsp;&nbsp;netwox 138 --conffile "srcfile.txt"<BR>
+<BR>
+ </BODY>
+ </HTML>

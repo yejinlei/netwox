@@ -1,0 +1,2051 @@
+.TH NETWIB_PKT 3 "08/07/2012"
+.SH NAME
+\fBnetwib\fR - section \fBpkt\fR
+
+.SH HTML DOC
+If you have a browser, read netwib-5.39.0-doc_html.tgz
+which is easier to read than this manpage.
+
+.SH PRESENTATION
+This manpage contains a concatenation of includes for section
+PKT.
+.SH MODULE TYPES
+.nf
+
+#ifndef \fBNETWIB_PKT_TYPES_INCLUDED\fP
+\fI#define\fP \fBNETWIB_PKT_TYPES_INCLUDED\fP 1
+
+/*-------------------------------------------------------------*/
+/* Protocol values */
+\fItypedef\fP enum {
+  \fBNETWIB_IPPROTO_IP\fP = 0,        /* Dummy protocol for TCP */
+  \fBNETWIB_IPPROTO_HOPOPTS\fP = 0,   /* IPv6 Hop-by-Hop options */
+  \fBNETWIB_IPPROTO_ICMP4\fP = 1,     /* Internet Control Message Protocol */
+  \fBNETWIB_IPPROTO_IGMP\fP = 2,      /* Internet Group Management Protocol */
+  \fBNETWIB_IPPROTO_IPIP\fP = 4,      /* IPIP tunnels */
+  \fBNETWIB_IPPROTO_TCP\fP = 6,       /* Transmission Control Protocol */
+  \fBNETWIB_IPPROTO_EGP\fP = 8,       /* Exterior Gateway Protocol */
+  \fBNETWIB_IPPROTO_PUP\fP = 12,      /* PUP protocol */
+  \fBNETWIB_IPPROTO_UDP\fP = 17,      /* User Datagram Protocol */
+  \fBNETWIB_IPPROTO_IDP\fP = 22,      /* XNS IDP protocol */
+  \fBNETWIB_IPPROTO_TP\fP = 29,       /* SO Transport Protocol Class 4 */
+  \fBNETWIB_IPPROTO_IP6\fP = 41,      /* IPv6 header */
+  \fBNETWIB_IPPROTO_ROUTING\fP = 43,  /* IPv6 routing header */
+  \fBNETWIB_IPPROTO_FRAGMENT\fP = 44, /* IPv6 fragmentation header */
+  \fBNETWIB_IPPROTO_RSVP\fP = 46,     /* Reservation Protocol */
+  \fBNETWIB_IPPROTO_GRE\fP = 47,      /* General Routing Encapsulation */
+  \fBNETWIB_IPPROTO_ESP\fP = 50,      /* encapsulating security payload */
+  \fBNETWIB_IPPROTO_AH\fP = 51,       /* authentication header */
+  \fBNETWIB_IPPROTO_ICMP6\fP = 58,    /* ICMPv6 */
+  \fBNETWIB_IPPROTO_NONE\fP = 59,     /* IPv6 no next header */
+  \fBNETWIB_IPPROTO_DSTOPTS\fP = 60,  /* IPv6 destination options */
+  \fBNETWIB_IPPROTO_MTP\fP = 92,      /* Multicast Transport Protocol */
+  \fBNETWIB_IPPROTO_ENCAP\fP = 98,    /* Encapsulation Header */
+  \fBNETWIB_IPPROTO_PIM\fP = 103,     /* Protocol Independent Multicast */
+  \fBNETWIB_IPPROTO_COMP\fP = 108,    /* Compression Header Protocol */
+  \fBNETWIB_IPPROTO_RAW\fP = 255      /* Raw IP packets */
+} \fBnetwib_ipproto\fP;
+
+/*-------------------------------------------------------------*/
+\fI#define\fP \fBnetwib__data_append_uint8\fP(data,u) *(data)++=(\fBnetwib_byte\fP)(u)
+\fI#define\fP \fBnetwib__data_append_uint16\fP(data,u) *(data)++=\fBnetwib_c2_uint16_0\fP(u);*(data)++=\fBnetwib_c2_uint16_1\fP(u)
+\fI#define\fP \fBnetwib__data_append_uint32\fP(data,u) *(data)++=\fBnetwib_c2_uint32_0\fP(u);*(data)++=\fBnetwib_c2_uint32_1\fP(u);*(data)++=\fBnetwib_c2_uint32_2\fP(u);*(data)++=\fBnetwib_c2_uint32_3\fP(u)
+\fI#define\fP \fBnetwib__data_append_uint64\fP(data,u) *(data)++=\fBnetwib_c2_uint64_0\fP(u);*(data)++=\fBnetwib_c2_uint64_1\fP(u);*(data)++=\fBnetwib_c2_uint64_2\fP(u);*(data)++=\fBnetwib_c2_uint64_3\fP(u);*(data)++=\fBnetwib_c2_uint64_4\fP(u);*(data)++=\fBnetwib_c2_uint64_5\fP(u);*(data)++=\fBnetwib_c2_uint64_6\fP(u);*(data)++=\fBnetwib_c2_uint64_7\fP(u)
+/* for structures created with little endian processors */
+\fI#define\fP \fBnetwib__data_append_uint8_le\fP(data,u) \fBnetwib__data_append_uint8\fP(data,u)
+\fI#define\fP \fBnetwib__data_append_uint16_le\fP(data,u) *(data)++=\fBnetwib_c2_uint16_1\fP(u);*(data)++=\fBnetwib_c2_uint16_0\fP(u)
+\fI#define\fP \fBnetwib__data_append_uint32_le\fP(data,u) *(data)++=\fBnetwib_c2_uint32_3\fP(u);*(data)++=\fBnetwib_c2_uint32_2\fP(u);*(data)++=\fBnetwib_c2_uint32_1\fP(u);*(data)++=\fBnetwib_c2_uint32_0\fP(u)
+\fI#define\fP \fBnetwib__data_append_uint64_le\fP(data,u) *(data)++=\fBnetwib_c2_uint64_7\fP(u);*(data)++=\fBnetwib_c2_uint64_6\fP(u);*(data)++=\fBnetwib_c2_uint64_5\fP(u);*(data)++=\fBnetwib_c2_uint64_4\fP(u);*(data)++=\fBnetwib_c2_uint64_3\fP(u);*(data)++=\fBnetwib_c2_uint64_2\fP(u);*(data)++=\fBnetwib_c2_uint64_1\fP(u);*(data)++=\fBnetwib_c2_uint64_0\fP(u)
+
+/*-------------------------------------------------------------*/
+\fI#define\fP \fBnetwib__data_decode_uint8t\fP(data,u,type) u=(type)(*(data)++)
+\fI#define\fP \fBnetwib__data_decode_uint8t_le\fP(data,u,type) \fBnetwib__data_decode_uint8t\fP(data,u,type)
+\fI#define\fP \fBnetwib__data_decode_uint16t\fP(data,u,type) u=(type)((*(data)++)<<8);u=(type)((u)|*(data)++)
+\fI#define\fP \fBnetwib__data_decode_uint16t_le\fP(data,u,type) u=(type)(*(data)++);u=(type)(((*(data)++)<<8)|(u))
+\fI#define\fP \fBnetwib__data_decode_uint32t\fP(data,u,type) u=(type)((*(data)++)<<24);u=(type)((u)|((*(data)++)<<16));u=(type)((u)|((*(data)++)<<8));u=(type)((u)|*(data)++)
+\fI#define\fP \fBnetwib__data_decode_uint32t_le\fP(data,u,type) u=(type)(*(data)++);u=(type)(((*(data)++)<<8)|(u));u=(type)(((*(data)++)<<16)|(u));u=(type)(((*(data)++)<<24)|(u))
+#if \fBNETWIB_INT64_FAKE\fP == 0
+ \fI#define\fP \fBnetwib__data_decode_uint64t\fP(data,u,type) u=(type)((\fBnetwib_uint64\fP)(*(data)++)<<56);u=(type)((u)|((\fBnetwib_uint64\fP)(*(data)++)<<48));u=(type)((u)|((\fBnetwib_uint64\fP)(*(data)++)<<40));u=(type)((u)|((\fBnetwib_uint64\fP)(*(data)++)<<32));u=(type)((u)|((\fBnetwib_uint64\fP)(*(data)++)<<24));u=(type)((u)|((\fBnetwib_uint64\fP)(*(data)++)<<16));u=(type)((u)|((\fBnetwib_uint64\fP)(*(data)++)<<8));u=(type)((u)|(\fBnetwib_uint64\fP)(*(data)++))
+ \fI#define\fP \fBnetwib__data_decode_uint64t_le\fP(data,u,type) u=(type)(\fBnetwib_uint64\fP)(*(data)++);u=(type)(((\fBnetwib_uint64\fP)(*(data)++)<<8)|(u));u=(type)(((\fBnetwib_uint64\fP)(*(data)++)<<16)|(u));u=(type)(((\fBnetwib_uint64\fP)(*(data)++)<<24)|(u));u=(type)(((\fBnetwib_uint64\fP)(*(data)++)<<32)|(u));u=(type)(((\fBnetwib_uint64\fP)(*(data)++)<<40)|(u));u=(type)(((\fBnetwib_uint64\fP)(*(data)++)<<48)|(u));u=(type)(((\fBnetwib_uint64\fP)(*(data)++)<<56)|(u))
+#else
+ \fI#define\fP \fBnetwib__data_decode_uint64t\fP(data,u,type) \fBnetwib__data_decode_uint32\fP(data,(u).high);\fBnetwib__data_decode_uint32\fP(data,(u).low)
+ \fI#define\fP \fBnetwib__data_decode_uint64t_le\fP(data,u,type) \fBnetwib__data_decode_uint32_le\fP(data,(u).low);\fBnetwib__data_decode_uint32_le\fP(data,(u).high)
+#endif
+\fI#define\fP \fBnetwib__data_decode_uint8\fP(data,u) \fBnetwib__data_decode_uint8t\fP(data,u,\fBnetwib_uint8\fP)
+\fI#define\fP \fBnetwib__data_decode_uint8_le\fP(data,u) \fBnetwib__data_decode_uint8\fP(data,u)
+\fI#define\fP \fBnetwib__data_decode_uint16\fP(data,u) \fBnetwib__data_decode_uint16t\fP(data,u,\fBnetwib_uint16\fP)
+\fI#define\fP \fBnetwib__data_decode_uint16_le\fP(data,u) \fBnetwib__data_decode_uint16t_le\fP(data,u,\fBnetwib_uint16\fP)
+\fI#define\fP \fBnetwib__data_decode_uint32\fP(data,u) \fBnetwib__data_decode_uint32t\fP(data,u,\fBnetwib_uint32\fP)
+\fI#define\fP \fBnetwib__data_decode_uint32_le\fP(data,u) \fBnetwib__data_decode_uint32t_le\fP(data,u,\fBnetwib_uint32\fP)
+\fI#define\fP \fBnetwib__data_decode_uint64\fP(data,u) \fBnetwib__data_decode_uint64t\fP(data,u,\fBnetwib_uint64\fP)
+\fI#define\fP \fBnetwib__data_decode_uint64_le\fP(data,u) \fBnetwib__data_decode_uint64t_le\fP(data,u,\fBnetwib_uint64\fP)
+
+#endif
+.fi
+.SH MODULE LINKHDR
+.nf
+
+/*-------------------------------------------------------------*/
+/* Ethernet header (\fBNETWIB_DEVICE_DLTTYPE_EN10MB\fP) */
+\fItypedef\fP enum {
+  \fBNETWIB_ETHERHDRTYPE_IP4\fP =    0x0800,
+  \fBNETWIB_ETHERHDRTYPE_ARP\fP =    0x0806,
+  \fBNETWIB_ETHERHDRTYPE_VINES\fP =  0x0bad,
+  \fBNETWIB_ETHERHDRTYPE_TRAIN\fP =  0x1984,
+  \fBNETWIB_ETHERHDRTYPE_CDP\fP =    0x2000,
+  \fBNETWIB_ETHERHDRTYPE_RARP\fP =   0x8035,
+  \fBNETWIB_ETHERHDRTYPE_ATALK\fP =  0x809b,
+  \fBNETWIB_ETHERHDRTYPE_AARP\fP =   0x80f3,
+  \fBNETWIB_ETHERHDRTYPE_VLAN\fP =   0x8100,
+  \fBNETWIB_ETHERHDRTYPE_IPX\fP =    0x8137,
+  \fBNETWIB_ETHERHDRTYPE_IP6\fP =    0x86DD,
+  \fBNETWIB_ETHERHDRTYPE_PPPOED\fP = 0x8863,
+  \fBNETWIB_ETHERHDRTYPE_PPPOES\fP = 0x8864,
+  \fBNETWIB_ETHERHDRTYPE_LOOP\fP =   0x9000
+} \fBnetwib_etherhdrtype\fP;
+\fItypedef\fP struct {
+  \fBnetwib_eth\fP dst;
+  \fBnetwib_eth\fP src;
+  \fBnetwib_etherhdrtype\fP type;
+} \fBnetwib_etherhdr\fP;
+\fItypedef\fP const \fBnetwib_etherhdr\fP \fBnetwib_constetherhdr\fP;
+\fI#define\fP \fBNETWIB_ETHERHDR_LEN\fP 14
+
+/*-------------------------------------------------------------*/
+/* NULL header (\fBNETWIB_DEVICE_DLTTYPE_NULL\fP) */
+\fItypedef\fP struct {
+  \fBnetwib_etherhdrtype\fP type;
+} \fBnetwib_nullhdr\fP;
+\fItypedef\fP const \fBnetwib_nullhdr\fP \fBnetwib_constnullhdr\fP;
+\fI#define\fP \fBNETWIB_NULLHDR_LEN\fP 4
+
+/*-------------------------------------------------------------*/
+/* LOOP header (\fBNETWIB_DEVICE_DLTTYPE_LOOP\fP) */
+\fItypedef\fP struct {
+  \fBnetwib_etherhdrtype\fP type;
+} \fBnetwib_loophdr\fP;
+\fItypedef\fP const \fBnetwib_loophdr\fP \fBnetwib_constloophdr\fP;
+\fI#define\fP \fBNETWIB_LOOPHDR_LEN\fP 4
+
+/*-------------------------------------------------------------*/
+/* RAW header (\fBNETWIB_DEVICE_DLTTYPE_RAW\fP) */
+\fI#define\fP \fBNETWIB_RAWHDR_LEN\fP 0
+
+/*-------------------------------------------------------------*/
+/* PPP header (\fBNETWIB_DEVICE_DLTTYPE_PPP\fP) */
+\fItypedef\fP enum {
+  \fBNETWIB_PPPHDRPROTO_IP4\fP =     0x0021, /* Internet Protocol */
+  \fBNETWIB_PPPHDRPROTO_AT\fP =      0x0029, /* AppleTalk Protocol */
+  \fBNETWIB_PPPHDRPROTO_IPX\fP =     0x002b, /* IPX protocol */
+  \fBNETWIB_PPPHDRPROTO_VJC_COMP\fP =   0x002d, /* VJ compressed TCP */
+  \fBNETWIB_PPPHDRPROTO_VJC_UNCOMP\fP = 0x002f, /* VJ uncompressed TCP */
+  \fBNETWIB_PPPHDRPROTO_IP6\fP =     0x0057, /* Internet Protocol Version 6 */
+  \fBNETWIB_PPPHDRPROTO_COMP\fP =    0x00fd, /* compressed packet */
+  \fBNETWIB_PPPHDRPROTO_IPCP\fP =    0x8021, /* IP Control Protocol */
+  \fBNETWIB_PPPHDRPROTO_ATCP\fP =    0x8029, /* AppleTalk Control Protocol */
+  \fBNETWIB_PPPHDRPROTO_IPXCP\fP =   0x802b, /* IPX Control Protocol */
+  \fBNETWIB_PPPHDRPROTO_IP6CP\fP =   0x8057, /* IPv6 Control Protocol */
+  \fBNETWIB_PPPHDRPROTO_CCP\fP =     0x80fd, /* Compression Control Protocol */
+  \fBNETWIB_PPPHDRPROTO_LCP\fP =     0xc021, /* Link Control Protocol */
+  \fBNETWIB_PPPHDRPROTO_PAP\fP =     0xc023, /* Password Authentication Proto */
+  \fBNETWIB_PPPHDRPROTO_LQR\fP =     0xc025, /* Link Quality Report protocol */
+  \fBNETWIB_PPPHDRPROTO_CHAP\fP =    0xc223, /* Crypto. Handshake Auth. P. */
+  \fBNETWIB_PPPHDRPROTO_CBCP\fP =    0xc029  /* Callback Control Protocol */
+} \fBnetwib_ppphdrproto\fP;
+\fItypedef\fP struct {
+  \fBnetwib_byte\fP address;
+  \fBnetwib_byte\fP control;
+  \fBnetwib_ppphdrproto\fP protocol;
+} \fBnetwib_ppphdr\fP;
+\fItypedef\fP const \fBnetwib_ppphdr\fP \fBnetwib_constppphdr\fP;
+\fI#define\fP \fBNETWIB_PPPHDR_LEN\fP 4
+
+/*-------------------------------------------------------------*/
+/* LINUX_SLL header (\fBNETWIB_DEVICE_DLTTYPE_LINUX_SLL\fP) */
+\fItypedef\fP enum {
+  \fBNETWIB_LINUXSLLHDRPKTTYPE_HOST\fP = 0,
+  \fBNETWIB_LINUXSLLHDRPKTTYPE_BROADCAST\fP = 1,
+  \fBNETWIB_LINUXSLLHDRPKTTYPE_MULTICAST\fP = 2,
+  \fBNETWIB_LINUXSLLHDRPKTTYPE_OTHERHOST\fP = 3,
+  \fBNETWIB_LINUXSLLHDRPKTTYPE_OUTGOING\fP = 4
+} \fBnetwib_linuxsllhdrpkttype\fP;
+\fItypedef\fP enum {
+  \fBNETWIB_LINUXSLLHDRHATYPE_NETROM\fP = 0,
+  \fBNETWIB_LINUXSLLHDRHATYPE_ETHER\fP = 1
+} \fBnetwib_linuxsllhdrhatype\fP;
+\fItypedef\fP struct {
+  \fBnetwib_linuxsllhdrpkttype\fP pkttype;   /* packet type */
+  \fBnetwib_linuxsllhdrhatype\fP hatype;     /* link-layer address type */
+  \fBnetwib_uint16\fP halen;                 /* link-layer address length */
+  \fBnetwib_byte\fP srcaddr[8];              /* link-layer address */
+  \fBnetwib_etherhdrtype\fP protocol;        /* protocol */
+} \fBnetwib_linuxsllhdr\fP;
+\fItypedef\fP const \fBnetwib_linuxsllhdr\fP \fBnetwib_constlinuxsllhdr\fP;
+\fI#define\fP \fBNETWIB_LINUXSLLHDR_LEN\fP 16
+
+/*-------------------------------------------------------------*/
+/* Link header */
+\fItypedef\fP struct {
+  \fBnetwib_device_dlttype\fP type;
+  union {
+    \fBnetwib_etherhdr\fP    ether;
+    \fBnetwib_nullhdr\fP     null;
+    \fBnetwib_loophdr\fP     loop;
+    /* no \fBnetwib_rawhdr\fP needed */
+    \fBnetwib_ppphdr\fP      ppp;
+    \fBnetwib_linuxsllhdr\fP linuxsll;
+  } hdr;
+} \fBnetwib_linkhdr\fP;
+\fItypedef\fP const \fBnetwib_linkhdr\fP \fBnetwib_constlinkhdr\fP;
+\fI#define\fP \fBNETWIB_LINKHDR_MAXLEN\fP \fBNETWIB_LINUXSLLHDR_LEN\fP
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_linkhdr_initdefault\fP
+   Description :
+     Initialize a \fBnetwib_linkhdr\fP with default values.
+   Input parameter(s) :
+     type : header type
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *plinkhdr : \fBnetwib_linkhdr\fP to initialize
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_linkhdr_initdefault\fP(\fBnetwib_device_dlttype\fP type,
+                                      \fBnetwib_linkhdr\fP *plinkhdr);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_pkt_append_linkhdr\fP
+   Description :
+     Initialize physical data from a \fBnetwib_linkhdr\fP.
+   Input parameter(s) :
+     linkhdr : \fBnetwib_linkhdr\fP
+   Input/output parameter(s) :
+     *ppht : buffer to initialize
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_pkt_append_linkhdr\fP(\fBnetwib_constlinkhdr\fP *plinkhdr,
+                                     \fBnetwib_buf\fP *ppkt);
+\fBnetwib_err\fP \fBnetwib_pkt_prepend_linkhdr\fP(\fBnetwib_constlinkhdr\fP *plinkhdr,
+                                      \fBnetwib_buf\fP *ppkt);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_pkt_decode_linkhdr\fP
+   Description :
+     Decode a \fBnetwib_linkhdr\fP from data coming from wire.
+   Input parameter(s) :
+     dlttype : DLT type of packet
+     *ppkt : buffer containing physical data
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *plinkhdr : \fBnetwib_linkhdr\fP to initialize
+     *pskipsize : size to skip this header
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_pkt_decode_linkhdr\fP(\fBnetwib_device_dlttype\fP dlttype,
+                                     \fBnetwib_constbuf\fP *ppkt,
+                                     \fBnetwib_linkhdr\fP *plinkhdr,
+                                     \fBnetwib_uint32\fP *pskipsize);
+
+/*-------------------------------------------------------------*/
+/***************************************************************
+ * Link headers are horribly incompatible. The only field      *
+ * which can be considered as compatible is the type/protocol. *
+ * Following functions permit to set/get it from header.       *
+ * Type \fBnetwib_linkhdrproto\fP is the generic type.               *
+ ***************************************************************/
+\fItypedef\fP enum {
+  \fBNETWIB_LINKHDRPROTO_UNKNOWN\fP = 0,
+  \fBNETWIB_LINKHDRPROTO_IP4\fP,
+  \fBNETWIB_LINKHDRPROTO_IP6\fP,
+  \fBNETWIB_LINKHDRPROTO_ARP\fP,
+  \fBNETWIB_LINKHDRPROTO_RARP\fP,
+  \fBNETWIB_LINKHDRPROTO_IPX\fP
+} \fBnetwib_linkhdrproto\fP;
+\fBnetwib_err\fP \fBnetwib_linkhdr_set_proto\fP(\fBnetwib_linkhdr\fP *plinkhdr,
+                                    \fBnetwib_linkhdrproto\fP linkhdrproto);
+\fBnetwib_err\fP \fBnetwib_linkhdr_get_proto\fP(\fBnetwib_constlinkhdr\fP *plinkhdr,
+                                    \fBnetwib_linkhdrproto\fP *plinkhdrproto);
+.fi
+.SH MODULE IPHDR
+.nf
+
+/*-------------------------------------------------------------*/
+/***************************************************************
+ * A \fBnetwib_iphdr\fP permits to store :                           *
+ *  - an IPv4 header (rfc 791), or                             *
+ *  - an IPv6 header (rfc 2460)                                *
+ ***************************************************************/
+\fItypedef\fP struct {
+  /* common fields */
+  \fBnetwib_iptype\fP iptype;
+  \fBnetwib_ip\fP src;
+  \fBnetwib_ip\fP dst;
+  \fBnetwib_uint8\fP ttl;
+  \fBnetwib_ipproto\fP protocol;
+  /* specific fields */
+  union {
+    struct {
+      \fBnetwib_uint8\fP ihl;
+      \fBnetwib_uint8\fP tos;
+      \fBnetwib_uint16\fP totlen;
+      \fBnetwib_uint16\fP id;
+      \fBnetwib_bool\fP reserved;
+      \fBnetwib_bool\fP dontfrag;
+      \fBnetwib_bool\fP morefrag;
+      \fBnetwib_uint16\fP offsetfrag;
+      \fBnetwib_uint16\fP check;
+      \fBnetwib_bufext\fP opts; /* IPv4 options as defined in ip4opts.h */
+    } ip4;
+    struct {
+      \fBnetwib_uint8\fP trafficclass;
+      \fBnetwib_uint32\fP flowlabel;
+      \fBnetwib_uint16\fP payloadlength;
+      \fBnetwib_bufext\fP exts; /* IPv6 extensions as defined in ip6exts.h */
+    } ip6;
+  } header;
+} \fBnetwib_iphdr\fP;
+\fItypedef\fP const \fBnetwib_iphdr\fP \fBnetwib_constiphdr\fP;
+\fI#define\fP \fBNETWIB_IPHDR_MINLEN\fP 40
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_iphdr_initdefault\fP
+   Description :
+     Initialize a \fBnetwib_iphdr\fP with default values.
+   Input parameter(s) :
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *piphdr : \fBnetwib_iphdr\fP to initialize
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_iphdr_initdefault\fP(\fBnetwib_iptype\fP iptype,
+                                    \fBnetwib_iphdr\fP *piphdr);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_pkt_append_iphdr\fP
+   Description :
+     Initialize physical data from a \fBnetwib_iphdr\fP.
+   Input parameter(s) :
+     *piphdr : \fBnetwib_iphdr\fP
+   Input/output parameter(s) :
+     *ppht : buffer to initialize
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_pkt_append_iphdr\fP(\fBnetwib_constiphdr\fP *piphdr,
+                                   \fBnetwib_buf\fP *ppkt);
+\fBnetwib_err\fP \fBnetwib_pkt_prepend_iphdr\fP(\fBnetwib_constiphdr\fP *piphdr,
+                                    \fBnetwib_buf\fP *ppkt);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_pkt_decode_iphdr\fP
+   Description :
+     Decode a \fBnetwib_iphdr\fP from physical data.
+   Input parameter(s) :
+     *ppkt : buffer containing physical data
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *piphdr : \fBnetwib_iphdr\fP contained in pkt
+     *pskipsize : size to use to skip this header
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+     \fBNETWIB_ERR_NOTCONVERTED\fP : pkt could not be decoded
+     \fBNETWIB_ERR_DATAMISSING\fP : pkt was not big enough
+*/
+\fBnetwib_err\fP \fBnetwib_pkt_decode_iphdr\fP(\fBnetwib_constbuf\fP *ppkt,
+                                   \fBnetwib_iphdr\fP *piphdr,
+                                   \fBnetwib_uint32\fP *pskipsize);
+
+/*-------------------------------------------------------------*/
+/***************************************************************
+ * A \fBnetwib_iphdr\fP contains a protocol field, it is stored :    *
+ *  - IPv4 : in header.protocol                                *
+ *  - IPv6 : if exts is empty : in header.protocol,            *
+ *           else : in last extension of header.ip6.exts       *
+ ***************************************************************/
+\fBnetwib_err\fP \fBnetwib_iphdr_set_proto\fP(\fBnetwib_iphdr\fP *piphdr,
+                                  \fBnetwib_ipproto\fP ipproto);
+\fBnetwib_err\fP \fBnetwib_iphdr_get_proto\fP(\fBnetwib_constiphdr\fP *piphdr,
+                                  \fBnetwib_ipproto\fP *pipproto);
+.fi
+.SH MODULE IP4OPT
+.nf
+
+/*-------------------------------------------------------------*/
+/***************************************************************
+ * Refer to RFC 791 to obtain more information about IPv4      *
+ * options.                                                    *
+ ***************************************************************/
+
+/*-------------------------------------------------------------*/
+/* Comments starting with "NI" are not implemented */
+\fItypedef\fP enum {
+  \fBNETWIB_IP4OPTTYPE_END\fP = 0,        /* end of options */
+  \fBNETWIB_IP4OPTTYPE_NOOP\fP = 1,       /* no operation */
+  \fBNETWIB_IP4OPTTYPE_RR\fP = 7,         /* record route */
+  \fBNETWIB_IP4OPTTYPE_TIME\fP = 68,      /* timestamp */
+  \fBNETWIB_IP4OPTTYPE_SECURITY\fP = 130, /* NI security compartmentation */
+  \fBNETWIB_IP4OPTTYPE_LSRR\fP = 131,     /* loose source and record route */
+  \fBNETWIB_IP4OPTTYPE_STREAM\fP = 136,   /* NI SATNET stream identifier */
+  \fBNETWIB_IP4OPTTYPE_SSRR\fP = 137      /* strict source and record route */
+} \fBnetwib_ip4opttype\fP;
+
+/*-------------------------------------------------------------*/
+/* maximum length of one IP4 option */
+\fI#define\fP \fBNETWIB_IP4OPT_MAXLEN\fP 40
+
+/*-------------------------------------------------------------*/
+\fItypedef\fP struct {
+  \fBnetwib_uint32\fP storagesize; /* 0 to 9 */
+  \fBnetwib_uint32\fP storedvalues; /* 0 to storagesize */
+\fI#define\fP \fBNETWIB_IP4OPT_RR_IP_LEN\fP 9
+  \fBnetwib_ip\fP ip[\fBNETWIB_IP4OPT_RR_IP_LEN\fP];
+} \fBnetwib_ip4opt_rr\fP;
+\fItypedef\fP const \fBnetwib_ip4opt_rr\fP \fBnetwib_constip4opt_rr\fP;
+
+\fItypedef\fP struct {
+  \fBnetwib_uint32\fP storagesize; /* 0 to 9 */
+  \fBnetwib_uint32\fP usedvalues; /* 0 to storagesize */
+\fI#define\fP \fBNETWIB_IP4OPT_SRR_IP_LEN\fP 9
+  \fBnetwib_ip\fP ip[\fBNETWIB_IP4OPT_SRR_IP_LEN\fP];
+} \fBnetwib_ip4opt_srr\fP;
+\fItypedef\fP const \fBnetwib_ip4opt_srr\fP \fBnetwib_constip4opt_srr\fP;
+
+\fItypedef\fP enum {
+  \fBNETWIB_IP4OPT_TIMEFLAG_TS\fP = 0,
+  \fBNETWIB_IP4OPT_TIMEFLAG_IPTS\fP = 1,
+  \fBNETWIB_IP4OPT_TIMEFLAG_IPPTS\fP = 3
+} \fBnetwib_ip4opt_timeflag\fP;
+\fItypedef\fP struct {
+  \fBnetwib_uint32\fP storagesize; /* 0 to 4or9 (4 for ipts/ippts; 9 for ts) */
+  \fBnetwib_uint32\fP storedvalues; /* 0 to storeagesize */
+  \fBnetwib_uint8\fP overflow;
+  \fBnetwib_ip4opt_timeflag\fP flag;
+\fI#define\fP \fBNETWIB_IP4OPT_TIME_IP_LEN\fP 4
+  \fBnetwib_ip\fP ip[\fBNETWIB_IP4OPT_TIME_IP_LEN\fP];
+\fI#define\fP \fBNETWIB_IP4OPT_TIME_TIMESTAMP_LEN\fP 9
+  \fBnetwib_uint32\fP timestamp[\fBNETWIB_IP4OPT_TIME_TIMESTAMP_LEN\fP];
+} \fBnetwib_ip4opt_time\fP;
+\fItypedef\fP const \fBnetwib_ip4opt_time\fP \fBnetwib_constip4opt_time\fP;
+
+\fItypedef\fP struct {
+  \fBnetwib_ip4opttype\fP type;
+  union {
+    /* type end : no value */
+    /* type noop : no value */
+    \fBnetwib_ip4opt_rr\fP rr;
+    \fBnetwib_ip4opt_time\fP time;
+    /* type security : NI */
+    \fBnetwib_ip4opt_srr\fP lsrr;
+    /* type stream : NI */
+    \fBnetwib_ip4opt_srr\fP ssrr;
+  } opt;
+} \fBnetwib_ip4opt\fP;
+\fItypedef\fP const \fBnetwib_ip4opt\fP \fBnetwib_constip4opt\fP;
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_ip4opt_initdefault\fP
+   Description :
+     Initialize a \fBnetwib_ip4opt\fP with default values.
+   Input parameter(s) :
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pip4opt : \fBnetwib_ip4opt\fP to initialize
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_ip4opt_initdefault\fP(\fBnetwib_ip4opttype\fP ip4opttype,
+                                     \fBnetwib_ip4opt\fP *pip4opt);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_pkt_append_ip4opt\fP
+   Description :
+     Initialize physical data from a \fBnetwib_ip4opt\fP.
+   Input parameter(s) :
+     ip4opt : \fBnetwib_ip4opt\fP
+   Input/output parameter(s) :
+     *ppht : buffer to initialize
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_pkt_append_ip4opt\fP(\fBnetwib_constip4opt\fP *pip4opt,
+                                    \fBnetwib_buf\fP *ppkt);
+\fBnetwib_err\fP \fBnetwib_pkt_prepend_ip4opt\fP(\fBnetwib_constip4opt\fP *pip4opt,
+                                     \fBnetwib_buf\fP *ppkt);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_pkt_decode_ip4opt\fP
+   Description :
+     Decode a \fBnetwib_ip4opt\fP from data coming from wire.
+   Input parameter(s) :
+     *ppkt : buffer containing physical data
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pip4opt : \fBnetwib_ip4opt\fP to initialize
+     *pskipsize : size to skip this option
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_pkt_decode_ip4opt\fP(\fBnetwib_constbuf\fP *ppkt,
+                                    \fBnetwib_ip4opt\fP *pip4opt,
+                                    \fBnetwib_uint32\fP *pskipsize);
+.fi
+.SH MODULE IP4OPTS
+.nf
+
+/*-------------------------------------------------------------*/
+/***************************************************************
+ * A "\fBnetwib_ip4opts\fP" is a \fBnetwib_buf\fP storing 0, 1 or more     *
+ * \fBnetwib_ip4opt\fP. There is no \fItypedef\fP for \fBnetwib_ip4opts\fP.      *
+ ***************************************************************/
+
+/*-------------------------------------------------------------*/
+/* maximum length of a buffer containing a "\fBnetwib_ip4opts\fP" */
+\fI#define\fP \fBNETWIB_IP4OPTS_MAXLEN\fP 40
+
+/*-------------------------------------------------------------*/
+/***************************************************************
+ * To create a "\fBnetwib_ip4opts\fP", loop using function           *
+ * \fBnetwib_pkt_append_ip4opt\fP.                                   *
+ * To decode a "\fBnetwib_ip4opts\fP", loop using function           *
+ * \fBnetwib_pkt_decode_ip4opt\fP.                                   *
+ ***************************************************************/
+.fi
+.SH MODULE IP6EXT
+.nf
+
+/*-------------------------------------------------------------*/
+/***************************************************************
+ * Following functions work on extension headers of IPv6.      *
+ ***************************************************************/
+
+/*-------------------------------------------------------------*/
+/* IPv6 Hop-by-Hop Options extension header */
+\fItypedef\fP struct {
+  \fBnetwib_bufext\fP options;
+} \fBnetwib_ip6ext_hopopts\fP;
+\fItypedef\fP const \fBnetwib_ip6ext_hopopts\fP \fBnetwib_constip6ext_hopopts\fP;
+
+/*-------------------------------------------------------------*/
+/* IPv6 Destination Options extension header */
+\fItypedef\fP struct {
+  \fBnetwib_bufext\fP options;
+} \fBnetwib_ip6ext_dstopts\fP;
+\fItypedef\fP const \fBnetwib_ip6ext_dstopts\fP \fBnetwib_constip6ext_dstopts\fP;
+
+/*-------------------------------------------------------------*/
+/* IPv6 Routing extension header */
+\fItypedef\fP struct {
+  \fBnetwib_uint8\fP routingtype;
+  \fBnetwib_uint8\fP segmentsleft;
+  \fBnetwib_bufext\fP data;
+} \fBnetwib_ip6ext_routing\fP;
+\fItypedef\fP const \fBnetwib_ip6ext_routing\fP \fBnetwib_constip6ext_routing\fP;
+
+/*-------------------------------------------------------------*/
+/* IPv6 Fragment extension header */
+\fItypedef\fP struct {
+  \fBnetwib_uint16\fP fragmentoffset;
+  \fBnetwib_bool\fP reservedb1;
+  \fBnetwib_bool\fP reservedb2;
+  \fBnetwib_bool\fP morefrag;
+  \fBnetwib_uint32\fP id;
+} \fBnetwib_ip6ext_fragment\fP;
+\fItypedef\fP const \fBnetwib_ip6ext_fragment\fP \fBnetwib_constip6ext_fragment\fP;
+
+/*-------------------------------------------------------------*/
+/* IPv6 Authentication Header extension header (rfc 2402) */
+\fItypedef\fP struct {
+  \fBnetwib_uint16\fP reserved;
+  \fBnetwib_uint32\fP spi;
+  \fBnetwib_uint32\fP seqnum;
+  \fBnetwib_bufext\fP data;
+} \fBnetwib_ip6ext_ah\fP;
+\fItypedef\fP const \fBnetwib_ip6ext_ah\fP \fBnetwib_constip6ext_ah\fP;
+
+/*-------------------------------------------------------------*/
+/* Generic IPv6 extension header */
+\fItypedef\fP struct {
+  \fBnetwib_ipproto\fP proto;
+  union {
+    \fBnetwib_ip6ext_hopopts\fP hopopts;
+    \fBnetwib_ip6ext_dstopts\fP dstopts;
+    \fBnetwib_ip6ext_routing\fP routing;
+    \fBnetwib_ip6ext_fragment\fP fragment;
+    \fBnetwib_ip6ext_ah\fP ah;
+  } ext;
+  \fBnetwib_ipproto\fP nextproto;
+} \fBnetwib_ip6ext\fP;
+\fItypedef\fP const \fBnetwib_ip6ext\fP \fBnetwib_constip6ext\fP;
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_ip6ext_initdefault\fP
+   Description :
+     Initialize a \fBnetwib_ip6ext\fP with default values.
+   Input parameter(s) :
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pip6ext : \fBnetwib_ip6ext\fP to initialize
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_ip6ext_initdefault\fP(\fBnetwib_ipproto\fP proto,
+                                     \fBnetwib_ip6ext\fP *pip6ext);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_pkt_append_ip6ext\fP
+   Description :
+     Initialize physical data from a \fBnetwib_ip6ext\fP.
+   Input parameter(s) :
+     ip6ext : \fBnetwib_ip6ext\fP
+   Input/output parameter(s) :
+     *ppht : buffer to initialize
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_pkt_append_ip6ext\fP(\fBnetwib_constip6ext\fP *pip6ext,
+                                    \fBnetwib_buf\fP *ppkt);
+\fBnetwib_err\fP \fBnetwib_pkt_prepend_ip6ext\fP(\fBnetwib_constip6ext\fP *pip6ext,
+                                     \fBnetwib_buf\fP *ppkt);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_pkt_decode_ip6ext\fP
+   Description :
+     Decode a \fBnetwib_ip6ext\fP from data coming from wire.
+   Input parameter(s) :
+     pktproto : protocol of the \fBnetwib_ip6ext\fP in ppkt
+     *ppkt : buffer containing physical data
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pip6ext : \fBnetwib_ip6ext\fP to initialize
+     *pskipsize : size to skip this header
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_pkt_decode_ip6ext\fP(\fBnetwib_ipproto\fP pktproto,
+                                    \fBnetwib_constbuf\fP *ppkt,
+                                    \fBnetwib_ip6ext\fP *pip6ext,
+                                    \fBnetwib_uint32\fP *pskipsize);
+.fi
+.SH MODULE IP6EXTS
+.nf
+
+/*-------------------------------------------------------------*/
+/***************************************************************
+ * A "\fBnetwib_ip6exts\fP" is a \fBnetwib_buf\fP storing 0, 1 or more     *
+ * \fBnetwib_ip6ext\fP. There is no \fItypedef\fP for \fBnetwib_ip6exts\fP.      *
+ ***************************************************************/
+
+/*-------------------------------------------------------------*/
+/***************************************************************
+ * To create a "\fBnetwib_ip6exts\fP", loop using function           *
+ * \fBnetwib_pkt_append_ip6ext\fP.                                   *
+ * To decode a "\fBnetwib_ip6exts\fP", loop using function           *
+ * \fBnetwib_pkt_decode_ip6ext\fP.                                   *
+ ***************************************************************/
+
+/*-------------------------------------------------------------*/
+/***************************************************************
+ * Normally, an IPv6 packet should be created and decoded      *
+ * layer by layer. So, there should be no need for an          *
+ * \fBnetwib_ip6exts\fP, containing several layers/ip6_extensions.   *
+ * However, this behavior makes harder the creation of         *
+ * functions for both IPv4 (which contains IP4 options) and    *
+ * IPv6.                                                       *
+ * So, in netwib the \fBnetwib_ip6hdr\fP contains a buffer of        *
+ * \fBnetwib_ip6exts\fP.                                             *
+ *                                                             *
+ * When decoding a packet, the \fBnetwib_ip6exts\fP buffer is set to *
+ * all recognized extensions :                                 *
+ *   \fBNETWIB_IPPROTO_HOPOPTS\fP                                    *
+ *   \fBNETWIB_IPPROTO_DSTOPTS\fP                                    *
+ *   \fBNETWIB_IPPROTO_ROUTING\fP                                    *
+ *   \fBNETWIB_IPPROTO_FRAGMENT\fP                                   *
+ *   \fBNETWIB_IPPROTO_AH\fP                                         *
+ * Then, the packet eventually starts with unknown extensions  *
+ * or real data.                                               *
+ * Example 1 :                                                 *
+ *   packet is IP6+HOPOPTS+FRAGMENT+TCP                        *
+ *   ip6exts in ip6hdr will contain : HOPOPTS+FRAGMENT         *
+ *   next data will be : TCP                                   *
+ * Example 2 :                                                 *
+ *   packet is IP6+TCP                                         *
+ *   ip6exts in ip6hdr will contain : nothing                  *
+ *   next data will be : TCP                                   *
+ * Example 3 :                                                 *
+ *   packet is IP6+HOPOPTS+unknown+TCP                         *
+ *   ip6exts in ip6hdr will contain : HOPOPTS                  *
+ *   next data will be : unknown+TCP                           *
+ * Example 4 :                                                 *
+ *   packet is IP6+HOPOPTS+unknown+FRAGMENT+TCP                *
+ *   ip6exts in ip6hdr will contain : HOPOPTS                  *
+ *   next data will be : unknown+FRAGMENT+TCP                  *
+ * If you prefer the layer by layer behavior, just concatenate *
+ * ip6exts and next_data.                                      *
+ *                                                             *
+ * When creating a packet, there are 2 ways :                  *
+ *  - store extensions in ip6exts, or                          *
+ *  - left empty ip6exts, and put extensions at the beginning  *
+ *    of data                                                  *
+ * The first solution is preferred, because netwib will        *
+ * magically deal with them if necessary.                      *
+ ***************************************************************/
+
+/*-------------------------------------------------------------*/
+/***************************************************************
+ * RFC 2640 says "The Hop-by-Hop Options header, when present, *
+ * must immediately follow the IPv6 header". This is not       *
+ * enforced in netwib.                                         *
+ ***************************************************************/
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_pkt_decode_ip6exts\fP
+   Description :
+     Obtain size of all recognized extensions. Also obtain
+     the last proto and its offset (to easily overwrite it).
+     The recognized extensions are :
+        \fBNETWIB_IPPROTO_HOPOPTS\fP
+        \fBNETWIB_IPPROTO_DSTOPTS\fP
+        \fBNETWIB_IPPROTO_ROUTING\fP
+        \fBNETWIB_IPPROTO_FRAGMENT\fP
+        \fBNETWIB_IPPROTO_AH\fP
+   Input parameter(s) :
+     pktproto : protocol of the \fBnetwib_ip6ext\fP in ppkt
+     *ppkt : buffer containing physical data
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *plastproto : last protocol
+     *plastprotooffset : offset of the byte describing the
+                         last protocol. This value is unset
+                         if skipsize == 0.
+     *pskipsize : size to skip this/those extensions. If 0,
+                  there is no extension (in this case,
+                  lastproto is set to pktproto).
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_pkt_decode_ip6exts\fP(\fBnetwib_ipproto\fP pktproto,
+                                     \fBnetwib_constbuf\fP *ppkt,
+                                     \fBnetwib_ipproto\fP *plastproto,
+                                     \fBnetwib_uint32\fP *plastprotooffset,
+                                     \fBnetwib_uint32\fP *pskipsize);
+.fi
+.SH MODULE ARPHDR
+.nf
+
+/*-------------------------------------------------------------*/
+/***************************************************************
+ * Currently, only Ethernet-IPv4 is implemented as ARP.        *
+ ***************************************************************/
+
+/*-------------------------------------------------------------*/
+/* ARP header */
+\fItypedef\fP enum {
+  \fBNETWIB_ARPHDROP_ARPREQ\fP = 1,
+  \fBNETWIB_ARPHDROP_ARPREP\fP = 2,
+  \fBNETWIB_ARPHDROP_RARPREQ\fP = 3,
+  \fBNETWIB_ARPHDROP_RARPREP\fP = 4
+} \fBnetwib_arphdrop\fP;
+\fItypedef\fP struct
+{ \fBnetwib_arphdrop\fP op;
+  \fBnetwib_eth\fP ethsrc;
+  \fBnetwib_ip\fP ipsrc;
+  \fBnetwib_eth\fP ethdst;
+  \fBnetwib_ip\fP ipdst;
+} \fBnetwib_arphdr\fP;
+\fItypedef\fP const \fBnetwib_arphdr\fP \fBnetwib_constarphdr\fP;
+\fI#define\fP \fBNETWIB_ARPHDR_LEN\fP 28
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_arphdr_initdefault\fP
+   Description :
+     Initialize a \fBnetwib_arphdr\fP with default values.
+   Input parameter(s) :
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *parphdr : \fBnetwib_arphdr\fP to initialize
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_arphdr_initdefault\fP(\fBnetwib_arphdr\fP *parphdr);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_pkt_append_arphdr\fP
+   Description :
+     Initialize physical data from a \fBnetwib_arphdr\fP.
+   Input parameter(s) :
+     *parphdr : \fBnetwib_arphdr\fP
+   Input/output parameter(s) :
+     *ppht : buffer to initialize
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_pkt_append_arphdr\fP(\fBnetwib_constarphdr\fP *parphdr,
+                                    \fBnetwib_buf\fP *ppkt);
+\fBnetwib_err\fP \fBnetwib_pkt_prepend_arphdr\fP(\fBnetwib_constarphdr\fP *parphdr,
+                                     \fBnetwib_buf\fP *ppkt);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_pkt_decode_arphdr\fP
+   Description :
+     Decode a \fBnetwib_arphdr\fP from physical data.
+   Input parameter(s) :
+     *ppkt : buffer containing physical data
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *parphdr : \fBnetwib_arphdr\fP contained in pkt
+     *pskipsize : size to use to skip this header
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+     \fBNETWIB_ERR_NOTCONVERTED\fP : pkt could not be decoded
+     \fBNETWIB_ERR_DATAMISSING\fP : pkt was not big enough
+*/
+\fBnetwib_err\fP \fBnetwib_pkt_decode_arphdr\fP(\fBnetwib_constbuf\fP *ppkt,
+                                    \fBnetwib_arphdr\fP *parphdr,
+                                    \fBnetwib_uint32\fP *pskipsize);
+.fi
+.SH MODULE TCPHDR
+.nf
+
+/*-------------------------------------------------------------*/
+/* TCP header */
+\fItypedef\fP struct {
+  \fBnetwib_port\fP src;
+  \fBnetwib_port\fP dst;
+  \fBnetwib_uint32\fP seqnum;
+  \fBnetwib_uint32\fP acknum;
+  \fBnetwib_uint8\fP doff;
+  \fBnetwib_bool\fP reserved1;
+  \fBnetwib_bool\fP reserved2;
+  \fBnetwib_bool\fP reserved3;
+  \fBnetwib_bool\fP reserved4;
+  \fBnetwib_bool\fP cwr; /* RFC 3168 */
+  \fBnetwib_bool\fP ece; /* RFC 3168 */
+  \fBnetwib_bool\fP urg;
+  \fBnetwib_bool\fP ack;
+  \fBnetwib_bool\fP psh;
+  \fBnetwib_bool\fP rst;
+  \fBnetwib_bool\fP syn;
+  \fBnetwib_bool\fP fin;
+  \fBnetwib_uint16\fP window;
+  \fBnetwib_uint16\fP check;
+  \fBnetwib_uint16\fP urgptr;
+  \fBnetwib_bufext\fP opts; /* TCP options as defined in tcpopts.h */
+} \fBnetwib_tcphdr\fP;
+\fItypedef\fP const \fBnetwib_tcphdr\fP \fBnetwib_consttcphdr\fP;
+\fI#define\fP \fBNETWIB_TCPHDR_MINLEN\fP 20
+\fI#define\fP \fBNETWIB_TCPHDR_MAXLEN\fP 64
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_tcphdr_initdefault\fP
+   Description :
+     Initialize a \fBnetwib_tcphdr\fP with default values.
+   Input parameter(s) :
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *ptcphdr : \fBnetwib_tcphdr\fP to initialize
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_tcphdr_initdefault\fP(\fBnetwib_tcphdr\fP *ptcphdr);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_pkt_append_tcphdr\fP
+   Description :
+     Initialize physical data from a \fBnetwib_tcphdr\fP.
+   Input parameter(s) :
+     *ptcphdr : \fBnetwib_tcphdr\fP
+   Input/output parameter(s) :
+     *ppht : buffer to initialize
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+   Note : field doff is eventually recomputed.
+*/
+\fBnetwib_err\fP \fBnetwib_pkt_append_tcphdr\fP(\fBnetwib_consttcphdr\fP *ptcphdr,
+                                    \fBnetwib_buf\fP *ppkt);
+\fBnetwib_err\fP \fBnetwib_pkt_prepend_tcphdr\fP(\fBnetwib_consttcphdr\fP *ptcphdr,
+                                     \fBnetwib_buf\fP *ppkt);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_pkt_decode_tcphdr\fP
+   Description :
+     Decode a \fBnetwib_tcphdr\fP from physical data.
+   Input parameter(s) :
+     *ppkt : buffer containing physical data
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *ptcphdr : \fBnetwib_tcphdr\fP contained in pkt
+     *pskipsize : size to use to skip this header
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+     \fBNETWIB_ERR_NOTCONVERTED\fP : pkt could not be decoded
+     \fBNETWIB_ERR_DATAMISSING\fP : pkt was not big enough
+*/
+\fBnetwib_err\fP \fBnetwib_pkt_decode_tcphdr\fP(\fBnetwib_constbuf\fP *ppkt,
+                                    \fBnetwib_tcphdr\fP *ptcphdr,
+                                    \fBnetwib_uint32\fP *pskipsize);
+.fi
+.SH MODULE UDPHDR
+.nf
+
+/*-------------------------------------------------------------*/
+/* UDP header */
+\fItypedef\fP struct {
+  \fBnetwib_port\fP src;
+  \fBnetwib_port\fP dst;
+  \fBnetwib_uint16\fP len;
+  \fBnetwib_uint16\fP check;
+} \fBnetwib_udphdr\fP;
+\fItypedef\fP const \fBnetwib_udphdr\fP \fBnetwib_constudphdr\fP;
+\fI#define\fP \fBNETWIB_UDPHDR_LEN\fP 8
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_udphdr_initdefault\fP
+   Description :
+     Initialize a \fBnetwib_udphdr\fP with default values.
+   Input parameter(s) :
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pudphdr : \fBnetwib_udphdr\fP to initialize
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_udphdr_initdefault\fP(\fBnetwib_udphdr\fP *pudphdr);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_pkt_append_udphdr\fP
+   Description :
+     Initialize physical data from a \fBnetwib_udphdr\fP.
+   Input parameter(s) :
+     *pudphdr : \fBnetwib_udphdr\fP
+   Input/output parameter(s) :
+     *ppht : buffer to initialize
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_pkt_append_udphdr\fP(\fBnetwib_constudphdr\fP *pudphdr,
+                                    \fBnetwib_buf\fP *ppkt);
+\fBnetwib_err\fP \fBnetwib_pkt_prepend_udphdr\fP(\fBnetwib_constudphdr\fP *pudphdr,
+                                     \fBnetwib_buf\fP *ppkt);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_pkt_decode_udphdr\fP
+   Description :
+     Decode a \fBnetwib_udphdr\fP from physical data.
+   Input parameter(s) :
+     *ppkt : buffer containing physical data
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pudphdr : \fBnetwib_udphdr\fP contained in pkt
+     *pskipsize : size to use to skip this header
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+     \fBNETWIB_ERR_NOTCONVERTED\fP : pkt could not be decoded
+     \fBNETWIB_ERR_DATAMISSING\fP : pkt was not big enough
+*/
+\fBnetwib_err\fP \fBnetwib_pkt_decode_udphdr\fP(\fBnetwib_constbuf\fP *ppkt,
+                                    \fBnetwib_udphdr\fP *pudphdr,
+                                    \fBnetwib_uint32\fP *pskipsize);
+.fi
+.SH MODULE TCPOPT
+.nf
+
+/*-------------------------------------------------------------*/
+\fItypedef\fP enum {
+  \fBNETWIB_TCPOPTTYPE_END\fP = 0,          /* rfc 793 - end of options */
+  \fBNETWIB_TCPOPTTYPE_NOOP\fP = 1,         /* rfc 793 - no operation */
+  \fBNETWIB_TCPOPTTYPE_MSS\fP = 2,          /* rfc 793 - maximum segment size */
+  \fBNETWIB_TCPOPTTYPE_WINDOWSCALE\fP = 3,  /* rfc 1323 - window scale */
+  \fBNETWIB_TCPOPTTYPE_SACKPERMITTED\fP = 4,/* rfc 2018 - SACK permitted */
+  \fBNETWIB_TCPOPTTYPE_SACK\fP = 5,    /* rfc 2018 - selective acknowledgment */
+  \fBNETWIB_TCPOPTTYPE_ECHOREQUEST\fP = 6,  /* rfc 1072 - echo request */
+  \fBNETWIB_TCPOPTTYPE_ECHOREPLY\fP = 7,    /* rfc 1072 - echo reply */
+  \fBNETWIB_TCPOPTTYPE_TIMESTAMP\fP = 8,    /* rfc 1323 - timestamp */
+  \fBNETWIB_TCPOPTTYPE_CC\fP = 11,          /* rfc 1644 - connection count */
+  \fBNETWIB_TCPOPTTYPE_CCNEW\fP = 12,       /* rfc 1644 - connection count */
+  \fBNETWIB_TCPOPTTYPE_CCECHO\fP = 13       /* rfc 1644 - connection count */
+} \fBnetwib_tcpopttype\fP;
+
+/*-------------------------------------------------------------*/
+/* maximum length of one TCP option */
+\fI#define\fP \fBNETWIB_TCPOPT_MAXLEN\fP 40
+
+/*-------------------------------------------------------------*/
+\fItypedef\fP struct {
+  \fBnetwib_uint16\fP maxsegsize;
+} \fBnetwib_tcpopt_mss\fP;
+\fItypedef\fP const \fBnetwib_tcpopt_mss\fP \fBnetwib_consttcpopt_mss\fP;
+
+/*-------------------------------------------------------------*/
+\fItypedef\fP struct {
+  \fBnetwib_uint8\fP windowscale;
+} \fBnetwib_tcpopt_windowscale\fP;
+\fItypedef\fP const \fBnetwib_tcpopt_windowscale\fP \fBnetwib_consttcpopt_windowscale\fP;
+
+/*-------------------------------------------------------------*/
+\fItypedef\fP struct {
+  \fBnetwib_uint32\fP storedvalues; /* 0 to 4 */
+  \fBnetwib_uint32\fP leftedge[4];
+  \fBnetwib_uint32\fP rightedge[4];
+} \fBnetwib_tcpopt_sack\fP;
+\fItypedef\fP const \fBnetwib_tcpopt_sack\fP \fBnetwib_consttcpopt_sack\fP;
+
+/*-------------------------------------------------------------*/
+\fItypedef\fP struct {
+  \fBnetwib_uint32\fP data;
+} \fBnetwib_tcpopt_echo\fP;
+\fItypedef\fP const \fBnetwib_tcpopt_echo\fP \fBnetwib_consttcpopt_echo\fP;
+
+/*-------------------------------------------------------------*/
+\fItypedef\fP struct {
+  \fBnetwib_uint32\fP val;
+  \fBnetwib_uint32\fP echoreply;
+} \fBnetwib_tcpopt_timestamp\fP;
+\fItypedef\fP const \fBnetwib_tcpopt_timestamp\fP \fBnetwib_consttcpopt_timestamp\fP;
+
+/*-------------------------------------------------------------*/
+\fItypedef\fP struct {
+  \fBnetwib_uint32\fP connectioncount;
+} \fBnetwib_tcpopt_cc\fP;
+\fItypedef\fP const \fBnetwib_tcpopt_cc\fP \fBnetwib_consttcpopt_cc\fP;
+
+/*-------------------------------------------------------------*/
+\fItypedef\fP struct {
+  \fBnetwib_tcpopttype\fP type;
+  union {
+    /* type end : no value */
+    /* type noop : no value */
+    \fBnetwib_tcpopt_mss\fP mss;
+    \fBnetwib_tcpopt_windowscale\fP windowscale;
+    /* type sackpermitted : no value */
+    \fBnetwib_tcpopt_sack\fP sack;
+    \fBnetwib_tcpopt_echo\fP echo; /* used for request and reply */
+    \fBnetwib_tcpopt_timestamp\fP timestamp;
+    \fBnetwib_tcpopt_cc\fP cc; /* used for cc, ccnew and ccecho */
+  } opt;
+} \fBnetwib_tcpopt\fP;
+\fItypedef\fP const \fBnetwib_tcpopt\fP \fBnetwib_consttcpopt\fP;
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_tcpopt_initdefault\fP
+   Description :
+     Initialize a \fBnetwib_tcpopt\fP with default values.
+   Input parameter(s) :
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *ptcpopt : \fBnetwib_tcpopt\fP to initialize
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_tcpopt_initdefault\fP(\fBnetwib_tcpopttype\fP tcpopttype,
+                                     \fBnetwib_tcpopt\fP *ptcpopt);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_pkt_append_tcpopt\fP
+   Description :
+     Initialize physical data from a \fBnetwib_tcpopt\fP.
+   Input parameter(s) :
+     tcpopt : \fBnetwib_tcpopt\fP
+   Input/output parameter(s) :
+     *ppht : buffer to initialize
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_pkt_append_tcpopt\fP(\fBnetwib_consttcpopt\fP *ptcpopt,
+                                    \fBnetwib_buf\fP *ppkt);
+\fBnetwib_err\fP \fBnetwib_pkt_prepend_tcpopt\fP(\fBnetwib_consttcpopt\fP *ptcpopt,
+                                     \fBnetwib_buf\fP *ppkt);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_pkt_decode_tcpopt\fP
+   Description :
+     Decode a \fBnetwib_tcpopt\fP from data coming from wire.
+   Input parameter(s) :
+     *ppkt : buffer containing physical data
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *ptcpopt : \fBnetwib_tcpopt\fP to initialize
+     *pskipsize : size to skip this option
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_pkt_decode_tcpopt\fP(\fBnetwib_constbuf\fP *ppkt,
+                                    \fBnetwib_tcpopt\fP *ptcpopt,
+                                    \fBnetwib_uint32\fP *pskipsize);
+.fi
+.SH MODULE TCPOPTS
+.nf
+
+/*-------------------------------------------------------------*/
+/***************************************************************
+ * A "\fBnetwib_tcpopts\fP" is a \fBnetwib_buf\fP storing 0, 1 or more     *
+ * \fBnetwib_tcpopt\fP. There is no \fItypedef\fP for \fBnetwib_tcpopts\fP.      *
+ ***************************************************************/
+
+/*-------------------------------------------------------------*/
+/* maximum length of a buffer containing a "\fBnetwib_tcpopts\fP" */
+\fI#define\fP \fBNETWIB_TCPOPTS_MAXLEN\fP 40
+
+/*-------------------------------------------------------------*/
+/***************************************************************
+ * To create a "\fBnetwib_tcpopts\fP", loop using function           *
+ * \fBnetwib_pkt_append_tcpopt\fP.                                   *
+ * To decode a "\fBnetwib_tcpopts\fP", loop using function           *
+ * \fBnetwib_pkt_decode_tcpopt\fP.                                   *
+ ***************************************************************/
+.fi
+.SH MODULE IP64BITS
+.nf
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_ip64bits_init_ippkt\fP
+   Description :
+     Initialize a buffer containing an IP header and
+     64 bits of data.
+     This kind of packets are needed for errors (cf. rfc 792).
+   Input parameter(s) :
+     *piphdr : IP header
+     *pipdata : IP data
+     *phdrudp : udp header
+     *phdrtcp : tcp header
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pip64bits : buffer containing an IP header and
+                  64 bits of data.
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_ip64bits_init_ippkt\fP(\fBnetwib_constbuf\fP *pippkt,
+                                      \fBnetwib_bufext\fP *pip64bits);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_ip64bits_decode_ipxyz\fP
+   Description :
+     Try to decode ip packet contained in ip64bits.
+   Input parameter(s) :
+     *pip64bits : ip header and at least 64 bits of ip data
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *piphdr : decoded IP header
+     *pipdata : buffer containing ip data
+     *pudpsrc : udp source port
+     *pudpdst : udp destination port
+     *pudplen : udp len
+     *pudpcheck : udp checksum
+     *ptcpsrc : tcp source port
+     *ptcpdst : tcp destination port
+     *pseqnum : tcp sequence number
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+     \fBNETWIB_ERR_NOTCONVERTED\fP : packet not decoded
+     \fBNETWIB_ERR_DATAMISSING\fP : pkt was not big enough
+*/
+\fBnetwib_err\fP \fBnetwib_ip64bits_decode_ipudp\fP(\fBnetwib_constbuf\fP *pip64bits,
+                                        \fBnetwib_iphdr\fP *piphdr,
+                                        \fBnetwib_port\fP *pudpsrc,
+                                        \fBnetwib_port\fP *pudpdst);
+\fBnetwib_err\fP \fBnetwib_ip64bits_decode_iptcp\fP(\fBnetwib_constbuf\fP *pip64bits,
+                                        \fBnetwib_iphdr\fP *piphdr,
+                                        \fBnetwib_port\fP *ptcpsrc,
+                                        \fBnetwib_port\fP *ptcpdst);
+\fI#define\fP \fBnetwib_ip64bits_decode_ipdata\fP(pip64bits,piphdr,pipdata) \fBnetwib_pkt_decode_ipdata\fP(pip64bits,piphdr,pipdata)
+
+.fi
+.SH MODULE ICMP4
+.nf
+
+/*-------------------------------------------------------------*/
+/***************************************************************
+ * Refer to RFC 792 to obtain more information about ICMPv4.   *
+ ***************************************************************/
+
+/*-------------------------------------------------------------*/
+/* ICMP4 types. Comments starting with "NI" are not implemented */
+\fItypedef\fP enum {
+  \fBNETWIB_ICMP4TYPE_ECHOREP\fP = 0,       /* echo reply */
+  \fBNETWIB_ICMP4TYPE_DSTUNREACH\fP = 3,    /* destination unreachable */
+  \fBNETWIB_ICMP4TYPE_SRCQUENCH\fP = 4,     /* source quench */
+  \fBNETWIB_ICMP4TYPE_REDIRECT\fP = 5,      /* redirect */
+  \fBNETWIB_ICMP4TYPE_ALTHOSTAD\fP = 6,     /* NI www.iana.org */
+  \fBNETWIB_ICMP4TYPE_ECHOREQ\fP = 8,       /* echo request */
+  \fBNETWIB_ICMP4TYPE_ROUTERADVERT\fP = 9,  /* NI rfc 1256 */
+  \fBNETWIB_ICMP4TYPE_ROUTERSELECT\fP = 10, /* NI rfc 1256 */
+  \fBNETWIB_ICMP4TYPE_TIMEEXCEED\fP = 11,   /* time exceeded */
+  \fBNETWIB_ICMP4TYPE_PARAPROB\fP = 12,     /* parameter problem */
+  \fBNETWIB_ICMP4TYPE_TIMESTAMPREQ\fP = 13, /* timestamp request */
+  \fBNETWIB_ICMP4TYPE_TIMESTAMPREP\fP = 14, /* timestamp reply */
+  \fBNETWIB_ICMP4TYPE_INFOREQ\fP = 15,      /* information request */
+  \fBNETWIB_ICMP4TYPE_INFOREP\fP = 16,      /* information reply */
+  \fBNETWIB_ICMP4TYPE_ADMASKREQ\fP = 17,    /* NI rfc 950 */
+  \fBNETWIB_ICMP4TYPE_ADMASKREP\fP = 18,    /* NI rfc 950 */
+  \fBNETWIB_ICMP4TYPE_TRACEROUTE\fP = 30,   /* NI rfc 1393 */
+  \fBNETWIB_ICMP4TYPE_DATACONVERR\fP = 31,  /* NI rfc 1474 */
+  \fBNETWIB_ICMP4TYPE_MOBHOSTREDIR\fP = 32, /* NI www.iana.org */
+  \fBNETWIB_ICMP4TYPE_IPV6WHEREYOU\fP = 33, /* NI www.iana.org */
+  \fBNETWIB_ICMP4TYPE_IPV6IAMHERE\fP = 34,  /* NI www.iana.org */
+  \fBNETWIB_ICMP4TYPE_MOBREGREQ\fP = 35,    /* NI www.iana.org */
+  \fBNETWIB_ICMP4TYPE_MOBREGREP\fP = 36,    /* NI www.iana.org */
+  \fBNETWIB_ICMP4TYPE_SKIP\fP = 39,         /* NI www.iana.org */
+  \fBNETWIB_ICMP4TYPE_PHOTURIS\fP = 40      /* NI www.iana.org */
+} \fBnetwib_icmp4type\fP;
+
+/*-------------------------------------------------------------*/
+\fItypedef\fP enum {
+  \fBNETWIB_ICMP4CODE_ECHOREP\fP = 0,
+  \fBNETWIB_ICMP4CODE_DSTUNREACH_NET\fP = 0,
+  \fBNETWIB_ICMP4CODE_DSTUNREACH_HOST\fP = 1,
+  \fBNETWIB_ICMP4CODE_DSTUNREACH_PROTO\fP = 2,
+  \fBNETWIB_ICMP4CODE_DSTUNREACH_PORT\fP = 3,
+  \fBNETWIB_ICMP4CODE_DSTUNREACH_FRAG\fP = 4,
+  \fBNETWIB_ICMP4CODE_DSTUNREACH_SR\fP = 5,
+  \fBNETWIB_ICMP4CODE_DSTUNREACH_NETUNKNOWN\fP = 6,
+  \fBNETWIB_ICMP4CODE_DSTUNREACH_HOSTUNKNOWN\fP = 7,
+  \fBNETWIB_ICMP4CODE_DSTUNREACH_HOSTISOL\fP = 8,
+  \fBNETWIB_ICMP4CODE_DSTUNREACH_NETPROHI\fP = 9,
+  \fBNETWIB_ICMP4CODE_DSTUNREACH_HOSTPROHI\fP = 10,
+  \fBNETWIB_ICMP4CODE_DSTUNREACH_NETTOS\fP = 11,
+  \fBNETWIB_ICMP4CODE_DSTUNREACH_HOSTTOS\fP = 12,
+  \fBNETWIB_ICMP4CODE_DSTUNREACH_PROHI\fP = 13,
+  \fBNETWIB_ICMP4CODE_DSTUNREACH_PRECVIOL\fP = 14,
+  \fBNETWIB_ICMP4CODE_DSTUNREACH_PRECCUTOFF\fP = 15,
+  \fBNETWIB_ICMP4CODE_SRCQUENCH\fP = 0,
+  \fBNETWIB_ICMP4CODE_REDIRECT_NET\fP = 0,
+  \fBNETWIB_ICMP4CODE_REDIRECT_HOST\fP = 1,
+  \fBNETWIB_ICMP4CODE_REDIRECT_NETTOS\fP = 2,
+  \fBNETWIB_ICMP4CODE_REDIRECT_HOSTTOS\fP = 3,
+  \fBNETWIB_ICMP4CODE_ECHOREQ\fP = 0,
+  \fBNETWIB_ICMP4CODE_TIMEEXCEED_TTL\fP = 0,
+  \fBNETWIB_ICMP4CODE_TIMEEXCEED_FRAG\fP = 1,
+  \fBNETWIB_ICMP4CODE_PARAPROB_POINTER\fP = 0,
+  \fBNETWIB_ICMP4CODE_PARAPROB_MISSOPT\fP = 1,
+  \fBNETWIB_ICMP4CODE_PARAPROB_BADLEN\fP = 2,
+  \fBNETWIB_ICMP4CODE_TIMESTAMPREQ\fP = 0,
+  \fBNETWIB_ICMP4CODE_TIMESTAMPREP\fP = 0,
+  \fBNETWIB_ICMP4CODE_INFOREQ\fP = 0,
+  \fBNETWIB_ICMP4CODE_INFOREP\fP = 0
+} \fBnetwib_icmp4code\fP;
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_buf_append_icmp4type\fP
+   Description :
+     Print the text corresponding to icmp type.
+   Input parameter(s) :
+     type : icmp4 type
+   Input/output parameter(s) :
+     *pbuf : \fBnetwib_buf\fP receiving data
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_buf_append_icmp4type\fP(\fBnetwib_icmp4type\fP type,
+                                       \fBnetwib_buf\fP *pbuf);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_buf_append_icmp4code\fP
+   Description :
+     Print the text corresponding to icmp code.
+   Input parameter(s) :
+     type : icmp4 type
+     code : icmp4 code
+   Input/output parameter(s) :
+     *pbuf : \fBnetwib_buf\fP receiving data
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_buf_append_icmp4code\fP(\fBnetwib_icmp4type\fP type,
+                                       \fBnetwib_icmp4code\fP code,
+                                       \fBnetwib_buf\fP *pbuf);
+
+/*-------------------------------------------------------------*/
+\fItypedef\fP struct {
+  \fBnetwib_uint16\fP id;
+  \fBnetwib_uint16\fP seqnum;
+  \fBnetwib_bufext\fP data;
+} \fBnetwib_icmp4_echo\fP;
+
+/*-------------------------------------------------------------*/
+\fItypedef\fP struct {
+  \fBnetwib_uint32\fP reserved;
+  \fBnetwib_bufext\fP badippacket;
+} \fBnetwib_icmp4_dstunreach\fP;
+
+/*-------------------------------------------------------------*/
+\fItypedef\fP struct {
+  \fBnetwib_uint32\fP reserved;
+  \fBnetwib_bufext\fP badippacket;
+} \fBnetwib_icmp4_srcquench\fP;
+
+/*-------------------------------------------------------------*/
+\fItypedef\fP struct {
+  \fBnetwib_ip\fP gw;
+  \fBnetwib_bufext\fP badippacket;
+} \fBnetwib_icmp4_redirect\fP;
+
+/*-------------------------------------------------------------*/
+\fItypedef\fP struct {
+  \fBnetwib_uint32\fP reserved;
+  \fBnetwib_bufext\fP badippacket;
+} \fBnetwib_icmp4_timeexceed\fP;
+
+/*-------------------------------------------------------------*/
+\fItypedef\fP struct {
+  \fBnetwib_uint8\fP pointer;
+  \fBnetwib_uint32\fP reserved;
+  \fBnetwib_bufext\fP badippacket;
+} \fBnetwib_icmp4_paraprob\fP;
+
+/*-------------------------------------------------------------*/
+\fItypedef\fP struct {
+  \fBnetwib_uint16\fP id;
+  \fBnetwib_uint16\fP seqnum;
+  \fBnetwib_uint32\fP originatetimestamp;
+  \fBnetwib_uint32\fP receivetimestamp;
+  \fBnetwib_uint32\fP transmittimestamp;
+} \fBnetwib_icmp4_timestamp\fP;
+
+/*-------------------------------------------------------------*/
+\fItypedef\fP struct {
+  \fBnetwib_uint16\fP id;
+  \fBnetwib_uint16\fP seqnum;
+  \fBnetwib_bufext\fP data;
+} \fBnetwib_icmp4_info\fP;
+
+/*-------------------------------------------------------------*/
+\fItypedef\fP struct {
+  \fBnetwib_icmp4type\fP type;
+  \fBnetwib_icmp4code\fP code;
+  \fBnetwib_uint16\fP check;
+  union {
+    \fBnetwib_icmp4_echo\fP echo; /* used for request and reply */
+    \fBnetwib_icmp4_dstunreach\fP dstunreach;
+    \fBnetwib_icmp4_srcquench\fP srcquench;
+    \fBnetwib_icmp4_redirect\fP redirect;
+    \fBnetwib_icmp4_timeexceed\fP timeexceed;
+    \fBnetwib_icmp4_paraprob\fP paraprob;
+    \fBnetwib_icmp4_timestamp\fP timestamp; /* used for req and rep */
+    \fBnetwib_icmp4_info\fP info; /* used for request and reply */
+  } msg;
+} \fBnetwib_icmp4\fP;
+\fItypedef\fP const \fBnetwib_icmp4\fP \fBnetwib_consticmp4\fP;
+\fI#define\fP \fBNETWIB_ICMP4_MINLEN\fP 4
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_icmp4_initdefault\fP
+   Description :
+     Initialize a \fBnetwib_icmp4\fP with default values.
+   Input parameter(s) :
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *picmp4hdr : \fBnetwib_icmp4hdr\fP to initialize
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_icmp4_initdefault\fP(\fBnetwib_icmp4type\fP type,
+                                    \fBnetwib_icmp4\fP *picmp4);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_pkt_append_icmp4\fP
+   Description :
+     Initialize physical data from a \fBnetwib_icmp4\fP.
+   Input parameter(s) :
+     icmp4 : \fBnetwib_icmp4\fP
+   Input/output parameter(s) :
+     *ppht : buffer to initialize
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_pkt_append_icmp4\fP(\fBnetwib_consticmp4\fP *picmp4,
+                                   \fBnetwib_buf\fP *ppkt);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_pkt_decode_icmp4\fP
+   Description :
+     Decode a \fBnetwib_icmp4\fP from data coming from wire.
+   Input parameter(s) :
+     pktproto : protocol of the \fBnetwib_icmp4\fP in ppkt
+     *ppkt : buffer containing physical data
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *picmp4 : \fBnetwib_icmp4\fP to initialize
+     *pskipsize : size to skip this header
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_pkt_decode_icmp4\fP(\fBnetwib_constbuf\fP *ppkt,
+                                   \fBnetwib_icmp4\fP *picmp4,
+                                   \fBnetwib_uint32\fP *pskipsize);
+.fi
+.SH MODULE ICMP6
+.nf
+
+/*-------------------------------------------------------------*/
+/***************************************************************
+ * Refer to RFC 2463 to obtain more information about ICMPv6.  *
+ ***************************************************************/
+
+/*-------------------------------------------------------------*/
+/* ICMP6 types. Comments starting with "NI" are not implemented */
+\fItypedef\fP enum {
+  \fBNETWIB_ICMP6TYPE_DSTUNREACH\fP = 1,    /* destination unreachable */
+  \fBNETWIB_ICMP6TYPE_PKTTOOBIG\fP = 2,     /* packet too big */
+  \fBNETWIB_ICMP6TYPE_TIMEEXCEED\fP = 3,    /* time exceeded */
+  \fBNETWIB_ICMP6TYPE_PARAPROB\fP = 4,      /* parameter problem */
+  \fBNETWIB_ICMP6TYPE_ECHOREQ\fP = 128,     /* echo request */
+  \fBNETWIB_ICMP6TYPE_ECHOREP\fP = 129,     /* echo reply */
+  \fBNETWIB_ICMP6TYPE_ROUTERSOLICIT\fP = 133, /* router solicitation (rfc2461) */
+  \fBNETWIB_ICMP6TYPE_ROUTERADVERT\fP = 134,    /* router advert. (rfc2461) */
+  \fBNETWIB_ICMP6TYPE_NEIGHBORSOLICIT\fP = 135, /* neighbor soli. (rfc2461) */
+  \fBNETWIB_ICMP6TYPE_NEIGHBORADVERT\fP = 136,  /* neighbor advert. (rfc2461) */
+  \fBNETWIB_ICMP6TYPE_REDIRECT\fP = 137         /* redirect (rfc2461) */
+} \fBnetwib_icmp6type\fP;
+
+/*-------------------------------------------------------------*/
+\fItypedef\fP enum {
+  \fBNETWIB_ICMP6CODE_DSTUNREACH_NOROUTE\fP = 0,
+  \fBNETWIB_ICMP6CODE_DSTUNREACH_PROHI\fP = 1,
+  \fBNETWIB_ICMP6CODE_DSTUNREACH_HOST\fP = 3,
+  \fBNETWIB_ICMP6CODE_DSTUNREACH_PORT\fP = 4,
+  \fBNETWIB_ICMP6CODE_PKTTOOBIG\fP = 0,
+  \fBNETWIB_ICMP6CODE_TIMEEXCEED_TTL\fP = 0,
+  \fBNETWIB_ICMP6CODE_TIMEEXCEED_FRAG\fP = 1,
+  \fBNETWIB_ICMP6CODE_PARAPROB_HDR\fP = 0,
+  \fBNETWIB_ICMP6CODE_PARAPROB_NEXTHDR\fP = 1,
+  \fBNETWIB_ICMP6CODE_PARAPROB_OPTION\fP = 2,
+  \fBNETWIB_ICMP6CODE_ECHOREQ\fP = 0,
+  \fBNETWIB_ICMP6CODE_ECHOREP\fP = 0,
+  \fBNETWIB_ICMP6CODE_ROUTERSOLICIT\fP = 0,
+  \fBNETWIB_ICMP6CODE_ROUTERADVERT\fP = 0,
+  \fBNETWIB_ICMP6CODE_NEIGHBORSOLICIT\fP = 0,
+  \fBNETWIB_ICMP6CODE_NEIGHBORADVERT\fP = 0,
+  \fBNETWIB_ICMP6CODE_REDIRECT\fP = 0
+} \fBnetwib_icmp6code\fP;
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_buf_append_icmp6type\fP
+   Description :
+     Print the text corresponding to icmp type.
+   Input parameter(s) :
+     type : icmp6 type
+   Input/output parameter(s) :
+     *pbuf : \fBnetwib_buf\fP receiving data
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_buf_append_icmp6type\fP(\fBnetwib_icmp6type\fP type,
+                                       \fBnetwib_buf\fP *pbuf);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_buf_append_icmp6code\fP
+   Description :
+     Print the text corresponding to icmp code.
+   Input parameter(s) :
+     type : icmp6 type
+     code : icmp6 code
+   Input/output parameter(s) :
+     *pbuf : \fBnetwib_buf\fP receiving data
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_buf_append_icmp6code\fP(\fBnetwib_icmp6type\fP type,
+                                       \fBnetwib_icmp6code\fP code,
+                                       \fBnetwib_buf\fP *pbuf);
+
+/*-------------------------------------------------------------*/
+\fItypedef\fP struct {
+  \fBnetwib_uint32\fP reserved;
+  \fBnetwib_bufext\fP badippacket;
+} \fBnetwib_icmp6_dstunreach\fP;
+
+/*-------------------------------------------------------------*/
+\fItypedef\fP struct {
+  \fBnetwib_uint32\fP mtu;
+  \fBnetwib_bufext\fP badippacket;
+} \fBnetwib_icmp6_pkttoobig\fP;
+
+/*-------------------------------------------------------------*/
+\fItypedef\fP struct {
+  \fBnetwib_uint32\fP reserved;
+  \fBnetwib_bufext\fP badippacket;
+} \fBnetwib_icmp6_timeexceed\fP;
+
+/*-------------------------------------------------------------*/
+\fItypedef\fP struct {
+  \fBnetwib_uint32\fP pointer;
+  \fBnetwib_bufext\fP badippacket;
+} \fBnetwib_icmp6_paraprob\fP;
+
+/*-------------------------------------------------------------*/
+\fItypedef\fP struct {
+  \fBnetwib_uint16\fP id;
+  \fBnetwib_uint16\fP seqnum;
+  \fBnetwib_bufext\fP data;
+} \fBnetwib_icmp6_echo\fP;
+
+/*-------------------------------------------------------------*/
+\fItypedef\fP struct {
+  \fBnetwib_uint32\fP reserved;
+  \fBnetwib_bufext\fP options; /* buffer contains \fBnetwib_icmp6nd\fP */
+} \fBnetwib_icmp6_routersolicit\fP;
+
+/*-------------------------------------------------------------*/
+\fItypedef\fP struct {
+  \fBnetwib_uint8\fP curhoplimit;
+  \fBnetwib_bool\fP managedaddress;
+  \fBnetwib_bool\fP otherstateful;
+  \fBnetwib_uint8\fP reserved;
+  \fBnetwib_uint16\fP routerlifetime;
+  \fBnetwib_uint32\fP reachabletime;
+  \fBnetwib_uint32\fP retranstimer;
+  \fBnetwib_bufext\fP options; /* buffer contains \fBnetwib_icmp6nd\fP */
+} \fBnetwib_icmp6_routeradvert\fP;
+
+/*-------------------------------------------------------------*/
+\fItypedef\fP struct {
+  \fBnetwib_uint32\fP reserved;
+  \fBnetwib_ip\fP target;
+  \fBnetwib_bufext\fP options; /* buffer contains \fBnetwib_icmp6nd\fP */
+} \fBnetwib_icmp6_neighborsolicit\fP;
+
+/*-------------------------------------------------------------*/
+\fItypedef\fP struct {
+  \fBnetwib_bool\fP router;
+  \fBnetwib_bool\fP solicited;
+  \fBnetwib_bool\fP override;
+  \fBnetwib_uint32\fP reserved;
+  \fBnetwib_ip\fP target;
+  \fBnetwib_bufext\fP options; /* buffer contains \fBnetwib_icmp6nd\fP */
+} \fBnetwib_icmp6_neighboradvert\fP;
+
+/*-------------------------------------------------------------*/
+\fItypedef\fP struct {
+  \fBnetwib_uint32\fP reserved;
+  \fBnetwib_ip\fP target;
+  \fBnetwib_ip\fP dst;
+  \fBnetwib_bufext\fP options; /* buffer contains \fBnetwib_icmp6nd\fP */
+} \fBnetwib_icmp6_redirect\fP;
+
+/*-------------------------------------------------------------*/
+\fItypedef\fP struct {
+  \fBnetwib_icmp6type\fP type;
+  \fBnetwib_icmp6code\fP code;
+  \fBnetwib_uint16\fP check;
+  union {
+    \fBnetwib_icmp6_dstunreach\fP dstunreach;
+    \fBnetwib_icmp6_pkttoobig\fP pkttoobig;
+    \fBnetwib_icmp6_timeexceed\fP timeexceed;
+    \fBnetwib_icmp6_paraprob\fP paraprob;
+    \fBnetwib_icmp6_echo\fP echo; /* used for request and reply */
+    \fBnetwib_icmp6_routersolicit\fP routersolicit;
+    \fBnetwib_icmp6_routeradvert\fP routeradvert;
+    \fBnetwib_icmp6_neighborsolicit\fP neighborsolicit;
+    \fBnetwib_icmp6_neighboradvert\fP neighboradvert;
+    \fBnetwib_icmp6_redirect\fP redirect;
+  } msg;
+} \fBnetwib_icmp6\fP;
+\fItypedef\fP const \fBnetwib_icmp6\fP \fBnetwib_consticmp6\fP;
+\fI#define\fP \fBNETWIB_ICMP6_MINLEN\fP 4
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_icmp6_initdefault\fP
+   Description :
+     Initialize a \fBnetwib_icmp6\fP with default values.
+   Input parameter(s) :
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *picmp6hdr : \fBnetwib_icmp6hdr\fP to initialize
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_icmp6_initdefault\fP(\fBnetwib_icmp6type\fP type,
+                                    \fBnetwib_icmp6\fP *picmp6);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_pkt_append_icmp6\fP
+   Description :
+     Initialize physical data from a \fBnetwib_icmp6\fP.
+   Input parameter(s) :
+     icmp6 : \fBnetwib_icmp6\fP
+   Input/output parameter(s) :
+     *ppht : buffer to initialize
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_pkt_append_icmp6\fP(\fBnetwib_consticmp6\fP *picmp6,
+                                   \fBnetwib_buf\fP *ppkt);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_pkt_decode_icmp6\fP
+   Description :
+     Decode a \fBnetwib_icmp6\fP from data coming from wire.
+   Input parameter(s) :
+     pktproto : protocol of the \fBnetwib_icmp6\fP in ppkt
+     *ppkt : buffer containing physical data
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *picmp6 : \fBnetwib_icmp6\fP to initialize
+     *pskipsize : size to skip this header
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_pkt_decode_icmp6\fP(\fBnetwib_constbuf\fP *ppkt,
+                                   \fBnetwib_icmp6\fP *picmp6,
+                                   \fBnetwib_uint32\fP *pskipsize);
+
+
+.fi
+.SH MODULE ICMP6ND
+.nf
+
+/*-------------------------------------------------------------*/
+/***************************************************************
+ * Refer to RFC 2461 to obtain more information about ICMPv6   *
+ * Neighbor Discovery options.                                 *
+ ***************************************************************/
+
+/*-------------------------------------------------------------*/
+\fItypedef\fP enum {
+  \fBNETWIB_ICMP6NDTYPE_SRCLINK\fP = 1, /* src link layer address */
+  \fBNETWIB_ICMP6NDTYPE_DSTLINK\fP = 2, /* dst link layer address */
+  \fBNETWIB_ICMP6NDTYPE_PREFIX\fP = 3,  /* prefix information */
+  \fBNETWIB_ICMP6NDTYPE_REDIR\fP = 4,   /* redirected */
+  \fBNETWIB_ICMP6NDTYPE_MTU\fP = 5      /* mtu */
+} \fBnetwib_icmp6ndtype\fP;
+
+/*-------------------------------------------------------------*/
+\fItypedef\fP struct {
+  \fBnetwib_eth\fP linkad;
+} \fBnetwib_icmp6nd_link\fP;
+\fItypedef\fP const \fBnetwib_icmp6nd_link\fP \fBnetwib_consticmp6nd_link\fP;
+
+\fItypedef\fP struct {
+  \fBnetwib_uint8\fP prefixlength;
+  \fBnetwib_bool\fP onlink;
+  \fBnetwib_bool\fP autonomous;
+  \fBnetwib_uint8\fP reserved1;
+  \fBnetwib_uint32\fP validlifetime;
+  \fBnetwib_uint32\fP preferredlifetime;
+  \fBnetwib_uint32\fP reserved2;
+  \fBnetwib_ip\fP prefix;
+} \fBnetwib_icmp6nd_prefix\fP;
+\fItypedef\fP const \fBnetwib_icmp6nd_prefix\fP \fBnetwib_consticmp6nd_prefix\fP;
+
+\fItypedef\fP struct {
+  \fBnetwib_uint16\fP reserved1;
+  \fBnetwib_uint32\fP reserved2;
+  \fBnetwib_bufext\fP badippacket;
+} \fBnetwib_icmp6nd_redir\fP;
+\fItypedef\fP const \fBnetwib_icmp6nd_redir\fP \fBnetwib_consticmp6nd_redir\fP;
+
+\fItypedef\fP struct {
+  \fBnetwib_uint16\fP reserved;
+  \fBnetwib_uint32\fP mtu;
+} \fBnetwib_icmp6nd_mtu\fP;
+\fItypedef\fP const \fBnetwib_icmp6nd_mtu\fP \fBnetwib_consticmp6nd_mtu\fP;
+
+\fItypedef\fP struct {
+  \fBnetwib_icmp6ndtype\fP type;
+  union {
+    \fBnetwib_icmp6nd_link\fP link;
+    \fBnetwib_icmp6nd_prefix\fP prefix;
+    \fBnetwib_icmp6nd_redir\fP redir;
+    \fBnetwib_icmp6nd_mtu\fP mtu;
+  } opt;
+} \fBnetwib_icmp6nd\fP;
+\fItypedef\fP const \fBnetwib_icmp6nd\fP \fBnetwib_consticmp6nd\fP;
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_icmp6nd_initdefault\fP
+   Description :
+     Initialize a \fBnetwib_icmp6nd\fP with default values.
+   Input parameter(s) :
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *picmp6nd : \fBnetwib_icmp6nd\fP to initialize
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_icmp6nd_initdefault\fP(\fBnetwib_icmp6ndtype\fP icmp6ndtype,
+                                      \fBnetwib_icmp6nd\fP *picmp6nd);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_pkt_append_icmp6nd\fP
+   Description :
+     Initialize physical data from a \fBnetwib_icmp6nd\fP.
+   Input parameter(s) :
+     icmp6nd : \fBnetwib_icmp6nd\fP
+   Input/output parameter(s) :
+     *ppht : buffer to initialize
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_pkt_append_icmp6nd\fP(\fBnetwib_consticmp6nd\fP *picmp6nd,
+                                     \fBnetwib_buf\fP *ppkt);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_pkt_decode_icmp6nd\fP
+   Description :
+     Decode a \fBnetwib_icmp6nd\fP from data coming from wire.
+   Input parameter(s) :
+     *ppkt : buffer containing physical data
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *picmp6nd : \fBnetwib_icmp6nd\fP to initialize
+     *pskipsize : size to skip this option
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_pkt_decode_icmp6nd\fP(\fBnetwib_constbuf\fP *ppkt,
+                                     \fBnetwib_icmp6nd\fP *picmp6nd,
+                                     \fBnetwib_uint32\fP *pskipsize);
+.fi
+.SH MODULE LAYER
+.nf
+
+/*-------------------------------------------------------------*/
+/***************************************************************
+ * Following functions create/decode layers. Their names       *
+ * should be self explaining.                                  *
+ * Note : when decoding a layer, ppkt buffer is automatically  *
+ *        shifted to point to next entry.                      *
+ ***************************************************************/
+
+/*-------------------------------------------------------------*/
+/***************************************************************
+ * Some header fields are computed by functions append_layer:  *
+ *  - linkhdr.ethhdr.type                                      *
+ *  - iphdr.protocol                                           *
+ *  - iphdr.header.ip4.ihl                                     *
+ *  - iphdr.header.ip4.totlen                                  *
+ *  - iphdr.header.ip4.check                                   *
+ *  - iphdr.header.ip6.payloadlength                           *
+ *  - udphdr.len                                               *
+ *  - udphdr.check                                             *
+ *  - tcphdr.doff                                              *
+ *  - tcphdr.check                                             *
+ *  - icmp4hdr.check                                           *
+ * To use fake values for those fields, they have to be edited *
+ * after packet construction.                                  *
+ ***************************************************************/
+
+/*-------------------------------------------------------------*/
+/***************************************************************
+ * Which functions to use ?                                    *
+ *                                                             *
+ * Netwib has 3 kind of functions to decode packets:           *
+ *  - \fBnetwib_pkt_decode_abc\fP ie \fBnetwib_pkt_decode_iphdr\fP         *
+ *  - \fBnetwib_pkt_decode_layer_abc\fP ie \fBnetwib_pkt_decode_layer_ip\fP*
+ *  - \fBnetwib_pkt_decode_abcABC\fP ie \fBnetwib_pkt_decode_iptcp\fP      *
+ * Functions \fBnetwib_pkt_decode_abc\fP and                         *
+ * \fBnetwib_pkt_decode_layer_abc\fP are almost equivalent.          *
+ * Functions \fBnetwib_pkt_decode_abcABC\fP permits to decode only   *
+ * one kind of protocol : ABC on top of abc. So, they can only *
+ * be used in simple cases.                                    *
+ *                                                             *
+ * Netwib has 3 kind of functions to create packets:           *
+ *  - \fBnetwib_pkt_append_abc\fP ie \fBnetwib_pkt_append_iphdr\fP         *
+ *  - \fBnetwib_pkt_append_layer_abc\fP ie \fBnetwib_pkt_append_layer_ip\fP*
+ *  - \fBnetwib_pkt_append_abcABC\fP ie \fBnetwib_pkt_append_iptcp\fP      *
+ * Functions \fBnetwib_pkt_append_abc\fP use exact fields given as   *
+ * parameters from users.                                      *
+ * Functions \fBnetwib_pkt_append_layer_abc\fP compute fields before *
+ * storing them in the packet.                                 *
+ * Functions \fBnetwib_pkt_append_abcABC\fP permits to create only   *
+ * one kind of protocol : ABC on top of abc. So, they can only *
+ * be used in simple cases.                                    *
+ *                                                             *
+ * Summary: when possible, use \fBnetwib_pkt_append\fP/decode_layer  *
+ *          which are :                                        *
+ *           - easier than \fBnetwib_pkt_append\fP/decode_abc        *
+ *             because they compute fields                     *
+ *           - faster than \fBnetwib_pkt_append\fP/decode_abcABC     *
+ *             if several protocols of the same layer have to  *
+ *             be decoded (for example : iptcp and ipudp)      *
+ ***************************************************************/
+
+/*-------------------------------------------------------------*/
+\fBnetwib_err\fP \fBnetwib_pkt_append_layer_data\fP(\fBnetwib_constbuf\fP *pdata,
+                                        \fBnetwib_buf\fP *ppkt);
+\fBnetwib_err\fP \fBnetwib_pkt_decode_layer_data\fP(\fBnetwib_buf\fP *ppkt,
+                                        \fBnetwib_bufext\fP *pdata);
+
+/*-------------------------------------------------------------*/
+\fBnetwib_err\fP \fBnetwib_pkt_append_layer_link\fP(\fBnetwib_constlinkhdr\fP *plinkhdr,
+                                        \fBnetwib_buf\fP *ppkt);
+\fBnetwib_err\fP \fBnetwib_pkt_decode_layer_link\fP(\fBnetwib_device_dlttype\fP dlttype,
+                                        \fBnetwib_buf\fP *ppkt,
+                                        \fBnetwib_linkhdr\fP *plinkhdr);
+
+/*-------------------------------------------------------------*/
+\fBnetwib_err\fP \fBnetwib_pkt_append_layer_ip\fP(\fBnetwib_constiphdr\fP *piphdr,
+                                      \fBnetwib_uint32\fP datasize,
+                                      \fBnetwib_buf\fP *ppkt);
+\fBnetwib_err\fP \fBnetwib_pkt_decode_layer_ip\fP(\fBnetwib_buf\fP *ppkt,
+                                      \fBnetwib_iphdr\fP *piphdr);
+
+/*-------------------------------------------------------------*/
+/* fields followed by "checksum" are needed only for checksum
+   computation */
+\fBnetwib_err\fP \fBnetwib_pkt_append_layer_udp\fP(\fBnetwib_constiphdr\fP *piphdr,/*checksum*/
+                                       \fBnetwib_constudphdr\fP *pudphdr,
+                                       \fBnetwib_constbuf\fP *pudpdata,/*checksum*/
+                                       \fBnetwib_buf\fP *ppkt);
+\fBnetwib_err\fP \fBnetwib_pkt_decode_layer_udp\fP(\fBnetwib_buf\fP *ppkt,
+                                       \fBnetwib_udphdr\fP *pudphdr);
+
+/*-------------------------------------------------------------*/
+\fBnetwib_err\fP \fBnetwib_pkt_append_layer_tcp\fP(\fBnetwib_constiphdr\fP *piphdr,/*checksum*/
+                                       \fBnetwib_consttcphdr\fP *ptcphdr,
+                                       \fBnetwib_constbuf\fP *ptcpdata,/*checksum*/
+                                       \fBnetwib_buf\fP *ppkt);
+\fBnetwib_err\fP \fBnetwib_pkt_decode_layer_tcp\fP(\fBnetwib_buf\fP *ppkt,
+                                       \fBnetwib_tcphdr\fP *ptcphdr);
+
+/*-------------------------------------------------------------*/
+\fBnetwib_err\fP \fBnetwib_pkt_append_layer_icmp4\fP(\fBnetwib_consticmp4\fP *picmp4,
+                                         \fBnetwib_buf\fP *ppkt);
+\fBnetwib_err\fP \fBnetwib_pkt_decode_layer_icmp4\fP(\fBnetwib_buf\fP *ppkt,
+                                         \fBnetwib_icmp4\fP *picmp4);
+
+/*-------------------------------------------------------------*/
+\fBnetwib_err\fP \fBnetwib_pkt_append_layer_icmp6\fP(\fBnetwib_constiphdr\fP *piphdr,
+                                         \fBnetwib_consticmp6\fP *picmp6,
+                                         \fBnetwib_buf\fP *ppkt);
+\fBnetwib_err\fP \fBnetwib_pkt_decode_layer_icmp6\fP(\fBnetwib_buf\fP *ppkt,
+                                         \fBnetwib_icmp6\fP *picmp6);
+
+/*-------------------------------------------------------------*/
+\fBnetwib_err\fP \fBnetwib_pkt_append_layer_arp\fP(\fBnetwib_constarphdr\fP *parphdr,
+                                       \fBnetwib_buf\fP *ppkt);
+\fBnetwib_err\fP \fBnetwib_pkt_decode_layer_arp\fP(\fBnetwib_buf\fP *ppkt,
+                                       \fBnetwib_arphdr\fP *parphdr);
+.fi
+.SH MODULE PACKET
+.nf
+
+/*-------------------------------------------------------------*/
+/***************************************************************
+ * Following functions create/decode packets. Their names      *
+ * should be self explaining. They are specialized in decoding *
+ * one kind of packet. To support several kind of packets, use *
+ * \fBnetwib_pkt_decode_layer_abc\fP instead.                        *
+ ***************************************************************/
+
+/*-------------------------------------------------------------*/
+\fBnetwib_err\fP \fBnetwib_pkt_append_linkdata\fP(\fBnetwib_constlinkhdr\fP *plinkhdr,
+                                      \fBnetwib_constbuf\fP *pdata,
+                                      \fBnetwib_buf\fP *ppkt);
+\fBnetwib_err\fP \fBnetwib_pkt_decode_linkdata\fP(\fBnetwib_device_dlttype\fP dlttype,
+                                      \fBnetwib_constbuf\fP *ppkt,
+                                      \fBnetwib_linkhdr\fP *plinkhdr,
+                                      \fBnetwib_bufext\fP *pdata);
+
+/*-------------------------------------------------------------*/
+\fBnetwib_err\fP \fBnetwib_pkt_append_ipdata\fP(\fBnetwib_constiphdr\fP *piphdr,
+                                    \fBnetwib_constbuf\fP *pdata,
+                                    \fBnetwib_buf\fP *ppkt);
+\fBnetwib_err\fP \fBnetwib_pkt_decode_ipdata\fP(\fBnetwib_constbuf\fP *ppkt,
+                                    \fBnetwib_iphdr\fP *piphdr,
+                                    \fBnetwib_bufext\fP *pdata);
+\fBnetwib_err\fP \fBnetwib_pkt_append_linkipdata\fP(\fBnetwib_constlinkhdr\fP *plinkhdr,
+                                        \fBnetwib_constiphdr\fP *piphdr,
+                                        \fBnetwib_constbuf\fP *pdata,
+                                        \fBnetwib_buf\fP *ppkt);
+\fBnetwib_err\fP \fBnetwib_pkt_decode_linkipdata\fP(\fBnetwib_device_dlttype\fP dlttype,
+                                        \fBnetwib_constbuf\fP *ppkt,
+                                        \fBnetwib_linkhdr\fP *plinkhdr,
+                                        \fBnetwib_iphdr\fP *piphdr,
+                                        \fBnetwib_bufext\fP *pdata);
+
+/*-------------------------------------------------------------*/
+\fBnetwib_err\fP \fBnetwib_pkt_append_ipudpdata\fP(\fBnetwib_constiphdr\fP *piphdr,
+                                       \fBnetwib_constudphdr\fP *pudphdr,
+                                       \fBnetwib_constbuf\fP *pdata,
+                                       \fBnetwib_buf\fP *ppkt);
+\fBnetwib_err\fP \fBnetwib_pkt_decode_ipudpdata\fP(\fBnetwib_constbuf\fP *ppkt,
+                                       \fBnetwib_iphdr\fP *piphdr,
+                                       \fBnetwib_udphdr\fP *pudphdr,
+                                       \fBnetwib_bufext\fP *pdata);
+\fBnetwib_err\fP \fBnetwib_pkt_append_linkipudpdata\fP(\fBnetwib_constlinkhdr\fP *plinkhdr,
+                                           \fBnetwib_constiphdr\fP *piphdr,
+                                           \fBnetwib_constudphdr\fP *pudphdr,
+                                           \fBnetwib_constbuf\fP *pdata,
+                                           \fBnetwib_buf\fP *ppkt);
+\fBnetwib_err\fP \fBnetwib_pkt_decode_linkipudpdata\fP(\fBnetwib_device_dlttype\fP dlttype,
+                                           \fBnetwib_constbuf\fP *ppkt,
+                                           \fBnetwib_linkhdr\fP *plinkhdr,
+                                           \fBnetwib_iphdr\fP *piphdr,
+                                           \fBnetwib_udphdr\fP *pudphdr,
+                                           \fBnetwib_bufext\fP *pdata);
+
+/*-------------------------------------------------------------*/
+\fBnetwib_err\fP \fBnetwib_pkt_append_iptcpdata\fP(\fBnetwib_constiphdr\fP *piphdr,
+                                       \fBnetwib_consttcphdr\fP *ptcphdr,
+                                       \fBnetwib_constbuf\fP *pdata,
+                                       \fBnetwib_buf\fP *ppkt);
+\fBnetwib_err\fP \fBnetwib_pkt_decode_iptcpdata\fP(\fBnetwib_constbuf\fP *ppkt,
+                                       \fBnetwib_iphdr\fP *piphdr,
+                                       \fBnetwib_tcphdr\fP *ptcphdr,
+                                       \fBnetwib_bufext\fP *pdata);
+\fBnetwib_err\fP \fBnetwib_pkt_append_linkiptcpdata\fP(\fBnetwib_constlinkhdr\fP *plinkhdr,
+                                           \fBnetwib_constiphdr\fP *piphdr,
+                                           \fBnetwib_consttcphdr\fP *ptcphdr,
+                                           \fBnetwib_constbuf\fP *pdata,
+                                           \fBnetwib_buf\fP *ppkt);
+\fBnetwib_err\fP \fBnetwib_pkt_decode_linkiptcpdata\fP(\fBnetwib_device_dlttype\fP dlttype,
+                                           \fBnetwib_constbuf\fP *ppkt,
+                                           \fBnetwib_linkhdr\fP *plinkhdr,
+                                           \fBnetwib_iphdr\fP *piphdr,
+                                           \fBnetwib_tcphdr\fP *ptcphdr,
+                                           \fBnetwib_bufext\fP *pdata);
+
+/*-------------------------------------------------------------*/
+\fBnetwib_err\fP \fBnetwib_pkt_append_ipicmp4\fP(\fBnetwib_constiphdr\fP *piphdr,
+                                     \fBnetwib_consticmp4\fP *picmp4,
+                                     \fBnetwib_buf\fP *ppkt);
+\fBnetwib_err\fP \fBnetwib_pkt_decode_ipicmp4\fP(\fBnetwib_constbuf\fP *ppkt,
+                                     \fBnetwib_iphdr\fP *piphdr,
+                                     \fBnetwib_icmp4\fP *picmp4);
+\fBnetwib_err\fP \fBnetwib_pkt_append_linkipicmp4\fP(\fBnetwib_constlinkhdr\fP *plinkhdr,
+                                         \fBnetwib_constiphdr\fP *piphdr,
+                                         \fBnetwib_consticmp4\fP *picmp4,
+                                         \fBnetwib_buf\fP *ppkt);
+\fBnetwib_err\fP \fBnetwib_pkt_decode_linkipicmp4\fP(\fBnetwib_device_dlttype\fP dlttype,
+                                         \fBnetwib_constbuf\fP *ppkt,
+                                         \fBnetwib_linkhdr\fP *plinkhdr,
+                                         \fBnetwib_iphdr\fP *piphdr,
+                                         \fBnetwib_icmp4\fP *picmp4);
+
+/*-------------------------------------------------------------*/
+\fBnetwib_err\fP \fBnetwib_pkt_append_ipicmp6\fP(\fBnetwib_constiphdr\fP *piphdr,
+                                     \fBnetwib_consticmp6\fP *picmp6,
+                                     \fBnetwib_buf\fP *ppkt);
+\fBnetwib_err\fP \fBnetwib_pkt_decode_ipicmp6\fP(\fBnetwib_constbuf\fP *ppkt,
+                                     \fBnetwib_iphdr\fP *piphdr,
+                                     \fBnetwib_icmp6\fP *picmp6);
+\fBnetwib_err\fP \fBnetwib_pkt_append_linkipicmp6\fP(\fBnetwib_constlinkhdr\fP *plinkhdr,
+                                         \fBnetwib_constiphdr\fP *piphdr,
+                                         \fBnetwib_consticmp6\fP *picmp6,
+                                         \fBnetwib_buf\fP *ppkt);
+\fBnetwib_err\fP \fBnetwib_pkt_decode_linkipicmp6\fP(\fBnetwib_device_dlttype\fP dlttype,
+                                         \fBnetwib_constbuf\fP *ppkt,
+                                         \fBnetwib_linkhdr\fP *plinkhdr,
+                                         \fBnetwib_iphdr\fP *piphdr,
+                                         \fBnetwib_icmp6\fP *picmp6);
+
+/*-------------------------------------------------------------*/
+/* before calling this function, user has to set plinkhdr->type
+   to ARP or RARP */
+\fBnetwib_err\fP \fBnetwib_pkt_append_linkarp\fP(\fBnetwib_constlinkhdr\fP *plinkhdr,
+                                     \fBnetwib_constarphdr\fP *parphdr,
+                                     \fBnetwib_buf\fP *ppkt);
+\fBnetwib_err\fP \fBnetwib_pkt_decode_linkarp\fP(\fBnetwib_device_dlttype\fP dlttype,
+                                     \fBnetwib_constbuf\fP *ppkt,
+                                     \fBnetwib_linkhdr\fP *plinkhdr,
+                                     \fBnetwib_arphdr\fP *parphdr);
+.fi
+.SH MODULE CONV
+.nf
+
+/*-------------------------------------------------------------*/
+\fItypedef\fP enum {
+  \fBNETWIB_PKT_NEWFIELD_BLANK\fP = 1, /* do not try to compute field */
+  \fBNETWIB_PKT_NEWFIELD_FILL\fP,      /* compute field */
+  \fBNETWIB_PKT_NEWFIELD_FILLBLANK\fP, /* if can't compute left blank */
+  \fBNETWIB_PKT_NEWFIELD_BEST\fP = \fBNETWIB_PKT_NEWFIELD_FILLBLANK\fP
+} \fBnetwib_pkt_newfield\fP;
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_pkt_convert\fP
+   Description :
+     Convert a packet from one type to another
+   Input parameter(s) :
+     dlttype : DLT type of input packet
+     *ppktin : buffer containing physical input packet
+     newfieldopt : type to use for optional fields
+     newfieldreq : type to use for mandatory fields
+     dlttypeout : wanted outtype
+   Input/output parameter(s) :
+     *plinkhdrout : new link header
+     *ppktout : packet to put after the link header
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_pkt_convert\fP(\fBnetwib_device_dlttype\fP dlttypein,
+                              \fBnetwib_constbuf\fP *ppktin,
+                              \fBnetwib_pkt_newfield\fP newfieldopt,
+                              \fBnetwib_pkt_newfield\fP newfieldreq,
+                              \fBnetwib_device_dlttype\fP dlttypeout,
+                              \fBnetwib_linkhdr\fP *plinkhdrout,
+                              \fBnetwib_bufext\fP *ppktout);
+
+.fi
+.SH MODULE IPFRAG
+.nf
+
+/*-------------------------------------------------------------*/
+\fItypedef\fP \fBnetwib_err\fP (*\fBnetwib_ip_frag_pf\fP)(\fBnetwib_constbuf\fP *pfrag,
+                                        \fBnetwib_ptr\fP infos);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_ip_frag\fP
+   Description :
+     Fragment an IP packet
+   Input parameter(s) :
+     *pippkt : IP packet (containing IP header)
+     fragdatasize : data size to send in each fragment in bytes.
+                    It is rounded to 8 : 1->8bytes, 7->8bytes,
+                    8->8, 9->16, etc.
+                    The first fragment may be bigger than
+                    the others because it contains more IPv4
+                    options, or IPv6 extensions.
+                    If fragdatasize == 0, this limit is not used.
+     fragtotalsize : maximum total size of the packet in bytes.
+                     If fragtotalsize == 0, this limit is not used.
+     pfunc : memory address of the function which will
+             be called for each fragment
+             For each call, the first parameter ('infos')
+             will be set with the optional parameter below.
+   Input/output parameter(s) :
+     infos : optional parameter (can be NULL) which will be
+             used as the first parameter for *pfunc.
+             This may be used to send information to *pfunc.
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_ip_frag\fP(\fBnetwib_constbuf\fP *pippkt,
+                          \fBnetwib_uint32\fP fragdatasize,
+                          \fBnetwib_uint32\fP fragtotalsize,
+                          \fBnetwib_ip_frag_pf\fP pfunc,
+                          \fBnetwib_ptr\fP infos);
+
+/*-------------------------------------------------------------*/
+\fI#define\fP \fBNETWIB_MTU_MIN_IP4\fP 576 /* rfc 791 */
+\fI#define\fP \fBNETWIB_MTU_MIN_IP6\fP 1280 /* rfc 2460 */
+.fi
+.SH SEE ALSO
+.IR netwib (3),
+.IR netwib_dat (3),
+.IR netwib_sys (3),
+.IR netwib_net (3),
+.IR netwib_pkt (3),
+.IR netwib_shw (3),
+.IR netwib_err (3)

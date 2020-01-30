@@ -1,0 +1,44 @@
+<HTML>
+ <HEAD>
+ <TITLE>Tool 30: Convert a file from unix to dos</TITLE>
+ </HEAD>
+ <BODY BGCOLOR="#FFFFFF">
+  <CENTER>   <H3>Tool 30: Convert a file from unix to dos</H3>
+  </CENTER>
+
+  <P><H3>Description:</H3>
+   <PRE>
+  This tool converts a file using Unix end of lines style (0x0A) to a
+  file using Windows end of lines style (0x0D0A).
+  This tool permits to convert text files. It does not work on binary
+  files.
+   </PRE>
+
+  <P><H3>Synonyms:</H3>
+  &nbsp;&nbsp;unix2dos<BR>
+
+  <P><H3>Usage:</H3>
+  &nbsp;&nbsp;netwox 30 -i file -o file<BR>
+
+  <P><H3>Parameters:</H3>
+<TABLE BORDER=1 CELLPADDING=4>
+ <TR>
+  <TD ALIGN=middle><I>parameter</I></TD>
+  <TD ALIGN=middle><I>description</I></TD>
+  <TD ALIGN=middle><I>example</I></TD>
+ </TR>
+ <TR><TD><TT>-i|--src-file file</TD>
+<TD>source filename</TD>
+<TD>srcfile.txt</TD></TR>
+<TR><TD><TT>-o|--dst-file file</TD>
+<TD>destination filename</TD>
+<TD>dstfile.txt </TD></TR>
+</TABLE>
+
+  <P><H3>Examples:</H3>
+  &nbsp;&nbsp;netwox 30 -i "srcfile.txt" -o "dstfile.txt"<BR>
+<BR>
+  &nbsp;&nbsp;netwox 30 --src-file "srcfile.txt" --dst-file "dstfile.txt"<BR>
+<BR>
+ </BODY>
+ </HTML>

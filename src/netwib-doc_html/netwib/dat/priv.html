@@ -1,0 +1,74 @@
+<HTML><HEAD>
+<TITLE>netwib doc_html (version 5.39.0)</TITLE>
+</HEAD><BODY BGCOLOR="#FFFFFF" TEXT="#000000">
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../dat.html">section index</A></H2><HR><BR>
+<PRE>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* use this trick to convert a "netwib_conststring" to "netwib_string" */</FONT>
+<FONT COLOR="#008800">#define <B>netwib_priv_caststring</B>(s) ((netwib_string)((netwib_uintptr)s))</FONT>
+<FONT COLOR="#880000">/* use this trick to convert a "netwib_constdata" to "netwib_data" */</FONT>
+<FONT COLOR="#008800">#define <B>netwib_priv_castdata</B>(s) ((netwib_data)((netwib_uintptr)s))</FONT>
+<FONT COLOR="#880000">/* use this trick to convert a "netwib_constptr" to "netwib_ptr" */</FONT>
+<FONT COLOR="#008800">#define <B>netwib_priv_castptr</B>(s) ((netwib_ptr)((netwib_uintptr)s))</FONT>
+<FONT COLOR="#880000">/* use this trick to convert a "netwib_constptr*" to "<FONT COLOR="#000088">netwib_ptr</FONT> *" */</FONT>
+<FONT COLOR="#008800">#define <B>netwib_priv_castpptr</B>(s) ((netwib_ptr*)((netwib_uintptr)s))</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#008800">#if ! defined NETWIBDEF_PRIV_DONT_WANT_SYS</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_priv_buf_append_vfmt</B>(<FONT COLOR="#000088">netwib_buf</FONT> *pbuf,
+                                       <FONT COLOR="#000088">netwib_conststring</FONT> fmt,
+                                       va_list *pap);
+<FONT COLOR="#008800">#endif</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_priv_buf_wipe</B>(<FONT COLOR="#000088">netwib_buf</FONT> *pbuf);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#008800">#define <FONT COLOR="#000044">NETWIB_PRIV_NUM_1K</FONT> 1000</FONT>
+<FONT COLOR="#008800">#define <FONT COLOR="#000044">NETWIB_PRIV_NUM_1M</FONT> 1000000</FONT>
+<FONT COLOR="#008800">#define <FONT COLOR="#000044">NETWIB_PRIV_NUM_1G</FONT> 1000000000</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#008800">#include "priv/bufstore.h"</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+typedef struct <FONT COLOR="#000088">netwib_ringitem</FONT> <FONT COLOR="#000088">netwib_ringitem</FONT>;
+struct <FONT COLOR="#000088">netwib_ringitem</FONT> {
+  <FONT COLOR="#000088">netwib_ringitem</FONT> *pnext;
+  <FONT COLOR="#000088">netwib_ringitem</FONT> *pprevious;
+  <FONT COLOR="#000088">netwib_ptr</FONT> pitem;
+};
+struct <FONT COLOR="#000088">netwib_ring</FONT> {
+  <FONT COLOR="#000088">netwib_ringitem</FONT> *pnext;
+  <FONT COLOR="#000088">netwib_ringitem</FONT> *pprevious;
+  <FONT COLOR="#000088">netwib_uint32</FONT> numberofitems;
+  <FONT COLOR="#000088">netwib_ring_erase_pf</FONT> pfunc_erase;
+  <FONT COLOR="#000088">netwib_ring_duplicate_pf</FONT> pfunc_duplicate;
+};
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+typedef struct <FONT COLOR="#000088">netwib_hashitem</FONT> <FONT COLOR="#000088">netwib_hashitem</FONT>;
+struct <FONT COLOR="#000088">netwib_hashitem</FONT> {
+  <FONT COLOR="#000088">netwib_hashitem</FONT> *pnext; <FONT COLOR="#880000">/* must be the first ; see index_this_del func. */</FONT>
+  <FONT COLOR="#000088">netwib_uint32</FONT> currenttablepos;
+  <FONT COLOR="#000088">netwib_ptr</FONT> pitem;
+  <FONT COLOR="#000088">netwib_uint32</FONT> hashofkey;
+  <FONT COLOR="#000088">netwib_uint32</FONT> keysize;
+  <FONT COLOR="#000088">netwib_data</FONT> key;
+};
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+struct <FONT COLOR="#000088">netwib_hash</FONT> {
+  <FONT COLOR="#000088">netwib_uint32</FONT> numberofitems;
+  <FONT COLOR="#000088">netwib_uint32</FONT> tablemax; <FONT COLOR="#880000">/* == tablesize-1 */</FONT>
+  <FONT COLOR="#000088">netwib_hashitem</FONT> **table;
+  <FONT COLOR="#000088">netwib_hash_erase_pf</FONT> pfunc_erase;
+  <FONT COLOR="#000088">netwib_hash_duplicate_pf</FONT> pfunc_duplicate;
+  <FONT COLOR="#000088">netwib_uint32</FONT> internalrandom;
+};
+</PRE><BR><BR><HR><BR>
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../dat.html">section index</A></H2>
+</BODY></HTML>

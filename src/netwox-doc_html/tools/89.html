@@ -1,0 +1,79 @@
+<HTML>
+ <HEAD>
+ <TITLE>Tool 89: TCP server</TITLE>
+ </HEAD>
+ <BODY BGCOLOR="#FFFFFF">
+  <CENTER>   <H3>Tool 89: TCP server</H3>
+  </CENTER>
+
+  <P><H3>Description:</H3>
+   <PRE>
+  This tool listens on a TCP port. Use tool 87 to connect to it.
+  
+  Parameter --src-port defines the local port number to listen on.
+  Optional parameter --src-ip defines the local IP address to use.
+  Optional parameter --iptype defines which kind of IP address to use
+  when --src-ip is unset (accepted values: ip4 and ip6).
+  Optional parameter --ip4opts permits to add IP4 options encoded as
+  mixed.
+  Optional parameter --ip6exts permits to add IP6 options encoded as
+  mixed (first byte is the next header number).
+  Optional parameters --device and --src-eth permits to create
+  a virtual server using fake addresses (in this case, tool have to be
+  run with admin privilege in order to sniff and spoof at Ethernet
+  level).
+  Parameter --encode defines how to display data (common values: data,
+  dump, mixed).
+  Parameter --decode defines how keyboard data is entered (common
+  values: data, mixed).
+   </PRE>
+
+  <P><H3>Synonyms:</H3>
+  &nbsp;&nbsp;nc, netcat<BR>
+
+  <P><H3>Usage:</H3>
+  &nbsp;&nbsp;netwox 89 -P port [-d device] [-E eth] [-I ip] [-o ip4opts] [-O ip6exts] [-t iptype] [-k decode] [-n encode]<BR>
+
+  <P><H3>Parameters:</H3>
+<TABLE BORDER=1 CELLPADDING=4>
+ <TR>
+  <TD ALIGN=middle><I>parameter</I></TD>
+  <TD ALIGN=middle><I>description</I></TD>
+  <TD ALIGN=middle><I>example</I></TD>
+ </TR>
+ <TR><TD><TT>-P|--src-port port</TD>
+<TD>source port number</TD>
+<TD>1234</TD></TR>
+<TR><TD><TT>-d|--device device</TD>
+<TD>device name</TD>
+<TD>Eth0</TD></TR>
+<TR><TD><TT>-E|--src-eth eth</TD>
+<TD>source ethernet address</TD>
+<TD>0:2:3:4:5:6</TD></TR>
+<TR><TD><TT>-I|--src-ip ip</TD>
+<TD>source IP address</TD>
+<TD>192.168.100.200</TD></TR>
+<TR><TD><TT>-o|--ip4opts ip4opts</TD>
+<TD>IPv4 options</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-O|--ip6exts ip6exts</TD>
+<TD>IPv6 extensions</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-t|--iptype iptype</TD>
+<TD>type to use when src-ip is unset</TD>
+<TD>ip4</TD></TR>
+<TR><TD><TT>-k|--decode decode</TD>
+<TD>how keyboard data is entered</TD>
+<TD>data</TD></TR>
+<TR><TD><TT>-n|--encode encode</TD>
+<TD>how network data is displayed</TD>
+<TD>data </TD></TR>
+</TABLE>
+
+  <P><H3>Examples:</H3>
+  &nbsp;&nbsp;netwox 89 -P "1234"<BR>
+<BR>
+  &nbsp;&nbsp;netwox 89 --src-port "1234"<BR>
+<BR>
+ </BODY>
+ </HTML>

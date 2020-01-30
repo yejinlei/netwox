@@ -1,0 +1,92 @@
+<HTML>
+ <HEAD>
+ <TITLE>Tool 93: TCP remote administration server</TITLE>
+ </HEAD>
+ <BODY BGCOLOR="#FFFFFF">
+  <CENTER>   <H3>Tool 93: TCP remote administration server</H3>
+  </CENTER>
+
+  <P><H3>Description:</H3>
+   <PRE>
+  This tool permits to remotely administer computer. Tools 94, 95 and 96
+  will run a command, get a file and store a file on this server.
+  
+  Parameter --password defines password to use for connection.
+  Parameter --allowed-clients lists the IP addresses or hosts allowed
+  to connect.
+  Parameter --rootdir defines the root directory for put and get file
+  operations (cannot exit this root jail).
+  Setting --no-allow-exec, --no-allow-get or --no-allow-put restricts
+  allowed operations.
+  Parameter --src-port defines the local port number to listen on.
+  Optional parameter --src-ip defines the local IP address to use.
+  Optional parameter --iptype defines which kind of IP address to use
+  when --src-ip is unset (accepted values: ip4 and ip6).
+  Optional parameter --ip4opts permits to add IP4 options encoded as
+  mixed.
+  Optional parameter --ip6exts permits to add IP6 options encoded as
+  mixed (first byte is the next header number).
+  Optional parameters --device and --src-eth are not yet implemented.
+   </PRE>
+
+  <P><H3>Usage:</H3>
+  &nbsp;&nbsp;netwox 93 -P port [-w password] [-d device] [-E eth] [-I ip] [-o ip4opts] [-O ip6exts] [-t iptype] [-c ips] [-r dir] [-T uint32] [-X|+X] [-G|+G] [-U|+U]<BR>
+
+  <P><H3>Parameters:</H3>
+<TABLE BORDER=1 CELLPADDING=4>
+ <TR>
+  <TD ALIGN=middle><I>parameter</I></TD>
+  <TD ALIGN=middle><I>description</I></TD>
+  <TD ALIGN=middle><I>example</I></TD>
+ </TR>
+ <TR><TD><TT>-P|--src-port port</TD>
+<TD>source port number</TD>
+<TD>1234</TD></TR>
+<TR><TD><TT>-w|--password password</TD>
+<TD>password</TD>
+<TD>netwox</TD></TR>
+<TR><TD><TT>-d|--device device</TD>
+<TD>device name</TD>
+<TD>Eth0</TD></TR>
+<TR><TD><TT>-E|--src-eth eth</TD>
+<TD>source ethernet address</TD>
+<TD>0:2:3:4:5:6</TD></TR>
+<TR><TD><TT>-I|--src-ip ip</TD>
+<TD>source IP address</TD>
+<TD>192.168.100.200</TD></TR>
+<TR><TD><TT>-o|--ip4opts ip4opts</TD>
+<TD>IPv4 options</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-O|--ip6exts ip6exts</TD>
+<TD>IPv6 extensions</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-t|--iptype iptype</TD>
+<TD>type to use when src-ip is unset</TD>
+<TD>ip4</TD></TR>
+<TR><TD><TT>-c|--allowed-clients ips</TD>
+<TD>clients allowed to connect</TD>
+<TD>all</TD></TR>
+<TR><TD><TT>-r|--rootdir dir</TD>
+<TD>root directory</TD>
+<TD>/tmp</TD></TR>
+<TR><TD><TT>-T|--timeout uint32</TD>
+<TD>timeout in seconds</TD>
+<TD>60</TD></TR>
+<TR><TD><TT>-X|--allow-exec|+X|--no-allow-exec</TD>
+<TD>allow exec</TD>
+<TD><I>This boolean is set.<BR>Use + or --no- to unset it.</I></TD></TR>
+<TR><TD><TT>-G|--allow-get|+G|--no-allow-get</TD>
+<TD>allow get</TD>
+<TD><I>This boolean is set.<BR>Use + or --no- to unset it.</I></TD></TR>
+<TR><TD><TT>-U|--allow-put|+U|--no-allow-put</TD>
+<TD>allow put</TD>
+<TD><I>This boolean is set.<BR>Use + or --no- to unset it.</I> </TD></TR>
+</TABLE>
+
+  <P><H3>Examples:</H3>
+  &nbsp;&nbsp;netwox 93 -P "1234"<BR>
+<BR>
+  &nbsp;&nbsp;netwox 93 --src-port "1234"<BR>
+<BR>
+ </BODY>
+ </HTML>

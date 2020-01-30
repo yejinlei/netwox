@@ -1,0 +1,47 @@
+<HTML><HEAD>
+<TITLE>netwib doc_html (version 5.39.0)</TITLE>
+</HEAD><BODY BGCOLOR="#FFFFFF" TEXT="#000000">
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../sys.html">section index</A></H2><HR><BR>
+<PRE>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_buf_append_kbd
+   Description :
+     Ask user to enter a text on keyboard.
+   Input parameter(s) :
+     *pmessage : message to print before asking user
+     *pdefaultext : text string to use if user enters nothing
+                    if NULL, there is no default
+   Input/output parameter(s) :
+   Output parameter(s) :
+     pbuf : output buffer set with the text
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_buf_append_kbd</B>(<FONT COLOR="#000088">netwib_constbuf</FONT> *pmessage,
+                                 <FONT COLOR="#000088">netwib_constbuf</FONT> *pdefaulttext,
+                                 <FONT COLOR="#000088">netwib_buf</FONT> *pbuf);
+<FONT COLOR="#008800">#define <FONT COLOR="#000044">NETWIB_BUF_APPEND_KBD_NODEF</FONT> NULL</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_buf_append_password
+   Description :
+     Ask user to enter a password on keyboard.
+   Input parameter(s) :
+     *pmessage : message to print before asking user
+     *pdefaultext : text string to use if user enters nothing
+   Input/output parameter(s) :
+   Output parameter(s) :
+     pbuf : output buffer set with the text
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+   This function sets <FONT COLOR="#000044">NETWIB_BUF_FLAGS_SENSITIVE</FONT>.
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_buf_append_password</B>(<FONT COLOR="#000088">netwib_constbuf</FONT> *pmessage,
+                                      <FONT COLOR="#000088">netwib_constbuf</FONT> *pdefaulttext,
+                                      <FONT COLOR="#000088">netwib_buf</FONT> *pbuf);
+</PRE><BR><BR><HR><BR>
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../sys.html">section index</A></H2>
+</BODY></HTML>

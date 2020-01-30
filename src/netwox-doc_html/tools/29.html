@@ -1,0 +1,44 @@
+<HTML>
+ <HEAD>
+ <TITLE>Tool 29: Convert a readable and editable file to a binary file</TITLE>
+ </HEAD>
+ <BODY BGCOLOR="#FFFFFF">
+  <CENTER>   <H3>Tool 29: Convert a readable and editable file to a binary file</H3>
+  </CENTER>
+
+  <P><H3>Description:</H3>
+   <PRE>
+  This tool does the reverse of tool 28.
+  Editing a binary file is not easy with un-appropriate tools. Tool 28
+  converts a binary file which can be edited by a text editor. Tool 29
+  then recreates the binary file.
+   </PRE>
+
+  <P><H3>Synonyms:</H3>
+  &nbsp;&nbsp;hexedit<BR>
+
+  <P><H3>Usage:</H3>
+  &nbsp;&nbsp;netwox 29 -i file -o file<BR>
+
+  <P><H3>Parameters:</H3>
+<TABLE BORDER=1 CELLPADDING=4>
+ <TR>
+  <TD ALIGN=middle><I>parameter</I></TD>
+  <TD ALIGN=middle><I>description</I></TD>
+  <TD ALIGN=middle><I>example</I></TD>
+ </TR>
+ <TR><TD><TT>-i|--src-file file</TD>
+<TD>source filename</TD>
+<TD>srcfile.txt</TD></TR>
+<TR><TD><TT>-o|--dst-file file</TD>
+<TD>destination filename</TD>
+<TD>dstfile.txt </TD></TR>
+</TABLE>
+
+  <P><H3>Examples:</H3>
+  &nbsp;&nbsp;netwox 29 -i "srcfile.txt" -o "dstfile.txt"<BR>
+<BR>
+  &nbsp;&nbsp;netwox 29 --src-file "srcfile.txt" --dst-file "dstfile.txt"<BR>
+<BR>
+ </BODY>
+ </HTML>

@@ -1,0 +1,49 @@
+                 -------------------------------
+                 |        INTRODUCTION         |
+                 -------------------------------
+
+Note : if you encounter problems, read ./doc/probleminstall.txt
+
+There are 3 steps :
+ - compile and install netwox [if not already installed]
+ - install Tcl/Tk >= 8.0 [if not already installed]
+ - create and install netwag
+
+
+                  ------------------------------
+                  |       STEP 1 : netwox      |
+                  ------------------------------
+
+If netwox isn't installed on your system, you have to do it :
+   http://ntwox.sourceforge.net/
+Installation procedure for netwox is explained in downloaded files.
+
+
+                 -------------------------------
+                 |       STEP 2 : Tcl/Tk       |
+                 -------------------------------
+
+Tcl/Tk is a script programming language. Netwag is written is Tcl/Tk 8.
+
+You have to install Tcl/Tk version >= 8.0 :
+ - http://www.tcl.tk/
+ - from packages for your system (look the cdrom or website
+   of your distribution ; generally, there are two packages :
+   tcl... and tk...)
+
+If you have a problem downloading or installing read Tcl/Tk doc.
+If you still have a problem, contact Tcl/Tk's developers.
+I cannot help you, because I do not maintain this code.
+
+
+                  -----------------------------
+                  |      STEP 3 : netwag      |
+                  -----------------------------
+
+ - "cd src"            (to go in source directory)
+ - ./genemake          (to generate Makefile)
+ - "make"              (to create netwag)
+ - edit netwag          (to eventually modify top variables)
+ - "make install"      (to install netwag. You need to be root
+                        to achieve this command)
+

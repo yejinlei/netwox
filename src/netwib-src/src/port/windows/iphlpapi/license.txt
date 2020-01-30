@@ -1,0 +1,33 @@
+[These files are an extract of MinGW includes. Thanks - Laurent]
+
+
+        Free headers and libraries for the Win32 API
+
+        Written by Anders Norlander <anorland@hem2.passagen.se>
+        URL: http://www.acc.umu.se/~anorland/gnu-win32/
+
+	Maintained by MinGW Developers
+        Send bug reports and questions to MinGW-users@lists.sourceforge.net
+	URL: http://www.mingw.org
+
+* License
+
+  You are free to use, modify and copy this package. No restrictions
+  are imposed on programs or object files compiled with this library.
+  
+  You may not restrict the the usage of this library.
+
+  You may distribute this library as part of another package or as a
+  modified package if and only if you do *not* restrict the usage of
+  the portions consisting of this (optionally modified) library.
+
+  If distributed as part of another package, please notify the author
+  of what you are going to do.  If distributed as a modified package,
+  this file *must* be included.
+
+  This library is distributed in the hope that it will be useful, but
+  WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+[...]
+

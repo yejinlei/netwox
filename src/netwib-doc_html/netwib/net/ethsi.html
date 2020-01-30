@@ -1,0 +1,122 @@
+<HTML><HEAD>
+<TITLE>netwib doc_html (version 5.39.0)</TITLE>
+</HEAD><BODY BGCOLOR="#FFFFFF" TEXT="#000000">
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../net.html">section index</A></H2><HR><BR>
+<PRE>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+typedef struct <FONT COLOR="#000088">netwib_eths_index</FONT> <FONT COLOR="#000088">netwib_eths_index</FONT>;
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_eths_index_init
+   Description :
+     Initialize a <FONT COLOR="#000088">netwib_eths_index</FONT> used to loop through
+     a netwib_eths.
+   Input parameter(s) :
+   Input/output parameter(s) :
+   Output parameter(s) :
+     **ppethsindex : <FONT COLOR="#000088">netwib_eths_index</FONT> allocated and initialized
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_eths_index_init</B>(<FONT COLOR="#000088">netwib_consteths</FONT> *peths,
+                                  <FONT COLOR="#000088">netwib_eths_index</FONT> **ppethsindex);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_eths_index_close
+   Description :
+     Close a netwib_ethsindex.
+   Input parameter(s) :
+   Input/output parameter(s) :
+     **ppethsindex : <FONT COLOR="#000088">netwib_eths_index</FONT> closed
+   Output parameter(s) :
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_eths_index_close</B>(<FONT COLOR="#000088">netwib_eths_index</FONT> **ppethsindex);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Types to control a <FONT COLOR="#000088">netwib_eths_index</FONT> */</FONT>
+typedef enum {
+  <FONT COLOR="#000044">NETWIB_ETHS_INDEX_CTLTYPE_REWIND</FONT> = 1,  <FONT COLOR="#880000">/* position at beginning */</FONT>
+  <FONT COLOR="#000044">NETWIB_ETHS_INDEX_CTLTYPE_INDEX</FONT>        <FONT COLOR="#880000">/* reset with index pos */</FONT>
+} <FONT COLOR="#000088">netwib_eths_index_ctltype</FONT>;
+<FONT COLOR="#880000">/* Those functions permit to set/get parameters (pointer and
+   integer) about a netwib_eths_index. It should not be used directly,
+   but by the defines.
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_eths_index_ctl_set</B>(<FONT COLOR="#000088">netwib_eths_index</FONT> *pethsindex,
+                                     <FONT COLOR="#000088">netwib_eths_index_ctltype</FONT> type,
+                                     <FONT COLOR="#000088">netwib_ptr</FONT> p,
+                                     <FONT COLOR="#000088">netwib_uint32</FONT> ui);
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_eths_index_ctl_get</B>(<FONT COLOR="#000088">netwib_eths_index</FONT> *pethsindex,
+                                     <FONT COLOR="#000088">netwib_eths_index_ctltype</FONT> type,
+                                     <FONT COLOR="#000088">netwib_ptr</FONT> p,
+                                     <FONT COLOR="#000088">netwib_uint32</FONT> *pui);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* <FONT COLOR="#000088">netwib_err</FONT> f(<FONT COLOR="#000088">netwib_eths_index</FONT> *pethsindex); */</FONT>
+<FONT COLOR="#008800">#define <B>netwib_eths_index_ctl_set_rewind</B>(pethsindex) <B>netwib_eths_index_ctl_set</B>(pethsindex,<FONT COLOR="#000044">NETWIB_ETHS_INDEX_CTLTYPE_REWIND</FONT>,NULL,0)</FONT>
+<FONT COLOR="#880000">/* <FONT COLOR="#000088">netwib_err</FONT> f(<FONT COLOR="#000088">netwib_eths_index</FONT> *pethsindex,<FONT COLOR="#000088">netwib_eths_index</FONT> *pethsindexref);*/</FONT>
+<FONT COLOR="#008800">#define <B>netwib_eths_index_ctl_set_index</B>(pethsindex,pethsindexref) <B>netwib_eths_index_ctl_set</B>(pethsindex,<FONT COLOR="#000044">NETWIB_ETHS_INDEX_CTLTYPE_INDEX</FONT>,pethsindexref,0)</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_eths_index_next_eth
+   Description :
+     Get the next <FONT COLOR="#000088">netwib_eth</FONT> in the list.
+   Input parameter(s) :
+   Input/output parameter(s) :
+     *pethsindex : netwib_eths_index
+   Output parameter(s) :
+     *peth : next netwib_eth
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+     <FONT COLOR="#000044">NETWIB_ERR_DATAEND</FONT> : end of the list reached
+   Note :
+     If one thread changes the <FONT COLOR="#000088">netwib_eths</FONT> between two calls,
+     the next result might be incorrect. Developer have to
+     lock the entire loop (going through each item), or to
+     copy the <FONT COLOR="#000088">netwib_eths</FONT> and to loop on the copy.
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_eths_index_next_eth</B>(<FONT COLOR="#000088">netwib_eths_index</FONT> *pethsindex,
+                                      <FONT COLOR="#000088">netwib_eth</FONT> *peth);
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_eths_index_next_ethrange</B>(<FONT COLOR="#000088">netwib_eths_index</FONT> *pethsindex,
+                                           <FONT COLOR="#000088">netwib_eth</FONT> *pinfeth,
+                                           <FONT COLOR="#000088">netwib_eth</FONT> *psupeth);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_eths_index_this_eth
+   Description :
+     Re-give the last <FONT COLOR="#000088">netwib_eth</FONT> in the list.
+   Input parameter(s) :
+   Input/output parameter(s) :
+     *pethsindex : netwib_eths_index
+   Output parameter(s) :
+     *peth : next netwib_eth
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_eths_index_this_eth</B>(<FONT COLOR="#000088">netwib_eths_index</FONT> *pethsindex,
+                                      <FONT COLOR="#000088">netwib_eth</FONT> *peth);
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_eths_index_this_ethrange</B>(<FONT COLOR="#000088">netwib_eths_index</FONT> *pethsindex,
+                                           <FONT COLOR="#000088">netwib_eth</FONT> *pinfeth,
+                                           <FONT COLOR="#000088">netwib_eth</FONT> *psupeth);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_eths_index_this_del
+   Description :
+     Delete the last given value by a netwib_eths_index_next
+     function.
+   Input parameter(s) :
+   Input/output parameter(s) :
+     *pethsindex : netwib_eths_index
+   Output parameter(s) :
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_eths_index_this_del</B>(<FONT COLOR="#000088">netwib_eths_index</FONT> *pethsindex);
+</PRE><BR><BR><HR><BR>
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../net.html">section index</A></H2>
+</BODY></HTML>

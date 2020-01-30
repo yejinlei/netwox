@@ -1,0 +1,390 @@
+<HTML><HEAD>
+<TITLE>netwib doc_html (version 5.39.0)</TITLE>
+</HEAD><BODY BGCOLOR="#FFFFFF" TEXT="#000000">
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../sys.html">section index</A></H2><HR><BR>
+<PRE>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000"><B>/***************************************************************
+ * A <FONT COLOR="#000088">netwib_time</FONT> contains a time duration (relative time) or a *
+ * date (absolute time).                                       *
+ * Fields of a <FONT COLOR="#000088">netwib_time</FONT> can be directly used, but when it is*
+ * set nsec must be between 0 and 999999999.                   *
+ ***************************************************************/</B></FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+typedef struct {
+  <FONT COLOR="#000088">netwib_uint32</FONT> sec;  <FONT COLOR="#880000">/* seconds */</FONT>
+  <FONT COLOR="#000088">netwib_uint32</FONT> nsec; <FONT COLOR="#880000">/* nanoseconds */</FONT>
+} <FONT COLOR="#000088">netwib_time</FONT>;
+typedef const <FONT COLOR="#000088">netwib_time</FONT> <FONT COLOR="#000088">netwib_consttime</FONT>;
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000"><B>/***************************************************************
+ * Every function should be prepared to receive as input :     *
+ *  - netwib_time*                                             *
+ *  - <FONT COLOR="#000044">NETWIB_TIME_ZERO</FONT>                                         *
+ *  - <FONT COLOR="#000044">NETWIB_TIME_INFINITE</FONT>                                     *
+ * However, <FONT COLOR="#000044">NETWIB_TIME_ZERO</FONT> and <FONT COLOR="#000044">NETWIB_TIME_INFINITE</FONT> cannot be*
+ * returned as output by a function. Those defines exist to    *
+ * quickly specify those specific inputs.                      *
+ ***************************************************************/</B></FONT>
+<FONT COLOR="#880000">/* Empty time duration or year 1970 */</FONT>
+<FONT COLOR="#008800">#define <FONT COLOR="#000044">NETWIB_TIME_ZERO</FONT> ((netwib_time*)1)</FONT>
+<FONT COLOR="#880000">/* Infinite time duration or year 2038/2108 */</FONT>
+<FONT COLOR="#008800">#define <FONT COLOR="#000044">NETWIB_TIME_INFINITE</FONT> ((netwib_time*)2)</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_time_init_time
+   Description :
+     Initialize a <FONT COLOR="#000088">netwib_time</FONT> from another netwib_time.
+     This function is mainly useful to convert
+     <FONT COLOR="#000044">NETWIB_TIME_ZERO</FONT> or <FONT COLOR="#000044">NETWIB_TIME_INFINITE</FONT> to a real structure.
+   Input parameter(s) :
+     ptimein : time to copy
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *ptimeout : <FONT COLOR="#000088">netwib_time</FONT> set
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_time_init_time</B>(<FONT COLOR="#000088">netwib_consttime</FONT> *ptimein,
+                                 <FONT COLOR="#000088">netwib_time</FONT> *ptimeout);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_time_init_fields
+   Description :
+     Initialize a netwib_time.
+   Input parameter(s) :
+     sec : number of seconds
+     msec : number of milliseconds
+     usec : number of microseconds
+     nsec : number of nanoseconds
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *ptime : <FONT COLOR="#000088">netwib_time</FONT> set
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_time_init_fields</B>(<FONT COLOR="#000088">netwib_uint32</FONT> sec,
+                                   <FONT COLOR="#000088">netwib_uint32</FONT> msec,
+                                   <FONT COLOR="#000088">netwib_uint32</FONT> usec,
+                                   <FONT COLOR="#000088">netwib_uint32</FONT> nsec,
+                                   <FONT COLOR="#000088">netwib_time</FONT> *ptime);
+<FONT COLOR="#008800">#define <B>netwib_time_init_sec</B>(sec,ptime) <B>netwib_time_init_fields</B>(sec,0,0,0,ptime)</FONT>
+<FONT COLOR="#008800">#define <B>netwib_time_init_msec</B>(msec,ptime) <B>netwib_time_init_fields</B>(0,msec,0,0,ptime)</FONT>
+<FONT COLOR="#008800">#define <B>netwib_time_init_usec</B>(usec,ptime) <B>netwib_time_init_fields</B>(0,0,usec,0,ptime)</FONT>
+<FONT COLOR="#008800">#define <B>netwib_time_init_nsec</B>(nsec,ptime) <B>netwib_time_init_fields</B>(0,0,0,nsec,ptime)</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_time_decode_xyz
+   Description :
+     Obtain time values stored in a netwib_time.
+       function                 obtained ranges
+       <FONT COLOR="#000088">netwib_time_decode_sec</FONT>    [0..2^32]
+       <FONT COLOR="#000088">netwib_time_decode_msec</FONT>   [0..2^32]
+       <FONT COLOR="#000088">netwib_time_decode_usec</FONT>   [0..2^32]
+       <FONT COLOR="#000088">netwib_time_decode_nsec</FONT>   [0..2^32]
+       <FONT COLOR="#000088">netwib_time_decode_fields</FONT> [0..2^32], [0-999], [0-999], [0-999]
+   Input parameter(s) :
+     *ptime : netwib_time
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *psec : seconds
+     *pmsec : milliseconds
+     *pusec : microseconds
+     *pnsec : nanoseconds
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+     <FONT COLOR="#000044">NETWIB_ERR_NOTCONVERTED</FONT> : too big to be decoded
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_time_decode_fields</B>(<FONT COLOR="#000088">netwib_consttime</FONT> *ptime,
+                                     <FONT COLOR="#000088">netwib_uint32</FONT> *psec,
+                                     <FONT COLOR="#000088">netwib_uint32</FONT> *pmsec,
+                                     <FONT COLOR="#000088">netwib_uint32</FONT> *pusec,
+                                     <FONT COLOR="#000088">netwib_uint32</FONT> *pnsec);
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_time_decode_sec</B>(<FONT COLOR="#000088">netwib_consttime</FONT> *ptime,
+                                  <FONT COLOR="#000088">netwib_uint32</FONT> *psec);
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_time_decode_msec</B>(<FONT COLOR="#000088">netwib_consttime</FONT> *ptime,
+                                   <FONT COLOR="#000088">netwib_uint32</FONT> *pmsec);
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_time_decode_usec</B>(<FONT COLOR="#000088">netwib_consttime</FONT> *ptime,
+                                   <FONT COLOR="#000088">netwib_uint32</FONT> *pusec);
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_time_decode_nsec</B>(<FONT COLOR="#000088">netwib_consttime</FONT> *ptime,
+                                   <FONT COLOR="#000088">netwib_uint32</FONT> *pnsec);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_time_plus_time
+   Description :
+     Initialize a <FONT COLOR="#000088">netwib_time</FONT> by adding two netwib_time.
+   Input parameter(s) :
+     ptimetoadd : time to add
+   Input/output parameter(s) :
+     *ptime : <FONT COLOR="#000088">netwib_time</FONT> incremented by ptime
+   Output parameter(s) :
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_time_plus_time</B>(<FONT COLOR="#000088">netwib_time</FONT> *ptime,
+                                 <FONT COLOR="#000088">netwib_consttime</FONT> *ptimetoadd);
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_time_plus_fields</B>(<FONT COLOR="#000088">netwib_time</FONT> *ptime,
+                                   <FONT COLOR="#000088">netwib_uint32</FONT> sec,
+                                   <FONT COLOR="#000088">netwib_uint32</FONT> msec,
+                                   <FONT COLOR="#000088">netwib_uint32</FONT> usec,
+                                   <FONT COLOR="#000088">netwib_uint32</FONT> nsec);
+<FONT COLOR="#008800">#define <B>netwib_time_plus_sec</B>(ptime,sec) <B>netwib_time_plus_fields</B>(ptime,sec,0,0,0)</FONT>
+<FONT COLOR="#008800">#define <B>netwib_time_plus_msec</B>(ptime,msec) <B>netwib_time_plus_fields</B>(ptime,0,msec,0,0)</FONT>
+<FONT COLOR="#008800">#define <B>netwib_time_plus_usec</B>(ptime,usec) <B>netwib_time_plus_fields</B>(ptime,0,0,usec,0)</FONT>
+<FONT COLOR="#008800">#define <B>netwib_time_plus_nsec</B>(ptime,nsec) <B>netwib_time_plus_fields</B>(ptime,0,0,0,nsec)</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_time_minus_time
+   Description :
+     Initialize a <FONT COLOR="#000088">netwib_time</FONT> by adding two netwib_time.
+   Input parameter(s) :
+     ptimetoadd : time to add
+   Input/output parameter(s) :
+     *ptime : <FONT COLOR="#000088">netwib_time</FONT> incremented by ptime
+   Output parameter(s) :
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_time_minus_time</B>(<FONT COLOR="#000088">netwib_time</FONT> *ptime,
+                                  <FONT COLOR="#000088">netwib_consttime</FONT> *ptimetosub);
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_time_minus_fields</B>(<FONT COLOR="#000088">netwib_time</FONT> *ptime,
+                                    <FONT COLOR="#000088">netwib_uint32</FONT> sec,
+                                    <FONT COLOR="#000088">netwib_uint32</FONT> msec,
+                                    <FONT COLOR="#000088">netwib_uint32</FONT> usec,
+                                    <FONT COLOR="#000088">netwib_uint32</FONT> nsec);
+<FONT COLOR="#008800">#define <B>netwib_time_minus_sec</B>(ptime,sec) <B>netwib_time_minus_fields</B>(ptime,sec,0,0,0)</FONT>
+<FONT COLOR="#008800">#define <B>netwib_time_minus_msec</B>(ptime,msec) <B>netwib_time_minus_fields</B>(ptime,0,msec,0,0)</FONT>
+<FONT COLOR="#008800">#define <B>netwib_time_minus_usec</B>(ptime,usec) <B>netwib_time_minus_fields</B>(ptime,0,0,usec,0)</FONT>
+<FONT COLOR="#008800">#define <B>netwib_time_minus_nsec</B>(ptime,nsec) <B>netwib_time_minus_fields</B>(ptime,0,0,0,nsec)</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_time_cmp
+   Description :
+     Compare two netwib_time.
+   Input parameter(s) :
+     ptime1 : time
+     ptime2 : time
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pcmp :
+       - if time1&lt;time2, *pcmp is set to <FONT COLOR="#000044">NETWIB_CMP_LT</FONT>
+       - if time1&gt;time2, *pcmp is set to <FONT COLOR="#000044">NETWIB_CMP_GT</FONT>
+       - if time1==time2, *pcmp is set to <FONT COLOR="#000044">NETWIB_CMP_EQ</FONT>
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_time_cmp</B>(<FONT COLOR="#000088">netwib_consttime</FONT> *ptime1,
+                           <FONT COLOR="#000088">netwib_consttime</FONT> *ptime2,
+                           <FONT COLOR="#000088">netwib_cmp</FONT> *pcmp);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_time_sleep_xyz
+   Description :
+     Sleep for a time duration.
+     This is not a "real time" sleep. This sleep is not precise.
+     On some systems, the duration might exceed the wanted time
+     by several milliseconds.
+   Input parameter(s) :
+     *preltime : relative time
+     sec : number of seconds to wait
+     msec : number of milliseconds to wait
+     usec : number of microseconds to wait
+   Input/output parameter(s) :
+   Output parameter(s) :
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_time_sleep_time</B>(<FONT COLOR="#000088">netwib_consttime</FONT> *preltime);
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_time_sleep_fields</B>(<FONT COLOR="#000088">netwib_uint32</FONT> sec,
+                                    <FONT COLOR="#000088">netwib_uint32</FONT> msec,
+                                    <FONT COLOR="#000088">netwib_uint32</FONT> usec,
+                                    <FONT COLOR="#000088">netwib_uint32</FONT> nsec);
+<FONT COLOR="#008800">#define <B>netwib_time_sleep_sec</B>(sec) <B>netwib_time_sleep_fields</B>(sec,0,0,0)</FONT>
+<FONT COLOR="#008800">#define <B>netwib_time_sleep_msec</B>(msec) <B>netwib_time_sleep_fields</B>(0,msec,0,0)</FONT>
+<FONT COLOR="#008800">#define <B>netwib_time_sleep_usec</B>(usec) <B>netwib_time_sleep_fields</B>(0,0,usec,0)</FONT>
+<FONT COLOR="#008800">#define <B>netwib_time_sleep_nsec</B>(nsec) <B>netwib_time_sleep_fields</B>(0,0,0,nsec)</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_time_wait_time
+   Description :
+     Wait an absolute time value.
+     This is not a "real time" wait. This wait is not precise.
+     On some systems, the duration might exceed the wanted time
+     by several milliseconds.
+   Input parameter(s) :
+     *pabstime : absolute time (from 1970)
+   Input/output parameter(s) :
+   Output parameter(s) :
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_time_wait_time</B>(<FONT COLOR="#000088">netwib_consttime</FONT> *pabstime);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+typedef enum {
+  <FONT COLOR="#000044">NETWIB_TIME_ENCODETYPE_NOTHING</FONT> = 1, <FONT COLOR="#880000">/* print nothing */</FONT>
+  <FONT COLOR="#000044">NETWIB_TIME_ENCODETYPE_BEST</FONT>,        <FONT COLOR="#880000">/* best display of the form :
+                                         2d:3h:4m:5s:6ms:7us:8ns*/</FONT>
+  <FONT COLOR="#000044">NETWIB_TIME_ENCODETYPE_BEST2</FONT>,       <FONT COLOR="#880000">/* best display of the form :
+                                         2 days 3 hours 4 minutes ...*/</FONT>
+  <FONT COLOR="#000044">NETWIB_TIME_ENCODETYPE_SEC</FONT>,         <FONT COLOR="#880000">/* "123s" */</FONT>
+  <FONT COLOR="#000044">NETWIB_TIME_ENCODETYPE_SEC2</FONT>,        <FONT COLOR="#880000">/* "123 second(s)" */</FONT>
+  <FONT COLOR="#000044">NETWIB_TIME_ENCODETYPE_MSEC</FONT>,        <FONT COLOR="#880000">/* "123ms" */</FONT>
+  <FONT COLOR="#000044">NETWIB_TIME_ENCODETYPE_MSEC2</FONT>,       <FONT COLOR="#880000">/* "123 millisecond(s)" */</FONT>
+  <FONT COLOR="#000044">NETWIB_TIME_ENCODETYPE_USEC</FONT>,        <FONT COLOR="#880000">/* "123us" */</FONT>
+  <FONT COLOR="#000044">NETWIB_TIME_ENCODETYPE_USEC2</FONT>,       <FONT COLOR="#880000">/* "123 microsecond(s)" */</FONT>
+  <FONT COLOR="#000044">NETWIB_TIME_ENCODETYPE_NSEC</FONT>,        <FONT COLOR="#880000">/* "123ns" */</FONT>
+  <FONT COLOR="#000044">NETWIB_TIME_ENCODETYPE_NSEC2</FONT>        <FONT COLOR="#880000">/* "123 nanosecond(s)" */</FONT>
+} <FONT COLOR="#000088">netwib_time_encodetype</FONT>;
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_buf_append_time
+   Description :
+     Append a string representing a <FONT COLOR="#000088">netwib_time</FONT> duration (relative
+     time). To display an absolute time, use function
+     netwib_time_decode_localtime.
+   Input parameter(s) :
+     *ptime : time to print
+     encodetype : <FONT COLOR="#000088">netwib_time_encodetype</FONT> to use
+   Input/output parameter(s) :
+   Output parameter(s) :
+     pbuf : buffer updated
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_buf_append_time</B>(<FONT COLOR="#000088">netwib_consttime</FONT> *preltime,
+                                  <FONT COLOR="#000088">netwib_time_encodetype</FONT> encodetype,
+                                  <FONT COLOR="#000088">netwib_buf</FONT> *pbuf);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+typedef struct {
+  <FONT COLOR="#000088">netwib_uint32</FONT> nsec; <FONT COLOR="#880000">/* nanoseconds [0-999999999]*/</FONT>
+  <FONT COLOR="#000088">netwib_int32</FONT> sec; <FONT COLOR="#880000">/* seconds [0-59] */</FONT>
+  <FONT COLOR="#000088">netwib_int32</FONT> min; <FONT COLOR="#880000">/* minutes [0-59] */</FONT>
+  <FONT COLOR="#000088">netwib_int32</FONT> hour; <FONT COLOR="#880000">/* hours [0-23] */</FONT>
+  <FONT COLOR="#000088">netwib_int32</FONT> mday; <FONT COLOR="#880000">/* day [1-31] */</FONT>
+  <FONT COLOR="#000088">netwib_int32</FONT> mon; <FONT COLOR="#880000">/* month [1-12] (!= from struct tm) */</FONT>
+  <FONT COLOR="#000088">netwib_uint32</FONT> year; <FONT COLOR="#880000">/* year (start at 0) (!= from struct tm) */</FONT>
+  <FONT COLOR="#000088">netwib_uint32</FONT> wday; <FONT COLOR="#880000">/* day of the week [0(sun)-6(sat)] */</FONT>
+  <FONT COLOR="#000088">netwib_uint32</FONT> yday; <FONT COLOR="#880000">/* day of the year [1-365/366] (!= from struct tm) */</FONT>
+  <FONT COLOR="#000088">netwib_int32</FONT> zoneoffset; <FONT COLOR="#880000">/* offset in seconds between localtime
+                              and GMT (for example GMT+1 is
+                              +3600). This field is used only by
+                              <FONT COLOR="#000088">netwib_time_decode_localtime</FONT> */</FONT>
+} <FONT COLOR="#000088">netwib_localtime</FONT>;
+typedef const <FONT COLOR="#000088">netwib_localtime</FONT> <FONT COLOR="#000088">netwib_constlocaltime</FONT>;
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_time_init_now
+   Description :
+     Initialize a <FONT COLOR="#000088">netwib_time</FONT> with the current UTC/GMT time.
+     It uses the number of seconds elapsed since 00:00:00 on
+     January 1, 1970, Coordinated Universal Time (UTC)
+   Input parameter(s) :
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *ptime : <FONT COLOR="#000088">netwib_time</FONT> set to the current time (absolute time)
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_time_init_now</B>(<FONT COLOR="#000088">netwib_time</FONT> *pabstime);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_time_init_localtime
+   Description :
+     Initialize a <FONT COLOR="#000088">netwib_time</FONT> using localtime fields
+   Input parameter(s) :
+     *plocaltime : structure containing day. Fields nsec, wday,
+                   and yday are ignored. Other fields
+                   are normalized before converting.
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *ptime : <FONT COLOR="#000088">netwib_time</FONT> set to the current local time
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_time_init_localtime</B>(<FONT COLOR="#000088">netwib_constlocaltime</FONT> *plocaltime,
+                                      <FONT COLOR="#000088">netwib_time</FONT> *pabstime);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_time_decode_localtime
+   Description :
+     Initialize a <FONT COLOR="#000088">netwib_localtime</FONT> using time fields
+   Input parameter(s) :
+     *ptime : structure containing current time (UTC)
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *plocaltime : <FONT COLOR="#000088">netwib_localtime</FONT> set
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_time_decode_localtime</B>(<FONT COLOR="#000088">netwib_consttime</FONT> *pabstime,
+                                        <FONT COLOR="#000088">netwib_localtime</FONT> *plocaltime);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+typedef enum {
+  <FONT COLOR="#000044">NETWIB_LOCALTIME_ENCODETYPE_NOTHING</FONT> = 1, <FONT COLOR="#880000">/* print nothing */</FONT>
+  <FONT COLOR="#000044">NETWIB_LOCALTIME_ENCODETYPE_NSEC_ZERO</FONT>,   <FONT COLOR="#880000">/* 000000000-999999999 */</FONT>
+  <FONT COLOR="#000044">NETWIB_LOCALTIME_ENCODETYPE_NSEC_SPACE</FONT>,  <FONT COLOR="#880000">/* ________0-999999999 */</FONT>
+  <FONT COLOR="#000044">NETWIB_LOCALTIME_ENCODETYPE_SEC_ZERO</FONT>,    <FONT COLOR="#880000">/* 00-59 */</FONT>
+  <FONT COLOR="#000044">NETWIB_LOCALTIME_ENCODETYPE_SEC_SPACE</FONT>,   <FONT COLOR="#880000">/* _0-59 */</FONT>
+  <FONT COLOR="#000044">NETWIB_LOCALTIME_ENCODETYPE_MIN_ZERO</FONT>,    <FONT COLOR="#880000">/* 00-59 */</FONT>
+  <FONT COLOR="#000044">NETWIB_LOCALTIME_ENCODETYPE_MIN_SPACE</FONT>,   <FONT COLOR="#880000">/* _0-59 */</FONT>
+  <FONT COLOR="#000044">NETWIB_LOCALTIME_ENCODETYPE_HOUR_ZERO</FONT>,   <FONT COLOR="#880000">/* 00-23 */</FONT>
+  <FONT COLOR="#000044">NETWIB_LOCALTIME_ENCODETYPE_HOUR_SPACE</FONT>,  <FONT COLOR="#880000">/* _0-23 */</FONT>
+  <FONT COLOR="#000044">NETWIB_LOCALTIME_ENCODETYPE_MDAY_ZERO</FONT>,   <FONT COLOR="#880000">/* 01-31 */</FONT>
+  <FONT COLOR="#000044">NETWIB_LOCALTIME_ENCODETYPE_MDAY_SPACE</FONT>,  <FONT COLOR="#880000">/* _1-31 */</FONT>
+  <FONT COLOR="#000044">NETWIB_LOCALTIME_ENCODETYPE_MON_ZERO</FONT>,    <FONT COLOR="#880000">/* 01-12 */</FONT>
+  <FONT COLOR="#000044">NETWIB_LOCALTIME_ENCODETYPE_MON_SPACE</FONT>,   <FONT COLOR="#880000">/* _1-12 */</FONT>
+  <FONT COLOR="#000044">NETWIB_LOCALTIME_ENCODETYPE_MON_SHORT</FONT>,   <FONT COLOR="#880000">/* Jan */</FONT>
+  <FONT COLOR="#000044">NETWIB_LOCALTIME_ENCODETYPE_MON_LONG</FONT>,    <FONT COLOR="#880000">/* January */</FONT>
+  <FONT COLOR="#000044">NETWIB_LOCALTIME_ENCODETYPE_YEAR_SHORT</FONT>,  <FONT COLOR="#880000">/* 04 */</FONT>
+  <FONT COLOR="#000044">NETWIB_LOCALTIME_ENCODETYPE_YEAR_LONG</FONT>,   <FONT COLOR="#880000">/* 2004 */</FONT>
+  <FONT COLOR="#000044">NETWIB_LOCALTIME_ENCODETYPE_WDAY_SHORT</FONT>,  <FONT COLOR="#880000">/* Mon */</FONT>
+  <FONT COLOR="#000044">NETWIB_LOCALTIME_ENCODETYPE_WDAY_LONG</FONT>,   <FONT COLOR="#880000">/* Monday */</FONT>
+  <FONT COLOR="#000044">NETWIB_LOCALTIME_ENCODETYPE_YDAY_ZERO</FONT>,   <FONT COLOR="#880000">/* 001-365 */</FONT>
+  <FONT COLOR="#000044">NETWIB_LOCALTIME_ENCODETYPE_YDAY_SPACE</FONT>,  <FONT COLOR="#880000">/* __1-365 */</FONT>
+  <FONT COLOR="#000044">NETWIB_LOCALTIME_ENCODETYPE_ZONE_SEC</FONT>,    <FONT COLOR="#880000">/* +3600 */</FONT>
+  <FONT COLOR="#000044">NETWIB_LOCALTIME_ENCODETYPE_ZONE_GMT</FONT>,    <FONT COLOR="#880000">/* GMT+1 */</FONT>
+  <FONT COLOR="#000044">NETWIB_LOCALTIME_ENCODETYPE_ZONE_HM</FONT>,     <FONT COLOR="#880000">/* +0100 */</FONT>
+} <FONT COLOR="#000088">netwib_localtime_encodetype</FONT>;
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_buf_append_localtime
+   Description :
+     Append a string representing a field of a netwib_localtime.
+   Input parameter(s) :
+     *plocaltime : localtime to print
+     encodetype : <FONT COLOR="#000088">netwib_localtime_encodetype</FONT> to use
+   Input/output parameter(s) :
+   Output parameter(s) :
+     pbuf : buffer updated
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_buf_append_localtime</B>(<FONT COLOR="#000088">netwib_constlocaltime</FONT> *plocaltime,
+                                       <FONT COLOR="#000088">netwib_localtime_encodetype</FONT> encodetype,
+                                       <FONT COLOR="#000088">netwib_buf</FONT> *pbuf);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_time_iselapsed
+   Description :
+     Check if an absolute time has elapsed.
+   Input parameter(s) :
+     *ptime : time
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pyes : true if elapsed or equal
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_time_iselapsed</B>(<FONT COLOR="#000088">netwib_consttime</FONT> *pabstime,
+                                 <FONT COLOR="#000088">netwib_bool</FONT> *pyes);
+</PRE><BR><BR><HR><BR>
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../sys.html">section index</A></H2>
+</BODY></HTML>

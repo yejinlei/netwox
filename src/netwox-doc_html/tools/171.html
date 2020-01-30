@@ -1,0 +1,51 @@
+<HTML>
+ <HEAD>
+ <TITLE>Tool 171: DHCP client</TITLE>
+ </HEAD>
+ <BODY BGCOLOR="#FFFFFF">
+  <CENTER>   <H3>Tool 171: DHCP client</H3>
+  </CENTER>
+
+  <P><H3>Description:</H3>
+   <PRE>
+  This tool obtains an IP address from a DHCP server.
+  It sends a DISCOVER message, and wait for server replies. The first
+  server to answer is accepted, and its proposed address is displayed.
+  Then, it periodically updates in order to keep this address. Finally,
+  when user presses Q key, address ie released.
+  This tool permits to obtain an IP address on a DHCP network, in order
+  to temporarily configure a host not supporting DHCP.
+  
+  Parameters --device and --eth-src permit to send message using a fake
+  address.
+  
+  This tool may need to be run with admin privilege in order to sniff
+  and spoof.
+   </PRE>
+
+  <P><H3>Usage:</H3>
+  &nbsp;&nbsp;netwox 171 [-d device] [-e eth] [-T uint32]<BR>
+
+  <P><H3>Parameters:</H3>
+<TABLE BORDER=1 CELLPADDING=4>
+ <TR>
+  <TD ALIGN=middle><I>parameter</I></TD>
+  <TD ALIGN=middle><I>description</I></TD>
+  <TD ALIGN=middle><I>example</I></TD>
+ </TR>
+ <TR><TD><TT>-d|--device device</TD>
+<TD>device for spoof</TD>
+<TD>Eth0</TD></TR>
+<TR><TD><TT>-e|--eth-src eth</TD>
+<TD>Ethernet src</TD>
+<TD>E0:69:95:6F:ED:9A</TD></TR>
+<TR><TD><TT>-T|--timeout uint32</TD>
+<TD>timeout in ms</TD>
+<TD>30000 </TD></TR>
+</TABLE>
+
+  <P><H3>Example:</H3>
+  &nbsp;&nbsp;netwox 171<BR>
+<BR>
+ </BODY>
+ </HTML>

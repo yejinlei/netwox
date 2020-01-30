@@ -1,0 +1,74 @@
+                 -------------------------------
+                 |        INTRODUCTION         |
+                 -------------------------------
+
+Note : if you encounter problems, read ./doc/probleminstallunix.txt
+
+There are 3 steps :
+ - compile and install libpcap [if not already installed]
+ - compile and install libnet [if not already installed]
+ - compile and install libnetwib.a
+
+
+                 -------------------------------
+                 |       STEP 1 : libpcap      |
+                 -------------------------------
+
+If libpcap isn't installed on your system, you have to do it :
+ - http://www.tcpdump.org/, or
+ - from a package for your system (look the cdrom or website
+   of your distribution)
+Installation procedure for libpcap is explained in downloaded
+files, or depends on tools from your distribution. On some
+distributions, there are two packages to install : libpcap
+and libpcap-devel.
+
+Note: If libpcap is not installed, netwib will work, but without
+      sniffing features.
+
+
+                 -------------------------------
+                 |       STEP 2 : libnet       |
+                 -------------------------------
+
+If libnet isn't installed on your system, you have to do it :
+ - http://www.packetfactory.net/libnet, or
+ - from a package for your system (look the cdrom or website
+   of your distribution)
+Version >= 1.0 is necessary.
+Installation procedure for libnet is explained in downloaded
+files, or depends on tools from your distribution. On some
+distributions, there are two packages to install : libnet
+and libnet-devel.
+
+Note: If libnet is not installed, netwib will work, but without
+      spoofing features.
+
+
+                 -------------------------------
+                 |     STEP 3 : libnetwib.a    |
+                 -------------------------------
+
+ - "cd src"          (to go in sources subdirectory)
+ - "./genemake"      (generate the files Makefile and netwib/def.h)
+ - "make"            (compile the library)
+ - "make install"    (install the library : include files, libnetwib.a
+                      and manpages are installed. You need to be root
+                      to do it)
+
+Note : if you prefer installing libnetwib.so, use (after "./genemake") 
+       "make libnetwib.so" and "make installso".
+
+
+                 ------------------------------
+                 |          NEXT STEP         |
+                 ------------------------------
+
+If you want to compile a program needing netwib library, that's all.
+
+If you want to create your own program using netwib library :
+ - Download netw-ib-ox-ag-5.39.0.tgz which shows how to use each function (directory test/netwib).
+ - Read ./doc/compilunix.txt.
+ - Download and read netwib-5.39.0-doc_html.tgz to obtain information
+   about netwib.
+

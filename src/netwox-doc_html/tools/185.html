@@ -1,0 +1,82 @@
+<HTML>
+ <HEAD>
+ <TITLE>Tool 185: TCP multiclient relay</TITLE>
+ </HEAD>
+ <BODY BGCOLOR="#FFFFFF">
+  <CENTER>   <H3>Tool 185: TCP multiclient relay</H3>
+  </CENTER>
+
+  <P><H3>Description:</H3>
+   <PRE>
+  This tool is a relay: a client will connect to it, then it will
+  connect to server. All data received from server is sent back to
+  client. All data received from client is sent to server. From server's
+  view point, it only sees relay as source IP address. From client's
+  viewpoint, it only sees relay as destination IP address.
+  This tool is different from tool 183 because several relays can be in
+  use simultaneously. It can be used like a load balancer.
+  
+  Parameter --src-port defines the local port number to listen on.
+  Optional parameter --src-ip defines the local IP address to use.
+  Optional parameter --iptype defines which kind of IP address to use
+  when --src-ip is unset (accepted values: ip4 and ip6).
+  Optional parameter --ip4opts permits to add IP4 options encoded as
+  mixed.
+  Optional parameter --ip6exts permits to add IP6 options encoded as
+  mixed (first byte is the next header number).
+  Optional parameters --device and --src-eth are not yet implemented.
+  Parameter --server-ip is the address of remote host/server.
+  Parameter --server-port is the port number where to connect.
+  Parameter --allowed-clients lists the IP addresses or hosts allowed
+  to connect.
+   </PRE>
+
+  <P><H3>Usage:</H3>
+  &nbsp;&nbsp;netwox 185 -P port -x ips -X port [-d device] [-E eth] [-I ip] [-o ip4opts] [-O ip6exts] [-t iptype] [-c ips]<BR>
+
+  <P><H3>Parameters:</H3>
+<TABLE BORDER=1 CELLPADDING=4>
+ <TR>
+  <TD ALIGN=middle><I>parameter</I></TD>
+  <TD ALIGN=middle><I>description</I></TD>
+  <TD ALIGN=middle><I>example</I></TD>
+ </TR>
+ <TR><TD><TT>-P|--src-port port</TD>
+<TD>source port number</TD>
+<TD>1234</TD></TR>
+<TR><TD><TT>-x|--server-ip ips</TD>
+<TD>list/range of IP addresses</TD>
+<TD>1.2.3.4,1.2.3.5</TD></TR>
+<TR><TD><TT>-X|--server-port port</TD>
+<TD>destination port number</TD>
+<TD>80</TD></TR>
+<TR><TD><TT>-d|--device device</TD>
+<TD>device name</TD>
+<TD>Eth0</TD></TR>
+<TR><TD><TT>-E|--src-eth eth</TD>
+<TD>source ethernet address</TD>
+<TD>0:2:3:4:5:6</TD></TR>
+<TR><TD><TT>-I|--src-ip ip</TD>
+<TD>source IP address</TD>
+<TD>192.168.100.200</TD></TR>
+<TR><TD><TT>-o|--ip4opts ip4opts</TD>
+<TD>IPv4 options</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-O|--ip6exts ip6exts</TD>
+<TD>IPv6 extensions</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-t|--iptype iptype</TD>
+<TD>type to use when src-ip is unset</TD>
+<TD>ip4</TD></TR>
+<TR><TD><TT>-c|--allowed-clients ips</TD>
+<TD>clients allowed to connect</TD>
+<TD>all </TD></TR>
+</TABLE>
+
+  <P><H3>Examples:</H3>
+  &nbsp;&nbsp;netwox 185 -P "1234" -x "1.2.3.4,1.2.3.5" -X "80"<BR>
+<BR>
+  &nbsp;&nbsp;netwox 185 --src-port "1234" --server-ip "1.2.3.4,1.2.3.5" --server-port "80"<BR>
+<BR>
+ </BODY>
+ </HTML>

@@ -1,0 +1,77 @@
+<HTML>
+ <HEAD>
+ <TITLE>Tool 1: Display network configuration</TITLE>
+ </HEAD>
+ <BODY BGCOLOR="#FFFFFF">
+  <CENTER>   <H3>Tool 1: Display network configuration</H3>
+  </CENTER>
+
+  <P><H3>Description:</H3>
+   <PRE>
+  This tool displays network configuration:
+   - the list of devices/interfaces:
+      + nu: device number
+      + dev: easy device name
+      + eth_hw: Ethernet address or hardware type (if not Ethernet)
+      + mtu: MTU (maximum size of packets)
+      + real_dev: real device name
+   - the list of IP addresses:
+      + nu: device number of device associated to this address
+      + ip: IP address
+      + netmask: network mask
+      + ppp: if true(1), this address is a Point To Point
+      + ppp_with: if ppp, this is the address of remote endpoint
+   - the IP4 ARP cache or IP6 neighbor (this contains Ethernet
+     addresses for other computers)
+      + nu: device number of device associated to this entry
+      + eth: Ethernet address of computer
+      + ip: IP address of computer
+   - the routes
+      + nu: device number of device associated to this entry
+      + destination/netmask: destination addresses
+      + source: source IP address, or local for a local route
+      + gateway: gateway (first router) to use
+      + metric: metric of route
+  
+  Parameter --device ask to display devices list.
+  Parameter --ip ask to display ip list.
+  Parameter --arpcache ask to display ARP cache and neighbors.
+  Parameter --routes ask to display routes list.
+  If no Parameter is set, they are all displayed.
+  
+  This tool may need to be run with admin privilege in order to obtain
+  full network configuration.
+   </PRE>
+
+  <P><H3>Synonyms:</H3>
+  &nbsp;&nbsp;address, arp, device, gateway, ifconfig, interface, ipconfig, mac, neighbor, netmask, route, show<BR>
+
+  <P><H3>Usage:</H3>
+  &nbsp;&nbsp;netwox 1 [-d|+d] [-i|+i] [-a|+a] [-r|+r]<BR>
+
+  <P><H3>Parameters:</H3>
+<TABLE BORDER=1 CELLPADDING=4>
+ <TR>
+  <TD ALIGN=middle><I>parameter</I></TD>
+  <TD ALIGN=middle><I>description</I></TD>
+  <TD ALIGN=middle><I>example</I></TD>
+ </TR>
+ <TR><TD><TT>-d|--devices|+d|--no-devices</TD>
+<TD>display devices</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-i|--ip|+i|--no-ip</TD>
+<TD>display ip addresses</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-a|--arpcache|+a|--no-arpcache</TD>
+<TD>display arp cache and neighbors</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-r|--routes|+r|--no-routes</TD>
+<TD>display routes</TD>
+<TD>&nbsp; </TD></TR>
+</TABLE>
+
+  <P><H3>Example:</H3>
+  &nbsp;&nbsp;netwox 1<BR>
+<BR>
+ </BODY>
+ </HTML>

@@ -1,0 +1,70 @@
+                 -------------------------------
+                 |        INTRODUCTION         |
+                 -------------------------------
+
+Note : if you encounter problems, read ./doc/probleminstall.txt
+
+There are 2 steps :
+ - install winpcap version >= 3.0
+ - install netwib539.dll
+
+
+                 -------------------------------
+                 |       STEP 1 : winpcap      |
+                 -------------------------------
+
+If winpcap isn't installed on your system, download it from :
+  http://winpcap.polito.it/
+Version 3.0, or superior, is needed.
+Follow the given instructions in order to install it.
+
+After installing winpcap, you should test if it is working properly.
+If you do not want to bother testing, you can directly go to step 2.
+To test winpcap's installation, you need to download windump :
+  http://windump.polito.it/
+Then, in a console window, if you enter "\directory...\windump",
+network packet will be displayed (for example, you can ping another
+computer and see the packets).
+Once windump displays network packets, you can go to step2.
+
+If you have a problem downloading, installing winpcap, or running 
+windump, read the faq at :
+  http://winpcap.polito.it/
+  http://windump.polito.it/
+If you still have a problem, contact Winpcap's developers.
+I cannot help you, because I do not maintain this code.
+
+Note: If winpcap is not installed, netwib will work, but without
+      sniffing or spoofing features.
+
+
+                 ------------------------------
+                 |       STEP 2 : netwib      |
+                 ------------------------------
+
+
+Copy "dll\netwib539.dll" to :
+ - "c:\Windows\System\netwib539.dll"   [under Windows 95, 98, Me]
+ - "c:\winnt\System32\netwib539.dll"   [under Windows NT, 2000]
+ - "c:\windows\System32\netwib539.dll" [under Windows XP]
+
+Create a directory which will contain material for building 
+projects using netwib (for example "c:\netwib539\").
+
+Copy "lib\netwib539.lib" to "c:\netwib539\lib\netwib539.lib".
+
+Copy "include\" to "c:\netwib539\include\".
+
+
+                 ------------------------------
+                 |          NEXT STEP         |
+                 ------------------------------
+
+If you want to compile a program needing netwib library, that's all.
+
+If you want to create your own program using netwib library :
+ - Download netw-ib-ox-ag-5.39.0.tgz which shows how to use each function (directory test/netwib).
+ - Read ./doc/compil.txt.
+ - Download and read netwib-5.39.0-doc_html.tgz to obtain information
+   about netwib.
+

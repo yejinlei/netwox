@@ -1,0 +1,85 @@
+<HTML><HEAD>
+<TITLE>netwib doc_html (version 5.39.0)</TITLE>
+</HEAD><BODY BGCOLOR="#FFFFFF" TEXT="#000000">
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../dat.html">section index</A></H2><HR><BR>
+<PRE>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000"><B>/***************************************************************
+ * A <FONT COLOR="#000088">netwib_bufpool</FONT> permits to obtain and release memory,      *
+ * without having to malloc and free it : this is done once.   *
+ * This is mainly advantageous for programs needing to allocate*
+ * and free frequently. For programs allocating memory and then*
+ * only freeing it at the end, function <FONT COLOR="#000088">netwib_buf_init_malloc</FONT> *
+ * is more appropriated.                                       *
+ ***************************************************************/</B></FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+typedef struct <FONT COLOR="#000088">netwib_bufpool</FONT> <FONT COLOR="#000088">netwib_bufpool</FONT>;
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_bufpool_init
+   Description :
+     Initialize a netwib_bufpool.
+   Input parameter(s) :
+     mt : for multithread access
+   Input/output parameter(s) :
+     **ppbufpool : bufpool initialized
+   Output parameter(s) :
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_bufpool_init</B>(<FONT COLOR="#000088">netwib_bool</FONT> mt,
+                               <FONT COLOR="#000088">netwib_bufpool</FONT> **ppbufpool);
+<FONT COLOR="#008800">#define <B>netwib_bufpool_initdefault</B>(ppbufpool) <B>netwib_bufpool_init</B>(<FONT COLOR="#000044">NETWIB_FALSE</FONT>,ppbufpool)</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_bufpool_close
+   Description :
+     Close a netwib_bufpool.
+   Input parameter(s) :
+   Input/output parameter(s) :
+     **ppbufpool : bufpool closed
+   Output parameter(s) :
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_bufpool_close</B>(<FONT COLOR="#000088">netwib_bufpool</FONT> **ppbufpool);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_bufpool_buf_init
+   Description :
+     Give a buffer pointer to user.
+   Input parameter(s) :
+   Input/output parameter(s) :
+     *pbufpool : bufpool
+   Output parameter(s) :
+     *ppbuf : pointer obtained
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_bufpool_buf_init</B>(<FONT COLOR="#000088">netwib_bufpool</FONT> *pbufpool,
+                                   <FONT COLOR="#000088">netwib_buf</FONT> **ppbuf);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_bufpool_buf_close
+   Description :
+     The user indicates he does not need the buffer anymore.
+   Input parameter(s) :
+   Input/output parameter(s) :
+     *pbufpool : bufpool
+     *ppbuf : pointer to close
+   Output parameter(s) :
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_bufpool_buf_close</B>(<FONT COLOR="#000088">netwib_bufpool</FONT> *pbufpool,
+                                    <FONT COLOR="#000088">netwib_buf</FONT> **ppbuf);
+
+
+
+</PRE><BR><BR><HR><BR>
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../dat.html">section index</A></H2>
+</BODY></HTML>

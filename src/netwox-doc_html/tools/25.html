@@ -1,0 +1,41 @@
+<HTML>
+ <HEAD>
+ <TITLE>Tool 25: Test if a directory is secure</TITLE>
+ </HEAD>
+ <BODY BGCOLOR="#FFFFFF">
+  <CENTER>   <H3>Tool 25: Test if a directory is secure</H3>
+  </CENTER>
+
+  <P><H3>Description:</H3>
+   <PRE>
+  This tool ensures a directory is secure. It is not needed for Windows.
+  Under Unix, a publicly writable directory can be used by intruders
+  to create a symlink attack.
+  This tool checks if a directory is publicly writable.
+   </PRE>
+
+  <P><H3>Synonyms:</H3>
+  &nbsp;&nbsp;symlink, verify<BR>
+
+  <P><H3>Usage:</H3>
+  &nbsp;&nbsp;netwox 25 -d dir<BR>
+
+  <P><H3>Parameters:</H3>
+<TABLE BORDER=1 CELLPADDING=4>
+ <TR>
+  <TD ALIGN=middle><I>parameter</I></TD>
+  <TD ALIGN=middle><I>description</I></TD>
+  <TD ALIGN=middle><I>example</I></TD>
+ </TR>
+ <TR><TD><TT>-d|--dir dir</TD>
+<TD>directory to test</TD>
+<TD>/tmp </TD></TR>
+</TABLE>
+
+  <P><H3>Examples:</H3>
+  &nbsp;&nbsp;netwox 25 -d "/tmp"<BR>
+<BR>
+  &nbsp;&nbsp;netwox 25 --dir "/tmp"<BR>
+<BR>
+ </BODY>
+ </HTML>

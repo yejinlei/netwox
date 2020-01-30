@@ -1,0 +1,54 @@
+<HTML>
+ <HEAD>
+ <TITLE>Tool 80: Periodically send ARP replies</TITLE>
+ </HEAD>
+ <BODY BGCOLOR="#FFFFFF">
+  <CENTER>   <H3>Tool 80: Periodically send ARP replies</H3>
+  </CENTER>
+
+  <P><H3>Description:</H3>
+   <PRE>
+  This tool periodically sends unsolicited ARP replies. It can be used
+  to corrupt ARP cache of a LAN computer. Then, this computer will start
+  sending its data to fake computer, instead of real computer.
+  
+  This tool may need to be run with admin privilege in order to spoof.
+   </PRE>
+
+  <P><H3>Usage:</H3>
+  &nbsp;&nbsp;netwox 80 -e eth -i ip [-d device] [-E eth] [-I ip] [-s uint32]<BR>
+
+  <P><H3>Parameters:</H3>
+<TABLE BORDER=1 CELLPADDING=4>
+ <TR>
+  <TD ALIGN=middle><I>parameter</I></TD>
+  <TD ALIGN=middle><I>description</I></TD>
+  <TD ALIGN=middle><I>example</I></TD>
+ </TR>
+ <TR><TD><TT>-e|--eth eth</TD>
+<TD>ethernet address</TD>
+<TD>E0:69:95:6F:ED:9A</TD></TR>
+<TR><TD><TT>-i|--ip ip</TD>
+<TD>IP address</TD>
+<TD>192.168.100.200</TD></TR>
+<TR><TD><TT>-d|--device device</TD>
+<TD>device for spoof</TD>
+<TD>Eth0</TD></TR>
+<TR><TD><TT>-E|--eth-dst eth</TD>
+<TD>to whom answer</TD>
+<TD>0:8:9:a:b:c</TD></TR>
+<TR><TD><TT>-I|--ip-dst ip</TD>
+<TD>to whom answer</TD>
+<TD>5.6.7.8</TD></TR>
+<TR><TD><TT>-s|--sleep uint32</TD>
+<TD>sleep delay in ms</TD>
+<TD>1000 </TD></TR>
+</TABLE>
+
+  <P><H3>Examples:</H3>
+  &nbsp;&nbsp;netwox 80 -e "E0:69:95:6F:ED:9A" -i "192.168.100.200"<BR>
+<BR>
+  &nbsp;&nbsp;netwox 80 --eth "E0:69:95:6F:ED:9A" --ip "192.168.100.200"<BR>
+<BR>
+ </BODY>
+ </HTML>

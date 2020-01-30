@@ -1,0 +1,94 @@
+<HTML>
+ <HEAD>
+ <TITLE>Tool 104: DNS server always answering same values</TITLE>
+ </HEAD>
+ <BODY BGCOLOR="#FFFFFF">
+  <CENTER>   <H3>Tool 104: DNS server always answering same values</H3>
+  </CENTER>
+
+  <P><H3>Description:</H3>
+   <PRE>
+  This tool creates a simple DNS server. It will always return the same
+  information. It can be used to redirect network flow to a computer.
+  
+  Parameter --hostname defines the hostname to tell (www.example.com).
+  Parameter --hostnameip defines IP address of this hostname (1.2.3.4).
+  Parameter --authns is the authoritative name server (ns.example.com).
+  Parameter --authnsip defines IP address of name server (1.2.3.5).
+  Parameter --ttl defines the Time To Live of this reply.
+  
+  Parameter --src-port defines the local port number to listen on.
+  Optional parameter --src-ip defines the local IP address to use.
+  Optional parameter --iptype defines which kind of IP address to use
+  when --src-ip is unset (accepted values: ip4 and ip6).
+  Optional parameter --ip4opts permits to add IP4 options encoded as
+  mixed.
+  Optional parameter --ip6exts permits to add IP6 options encoded as
+  mixed (first byte is the next header number).
+  Optional parameters --device and --src-eth permits to create
+  a virtual server using fake addresses (in this case, tool have to be
+  run with admin privilege in order to sniff and spoof at Ethernet
+  level).
+  
+  This tool may need to be run with admin privilege in order to listen
+  on a small port number (port<1024).
+   </PRE>
+
+  <P><H3>Synonyms:</H3>
+  &nbsp;&nbsp;bind<BR>
+
+  <P><H3>Usage:</H3>
+  &nbsp;&nbsp;netwox 104 -h hostname -H ip -a hostname -A ip [-d device] [-E eth] [-I ip] [-P port] [-o ip4opts] [-O ip6exts] [-t iptype] [-T uint32]<BR>
+
+  <P><H3>Parameters:</H3>
+<TABLE BORDER=1 CELLPADDING=4>
+ <TR>
+  <TD ALIGN=middle><I>parameter</I></TD>
+  <TD ALIGN=middle><I>description</I></TD>
+  <TD ALIGN=middle><I>example</I></TD>
+ </TR>
+ <TR><TD><TT>-h|--hostname hostname</TD>
+<TD>hostname</TD>
+<TD>www.example.com</TD></TR>
+<TR><TD><TT>-H|--hostnameip ip</TD>
+<TD>hostname IP</TD>
+<TD>1.2.3.4</TD></TR>
+<TR><TD><TT>-a|--authns hostname</TD>
+<TD>authoritative name server</TD>
+<TD>ns.example.com</TD></TR>
+<TR><TD><TT>-A|--authnsip ip</TD>
+<TD>authns IP</TD>
+<TD>1.2.3.5</TD></TR>
+<TR><TD><TT>-d|--device device</TD>
+<TD>device name</TD>
+<TD>Eth0</TD></TR>
+<TR><TD><TT>-E|--src-eth eth</TD>
+<TD>source ethernet address</TD>
+<TD>0:2:3:4:5:6</TD></TR>
+<TR><TD><TT>-I|--src-ip ip</TD>
+<TD>source IP address</TD>
+<TD>192.168.100.200</TD></TR>
+<TR><TD><TT>-P|--src-port port</TD>
+<TD>source port number</TD>
+<TD>53</TD></TR>
+<TR><TD><TT>-o|--ip4opts ip4opts</TD>
+<TD>IPv4 options</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-O|--ip6exts ip6exts</TD>
+<TD>IPv6 extensions</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-t|--iptype iptype</TD>
+<TD>type to use when src-ip is unset</TD>
+<TD>ip4</TD></TR>
+<TR><TD><TT>-T|--ttl uint32</TD>
+<TD>ttl in seconds</TD>
+<TD>10 </TD></TR>
+</TABLE>
+
+  <P><H3>Examples:</H3>
+  &nbsp;&nbsp;netwox 104 -h "www.example.com" -H "1.2.3.4" -a "ns.example.com" -A "1.2.3.5"<BR>
+<BR>
+  &nbsp;&nbsp;netwox 104 --hostname "www.example.com" --hostnameip "1.2.3.4" --authns "ns.example.com" --authnsip "1.2.3.5"<BR>
+<BR>
+ </BODY>
+ </HTML>

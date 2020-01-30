@@ -1,0 +1,89 @@
+<HTML>
+ <HEAD>
+ <TITLE>Tool 176: TFTP client : get a file and check its MD5</TITLE>
+ </HEAD>
+ <BODY BGCOLOR="#FFFFFF">
+  <CENTER>   <H3>Tool 176: TFTP client : get a file and check its MD5</H3>
+  </CENTER>
+
+  <P><H3>Description:</H3>
+   <PRE>
+  This tool downloads a TFTP file and check its MD5.
+  It ensures the server is working properly.
+  
+  Parameter --md5 is the expected md5sum.
+  Parameter --dst-ip is the address of remote host/server.
+  Parameter --dst-port is the port number where to connect.
+  Optional parameter --src-ip defines the local IP address to use.
+  Optional parameter --src-port defines the local port number to use.
+  Optional parameter --ip4opts permits to add IP4 options encoded as
+  mixed.
+  Optional parameter --ip6exts permits to add IP6 options encoded as
+  mixed (first byte is the next header number).
+  Optional parameters --device, --src-eth and --dst-eth permits to
+  create a virtual client using fake addresses (in this case, tool have
+  to be run with admin privilege in order to sniff and spoof at
+  Ethernet level).
+   </PRE>
+
+  <P><H3>Usage:</H3>
+  &nbsp;&nbsp;netwox 176 -i ip -F file -s md5 [-d device] [-E eth] [-e eth] [-I ip] [-P port] [-p port] [-o ip4opts] [-O ip6exts] [-m data] [-T uint32] [-R uint32]<BR>
+
+  <P><H3>Parameters:</H3>
+<TABLE BORDER=1 CELLPADDING=4>
+ <TR>
+  <TD ALIGN=middle><I>parameter</I></TD>
+  <TD ALIGN=middle><I>description</I></TD>
+  <TD ALIGN=middle><I>example</I></TD>
+ </TR>
+ <TR><TD><TT>-i|--dst-ip ip</TD>
+<TD>destination IP address</TD>
+<TD>5.6.7.8</TD></TR>
+<TR><TD><TT>-F|--remote-file file</TD>
+<TD>remote file</TD>
+<TD>/etc/passwd</TD></TR>
+<TR><TD><TT>-s|--md5 md5</TD>
+<TD>wanted md5</TD>
+<TD>12345678901234567890123456789012</TD></TR>
+<TR><TD><TT>-d|--device device</TD>
+<TD>device name</TD>
+<TD>Eth0</TD></TR>
+<TR><TD><TT>-E|--src-eth eth</TD>
+<TD>source ethernet address</TD>
+<TD>0:2:3:4:5:6</TD></TR>
+<TR><TD><TT>-e|--dst-eth eth</TD>
+<TD>destination ethernet address</TD>
+<TD>0:8:9:a:b:c</TD></TR>
+<TR><TD><TT>-I|--src-ip ip</TD>
+<TD>source IP address</TD>
+<TD>192.168.100.200</TD></TR>
+<TR><TD><TT>-P|--src-port port</TD>
+<TD>source port number</TD>
+<TD>0</TD></TR>
+<TR><TD><TT>-p|--dst-port port</TD>
+<TD>destination port number</TD>
+<TD>69</TD></TR>
+<TR><TD><TT>-o|--ip4opts ip4opts</TD>
+<TD>IPv4 options</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-O|--ip6exts ip6exts</TD>
+<TD>IPv6 extensions</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-m|--mode data</TD>
+<TD>mode (octet or netascii)</TD>
+<TD>octet</TD></TR>
+<TR><TD><TT>-T|--timeout uint32</TD>
+<TD>timeout in milliseconds</TD>
+<TD>60000</TD></TR>
+<TR><TD><TT>-R|--retry uint32</TD>
+<TD>number of retry</TD>
+<TD>3 </TD></TR>
+</TABLE>
+
+  <P><H3>Examples:</H3>
+  &nbsp;&nbsp;netwox 176 -i "5.6.7.8" -F "/etc/passwd" -s "12345678901234567890123456789012"<BR>
+<BR>
+  &nbsp;&nbsp;netwox 176 --dst-ip "5.6.7.8" --remote-file "/etc/passwd" --md5 "12345678901234567890123456789012"<BR>
+<BR>
+ </BODY>
+ </HTML>

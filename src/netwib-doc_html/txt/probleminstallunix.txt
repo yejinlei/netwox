@@ -1,0 +1,431 @@
+                         Network library netwib
+
+              -------------------------------------------
+              |              KNOWN PROBLEMS             |
+              -------------------------------------------
+
+This file describes known problems (incompatibilities, unsupported
+features, errors, etc.).
+If you seek help (usage help, examples, etc.), it's better to read 
+netwib-5.39.0-doc_html.tgz. You can also use "man netwib".
+
+Problems described in this file are (if you encounter an unknown problem,
+thanks for contacting me, as explained in ./doc/problemreport.txt):
+
+WHILE EXECUTING ./GENEMAKE
+ 1: [Linux] exec ether_hostton ko
+       Warning: you are on a computer with a bad ether_hostton.
+                The library netwib will still be usable, but read 
+                ../doc/probleminstallunix.txt if you want to use the file
+                /etc/ethers.
+    [problem in /etc/nsswitch.conf]
+ 2: [Linux] exec ether_hostton ko
+       Warning: you are on a computer with a bad ether_hostton.
+                The library netwib will still be usable, but read 
+                ../doc/probleminstallunix.txt if you want to use the file
+                /etc/ethers.
+    [problem in /etc/ethers]
+ 3: ./genemake: Permission denied.
+ 4: Warning: the directory '/usr/.../xyz' doesn't exists.
+ 5: Error: the library libpcap is not installed.
+ 6: config.check.tmp.c: pcap.h: No such file or directory.
+ 7: pcap.h: net/bpf.h: No such file or directory.
+ 8: /usr/bin/ld: cannot find -lpcap.
+
+WHILE COMPILING
+ 9: [FreeBSD, Solaris] Warning: integer constant is unsigned in ANSI C, signed with -traditional.
+10: [Solaris] Warning: implicit declaration of function `ether_hostton'.
+11: [Solaris] Error: stat.c: aggregate value used where integer was expected.
+12: [Linux] Error: /usr/include/linux/xyz.h: No such file or directory
+    Error: /usr/include/asm/xyz.h: No such file or directory
+    Error: linux/xyz.h: No such file or directory
+    Error: asm/xyz.h: No such file or directory
+13: [Solaris] Warning: SIG_IGN: function declaration isn't a prototype
+    Warning: SIG_DFL: function declaration isn't a prototype
+    Warning: SIG_xyz: function declaration isn't a prototype
+14: [Linux] Warning in /usr/include/bits/string2.h
+
+
+
+-------------------------------------------------------------------------------
+Problem 1:
+  Problem synthesis:
+    exec ether_hostton ko
+       Warning: you are on a computer with a bad ether_hostton.
+                The library netwib will still be usable, but read 
+                ../doc/probleminstallunix.txt if you want to use the file
+                /etc/ethers.
+    [problem in /etc/nsswitch.conf]
+  Environment affected by the problem:
+    Glibc-2.?? (<2.2.1) with "nisplus" or "db" in /etc/nsswitch.conf
+  What's causing the problem:
+    The problem arises when calling the function ether_hostton, and when
+    the entry "nisplus" or "db" is in /etc/nsswitch.conf.
+    Indeed, there is an error in glibc source (glibc-2.1.3):
+      nis/nss_nisplus/nisplus-ethers.c, line 234: 
+        there is "if (name != NULL)" instead of "if (name == NULL)"
+    Note: an email was sent to glibc developers. They applied a patch
+          in glibc 2.2.1.
+  Solution 1:
+    Edit /etc/nsswitch.conf to replace the line:
+         ethers: _here_nisplus_or_nis_or_db_is_written_ files
+    by:
+         ethers: files
+    Indeed, the problems disappears when removing "nis", "nisplus" or "db".
+    You should then execute "genemake" again (and compile and install)
+    to ensure that netwib will use ether_hostton.
+  Solution 2:
+    Install glibc > 2.2.1.
+
+-------------------------------------------------------------------------------
+Problem 2:
+  Problem synthesis:
+    exec ether_hostton ko
+       Warning: you are on a computer with a bad ether_hostton.
+                The library netwib will still be usable, but read 
+                ../doc/probleminstallunix.txt if you want to use the file
+                /etc/ethers.
+    [problem in /etc/ethers]
+  Environment affected by the problem:
+    /etc/ethers empty
+  What's causing the problem:
+    The problem arises when /etc/ethers exists, but is empty.
+    Indeed, there is an error in glibc source (glibc-2.1.3):
+      inet/ether_hton.c, line 76:
+        fct has only four parameters, instead of five
+    Note: an email was sent to glibc developers. They applied a patch
+          in glibc 2.2.1.
+  Solution 1:
+    Remove the file /etc/ethers if it doesn't contain any line.
+  Solution 2:
+    Install glibc > 2.2.1.
+
+-------------------------------------------------------------------------------
+Problem 3:
+  Problem synthesis:
+    ./genemake: Permission denied.
+  Environment affected by the problem:
+    All
+  What's causing the problem:
+    file-5.39.0-src.tgz wasn't uncompressed with a good program.
+  Solution:
+    Use:
+         tar -zxvf file-5.39.0-src.tgz
+    or
+         gunzip file-5.39.0-src.tgz ; tar -xvf file-5.39.0-src.tar
+
+-------------------------------------------------------------------------------
+Problem 4:
+  Problem synthesis:
+    Warning: the directory '/usr/.../xyz' doesn't exists.
+  Environment affected by the problem:
+    All
+  What's causing the problem:
+    The directory named 'xyz' does not exist on your system.
+  Solution 1:
+    Create the directory with:
+         mkdir /usr/.../xyz
+  Solution 2:
+    Edit ../src/config.dat to specify an alternative installation directory.
+
+-------------------------------------------------------------------------------
+Problem 5:
+  Problem synthesis:
+    Error: the library libpcap is not installed.
+  Environment affected by the problem:
+    All
+  What's causing the problem:
+    The library libpcap doesn't seem to be installed
+  Solution 1:
+    Libpcap isn't completely installed or configured
+    Install it from http://www.tcpdump.org/.
+  Solution 2:
+    Verify that all packages are installed on your system.
+    For example, for Debian, you have to install libpcapxx.deb
+    (for the dynamic library) and libpcap-devxx.deb (for pcap.h).
+  Solution 3:
+    [if the error is about pcap.h]
+    The file pcap.h is not located in a good directory:
+        locate "pcap.h"
+    If you find it in /somewhere/pcap.h, then link it:
+        ln -s /somewhere/pcap.h /usr/local/include/pcap.h
+    Note: "/usr/local/include/" might not be in the path searched
+          by the compiler (this is the case for the gcc optional package of
+          Solaris8), so use "/usr/include/" for example.
+  Solution 4:
+    [if the error is about bpf.h]
+    The file bpf.h is not located in a good directory:
+         locate "bpf.h"
+    If you find it in /somewhere/bpf.h, then link it:
+         ln -s /somewhere/bpf.h /usr/local/include/net/bpf.h
+    Note: "/usr/local/include/" might not be in the path searched
+          by the compiler (this is the case for the gcc optional package of
+          Solaris8), so use "/usr/include/" for example.
+  Solution 5:
+    [if the error is about bpf.h]
+    The file /usr/local/include/net/bpf.h or /usr/include/net/bpf.h
+    is not on your system.
+    Search the cdrom of your distribution to find the file "bpf.h",
+    and install the corresponding missing package.
+  Solution 6:
+    [if the error is about -lpcap]
+    The file libpcap.a/libpcap.so is not located in a good directory:
+        locate "libpcap.a" ; locate "libpcap.so"
+    If you find it in /somewhere/libpcap.a_or_so, then link it:
+        ln -s /somewhere/libpcap.a /usr/local/lib/libpcap.a
+        ln -s /somewhere/libpcap.so /usr/local/lib/libpcap.so
+    Note: "/usr/local/lib/" might not be in the path searched
+          by the compiler (this is the case for the gcc optional package of
+          Solaris8), so use "/usr/lib/" for example.
+
+-------------------------------------------------------------------------------
+Problem 6:
+  Problem synthesis:
+    config.check.tmp.c: pcap.h: No such file or directory.
+  Environment affected by the problem:
+    All
+  What's causing the problem:
+    The library libpcap doesn't seem to be installed
+  Solution 1:
+    Libpcap isn't completely installed or configured
+    Install it from http://www.tcpdump.org/.
+  Solution 2:
+    Verify that all packages are installed on your system.
+    For example, for Debian, you have to install libpcapxx.deb
+    (for the dynamic library) and libpcap-devxx.deb (for pcap.h).
+  Solution 3:
+    [if the error is about pcap.h]
+    The file pcap.h is not located in a good directory:
+        locate "pcap.h"
+    If you find it in /somewhere/pcap.h, then link it:
+        ln -s /somewhere/pcap.h /usr/local/include/pcap.h
+    Note: "/usr/local/include/" might not be in the path searched
+          by the compiler (this is the case for the gcc optional package of
+          Solaris8), so use "/usr/include/" for example.
+  Solution 4:
+    [if the error is about bpf.h]
+    The file bpf.h is not located in a good directory:
+         locate "bpf.h"
+    If you find it in /somewhere/bpf.h, then link it:
+         ln -s /somewhere/bpf.h /usr/local/include/net/bpf.h
+    Note: "/usr/local/include/" might not be in the path searched
+          by the compiler (this is the case for the gcc optional package of
+          Solaris8), so use "/usr/include/" for example.
+  Solution 5:
+    [if the error is about bpf.h]
+    The file /usr/local/include/net/bpf.h or /usr/include/net/bpf.h
+    is not on your system.
+    Search the cdrom of your distribution to find the file "bpf.h",
+    and install the corresponding missing package.
+  Solution 6:
+    [if the error is about -lpcap]
+    The file libpcap.a/libpcap.so is not located in a good directory:
+        locate "libpcap.a" ; locate "libpcap.so"
+    If you find it in /somewhere/libpcap.a_or_so, then link it:
+        ln -s /somewhere/libpcap.a /usr/local/lib/libpcap.a
+        ln -s /somewhere/libpcap.so /usr/local/lib/libpcap.so
+    Note: "/usr/local/lib/" might not be in the path searched
+          by the compiler (this is the case for the gcc optional package of
+          Solaris8), so use "/usr/lib/" for example.
+
+-------------------------------------------------------------------------------
+Problem 7:
+  Problem synthesis:
+    pcap.h: net/bpf.h: No such file or directory.
+  Environment affected by the problem:
+    All
+  What's causing the problem:
+    The library libpcap doesn't seem to be installed
+  Solution 1:
+    Libpcap isn't completely installed or configured
+    Install it from http://www.tcpdump.org/.
+  Solution 2:
+    Verify that all packages are installed on your system.
+    For example, for Debian, you have to install libpcapxx.deb
+    (for the dynamic library) and libpcap-devxx.deb (for pcap.h).
+  Solution 3:
+    [if the error is about pcap.h]
+    The file pcap.h is not located in a good directory:
+        locate "pcap.h"
+    If you find it in /somewhere/pcap.h, then link it:
+        ln -s /somewhere/pcap.h /usr/local/include/pcap.h
+    Note: "/usr/local/include/" might not be in the path searched
+          by the compiler (this is the case for the gcc optional package of
+          Solaris8), so use "/usr/include/" for example.
+  Solution 4:
+    [if the error is about bpf.h]
+    The file bpf.h is not located in a good directory:
+         locate "bpf.h"
+    If you find it in /somewhere/bpf.h, then link it:
+         ln -s /somewhere/bpf.h /usr/local/include/net/bpf.h
+    Note: "/usr/local/include/" might not be in the path searched
+          by the compiler (this is the case for the gcc optional package of
+          Solaris8), so use "/usr/include/" for example.
+  Solution 5:
+    [if the error is about bpf.h]
+    The file /usr/local/include/net/bpf.h or /usr/include/net/bpf.h
+    is not on your system.
+    Search the cdrom of your distribution to find the file "bpf.h",
+    and install the corresponding missing package.
+  Solution 6:
+    [if the error is about -lpcap]
+    The file libpcap.a/libpcap.so is not located in a good directory:
+        locate "libpcap.a" ; locate "libpcap.so"
+    If you find it in /somewhere/libpcap.a_or_so, then link it:
+        ln -s /somewhere/libpcap.a /usr/local/lib/libpcap.a
+        ln -s /somewhere/libpcap.so /usr/local/lib/libpcap.so
+    Note: "/usr/local/lib/" might not be in the path searched
+          by the compiler (this is the case for the gcc optional package of
+          Solaris8), so use "/usr/lib/" for example.
+
+-------------------------------------------------------------------------------
+Problem 8:
+  Problem synthesis:
+    /usr/bin/ld: cannot find -lpcap.
+  Environment affected by the problem:
+    All
+  What's causing the problem:
+    The library libpcap doesn't seem to be installed
+  Solution 1:
+    Libpcap isn't completely installed or configured
+    Install it from http://www.tcpdump.org/.
+  Solution 2:
+    Verify that all packages are installed on your system.
+    For example, for Debian, you have to install libpcapxx.deb
+    (for the dynamic library) and libpcap-devxx.deb (for pcap.h).
+  Solution 3:
+    [if the error is about pcap.h]
+    The file pcap.h is not located in a good directory:
+        locate "pcap.h"
+    If you find it in /somewhere/pcap.h, then link it:
+        ln -s /somewhere/pcap.h /usr/local/include/pcap.h
+    Note: "/usr/local/include/" might not be in the path searched
+          by the compiler (this is the case for the gcc optional package of
+          Solaris8), so use "/usr/include/" for example.
+  Solution 4:
+    [if the error is about bpf.h]
+    The file bpf.h is not located in a good directory:
+         locate "bpf.h"
+    If you find it in /somewhere/bpf.h, then link it:
+         ln -s /somewhere/bpf.h /usr/local/include/net/bpf.h
+    Note: "/usr/local/include/" might not be in the path searched
+          by the compiler (this is the case for the gcc optional package of
+          Solaris8), so use "/usr/include/" for example.
+  Solution 5:
+    [if the error is about bpf.h]
+    The file /usr/local/include/net/bpf.h or /usr/include/net/bpf.h
+    is not on your system.
+    Search the cdrom of your distribution to find the file "bpf.h",
+    and install the corresponding missing package.
+  Solution 6:
+    [if the error is about -lpcap]
+    The file libpcap.a/libpcap.so is not located in a good directory:
+        locate "libpcap.a" ; locate "libpcap.so"
+    If you find it in /somewhere/libpcap.a_or_so, then link it:
+        ln -s /somewhere/libpcap.a /usr/local/lib/libpcap.a
+        ln -s /somewhere/libpcap.so /usr/local/lib/libpcap.so
+    Note: "/usr/local/lib/" might not be in the path searched
+          by the compiler (this is the case for the gcc optional package of
+          Solaris8), so use "/usr/lib/" for example.
+
+-------------------------------------------------------------------------------
+Problem 9:
+  Problem synthesis:
+    Warning: integer constant is unsigned in ANSI C, signed with -traditional.
+  Environment affected by the problem:
+    FreeBSD 3.1, FreeBSD 4.0, Solaris 2.8
+  What's causing the problem:
+    This error is in the definition of SIOCGIFCONF, which
+    uses a signed number.
+  Solution:
+    You should edit /usr/include/sys/ioccom.h to correct IOC_IN:
+        "#define IOC_IN 0x80000000u" instead of
+        "#define IOC_IN 0x80000000"
+
+-------------------------------------------------------------------------------
+Problem 10:
+  Problem synthesis:
+    Warning: implicit declaration of function `ether_hostton'.
+  Environment affected by the problem:
+    Solaris 2.x
+  What's causing the problem:
+    The functions "ether_hostton" and "ether_ntohost" are never
+    defined.
+  Solution:
+    You should edit "/usr/include/netinet/if_ether.h" to add:
+            int ether_hostton(char *hostname, struct ether_addr *e);
+            int ether_ntohost(char *hostname, struct ether_addr *e);
+
+-------------------------------------------------------------------------------
+Problem 11:
+  Problem synthesis:
+    Error: stat.c: aggregate value used where integer was expected.
+  Environment affected by the problem:
+    Solaris 2.7
+  What's causing the problem:
+    Older includes contain a typedef for u_longlong_t and
+    longlong_t in /usr/include/sys/types.h. It defines them as an union
+    to support older compilers. They have to be redefined as 'long long'
+    if you have a recent compiler. In other cases, edit netwib/inc/maininc.h
+    to undefine support for 64 bit file access (undefine _LARGEFILE_SOURCE
+    and _FILE_OFFSET_BITS).
+  Solution:
+    You should edit "/usr/include/sys/types.h" to replace:
+      typedef union ... longlong_t;
+      typedef union ... u_longlong_t;
+    by:
+      typedef long long longlong_t;
+      typedef unsigned long long u_longlong_t;
+
+-------------------------------------------------------------------------------
+Problem 12:
+  Problem synthesis:
+    Error: /usr/include/linux/xyz.h: No such file or directory
+    Error: /usr/include/asm/xyz.h: No such file or directory
+    Error: linux/xyz.h: No such file or directory
+    Error: asm/xyz.h: No such file or directory
+  Environment affected by the problem:
+    Linux
+  What's causing the problem:
+    Standard includes are needed to compile.
+  Solution 1:
+    Install the package libc6-dev_xyz
+    For example, under Debian: libc6-dev_2.x.x-xx.deb.
+  Solution 2:
+    The new kernel includes have to be reachable by the compiler.
+    For example:
+        ln -s /usr/src/linux-x.x.xx/include/asm /usr/include/asm
+        ln -s /usr/src/linux-x.x.xx/include/linux /usr/include/linux
+
+-------------------------------------------------------------------------------
+Problem 13:
+  Problem synthesis:
+    Warning: SIG_IGN: function declaration isn't a prototype
+    Warning: SIG_DFL: function declaration isn't a prototype
+    Warning: SIG_xyz: function declaration isn't a prototype
+  Environment affected by the problem:
+    Solaris
+  What's causing the problem:
+    Prototype for SIG_xyz is incorrect.
+  Solution:
+    Edit /usr/include/sys/iso/signal_iso.h (or
+    /usr/include/sys/signal.h) to replace:
+        #define SIG_IGN (void(*)())1
+    by:
+        #define SIG_IGN (void(*)(int))1
+
+-------------------------------------------------------------------------------
+Problem 14:
+  Problem synthesis:
+    Warning in /usr/include/bits/string2.h
+  Environment affected by the problem:
+    Linux
+  What's causing the problem:
+    Standard inlines do not compile without warning.
+  Solution 1:
+    Edit netwib/inc/maininc.h to add
+        #define __NO_INLINE__ 1
+  Solution 2:
+    Edit /usr/include/string.h at line 359 (may vary, it's just
+    before "#include <bits/string2.h>") to add
+        #define __NO_STRING_INLINES 1

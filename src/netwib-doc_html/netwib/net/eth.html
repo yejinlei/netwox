@@ -1,0 +1,129 @@
+<HTML><HEAD>
+<TITLE>netwib doc_html (version 5.39.0)</TITLE>
+</HEAD><BODY BGCOLOR="#FFFFFF" TEXT="#000000">
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../net.html">section index</A></H2><HR><BR>
+<PRE>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000"><B>/***************************************************************
+ * A <FONT COLOR="#000088">netwib_eth</FONT> represents an Ethernet address.                *
+ * You can init it with a <FONT COLOR="#000088">netwib_eth_init_xyz</FONT> function or with:*
+ *   <FONT COLOR="#000088">netwib_eth</FONT> eth, eth2;                                     *
+ *   eth.b[0] = 0x01; eth.b[1] = 0x02; eth.b[2] = 0x03; ...    *
+ *   <B>netwib_c_memcpy</B>(eth.b, array, <FONT COLOR="#000044">NETWIB_ETH_LEN</FONT>);            *
+ *   <B>netwib_c_memset</B>(eth.b, 0, <FONT COLOR="#000044">NETWIB_ETH_LEN</FONT>);                *
+ *   eth2 = eth1;                                              *
+ ***************************************************************/</B></FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_eth_init_fields
+   Description :
+     Initialize an <FONT COLOR="#000088">netwib_eth</FONT> address.
+   Input parameter(s) :
+     a,b,c,d,e,f : bytes of the Ethernet address
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *peth : <FONT COLOR="#000088">netwib_eth</FONT> set with a:b:c:d:e:f
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_eth_init_fields</B>(<FONT COLOR="#000088">netwib_byte</FONT> a,
+                                  <FONT COLOR="#000088">netwib_byte</FONT> b,
+                                  <FONT COLOR="#000088">netwib_byte</FONT> c,
+                                  <FONT COLOR="#000088">netwib_byte</FONT> d,
+                                  <FONT COLOR="#000088">netwib_byte</FONT> e,
+                                  <FONT COLOR="#000088">netwib_byte</FONT> f,
+                                  <FONT COLOR="#000088">netwib_eth</FONT> *peth);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_eth_init_buf
+   Description :
+     Convert the string "aa:bb:cc:dd:ee:ff" to a netwib_eth.
+   Input parameter(s) :
+     *pbuf : string
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *peth : <FONT COLOR="#000088">netwib_eth</FONT> set
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+     <FONT COLOR="#000044">NETWIB_ERR_NOTCONVERTED</FONT> : format is not "aa:bb:cc:dd:ee:ff"
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_eth_init_buf</B>(<FONT COLOR="#000088">netwib_constbuf</FONT> *pbuf,
+                               <FONT COLOR="#000088">netwib_eth</FONT> *peth);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_eth_init_ip
+   Description :
+     Convert a <FONT COLOR="#000088">netwib_ip</FONT> address to a netwib_eth.
+   Input parameter(s) :
+     ip : IP address
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *peth : <FONT COLOR="#000088">netwib_eth</FONT> set with ip
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+     <FONT COLOR="#000044">NETWIB_ERR_OKUNRESOLVED</FONT> : the address could not be resolved
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_eth_init_ip</B>(<FONT COLOR="#000088">netwib_constip</FONT> *pip,
+                              <FONT COLOR="#000088">netwib_eth</FONT> *peth);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_eth_init_kbd
+   Description :
+     Initialize an <FONT COLOR="#000088">netwib_eth</FONT> with the address entered by the
+     user through the keyboard
+   Input parameter(s) :
+     message : message to print before
+     *pdefaulteth : default eth to use if user enters nothing
+                    if NULL, there is no default
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *peth : <FONT COLOR="#000088">netwib_eth</FONT> set with user's string
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_eth_init_kbd</B>(<FONT COLOR="#000088">netwib_constbuf</FONT> *pmessage,
+                               <FONT COLOR="#000088">netwib_consteth</FONT> *pdefaulteth,
+                               <FONT COLOR="#000088">netwib_eth</FONT> *peth);
+<FONT COLOR="#008800">#define <FONT COLOR="#000044">NETWIB_ETH_INIT_KBD_NODEF</FONT> NULL</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_eth_cmp
+   Description :
+     Compare two netwib_eth.
+   Input parameter(s) :
+     eth1 : <FONT COLOR="#000088">netwib_eth</FONT> to compare with eth2
+     eth2 : <FONT COLOR="#000088">netwib_eth</FONT> to compare with eth1
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pcmp :
+       <FONT COLOR="#000044">NETWIB_CMP_LT</FONT> : eth1&lt;eth2
+       <FONT COLOR="#000044">NETWIB_CMP_EQ</FONT> : if eth1 and eth2 are equal
+       <FONT COLOR="#000044">NETWIB_CMP_GT</FONT> : eth1&gt;eth2
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_eth_cmp</B>(<FONT COLOR="#000088">netwib_consteth</FONT> *peth1,
+                          <FONT COLOR="#000088">netwib_consteth</FONT> *peth2,
+                          <FONT COLOR="#000088">netwib_cmp</FONT> *pcmp);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_buf_append_eth
+   Description :
+     Append a string representing a netwib_eth.
+   Input parameter(s) :
+     eth : <FONT COLOR="#000088">netwib_eth</FONT> to append
+   Input/output parameter(s) :
+     pbuf : buffer updated
+   Output parameter(s) :
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_buf_append_eth</B>(<FONT COLOR="#000088">netwib_consteth</FONT> *peth,
+                                 <FONT COLOR="#000088">netwib_buf</FONT> *pbuf);
+
+</PRE><BR><BR><HR><BR>
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../net.html">section index</A></H2>
+</BODY></HTML>

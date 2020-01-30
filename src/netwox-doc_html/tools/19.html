@@ -1,0 +1,66 @@
+<HTML>
+ <HEAD>
+ <TITLE>Tool 19: Extract a range of packets from a record</TITLE>
+ </HEAD>
+ <BODY BGCOLOR="#FFFFFF">
+  <CENTER>   <H3>Tool 19: Extract a range of packets from a record</H3>
+  </CENTER>
+
+  <P><H3>Description:</H3>
+   <PRE>
+  A record is a capture file. It contains several packets captured
+  during a sniff. It can also be created by hand. There are 7 formats
+  for records: pcap (tcpdump compatible), bin (binary, unreadable by
+  humans but fast) and mixed/mixed_wrap/dump/hexa/hexa_wrap (easy to
+  read and edit). A record also has an associated DLT (Data Link Type),
+  indicating at which level a packet start: raw (start at IP header) and
+  ether (start at Ethernet header) are the 2 most common DLT. Tool 13
+  displays DLT of each device.
+  
+  This tool extracts a range of packets from one record, and save them
+  in another record. For example, it can extract packet number 2 to
+  number 5.
+  
+  Parameter --src-file indicates the input record filename.
+  Parameter --dst-file indicates the output record filename.
+  Parameter --recordencode defines how to encode data in this record
+  (suggested values: bin, pcap and mixed_wrap).
+   </PRE>
+
+  <P><H3>Synonyms:</H3>
+  &nbsp;&nbsp;capture<BR>
+
+  <P><H3>Usage:</H3>
+  &nbsp;&nbsp;netwox 19 -f file -F file [-r recordencode] [-s uint32] [-e uint32]<BR>
+
+  <P><H3>Parameters:</H3>
+<TABLE BORDER=1 CELLPADDING=4>
+ <TR>
+  <TD ALIGN=middle><I>parameter</I></TD>
+  <TD ALIGN=middle><I>description</I></TD>
+  <TD ALIGN=middle><I>example</I></TD>
+ </TR>
+ <TR><TD><TT>-f|--src-file file</TD>
+<TD>input record file</TD>
+<TD>srcfile.txt</TD></TR>
+<TR><TD><TT>-F|--dst-file file</TD>
+<TD>output record file</TD>
+<TD>dstfile.txt</TD></TR>
+<TR><TD><TT>-r|--recordencode recordencode</TD>
+<TD>encoding type for output record</TD>
+<TD>bin</TD></TR>
+<TR><TD><TT>-s|--start uint32</TD>
+<TD>start packet (from 1)</TD>
+<TD>0</TD></TR>
+<TR><TD><TT>-e|--end uint32</TD>
+<TD>end packet (0=nolimit)</TD>
+<TD>0 </TD></TR>
+</TABLE>
+
+  <P><H3>Examples:</H3>
+  &nbsp;&nbsp;netwox 19 -f "srcfile.txt" -F "dstfile.txt"<BR>
+<BR>
+  &nbsp;&nbsp;netwox 19 --src-file "srcfile.txt" --dst-file "dstfile.txt"<BR>
+<BR>
+ </BODY>
+ </HTML>

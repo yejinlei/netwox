@@ -1,0 +1,39 @@
+<HTML>
+ <HEAD>
+ <TITLE>Tool 211: Web spider : converts a local downloaded filename to its original url</TITLE>
+ </HEAD>
+ <BODY BGCOLOR="#FFFFFF">
+  <CENTER>   <H3>Tool 211: Web spider : converts a local downloaded filename to its original url</H3>
+  </CENTER>
+
+  <P><H3>Description:</H3>
+   <PRE>
+  This tool indicates the original url of a local filename.
+  For example files/02/f.html may be the local copy of http://s/f.php.
+   </PRE>
+
+  <P><H3>Usage:</H3>
+  &nbsp;&nbsp;netwox 211 -c file -f file<BR>
+
+  <P><H3>Parameters:</H3>
+<TABLE BORDER=1 CELLPADDING=4>
+ <TR>
+  <TD ALIGN=middle><I>parameter</I></TD>
+  <TD ALIGN=middle><I>description</I></TD>
+  <TD ALIGN=middle><I>example</I></TD>
+ </TR>
+ <TR><TD><TT>-c|--conffile file</TD>
+<TD>configuration file</TD>
+<TD>srcfile.txt</TD></TR>
+<TR><TD><TT>-f|--filename file</TD>
+<TD>filename to convert</TD>
+<TD>file.txt </TD></TR>
+</TABLE>
+
+  <P><H3>Examples:</H3>
+  &nbsp;&nbsp;netwox 211 -c "srcfile.txt" -f "file.txt"<BR>
+<BR>
+  &nbsp;&nbsp;netwox 211 --conffile "srcfile.txt" --filename "file.txt"<BR>
+<BR>
+ </BODY>
+ </HTML>

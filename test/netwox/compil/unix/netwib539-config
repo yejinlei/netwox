@@ -1,0 +1,59 @@
+:
+
+#echo $* 1>&2
+
+netwoxsrcdir=`pwd`
+cd ../../netwib-src/src/
+netwiblib=`./compil/unix/netwib-config -l | sed 's/-lnetwib/ /'`
+netwibccalias=`./compil/unix/netwib-config -d PROGCCALIAS`
+netwibccwundef=`./compil/unix/netwib-config -d PROGCCWUNDEF`
+netwibccwsignc=`./compil/unix/netwib-config -d PROGCCWSIGNC`
+netwibccwextra=`./compil/unix/netwib-config -d PROGCCWEXTRA`
+netwibsrcdir=`pwd`
+cd $netwoxsrcdir
+
+case $1 in
+  -d)
+     case $2 in
+       PROGAR)
+         echo "ar"
+         ;;
+       PROGCC)
+         echo "gcc"
+         ;;
+       PROGCCALIAS)
+         echo $netwibccalias
+         ;;
+       PROGCCWUNDEF)
+         echo $netwibccwundef
+         ;;
+       PROGCCWSIGNC)
+         echo $netwibccwsignc
+         ;;
+       PROGCCWEXTRA)
+         echo $netwibccwextra
+         ;;
+       PROGGREP)
+         echo "grep"
+         ;;
+       PROGRANLIB)
+         echo "ranlib"
+         ;;
+       PROGWC)
+         echo "wc"
+         ;;
+       INSTBIN)
+         echo "/usr/bin"
+         ;;
+       INSTMAN1)
+         echo "/tmp"
+         ;;
+     esac
+    ;;
+  -c)
+      echo "-I$netwibsrcdir"
+    ;;
+  -l)
+      echo "$netwibsrcdir/libnetwib.a $netwiblib"
+    ;;
+esac

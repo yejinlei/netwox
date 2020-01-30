@@ -1,0 +1,130 @@
+<HTML><HEAD>
+<TITLE>netwib doc_html (version 5.39.0)</TITLE>
+</HEAD><BODY BGCOLOR="#FFFFFF" TEXT="#000000">
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../pkt.html">section index</A></H2><HR><BR>
+<PRE>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000"><B>/***************************************************************
+ * Refer to RFC 791 to obtain more information about IPv4      *
+ * options.                                                    *
+ ***************************************************************/</B></FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Comments starting with "NI" are not implemented */</FONT>
+typedef enum {
+  <FONT COLOR="#000044">NETWIB_IP4OPTTYPE_END</FONT> = 0,        <FONT COLOR="#880000">/* end of options */</FONT>
+  <FONT COLOR="#000044">NETWIB_IP4OPTTYPE_NOOP</FONT> = 1,       <FONT COLOR="#880000">/* no operation */</FONT>
+  <FONT COLOR="#000044">NETWIB_IP4OPTTYPE_RR</FONT> = 7,         <FONT COLOR="#880000">/* record route */</FONT>
+  <FONT COLOR="#000044">NETWIB_IP4OPTTYPE_TIME</FONT> = 68,      <FONT COLOR="#880000">/* timestamp */</FONT>
+  <FONT COLOR="#000044">NETWIB_IP4OPTTYPE_SECURITY</FONT> = 130, <FONT COLOR="#880000">/* NI security compartmentation */</FONT>
+  <FONT COLOR="#000044">NETWIB_IP4OPTTYPE_LSRR</FONT> = 131,     <FONT COLOR="#880000">/* loose source and record route */</FONT>
+  <FONT COLOR="#000044">NETWIB_IP4OPTTYPE_STREAM</FONT> = 136,   <FONT COLOR="#880000">/* NI SATNET stream identifier */</FONT>
+  <FONT COLOR="#000044">NETWIB_IP4OPTTYPE_SSRR</FONT> = 137      <FONT COLOR="#880000">/* strict source and record route */</FONT>
+} <FONT COLOR="#000088">netwib_ip4opttype</FONT>;
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* maximum length of one IP4 option */</FONT>
+<FONT COLOR="#008800">#define <FONT COLOR="#000044">NETWIB_IP4OPT_MAXLEN</FONT> 40</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+typedef struct {
+  <FONT COLOR="#000088">netwib_uint32</FONT> storagesize; <FONT COLOR="#880000">/* 0 to 9 */</FONT>
+  <FONT COLOR="#000088">netwib_uint32</FONT> storedvalues; <FONT COLOR="#880000">/* 0 to storagesize */</FONT>
+<FONT COLOR="#008800">#define <FONT COLOR="#000044">NETWIB_IP4OPT_RR_IP_LEN</FONT> 9</FONT>
+  <FONT COLOR="#000088">netwib_ip</FONT> ip[<FONT COLOR="#000044">NETWIB_IP4OPT_RR_IP_LEN</FONT>];
+} <FONT COLOR="#000088">netwib_ip4opt_rr</FONT>;
+typedef const <FONT COLOR="#000088">netwib_ip4opt_rr</FONT> <FONT COLOR="#000088">netwib_constip4opt_rr</FONT>;
+
+typedef struct {
+  <FONT COLOR="#000088">netwib_uint32</FONT> storagesize; <FONT COLOR="#880000">/* 0 to 9 */</FONT>
+  <FONT COLOR="#000088">netwib_uint32</FONT> usedvalues; <FONT COLOR="#880000">/* 0 to storagesize */</FONT>
+<FONT COLOR="#008800">#define <FONT COLOR="#000044">NETWIB_IP4OPT_SRR_IP_LEN</FONT> 9</FONT>
+  <FONT COLOR="#000088">netwib_ip</FONT> ip[<FONT COLOR="#000044">NETWIB_IP4OPT_SRR_IP_LEN</FONT>];
+} <FONT COLOR="#000088">netwib_ip4opt_srr</FONT>;
+typedef const <FONT COLOR="#000088">netwib_ip4opt_srr</FONT> <FONT COLOR="#000088">netwib_constip4opt_srr</FONT>;
+
+typedef enum {
+  <FONT COLOR="#000044">NETWIB_IP4OPT_TIMEFLAG_TS</FONT> = 0,
+  <FONT COLOR="#000044">NETWIB_IP4OPT_TIMEFLAG_IPTS</FONT> = 1,
+  <FONT COLOR="#000044">NETWIB_IP4OPT_TIMEFLAG_IPPTS</FONT> = 3
+} <FONT COLOR="#000088">netwib_ip4opt_timeflag</FONT>;
+typedef struct {
+  <FONT COLOR="#000088">netwib_uint32</FONT> storagesize; <FONT COLOR="#880000">/* 0 to 4or9 (4 for ipts/ippts; 9 for ts) */</FONT>
+  <FONT COLOR="#000088">netwib_uint32</FONT> storedvalues; <FONT COLOR="#880000">/* 0 to storeagesize */</FONT>
+  <FONT COLOR="#000088">netwib_uint8</FONT> overflow;
+  <FONT COLOR="#000088">netwib_ip4opt_timeflag</FONT> flag;
+<FONT COLOR="#008800">#define <FONT COLOR="#000044">NETWIB_IP4OPT_TIME_IP_LEN</FONT> 4</FONT>
+  <FONT COLOR="#000088">netwib_ip</FONT> ip[<FONT COLOR="#000044">NETWIB_IP4OPT_TIME_IP_LEN</FONT>];
+<FONT COLOR="#008800">#define <FONT COLOR="#000044">NETWIB_IP4OPT_TIME_TIMESTAMP_LEN</FONT> 9</FONT>
+  <FONT COLOR="#000088">netwib_uint32</FONT> timestamp[<FONT COLOR="#000044">NETWIB_IP4OPT_TIME_TIMESTAMP_LEN</FONT>];
+} <FONT COLOR="#000088">netwib_ip4opt_time</FONT>;
+typedef const <FONT COLOR="#000088">netwib_ip4opt_time</FONT> <FONT COLOR="#000088">netwib_constip4opt_time</FONT>;
+
+typedef struct {
+  <FONT COLOR="#000088">netwib_ip4opttype</FONT> type;
+  union {
+    <FONT COLOR="#880000">/* type end : no value */</FONT>
+    <FONT COLOR="#880000">/* type noop : no value */</FONT>
+    <FONT COLOR="#000088">netwib_ip4opt_rr</FONT> rr;
+    <FONT COLOR="#000088">netwib_ip4opt_time</FONT> time;
+    <FONT COLOR="#880000">/* type security : NI */</FONT>
+    <FONT COLOR="#000088">netwib_ip4opt_srr</FONT> lsrr;
+    <FONT COLOR="#880000">/* type stream : NI */</FONT>
+    <FONT COLOR="#000088">netwib_ip4opt_srr</FONT> ssrr;
+  } opt;
+} <FONT COLOR="#000088">netwib_ip4opt</FONT>;
+typedef const <FONT COLOR="#000088">netwib_ip4opt</FONT> <FONT COLOR="#000088">netwib_constip4opt</FONT>;
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_ip4opt_initdefault
+   Description :
+     Initialize a <FONT COLOR="#000088">netwib_ip4opt</FONT> with default values.
+   Input parameter(s) :
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pip4opt : <FONT COLOR="#000088">netwib_ip4opt</FONT> to initialize
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_ip4opt_initdefault</B>(<FONT COLOR="#000088">netwib_ip4opttype</FONT> ip4opttype,
+                                     <FONT COLOR="#000088">netwib_ip4opt</FONT> *pip4opt);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_pkt_append_ip4opt
+   Description :
+     Initialize physical data from a netwib_ip4opt.
+   Input parameter(s) :
+     ip4opt : netwib_ip4opt
+   Input/output parameter(s) :
+     *ppht : buffer to initialize
+   Output parameter(s) :
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_pkt_append_ip4opt</B>(<FONT COLOR="#000088">netwib_constip4opt</FONT> *pip4opt,
+                                    <FONT COLOR="#000088">netwib_buf</FONT> *ppkt);
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_pkt_prepend_ip4opt</B>(<FONT COLOR="#000088">netwib_constip4opt</FONT> *pip4opt,
+                                     <FONT COLOR="#000088">netwib_buf</FONT> *ppkt);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_pkt_decode_ip4opt
+   Description :
+     Decode a <FONT COLOR="#000088">netwib_ip4opt</FONT> from data coming from wire.
+   Input parameter(s) :
+     *ppkt : buffer containing physical data
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pip4opt : <FONT COLOR="#000088">netwib_ip4opt</FONT> to initialize
+     *pskipsize : size to skip this option
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_pkt_decode_ip4opt</B>(<FONT COLOR="#000088">netwib_constbuf</FONT> *ppkt,
+                                    <FONT COLOR="#000088">netwib_ip4opt</FONT> *pip4opt,
+                                    <FONT COLOR="#000088">netwib_uint32</FONT> *pskipsize);
+</PRE><BR><BR><HR><BR>
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../pkt.html">section index</A></H2>
+</BODY></HTML>

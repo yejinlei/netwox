@@ -1,0 +1,120 @@
+<HTML><HEAD>
+<TITLE>netwib doc_html (version 5.39.0)</TITLE>
+</HEAD><BODY BGCOLOR="#FFFFFF" TEXT="#000000">
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../sys.html">section index</A></H2><HR><BR>
+<PRE>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000"><B>/***************************************************************
+ * Those functions deals with several threads, referenced      *
+ * by their id.                                                *
+ ***************************************************************/</B></FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+typedef struct {
+  <FONT COLOR="#000088">netwib_thread</FONT> *pthread;
+  <FONT COLOR="#000088">netwib_uint32</FONT> threadid;
+} <FONT COLOR="#000088">netwib_threadringitem</FONT>;
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_threadlist_init
+   Description :
+     Create a new threadlist.
+   Input parameter(s) :
+   Input/output parameter(s) :
+   Output parameter(s) :
+     **ppring : <FONT COLOR="#000088">netwib_ring</FONT> initialized
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_threadlist_init</B>(<FONT COLOR="#000088">netwib_ring</FONT> **ppring);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_threadlist_close
+   Description :
+     Wait for threads in the list (this can be infinite if one
+     thread never ends). If one thread returns on error, it is
+     ignored. Then, close the threadlist.
+   Input parameter(s) :
+   Input/output parameter(s) :
+   Output parameter(s) :
+     **ppring : <FONT COLOR="#000088">netwib_ring</FONT> to close
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_threadlist_close</B>(<FONT COLOR="#000088">netwib_ring</FONT> **ppring);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_threadlist_add
+   Description :
+     Add a new thread.
+   Input parameter(s) :
+     *pthread : thread to add
+     threadid : id of the newly added thread (any value decided
+                by user)
+   Input/output parameter(s) :
+     *pring : <FONT COLOR="#000088">netwib_ring</FONT> where to add the thread
+   Output parameter(s) :
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_threadlist_add</B>(<FONT COLOR="#000088">netwib_ring</FONT> *pring,
+                                 <FONT COLOR="#000088">netwib_thread</FONT> *pthread,
+                                 <FONT COLOR="#000088">netwib_uint32</FONT> threadid);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_threadlist_del
+   Description :
+     Remove a thread from the ring.
+   Input parameter(s) :
+     threadid : id of the thread to remove
+   Input/output parameter(s) :
+     *pring : <FONT COLOR="#000088">netwib_ring</FONT> where to remove the thread
+   Output parameter(s) :
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_threadlist_del</B>(<FONT COLOR="#000088">netwib_ring</FONT> *pring,
+                                 <FONT COLOR="#000088">netwib_uint32</FONT> threadid);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_threadlist_wait
+   Description :
+     Wait for the end of one thread. When this occurs, the
+     <FONT COLOR="#000088">netwib_thread</FONT> associated is closed (use netwib_threadlist_del
+     to remove a thread from the list : you can wait and close
+     it yourself).
+   Input parameter(s) :
+     *pring : <FONT COLOR="#000088">netwib_ring</FONT> containing threads
+     *pabstime : end time. If *pabstime is reached, function
+                 returns (*pevent set to <FONT COLOR="#000044">NETWIB_FALSE</FONT>).
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pevent : a thread finished
+     *pthreadid : id of the thread
+     *preturnederror : value returned by the thread
+     *pinfosout : info eventually set by thread
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+     <FONT COLOR="#000044">NETWIB_ERR_DATAEND</FONT> : there is no more thread in the ring
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_threadlist_wait</B>(<FONT COLOR="#000088">netwib_ring</FONT> *pring,
+                                  <FONT COLOR="#000088">netwib_consttime</FONT> *pabstime,
+                                  <FONT COLOR="#000088">netwib_bool</FONT> *pevent,
+                                  <FONT COLOR="#000088">netwib_uint32</FONT> *pthreadid,
+                                  <FONT COLOR="#000088">netwib_err</FONT> *preturnederror,
+                                  <FONT COLOR="#000088">netwib_ptr</FONT> *pinfosout);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000"><B>/***************************************************************
+ * For other functions, you can directly use functions of      *
+ * ring.h.                                                     *
+ * To do so, booleans "eraseitems" and "duplicateitems" have   *
+ * be set to <FONT COLOR="#000044">NETWIB_TRUE</FONT>. See <FONT COLOR="#000088">netwib_threadlist_close</FONT> for      *
+ * example.                                                    *
+ ***************************************************************/</B></FONT>
+</PRE><BR><BR><HR><BR>
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../sys.html">section index</A></H2>
+</BODY></HTML>

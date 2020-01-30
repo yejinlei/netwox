@@ -1,0 +1,6 @@
+                                 --
+Extended regular expression matching and search library, version 0.12.
+
+These files come from glibc, and are GPL code (read header of regex.c).
+
+

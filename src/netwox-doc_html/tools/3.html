@@ -1,0 +1,71 @@
+<HTML>
+ <HEAD>
+ <TITLE>Tool 3: Display information about an IP address or a hostname</TITLE>
+ </HEAD>
+ <BODY BGCOLOR="#FFFFFF">
+  <CENTER>   <H3>Tool 3: Display information about an IP address or a hostname</H3>
+  </CENTER>
+
+  <P><H3>Description:</H3>
+   <PRE>
+  This tool obtains addresses of a computer.
+  For example, from an IP address, obtain hostname and Ethernet address.
+  For example, from a hostname, obtain IP address and Ethernet address.
+  
+  Parameter --title displays title in front of each result.
+  Parameter --ip displays IP address.
+  Parameter --host displays main hostname.
+  Parameter --hosts displays list of hostnames (one IP address can have
+  several hostnames).
+  Parameter --eth displays Ethernet address.
+  If no option (ip, host, hosts, eth) is set, they are all displayed.
+  Parameter --all displays information about a list of addresses (for
+  example 'netwox 3 -a 192.168.0.0/24').
+  
+  This tool may need to be run with admin privilege in order to sniff
+  and spoof (for Ethernet addresses resolving).
+   </PRE>
+
+  <P><H3>Synonyms:</H3>
+  &nbsp;&nbsp;ethernet, ip4, ip6, mac, resolve, show<BR>
+
+  <P><H3>Usage:</H3>
+  &nbsp;&nbsp;netwox 3 -q hostname [-t|+t] [-i|+i] [-h|+h] [-H|+H] [-e|+e] [-a|+a]<BR>
+
+  <P><H3>Parameters:</H3>
+<TABLE BORDER=1 CELLPADDING=4>
+ <TR>
+  <TD ALIGN=middle><I>parameter</I></TD>
+  <TD ALIGN=middle><I>description</I></TD>
+  <TD ALIGN=middle><I>example</I></TD>
+ </TR>
+ <TR><TD><TT>-q|--query hostname</TD>
+<TD>IP address or hostname</TD>
+<TD>www.example.com</TD></TR>
+<TR><TD><TT>-t|--title|+t|--no-title</TD>
+<TD>display titles</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-i|--ip|+i|--no-ip</TD>
+<TD>obtain IP address</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-h|--host|+h|--no-host</TD>
+<TD>obtain hostname</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-H|--hosts|+H|--no-hosts</TD>
+<TD>obtain hostnames</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-e|--eth|+e|--no-eth</TD>
+<TD>obtain Ethernet address</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-a|--all|+a|--no-all</TD>
+<TD>display all IP addresses</TD>
+<TD>&nbsp; </TD></TR>
+</TABLE>
+
+  <P><H3>Examples:</H3>
+  &nbsp;&nbsp;netwox 3 -q "www.example.com"<BR>
+<BR>
+  &nbsp;&nbsp;netwox 3 --query "www.example.com"<BR>
+<BR>
+ </BODY>
+ </HTML>

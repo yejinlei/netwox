@@ -1,0 +1,156 @@
+<HTML>
+ <HEAD>
+ <TITLE>Tool 36: Spoof EthernetIp4Tcp packet</TITLE>
+ </HEAD>
+ <BODY BGCOLOR="#FFFFFF">
+  <CENTER>   <H3>Tool 36: Spoof EthernetIp4Tcp packet</H3>
+  </CENTER>
+
+  <P><H3>Description:</H3>
+   <PRE>
+  This tool sends a fake packet on the network.
+  Each parameter name should be self explaining.
+  
+  This tool may need to be run with admin privilege in order to spoof.
+   </PRE>
+
+  <P><H3>Synonyms:</H3>
+  &nbsp;&nbsp;frame, hping, mac, send<BR>
+
+  <P><H3>Usage:</H3>
+  &nbsp;&nbsp;netwox 36 [-d device] [-a eth] [-b eth] [-c uint32] [-e uint32] [-f|+f] [-g|+g] [-h|+h] [-i uint32] [-j uint32] [-k uint32] [-l ip] [-m ip] [-n ip4opts] [-o port] [-p port] [-q uint32] [-r uint32] [-s|+s] [-t|+t] [-u|+u] [-v|+v] [-w|+w] [-x|+x] [-y|+y] [-z|+z] [-A|+A] [-B|+B] [-C|+C] [-D|+D] [-E uint32] [-F uint32] [-G tcpopts] [-H mixed_data] [-I uint32] [-J uint32] [-K uint32] [-L uint32] [-M uint32] [-N uint32]<BR>
+
+  <P><H3>Parameters:</H3>
+<TABLE BORDER=1 CELLPADDING=4>
+ <TR>
+  <TD ALIGN=middle><I>parameter</I></TD>
+  <TD ALIGN=middle><I>description</I></TD>
+  <TD ALIGN=middle><I>example</I></TD>
+ </TR>
+ <TR><TD><TT>-d|--device device</TD>
+<TD>device for spoof</TD>
+<TD>Eth0</TD></TR>
+<TR><TD><TT>-a|--eth-src eth</TD>
+<TD>Ethernet src</TD>
+<TD>E0:69:95:6F:ED:9A</TD></TR>
+<TR><TD><TT>-b|--eth-dst eth</TD>
+<TD>Ethernet dst</TD>
+<TD>0:8:9:a:b:c</TD></TR>
+<TR><TD><TT>-c|--ip4-tos uint32</TD>
+<TD>IP4 tos</TD>
+<TD>0</TD></TR>
+<TR><TD><TT>-e|--ip4-id uint32</TD>
+<TD>IP4 id (rand if unset)</TD>
+<TD>0</TD></TR>
+<TR><TD><TT>-f|--ip4-reserved|+f|--no-ip4-reserved</TD>
+<TD>IP4 reserved</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-g|--ip4-dontfrag|+g|--no-ip4-dontfrag</TD>
+<TD>IP4 dontfrag</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-h|--ip4-morefrag|+h|--no-ip4-morefrag</TD>
+<TD>IP4 morefrag</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-i|--ip4-offsetfrag uint32</TD>
+<TD>IP4 offsetfrag</TD>
+<TD>0</TD></TR>
+<TR><TD><TT>-j|--ip4-ttl uint32</TD>
+<TD>IP4 ttl</TD>
+<TD>0</TD></TR>
+<TR><TD><TT>-k|--ip4-protocol uint32</TD>
+<TD>IP4 protocol</TD>
+<TD>0</TD></TR>
+<TR><TD><TT>-l|--ip4-src ip</TD>
+<TD>IP4 src</TD>
+<TD>192.168.100.200</TD></TR>
+<TR><TD><TT>-m|--ip4-dst ip</TD>
+<TD>IP4 dst</TD>
+<TD>5.6.7.8</TD></TR>
+<TR><TD><TT>-n|--ip4-opt ip4opts</TD>
+<TD>IPv4 options</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-o|--tcp-src port</TD>
+<TD>TCP src</TD>
+<TD>1234</TD></TR>
+<TR><TD><TT>-p|--tcp-dst port</TD>
+<TD>TCP dst</TD>
+<TD>80</TD></TR>
+<TR><TD><TT>-q|--tcp-seqnum uint32</TD>
+<TD>TCP seqnum (rand if unset)</TD>
+<TD>0</TD></TR>
+<TR><TD><TT>-r|--tcp-acknum uint32</TD>
+<TD>TCP acknum</TD>
+<TD>0</TD></TR>
+<TR><TD><TT>-s|--tcp-reserved1|+s|--no-tcp-reserved1</TD>
+<TD>TCP reserved1</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-t|--tcp-reserved2|+t|--no-tcp-reserved2</TD>
+<TD>TCP reserved2</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-u|--tcp-reserved3|+u|--no-tcp-reserved3</TD>
+<TD>TCP reserved3</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-v|--tcp-reserved4|+v|--no-tcp-reserved4</TD>
+<TD>TCP reserved4</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-w|--tcp-cwr|+w|--no-tcp-cwr</TD>
+<TD>TCP cwr</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-x|--tcp-ece|+x|--no-tcp-ece</TD>
+<TD>TCP ece</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-y|--tcp-urg|+y|--no-tcp-urg</TD>
+<TD>TCP urg</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-z|--tcp-ack|+z|--no-tcp-ack</TD>
+<TD>TCP ack</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-A|--tcp-psh|+A|--no-tcp-psh</TD>
+<TD>TCP psh</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-B|--tcp-rst|+B|--no-tcp-rst</TD>
+<TD>TCP rst</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-C|--tcp-syn|+C|--no-tcp-syn</TD>
+<TD>TCP syn</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-D|--tcp-fin|+D|--no-tcp-fin</TD>
+<TD>TCP fin</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-E|--tcp-window uint32</TD>
+<TD>TCP window</TD>
+<TD>0</TD></TR>
+<TR><TD><TT>-F|--tcp-urgptr uint32</TD>
+<TD>TCP urgptr</TD>
+<TD>0</TD></TR>
+<TR><TD><TT>-G|--tcp-opt tcpopts</TD>
+<TD>TCP options</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-H|--tcp-data mixed_data</TD>
+<TD>mixed data</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-I|--eth-type uint32</TD>
+<TD>Ethernet type</TD>
+<TD>2048</TD></TR>
+<TR><TD><TT>-J|--ip4-ihl uint32</TD>
+<TD>IP4 ihl</TD>
+<TD>5</TD></TR>
+<TR><TD><TT>-K|--ip4-totlen uint32</TD>
+<TD>IP4 totlen</TD>
+<TD>0</TD></TR>
+<TR><TD><TT>-L|--ip4-checksum uint32</TD>
+<TD>IP4 checksum</TD>
+<TD>0</TD></TR>
+<TR><TD><TT>-M|--tcp-doff uint32</TD>
+<TD>TCP data offset</TD>
+<TD>0</TD></TR>
+<TR><TD><TT>-N|--tcp-checksum uint32</TD>
+<TD>TCP checksum</TD>
+<TD>0 </TD></TR>
+</TABLE>
+
+  <P><H3>Example:</H3>
+  &nbsp;&nbsp;netwox 36<BR>
+<BR>
+ </BODY>
+ </HTML>

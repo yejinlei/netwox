@@ -1,0 +1,524 @@
+<HTML><HEAD>
+<TITLE>netwox examples</TITLE>
+</HEAD><BODY BGCOLOR="#FFFFFF" TEXT="#000000">
+<CENTER><IMG SRC="../images/banner_netwox.jpg"></CENTER>
+<BR><BR>
+
+I suggest you to read this document and to run each command 
+in order to understand how to use netwox. Note that you have
+to adapt device names, IP addresses and Ethernet addresses for them
+to work on your computers.<BR>
+<BR>
+
+<BR><H2>Preliminary notes</H2>
+Netwox needs, for some tools, the be run with administrator privileges.<BR>
+<BR>
+Netwox currently only supports Ethernet/PPP networks for low level actions 
+(sniff, spoof). 
+However, every kind of network is supported for high level actions (clients, servers, etc.).<BR>
+<BR>
+
+<HR>
+
+<BR><H2>Main usage</H2>
+The main syntax is :
+<PRE>
+# netwox toolnumber [parameters ...]
+</PRE>
+For example :
+<PRE>
+# netwox 23
+# netwox 23 --extended
+# netwox 23 -e
+</PRE>
+To obtain help about tool 23, run :
+<PRE>
+# netwox 23 --help
+</PRE>
+To obtain help and full description about tool 23, run :
+<PRE>
+# netwox 23 --help2
+</PRE>
+
+<HR>
+
+<BR><H2>Netwag</H2>
+This documentation covers netwox, which is a command line utility. Netwag
+is a graphical front end to netwox. It has some advantages such as easy
+parameter selection (open netwag, double-click on a tool (for example 7),
+and a form appears for easy generation of parameters).<BR>
+
+<HR>
+
+<BR><H2>Interactive help mode</H2>
+When using netwox without parameters, it enters interactive help mode. 
+Netwox interactive help mode allows users to find/run needed tool.<BR>
+Here is one example of tool selection :
+<PRE>
+# netwox
+########## MAIN MENU
+ 0 - leave netwox
+ 3 - search tools
+ a + information
+ b + network protocol
+ c + application protocol
+ d + sniff
+ e + spoof
+ f + record
+ g + client
+ h + server
+ i + tools not related to network
+ j + administrators' tools
+ k + attack tools
+Select a node (key in 03abcdefghijk): d
+########## sniff
+ 0 - leave netwox
+ 1 - go to main menu
+ 2 - go to previous menu
+ 3 - search tools
+ a - 7:Sniff
+ b - 10:Sniff and display network statistics
+ c - 11:Sniff and verify checksums
+ d - 13:Obtain DLT type for sniff and spoof for each device
+Select a node (key in 0123abcd)> a
+
+Here is how to use this tool:
+Title: Sniff
+Note:
+Usage: netwox 7 [-d device] [-f filter] [-r] [-p] [-i] [-t] [-s] [-H encode] [-D
+ encode] [-o file_dst] [-R recordencode] [-c uint32] [-C uint32]
+ Name                           Description (defaultvalue)
+ --help                         display this help
+ --kbd                          ask missing parameters from keyboard
+ --argfile file                 ask missing parameters from file
+ -d|--device device             device name (Eth0)
+ -f|--filter filter             pcap filter ()
+ -r|--rawip|+r|--no-rawip       sniff at IP level (0)
+ -p|--pause|+p|--no-pause       can pause (0)
+ -i|--ipreas|+i|--no-ipreas     reassemble IP packets (0)
+ -t|--tcpreord|+t|--no-tcpreord reorder TCP packets (0)
+ -s|--screen|+s|--no-screen     display to screen (1)
+ -H|--hdrencode encode          header encoding type for screen (array)
+ -D|--dataencode encode         data encoding type for screen (dump)
+ -o|--outfile file_dst          save in record file (dstfile.txt)
+ -R|--recordencode recordencode encoding type for record file (bin)
+ -c|--split-size uint32         maximum size of record in kb (0)
+ -C|--split-age uint32          maximum age of record in seconds (0)
+Example: netwox 7
+</PRE>
+Now, some examples are described. If they do not correspond to your needs,
+use the interactive help mode (or netwag's search) to find the appropriate
+one.<BR>
+
+<HR>
+
+<BR><H2>Tool 1 : local configuration</H2>
+<PRE>
+# netwox 1
+################################### Devices ###################################
+nu dev   ethernet_hwtype   mtu   real_device_name
+1  Lo0   loopback          1500  Loopback
+2  Eth0  00:01:01:01:01:01 1500  \Device\3COM
+##################################### IP ######################################
+nu ip             /netmask                    ppp point_to_point_with
+1  127.0.0.1      /255.0.0.0                  0
+2  192.168.1.2    /255.255.254.0              0
+############################## ArpCache/Neighbor #############################
+nu ethernet          ip
+2  00:01:01:01:01:01 192.168.1.2
+2  00:02:02:02:02:02 192.168.1.254
+#################################### Routes ###################################
+nu destination    /netmask         source              gateway           metric
+1  127.0.0.1      /255.255.255.255 local                                      0
+2  192.168.1.2    /255.255.255.255 local                                      0
+2  192.168.1.0    /255.255.255.0   192.168.1.2                                0
+2  0.0.0.0        /0.0.0.0         192.168.1.2         192.168.1.254          1
+</PRE>
+    In this example, we see the loopback device (Lo0), and network card
+    Eth0 (whose real name is \Device\3COM).<BR>
+    The arp table contains permanent entries, and the dynamic entry for
+    the router 192.168.1.254.<BR>
+    The routing table first contains entries to access local devices, then
+    network connected to the local devices, and finally the default router
+    192.168.1.254.<BR>
+
+<HR>
+
+<BR><H2>Tool 3 : print information about a hostname</H2>
+<PRE>
+# netwox 3 host1
+IP address:  192.168.1.1
+Hostname:    host1
+Hostnames:   host1
+Eth address: 00:01:01:01:01:01
+</PRE>
+This tool obtains the IP address of host1.<BR>
+Moreover, if host1 is on the LAN, we obtain its Ethernet address.<BR>
+Here is another example :<BR>
+<PRE>
+# netwox 3 192.168.1.1
+# netwox 3 -q 192.168.1.1
+# netwox 3 --query 192.168.1.1
+IP address:  192.168.1.1
+Hostname:    host1
+Hostnames:   host1
+Eth address: 00:01:01:01:01:01
+</PRE>
+
+<HR>
+
+<BR><H2>Tool 87 : real tcp client</H2>
+<PRE>
+# netwox 87 192.168.1.2 21
+220 host2 FTP server
+QUIT
+221 Goodbye.
+</PRE>
+This tool is a tcp client. This commands permits to connect on the 
+FTP server on port 21 at address 192.168.1.2. This command is equivalent
+to "telnet 192.168.1.2 21".<BR>
+Here is another example downloading a web page (port 80 of www.server.com)
+ :<BR>
+<PRE>
+# netwox 87 www.server.com 80
+GET / HTTP/1.0
+_here_enter_one_blank_line_
+HTTP/1.1 200 OK
+Date: Sat, 12 Jan 2002 08:43:27 GMT
+[...]
+</PRE>
+
+Data from keyboard or network can also be encoded or decoded :
+<PRE>
+# netwox 87 192.168.1.2 21 -encode "dump"
+32 32 30 20  46 54 50 20  0d 0a                        # 220 FTP..
+QUIT
+32 32 31 20  47 6f 6f 64  62 79 65 2e  0d 0a           # 221 Goodbye...
+</PRE>
+
+<HR>
+
+<BR><H2>Tool 87 : virtual tcp client</H2>
+When tool 87 is called with a device, a source/destination address,
+it will act as a virtual client.<BR>
+A real client/server uses IP address and Ethernet address
+of the current computer (they are classical sockets).<BR>
+A virtual client/server uses spoofed IP address and
+Ethernet address. For example, a virtual tcp client behaves like this :<BR>
+&nbsp;&nbsp;- spoof a syn packet<BR>
+&nbsp;&nbsp;- sniff the syn-ack from the server<BR>
+&nbsp;&nbsp;- spoof a ack packet to terminate the handshake<BR>
+&nbsp;&nbsp;- then, it behaves exactly like a real client<BR>
+<BR>
+In order to create a virtual client connecting on a server (for example 
+connecting on port 25 of 192.168.1.2) located on the LAN, you have to :<BR>
+&nbsp;&nbsp;- know the local device name to use (can be obtained with 
+"netwox 1"). For example Eth0.<BR>
+&nbsp;&nbsp;- choose one false Ethernet address to use. For example 
+aa:bb:cc:dd:ee:ff.<BR>
+&nbsp;&nbsp;- know the ethernet address of the computer 
+(netwox 3 192.168.1.2). For example 00:02:02:02:02:02.<BR>
+&nbsp;&nbsp;- choose one false IP address (it should not be used by another 
+computer). For example 192.168.1.3.<BR>
+&nbsp;&nbsp;- choose a random port. For example 1234.<BR>
+Here is this example :
+<PRE>
+# 87 -d "Eth0" -E "aa:bb:cc:dd:ee:ff " -e "00:02:02:02:02:02" -I "192.168.1.3" -i "192.168.1.2" -p "25"
+[...]
+</PRE>
+<BR>
+In order to create a virtual client connecting on a server (for example 
+connecting on port 25 of 192.168.1.2) not located on the LAN, you have to :<BR>
+&nbsp;&nbsp;- know the local device name to use (can be obtained with 
+"netwox 1"). For example eth0.<BR>
+&nbsp;&nbsp;- choose one false Ethernet address to use. For example 
+aa:bb:cc:dd:ee:ff.<BR>
+&nbsp;&nbsp;- know the ethernet address of the router 
+(netwox 3 192.168.1.254). For example 00:FE:FE:FE:FE:FE.<BR>
+&nbsp;&nbsp;- choose one false IP address (it should not be used by another 
+computer). For example 192.168.1.3.<BR>
+&nbsp;&nbsp;- choose a random port. For example 1234.<BR>
+Here is this example :
+<PRE>
+# 87 -d "Eth0" -E "aa:bb:cc:dd:ee:ff " -e "00:FE:FE:FE:FE:FE" -I "192.168.1.3" -i "192.168.1.2" -p "25"
+[...]
+</PRE>
+<BR>
+Two simple modes for virtual clients were presented. Depending on your needs,
+they can be adapted.<BR>
+
+<HR>
+
+<BR><H2>Tool 89 : real tcp server</H2>
+This tool creates a listening tcp server. It can be used to communicate
+between two computers.<BR>
+For example, computer host1 can run tool 89, and computer host2 can run
+tool 87. In this example, we choose to listen on port 1234 :
+<PRE>
+On host1 :                           On host2, then run :
+# netwox 89 1234
+                                     # netwox 87 host1 1234
+_write_ Hello _newline_
+                                     Hello
+                                     _write_ Hi _newline_
+Hi
+                                     _write_ Hola _newline_
+Hola
+[...]
+</PRE>
+
+<HR>
+
+<BR><H2>Tool 7 : sniff packets and display them</H2>
+This tool displays packets of the network. You have to select the
+device on which to intercept packets.<BR>
+<PRE>
+# netwox 7
+ ETH_____________________________________________________________________.
+ | 00:01:01:01:01:01 vers 00:02:02:02:02:02         type : 0x0800        |
+ |_______________________________________________________________________|
+ IP______________________________________________________________________.
+ |version |  ihl   |       tos       |              totlen               |
+ |___ 4___|___ 5___|_______  0_______|____________0054h=   84____________|
+ |                id                 |xxDfMf         fragoffset          |
+ |____________061Dh= 1565____________|0_0_0__________0000h=    0_________|
+ |       ttl       |    protocol     |          header checksum          |
+ |_____40h= 64_____|_____01h=  1_____|_______________DF38h_______________|
+ |                                source                                 |
+ |______________________________192.168.1.1______________________________|
+ |                              destination                              |
+ |______________________________192.168.1.2______________________________|
+ ICMP_(echo request)_____________________________________________________.
+ |      type       |      code       |             checksum              |
+ |_____08h=  8_____|_____00h=  0_____|____________2829h=10281____________|
+ 65 01 01 00  91 04 40 3C  AC 91 01 00  08 09 0A 0B     # e.....@<........
+[...]
+</PRE>
+<BR>
+Generally, on network with a lot of flow, sniff intercepts too much packets.
+If you want to restrict sniffed packet, use a filter.<BR>
+Basic item of a bpf filter are :<BR>
+&nbsp;&nbsp;host 1.2.3.4<BR>
+&nbsp;&nbsp;net 192.168.10<BR>
+&nbsp;&nbsp;net 192.168.10.0 mask 255.255.255.0<BR>
+&nbsp;&nbsp;net 192.168.10.0/24<BR>
+&nbsp;&nbsp;port 21<BR>
+&nbsp;&nbsp;dst host 1.2.3.4<BR>
+&nbsp;&nbsp;src port 2345<BR>
+&nbsp;&nbsp;ether host a:b:c:d:e:f ("ether a:b:c:d:e:f" is not working)<BR>
+&nbsp;&nbsp;ether src aa:bb:cc:dd:ee:ff<BR>
+&nbsp;&nbsp;ip<BR>
+&nbsp;&nbsp;arp<BR>
+&nbsp;&nbsp;rarp<BR>
+&nbsp;&nbsp;tcp<BR>
+&nbsp;&nbsp;icmp<BR>
+&nbsp;&nbsp;udp<BR>
+Here are filter examples :<BR>
+&nbsp;&nbsp;host 1.2.3.4<BR>
+&nbsp;&nbsp;net 192.168 and icmp<BR>
+&nbsp;&nbsp;host 1.2.3.4 or dst port 80<BR>
+&nbsp;&nbsp;(udp or tcp) and not host 1.2.3.4<BR>
+Now, just an example with a filter :
+<PRE>
+# netwox 7 -f "host 192.168.1.1"
+[...]
+</PRE>
+
+<HR>
+
+<BR><H2>Tool 7 : sniff packets and save them in a record</H2>
+Sometimes, we want to sniff packet and to save them in a file (a "record").
+<PRE>
+# netwox 7 -p -o thefile -R "mixed_wrap"
+Press q to exit. Press p to pause.
+</PRE>
+
+<HR>
+
+<BR><H2>Tool 15 : display a record</H2>
+With tool 7, we've saved Ethernet data in the file 'thefile'. This tool
+permits to display its contents.<BR>
+<PRE>
+# netwox 15 -f thefile
+[...]
+</PRE>
+
+<HR>
+
+<BR><H2>Tool 14 : spoof a record</H2>
+We can also resend data of a record :<BR>
+<PRE>
+# netwox 15 -f thefile
+[...]
+</PRE>
+Generally, we want to modify data before resending it. So, the file
+has to be edited. The procedure is quite simple :<BR>
+&nbsp;&nbsp;- edit thefile to change the packets<BR>
+&nbsp;&nbsp;- use tool 15 to ensure packets are correctly modified<BR>
+&nbsp;&nbsp;- use tool 14 to send new packets<BR>
+
+<HR>
+
+<BR><H2>Tool 36 : {Ethernet,IP,TCP} spoof specified by user</H2>
+This example spoofs a SYN packet :<BR>
+<PRE>
+# netwox 36 -d "Eth0" -a "1:2:3:4:5:6" -b "7:8:9:a:b:c" -l "1.2.3.4" -m "5.6.7.8" -o "1234" -p "80" -C
+Ethernet________________________________________________________________.
+| 01:02:03:04:05:06->07:08:09:0A:0B:0C type:0x0800                      |
+|_______________________________________________________________________|
+IP______________________________________________________________________.
+|version |  ihl   |       tos       |              totlen               |
+|___4____|___5____|_____0x00=0______|_____________0x0028=40_____________|
+|                id                 |  DfMf          offsetfrag         |
+|____________0x095A=2394____________|0_0_0____________0x0000=0__________|
+|       ttl       |    protocol     |             checksum              |
+|_____0x00=0______|_____0x06=6______|______________0xA163_______________|
+|                                source                                 |
+|________________________________1.2.3.4________________________________|
+|                              destination                              |
+|________________________________5.6.7.8________________________________|
+TCP_____________________________________________________________________.
+|            source port            |         destination port          |
+|____________0x04D2=1234____________|_____________0x0050=80_____________|
+|                                seqnum                                 |
+|_________________________0x40EC052C=1089209644_________________________|
+|                                acknum                                 |
+|_____________________________0x00000000=0______________________________|
+|  doff  |reserved CwEcUrAc PsRsSyFi|              window               |
+|___5____|0_0_0_0__0_0_0_0__0_0_1_0_|_____________0x0000=0______________|
+|             checksum              |              urgptr               |
+|___________0x5495=21653____________|_____________0x0000=0______________|
+</PRE>
+
+<HR>
+
+<BR><H2>Tool 59 : tcp traceroute</H2>
+The traceroute tool list routers located on the way to go to a computer.<BR>
+For example, with the following architecture, computer 192.168.1.1
+has to go through two routers before reaching 192.168.30.2 :<BR>
+<PRE>
+ ,____.    ,________.    ,________.    ,____.
+ | 192|    |192  192|    |192  192|    |192 |
+ | 168|____|168  168|____|168  168|____|168 |
+ |   1|    |1     20|    |20    30|    |30  |
+ |   1|    |254    1|    |2      1|    |2   |
+ `----'    `--------'    `--------'    `----'
+</PRE>
+Tool 59 traces route to reach a computer with an open tcp port. For example,
+to reach computer 192.168.30.2 with a web server (port 80), with a limit
+of 30 hops :
+<PRE>
+# netwox 59 192.168.30.2 -p 80 -t 30
+  1 : 192.168.1.254
+  2 : 192.168.20.2
+  3 : 192.168.30.2
+Destination reached.
+</PRE>
+If we use a closed port, we obtain :
+<PRE>
+# netwox 59 192.168.30.2 -p 81 -t 30
+  1 : 192.168.1.254
+  2 : 192.168.20.2
+  3 : 192.168.30.2
+Destination reached.
+Note : the TCP port 81 is closed (a reset was received).
+</PRE>
+If computer is unreachable, we obtain :
+<PRE>
+# netwox 59 192.168.30.2 -p 80 -t 30
+  1 : 192.168.1.254
+  2 : 192.168.20.2
+  3 : 192.168.20.2 : destination unreachable - host
+  4 : 192.168.20.2 : destination unreachable - host
+</PRE>
+If the number of hops is too small, we obtain :
+<PRE>
+# netwox 59 192.168.30.2 -p 81 -t 2
+  1 : 192.168.1.254
+  2 : 192.168.20.2
+maxttl(2) was too short to reach the destination
+</PRE>
+
+<HR>
+
+<BR><H2>Tool 49 : icmp ping</H2>
+This tool checks if a computer can be reached.<BR>
+If the computer is on the LAN, we obtain it's Ethernet address :<BR>
+<PRE>
+# netwox 49 192.168.1.2
+[...]
+</PRE>
+
+<HR>
+
+<BR><H2>Tool 73 : answer to ARP/ping request for a computer</H2>
+Tool 73 simulate the presence of a computer.<BR>
+For example, to simulate the computer 192.168.1.3 with Ethernet address
+aa:bb:cc:dd:ee:ff, enter :
+<PRE>
+# netwox 73 -i 192.168.1.3-e aa:bb:cc:dd:ee:ff
+</PRE>
+Then, from another computer, enter :
+<PRE>
+# ping 192.168.1.3
+or
+# netwox 49 192.168.1.3
+</PRE>
+
+<HR>
+
+<BR><H2>Tool 67 : scan of IP range, for TCP port range</H2>
+Sometimes, we do not know which ports are open on a computer. This tools
+scans a computer and lists open TCP ports.<BR>
+For example, to scan tcp ports between 20 and 25 of 192.168.1.2 :<BR>
+<PRE>
+# netwox 67 -i 192.168.1.2 -p 20-25
+192.168.1.2 - 21 : open
+192.168.1.2 - 22 : open
+192.168.1.2 - 10 : timeout
+</PRE>
+
+<HR>
+
+<BR><H2>Tool 30 : convert a file from dos to unix</H2>
+Then end of line of Windows and Unix are different. Tool 30 is a utility
+to convert files :
+<PRE>
+# netwox 30 filein fileout
+# netwox 30 --src-file filein --dst-file fileout
+</PRE>
+
+<HR>
+
+<BR><H2>Using Tcl scripting language</H2>
+Sometimes, we want to use netwox tools in a loop. Under Unix, this can
+be done using a Shell or Perl script. Under Windows the Tcl language
+is often the only available solution (Tcl is installed if you installed
+netwag, which is recommended under Windows).<BR>
+Here is a sample Tcl script :<BR>
+<PRE>
+#!/usr/bin/wish
+for {set i 0} {$i &lt; 3} {incr i} {
+  puts "\nTesting $i"
+  set ipad "192.168.0.$i"
+  if [catch {exec netwox 3 $ipad} data] {
+    puts "Error during exec : $data"
+  } else {
+    puts $data
+  }
+}
+exit
+</PRE>
+
+<HR>
+
+<BR><H2>Conclusion</H2>
+Other tools are described <A HREF="../tools/index.html">here</A>.
+If you've carefully read current document, you should be able to use them.<BR>
+
+<BR><H2>Availability</H2>
+Toolbox netwox is available at :<BR>
+  <A HREF="http://ntwox.sourceforge.net/">http://ntwox.sourceforge.net/</A><BR>
+
+</BODY></HTML>
+

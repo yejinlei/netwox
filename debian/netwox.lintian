@@ -1,0 +1,2 @@
+netwox: binary-or-shlib-defines-rpath ./usr/bin/netwox /usr/lib/netwib
+

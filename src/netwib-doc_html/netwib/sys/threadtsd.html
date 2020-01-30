@@ -1,0 +1,64 @@
+<HTML><HEAD>
+<TITLE>netwib doc_html (version 5.39.0)</TITLE>
+</HEAD><BODY BGCOLOR="#FFFFFF" TEXT="#000000">
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../sys.html">section index</A></H2><HR><BR>
+<PRE>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000"><B>/***************************************************************
+ * TSD : Thread Specific Data                                  *
+ ***************************************************************/</B></FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+typedef struct <FONT COLOR="#000088">netwib_thread_tsd</FONT> <FONT COLOR="#000088">netwib_thread_tsd</FONT>;
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_thread_tsd_init
+   Description :
+     Initialize a tsd.
+   Input parameter(s) :
+   Input/output parameter(s) :
+     *pptsd : <FONT COLOR="#000088">netwib_thread_tsd</FONT> initialized
+   Output parameter(s) :
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_thread_tsd_init</B>(<FONT COLOR="#000088">netwib_thread_tsd</FONT> **pptsd);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_thread_tsd_close
+   Description :
+     Close a tsd.
+   Input parameter(s) :
+   Input/output parameter(s) :
+     *pptsd : <FONT COLOR="#000088">netwib_thread_tsd</FONT> closed
+   Output parameter(s) :
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_thread_tsd_close</B>(<FONT COLOR="#000088">netwib_thread_tsd</FONT> **pptsd);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Types to control a <FONT COLOR="#000088">netwib_thread_tsd</FONT> */</FONT>
+typedef enum {
+  <FONT COLOR="#000044">NETWIB_THREAD_TSD_CTLTYPE_VALUE</FONT> = 1   <FONT COLOR="#880000">/* get/set value */</FONT>
+} <FONT COLOR="#000088">netwib_thread_tsd_ctltype</FONT>;
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_thread_tsd_ctl_set</B>(<FONT COLOR="#000088">netwib_thread_tsd</FONT> *ptsd,
+                                     <FONT COLOR="#000088">netwib_thread_tsd_ctltype</FONT> type,
+                                     <FONT COLOR="#000088">netwib_ptr</FONT> p,
+                                     <FONT COLOR="#000088">netwib_uint32</FONT> ui);
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_thread_tsd_ctl_get</B>(<FONT COLOR="#000088">netwib_thread_tsd</FONT> *ptsd,
+                                     <FONT COLOR="#000088">netwib_thread_tsd_ctltype</FONT> type,
+                                     <FONT COLOR="#000088">netwib_ptr</FONT> p,
+                                     <FONT COLOR="#000088">netwib_uint32</FONT> *pui);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* <FONT COLOR="#000088">netwib_err</FONT> f(<FONT COLOR="#000088">netwib_thread_tsd</FONT> *pthread_tsd, <FONT COLOR="#000088">netwib_ptr</FONT> ptr); */</FONT>
+<FONT COLOR="#008800">#define <B>netwib_thread_tsd_ctl_set_value</B>(pthread_tsd,ptr) <B>netwib_thread_tsd_ctl_set</B>(pthread_tsd,<FONT COLOR="#000044">NETWIB_THREAD_TSD_CTLTYPE_VALUE</FONT>,ptr,0)</FONT>
+<FONT COLOR="#880000">/* <FONT COLOR="#000088">netwib_err</FONT> f(<FONT COLOR="#000088">netwib_thread_tsd</FONT> *pthread_tsd, <FONT COLOR="#000088">netwib_ptr</FONT> ptr); */</FONT>
+<FONT COLOR="#008800">#define <B>netwib_thread_tsd_ctl_get_value</B>(pthread_tsd,ptr) <B>netwib_thread_tsd_ctl_get</B>(pthread_tsd,<FONT COLOR="#000044">NETWIB_THREAD_TSD_CTLTYPE_VALUE</FONT>,ptr,0)</FONT>
+</PRE><BR><BR><HR><BR>
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../sys.html">section index</A></H2>
+</BODY></HTML>

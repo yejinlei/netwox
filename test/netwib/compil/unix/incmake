@@ -1,0 +1,484 @@
+
+# test object list
+INCMAKETOBJ0A0=src/netwibtest_dat_priv.o
+INCMAKETOBJ0A1=$(INCMAKETOBJ0A0) src/netwibtest_dat_debug.o
+INCMAKETOBJ0A2=$(INCMAKETOBJ0A1) src/netwibtest_dat_c.o
+INCMAKETOBJ0A3=$(INCMAKETOBJ0A2) src/netwibtest_dat_c2.o
+INCMAKETOBJ0A4=$(INCMAKETOBJ0A3) src/netwibtest_dat_ptr.o
+INCMAKETOBJ0A5=$(INCMAKETOBJ0A4) src/netwibtest_dat_buf.o
+INCMAKETOBJ0A6=$(INCMAKETOBJ0A5) src/netwibtest_dat_bufpool.o
+INCMAKETOBJ0A7=$(INCMAKETOBJ0A6) src/netwibtest_dat_bufenc.o
+INCMAKETOBJ0A8=$(INCMAKETOBJ0A7) src/netwibtest_dat_bufdec.o
+INCMAKETOBJ0A9=$(INCMAKETOBJ0A8) src/netwibtest_dat_fmt.o
+INCMAKETOBJ0A10=$(INCMAKETOBJ0A9) src/netwibtest_dat_checksum.o
+INCMAKETOBJ0A11=$(INCMAKETOBJ0A10) src/netwibtest_dat_regexp.o
+INCMAKETOBJ0A12=$(INCMAKETOBJ0A11) src/netwibtest_dat_ring.o
+INCMAKETOBJ0A13=$(INCMAKETOBJ0A12) src/netwibtest_dat_ringi.o
+INCMAKETOBJ1A0=src/netwibtest_dat_hash.o
+INCMAKETOBJ1A1=$(INCMAKETOBJ1A0) src/netwibtest_dat_hashi.o
+INCMAKETOBJ1A2=$(INCMAKETOBJ1A1) src/netwibtest_dat_tlv.o
+INCMAKETOBJ1A3=$(INCMAKETOBJ1A2) src/netwibtest_dat_array.o
+INCMAKETOBJ1A4=$(INCMAKETOBJ1A3) src/netwibtest_dat_uint64.o
+INCMAKETOBJ1A5=$(INCMAKETOBJ1A4) src/netwibtest_sys_priv.o
+INCMAKETOBJ1A6=$(INCMAKETOBJ1A5) src/netwibtest_sys_debug.o
+INCMAKETOBJ1A7=$(INCMAKETOBJ1A6) src/netwibtest_sys_time.o
+INCMAKETOBJ1A8=$(INCMAKETOBJ1A7) src/netwibtest_sys_rand.o
+INCMAKETOBJ1A9=$(INCMAKETOBJ1A8) src/netwibtest_sys_path.o
+INCMAKETOBJ1A10=$(INCMAKETOBJ1A9) src/netwibtest_sys_pathname.o
+INCMAKETOBJ1A11=$(INCMAKETOBJ1A10) src/netwibtest_sys_pathstat.o
+INCMAKETOBJ1A12=$(INCMAKETOBJ1A11) src/netwibtest_sys_dirname.o
+INCMAKETOBJ1A13=$(INCMAKETOBJ1A12) src/netwibtest_sys_filename.o
+INCMAKETOBJ2A0=src/netwibtest_sys_dir.o
+INCMAKETOBJ2A1=$(INCMAKETOBJ2A0) src/netwibtest_sys_thread.o
+INCMAKETOBJ2A2=$(INCMAKETOBJ2A1) src/netwibtest_sys_threadmut.o
+INCMAKETOBJ2A3=$(INCMAKETOBJ2A2) src/netwibtest_sys_threadrwl.o
+INCMAKETOBJ2A4=$(INCMAKETOBJ2A3) src/netwibtest_sys_threadcond.o
+INCMAKETOBJ2A5=$(INCMAKETOBJ2A4) src/netwibtest_sys_threadtsd.o
+INCMAKETOBJ2A6=$(INCMAKETOBJ2A5) src/netwibtest_sys_threadlist.o
+INCMAKETOBJ2A7=$(INCMAKETOBJ2A6) src/netwibtest_sys_io.o
+INCMAKETOBJ2A8=$(INCMAKETOBJ2A7) src/netwibtest_sys_ionew.o
+INCMAKETOBJ2A9=$(INCMAKETOBJ2A8) src/netwibtest_sys_iousual.o
+INCMAKETOBJ2A10=$(INCMAKETOBJ2A9) src/netwibtest_sys_wait.o
+INCMAKETOBJ2A11=$(INCMAKETOBJ2A10) src/netwibtest_sys_waitlist.o
+INCMAKETOBJ2A12=$(INCMAKETOBJ2A11) src/netwibtest_sys_file.o
+INCMAKETOBJ2A13=$(INCMAKETOBJ2A12) src/netwibtest_sys_fd.o
+INCMAKETOBJ3A0=src/netwibtest_sys_stream.o
+INCMAKETOBJ3A1=$(INCMAKETOBJ3A0) src/netwibtest_sys_kbd.o
+INCMAKETOBJ3A2=$(INCMAKETOBJ3A1) src/netwibtest_sys_kbdchar.o
+INCMAKETOBJ3A3=$(INCMAKETOBJ3A2) src/netwibtest_sys_kbdint.o
+INCMAKETOBJ3A4=$(INCMAKETOBJ3A3) src/netwibtest_sys_kbdbuf.o
+INCMAKETOBJ3A5=$(INCMAKETOBJ3A4) src/netwibtest_sys_kbdpress.o
+INCMAKETOBJ3A6=$(INCMAKETOBJ3A5) src/netwibtest_sys_screen.o
+INCMAKETOBJ3A7=$(INCMAKETOBJ3A6) src/netwibtest_sys_bufenc.o
+INCMAKETOBJ3A8=$(INCMAKETOBJ3A7) src/netwibtest_sys_bufdec.o
+INCMAKETOBJ3A9=$(INCMAKETOBJ3A8) src/netwibtest_sys_disp.o
+INCMAKETOBJ3A10=$(INCMAKETOBJ3A9) src/netwibtest_sys_record.o
+INCMAKETOBJ3A11=$(INCMAKETOBJ3A10) src/netwibtest_sys_beep.o
+INCMAKETOBJ3A12=$(INCMAKETOBJ3A11) src/netwibtest_sys_global.o
+INCMAKETOBJ3A13=$(INCMAKETOBJ3A12) src/netwibtest_sys_init.o
+INCMAKETOBJ4A0=src/netwibtest_sys_error.o
+INCMAKETOBJ4A1=$(INCMAKETOBJ4A0) src/netwibtest_sys_internal.o
+INCMAKETOBJ4A2=$(INCMAKETOBJ4A1) src/netwibtest_sys_unix.o
+INCMAKETOBJ4A3=$(INCMAKETOBJ4A2) src/netwibtest_sys_windows.o
+INCMAKETOBJ4A4=$(INCMAKETOBJ4A3) src/netwibtest_net_priv.o
+INCMAKETOBJ4A5=$(INCMAKETOBJ4A4) src/netwibtest_net_debug.o
+INCMAKETOBJ4A6=$(INCMAKETOBJ4A5) src/netwibtest_net_device.o
+INCMAKETOBJ4A7=$(INCMAKETOBJ4A6) src/netwibtest_net_ip.o
+INCMAKETOBJ4A8=$(INCMAKETOBJ4A7) src/netwibtest_net_eth.o
+INCMAKETOBJ4A9=$(INCMAKETOBJ4A8) src/netwibtest_net_port.o
+INCMAKETOBJ4A10=$(INCMAKETOBJ4A9) src/netwibtest_net_ips.o
+INCMAKETOBJ4A11=$(INCMAKETOBJ4A10) src/netwibtest_net_ipsi.o
+INCMAKETOBJ4A12=$(INCMAKETOBJ4A11) src/netwibtest_net_eths.o
+INCMAKETOBJ4A13=$(INCMAKETOBJ4A12) src/netwibtest_net_ethsi.o
+INCMAKETOBJ5A0=src/netwibtest_net_ports.o
+INCMAKETOBJ5A1=$(INCMAKETOBJ5A0) src/netwibtest_net_portsi.o
+INCMAKETOBJ5A2=$(INCMAKETOBJ5A1) src/netwibtest_net_conf.o
+INCMAKETOBJ5A3=$(INCMAKETOBJ5A2) src/netwibtest_net_confdev.o
+INCMAKETOBJ5A4=$(INCMAKETOBJ5A3) src/netwibtest_net_confip.o
+INCMAKETOBJ5A5=$(INCMAKETOBJ5A4) src/netwibtest_net_confarp.o
+INCMAKETOBJ5A6=$(INCMAKETOBJ5A5) src/netwibtest_net_confrout.o
+INCMAKETOBJ5A7=$(INCMAKETOBJ5A6) src/netwibtest_net_sock.o
+INCMAKETOBJ5A8=$(INCMAKETOBJ5A7) src/netwibtest_net_sniff.o
+INCMAKETOBJ5A9=$(INCMAKETOBJ5A8) src/netwibtest_net_spoof.o
+INCMAKETOBJ5A10=$(INCMAKETOBJ5A9) src/netwibtest_pkt_priv.o
+INCMAKETOBJ5A11=$(INCMAKETOBJ5A10) src/netwibtest_pkt_debug.o
+INCMAKETOBJ5A12=$(INCMAKETOBJ5A11) src/netwibtest_pkt_linkhdr.o
+INCMAKETOBJ5A13=$(INCMAKETOBJ5A12) src/netwibtest_pkt_iphdr.o
+INCMAKETOBJ6A0=src/netwibtest_pkt_ip4opt.o
+INCMAKETOBJ6A1=$(INCMAKETOBJ6A0) src/netwibtest_pkt_ip4opts.o
+INCMAKETOBJ6A2=$(INCMAKETOBJ6A1) src/netwibtest_pkt_ip6ext.o
+INCMAKETOBJ6A3=$(INCMAKETOBJ6A2) src/netwibtest_pkt_ip6exts.o
+INCMAKETOBJ6A4=$(INCMAKETOBJ6A3) src/netwibtest_pkt_arphdr.o
+INCMAKETOBJ6A5=$(INCMAKETOBJ6A4) src/netwibtest_pkt_tcphdr.o
+INCMAKETOBJ6A6=$(INCMAKETOBJ6A5) src/netwibtest_pkt_udphdr.o
+INCMAKETOBJ6A7=$(INCMAKETOBJ6A6) src/netwibtest_pkt_tcpopt.o
+INCMAKETOBJ6A8=$(INCMAKETOBJ6A7) src/netwibtest_pkt_tcpopts.o
+INCMAKETOBJ6A9=$(INCMAKETOBJ6A8) src/netwibtest_pkt_ip64bits.o
+INCMAKETOBJ6A10=$(INCMAKETOBJ6A9) src/netwibtest_pkt_icmp4.o
+INCMAKETOBJ6A11=$(INCMAKETOBJ6A10) src/netwibtest_pkt_icmp6.o
+INCMAKETOBJ6A12=$(INCMAKETOBJ6A11) src/netwibtest_pkt_icmp6nd.o
+INCMAKETOBJ6A13=$(INCMAKETOBJ6A12) src/netwibtest_pkt_layer.o
+INCMAKETOBJ7A0=src/netwibtest_pkt_packet.o
+INCMAKETOBJ7A1=$(INCMAKETOBJ7A0) src/netwibtest_pkt_conv.o
+INCMAKETOBJ7A2=$(INCMAKETOBJ7A1) src/netwibtest_pkt_ipfrag.o
+INCMAKETOBJ7A3=$(INCMAKETOBJ7A2) src/netwibtest_shw_priv.o
+INCMAKETOBJ7A4=$(INCMAKETOBJ7A3) src/netwibtest_shw_debug.o
+INCMAKETOBJ7A5=$(INCMAKETOBJ7A4) src/netwibtest_shw_array.o
+INCMAKETOBJ7A6=$(INCMAKETOBJ7A5) src/netwibtest_shw_linkhdr.o
+INCMAKETOBJ7A7=$(INCMAKETOBJ7A6) src/netwibtest_shw_iphdr.o
+INCMAKETOBJ7A8=$(INCMAKETOBJ7A7) src/netwibtest_shw_ip4opt.o
+INCMAKETOBJ7A9=$(INCMAKETOBJ7A8) src/netwibtest_shw_ip4opts.o
+INCMAKETOBJ7A10=$(INCMAKETOBJ7A9) src/netwibtest_shw_ip6ext.o
+INCMAKETOBJ7A11=$(INCMAKETOBJ7A10) src/netwibtest_shw_ip6exts.o
+INCMAKETOBJ7A12=$(INCMAKETOBJ7A11) src/netwibtest_shw_arphdr.o
+INCMAKETOBJ7A13=$(INCMAKETOBJ7A12) src/netwibtest_shw_tcphdr.o
+INCMAKETOBJ8A0=src/netwibtest_shw_udphdr.o
+INCMAKETOBJ8A1=$(INCMAKETOBJ8A0) src/netwibtest_shw_tcpopt.o
+INCMAKETOBJ8A2=$(INCMAKETOBJ8A1) src/netwibtest_shw_tcpopts.o
+INCMAKETOBJ8A3=$(INCMAKETOBJ8A2) src/netwibtest_shw_icmp4.o
+INCMAKETOBJ8A4=$(INCMAKETOBJ8A3) src/netwibtest_shw_icmp6.o
+INCMAKETOBJ8A5=$(INCMAKETOBJ8A4) src/netwibtest_shw_icmp6nd.o
+INCMAKETOBJ8A6=$(INCMAKETOBJ8A5) src/netwibtest_shw_packet.o
+INCMAKETOBJ= $(INCMAKETOBJ0A13) $(INCMAKETOBJ1A13) $(INCMAKETOBJ2A13) $(INCMAKETOBJ3A13) $(INCMAKETOBJ4A13) $(INCMAKETOBJ5A13) $(INCMAKETOBJ6A13) $(INCMAKETOBJ7A13) $(INCMAKETOBJ8A6)
+
+# how to construct test objects
+src/netwibtest_dat_priv.o: src/netwibtest_dat_priv.c $(netwibdatprivh) $(netwibdatprivc) $(NETWIBTESTDEP)
+	$(CC) $(GCCOPT) -c src/netwibtest_dat_priv.c -I. $(GCCINC) -o src/netwibtest_dat_priv.o
+src/netwibtest_dat_debug.o: src/netwibtest_dat_debug.c $(netwibdatdebugh) $(netwibdatdebugc) $(NETWIBTESTDEP)
+	$(CC) $(GCCOPT) -c src/netwibtest_dat_debug.c -I. $(GCCINC) -o src/netwibtest_dat_debug.o
+src/netwibtest_dat_c.o: src/netwibtest_dat_c.c $(netwibdatch) $(netwibdatcc) $(NETWIBTESTDEP)
+	$(CC) $(GCCOPT) -c src/netwibtest_dat_c.c -I. $(GCCINC) -o src/netwibtest_dat_c.o
+src/netwibtest_dat_c2.o: src/netwibtest_dat_c2.c $(netwibdatc2h) $(netwibdatc2c) $(NETWIBTESTDEP)
+	$(CC) $(GCCOPT) -c src/netwibtest_dat_c2.c -I. $(GCCINC) -o src/netwibtest_dat_c2.o
+src/netwibtest_dat_ptr.o: src/netwibtest_dat_ptr.c $(netwibdatptrh) $(netwibdatptrc) $(NETWIBTESTDEP)
+	$(CC) $(GCCOPT) -c src/netwibtest_dat_ptr.c -I. $(GCCINC) -o src/netwibtest_dat_ptr.o
+src/netwibtest_dat_buf.o: src/netwibtest_dat_buf.c $(netwibdatbufh) $(netwibdatbufc) $(NETWIBTESTDEP)
+	$(CC) $(GCCOPT) -c src/netwibtest_dat_buf.c -I. $(GCCINC) -o src/netwibtest_dat_buf.o
+src/netwibtest_dat_bufpool.o: src/netwibtest_dat_bufpool.c $(netwibdatbufpoolh) $(netwibdatbufpoolc) $(NETWIBTESTDEP)
+	$(CC) $(GCCOPT) -c src/netwibtest_dat_bufpool.c -I. $(GCCINC) -o src/netwibtest_dat_bufpool.o
+src/netwibtest_dat_bufenc.o: src/netwibtest_dat_bufenc.c $(netwibdatbufench) $(netwibdatbufencc) $(NETWIBTESTDEP)
+	$(CC) $(GCCOPT) -c src/netwibtest_dat_bufenc.c -I. $(GCCINC) -o src/netwibtest_dat_bufenc.o
+src/netwibtest_dat_bufdec.o: src/netwibtest_dat_bufdec.c $(netwibdatbufdech) $(netwibdatbufdecc) $(NETWIBTESTDEP)
+	$(CC) $(GCCOPT) -c src/netwibtest_dat_bufdec.c -I. $(GCCINC) -o src/netwibtest_dat_bufdec.o
+src/netwibtest_dat_fmt.o: src/netwibtest_dat_fmt.c $(netwibdatfmth) $(netwibdatfmtc) $(NETWIBTESTDEP)
+	$(CC) $(GCCOPT) -c src/netwibtest_dat_fmt.c -I. $(GCCINC) -o src/netwibtest_dat_fmt.o
+src/netwibtest_dat_checksum.o: src/netwibtest_dat_checksum.c $(netwibdatchecksumh) $(netwibdatchecksumc) $(NETWIBTESTDEP)
+	$(CC) $(GCCOPT) -c src/netwibtest_dat_checksum.c -I. $(GCCINC) -o src/netwibtest_dat_checksum.o
+src/netwibtest_dat_regexp.o: src/netwibtest_dat_regexp.c $(netwibdatregexph) $(netwibdatregexpc) $(NETWIBTESTDEP)
+	$(CC) $(GCCOPT) -c src/netwibtest_dat_regexp.c -I. $(GCCINC) -o src/netwibtest_dat_regexp.o
+src/netwibtest_dat_ring.o: src/netwibtest_dat_ring.c $(netwibdatringh) $(netwibdatringc) $(NETWIBTESTDEP)
+	$(CC) $(GCCOPT) -c src/netwibtest_dat_ring.c -I. $(GCCINC) -o src/netwibtest_dat_ring.o
+src/netwibtest_dat_ringi.o: src/netwibtest_dat_ringi.c $(netwibdatringih) $(netwibdatringic) $(NETWIBTESTDEP)
+	$(CC) $(GCCOPT) -c src/netwibtest_dat_ringi.c -I. $(GCCINC) -o src/netwibtest_dat_ringi.o
+src/netwibtest_dat_hash.o: src/netwibtest_dat_hash.c $(netwibdathashh) $(netwibdathashc) $(NETWIBTESTDEP)
+	$(CC) $(GCCOPT) -c src/netwibtest_dat_hash.c -I. $(GCCINC) -o src/netwibtest_dat_hash.o
+src/netwibtest_dat_hashi.o: src/netwibtest_dat_hashi.c $(netwibdathashih) $(netwibdathashic) $(NETWIBTESTDEP)
+	$(CC) $(GCCOPT) -c src/netwibtest_dat_hashi.c -I. $(GCCINC) -o src/netwibtest_dat_hashi.o
+src/netwibtest_dat_tlv.o: src/netwibtest_dat_tlv.c $(netwibdattlvh) $(netwibdattlvc) $(NETWIBTESTDEP)
+	$(CC) $(GCCOPT) -c src/netwibtest_dat_tlv.c -I. $(GCCINC) -o src/netwibtest_dat_tlv.o
+src/netwibtest_dat_array.o: src/netwibtest_dat_array.c $(netwibdatarrayh) $(netwibdatarrayc) $(NETWIBTESTDEP)
+	$(CC) $(GCCOPT) -c src/netwibtest_dat_array.c -I. $(GCCINC) -o src/netwibtest_dat_array.o
+src/netwibtest_dat_uint64.o: src/netwibtest_dat_uint64.c $(netwibdatuint64h) $(netwibdatuint64c) $(NETWIBTESTDEP)
+	$(CC) $(GCCOPT) -c src/netwibtest_dat_uint64.c -I. $(GCCINC) -o src/netwibtest_dat_uint64.o
+src/netwibtest_sys_priv.o: src/netwibtest_sys_priv.c $(netwibsysprivh) $(netwibsysprivc) $(NETWIBTESTDEP)
+	$(CC) $(GCCOPT) -c src/netwibtest_sys_priv.c -I. $(GCCINC) -o src/netwibtest_sys_priv.o
+src/netwibtest_sys_debug.o: src/netwibtest_sys_debug.c $(netwibsysdebugh) $(netwibsysdebugc) $(NETWIBTESTDEP)
+	$(CC) $(GCCOPT) -c src/netwibtest_sys_debug.c -I. $(GCCINC) -o src/netwibtest_sys_debug.o
+src/netwibtest_sys_time.o: src/netwibtest_sys_time.c $(netwibsystimeh) $(netwibsystimec) $(NETWIBTESTDEP)
+	$(CC) $(GCCOPT) -c src/netwibtest_sys_time.c -I. $(GCCINC) -o src/netwibtest_sys_time.o
+src/netwibtest_sys_rand.o: src/netwibtest_sys_rand.c $(netwibsysrandh) $(netwibsysrandc) $(NETWIBTESTDEP)
+	$(CC) $(GCCOPT) -c src/netwibtest_sys_rand.c -I. $(GCCINC) -o src/netwibtest_sys_rand.o
+src/netwibtest_sys_path.o: src/netwibtest_sys_path.c $(netwibsyspathh) $(netwibsyspathc) $(NETWIBTESTDEP)
+	$(CC) $(GCCOPT) -c src/netwibtest_sys_path.c -I. $(GCCINC) -o src/netwibtest_sys_path.o
+src/netwibtest_sys_pathname.o: src/netwibtest_sys_pathname.c $(netwibsyspathnameh) $(netwibsyspathnamec) $(NETWIBTESTDEP)
+	$(CC) $(GCCOPT) -c src/netwibtest_sys_pathname.c -I. $(GCCINC) -o src/netwibtest_sys_pathname.o
+src/netwibtest_sys_pathstat.o: src/netwibtest_sys_pathstat.c $(netwibsyspathstath) $(netwibsyspathstatc) $(NETWIBTESTDEP)
+	$(CC) $(GCCOPT) -c src/netwibtest_sys_pathstat.c -I. $(GCCINC) -o src/netwibtest_sys_pathstat.o
+src/netwibtest_sys_dirname.o: src/netwibtest_sys_dirname.c $(netwibsysdirnameh) $(netwibsysdirnamec) $(NETWIBTESTDEP)
+	$(CC) $(GCCOPT) -c src/netwibtest_sys_dirname.c -I. $(GCCINC) -o src/netwibtest_sys_dirname.o
+src/netwibtest_sys_filename.o: src/netwibtest_sys_filename.c $(netwibsysfilenameh) $(netwibsysfilenamec) $(NETWIBTESTDEP)
+	$(CC) $(GCCOPT) -c src/netwibtest_sys_filename.c -I. $(GCCINC) -o src/netwibtest_sys_filename.o
+src/netwibtest_sys_dir.o: src/netwibtest_sys_dir.c $(netwibsysdirh) $(netwibsysdirc) $(NETWIBTESTDEP)
+	$(CC) $(GCCOPT) -c src/netwibtest_sys_dir.c -I. $(GCCINC) -o src/netwibtest_sys_dir.o
+src/netwibtest_sys_thread.o: src/netwibtest_sys_thread.c $(netwibsysthreadh) $(netwibsysthreadc) $(NETWIBTESTDEP)
+	$(CC) $(GCCOPT) -c src/netwibtest_sys_thread.c -I. $(GCCINC) -o src/netwibtest_sys_thread.o
+src/netwibtest_sys_threadmut.o: src/netwibtest_sys_threadmut.c $(netwibsysthreadmuth) $(netwibsysthreadmutc) $(NETWIBTESTDEP)
+	$(CC) $(GCCOPT) -c src/netwibtest_sys_threadmut.c -I. $(GCCINC) -o src/netwibtest_sys_threadmut.o
+src/netwibtest_sys_threadrwl.o: src/netwibtest_sys_threadrwl.c $(netwibsysthreadrwlh) $(netwibsysthreadrwlc) $(NETWIBTESTDEP)
+	$(CC) $(GCCOPT) -c src/netwibtest_sys_threadrwl.c -I. $(GCCINC) -o src/netwibtest_sys_threadrwl.o
+src/netwibtest_sys_threadcond.o: src/netwibtest_sys_threadcond.c $(netwibsysthreadcondh) $(netwibsysthreadcondc) $(NETWIBTESTDEP)
+	$(CC) $(GCCOPT) -c src/netwibtest_sys_threadcond.c -I. $(GCCINC) -o src/netwibtest_sys_threadcond.o
+src/netwibtest_sys_threadtsd.o: src/netwibtest_sys_threadtsd.c $(netwibsysthreadtsdh) $(netwibsysthreadtsdc) $(NETWIBTESTDEP)
+	$(CC) $(GCCOPT) -c src/netwibtest_sys_threadtsd.c -I. $(GCCINC) -o src/netwibtest_sys_threadtsd.o
+src/netwibtest_sys_threadlist.o: src/netwibtest_sys_threadlist.c $(netwibsysthreadlisth) $(netwibsysthreadlistc) $(NETWIBTESTDEP)
+	$(CC) $(GCCOPT) -c src/netwibtest_sys_threadlist.c -I. $(GCCINC) -o src/netwibtest_sys_threadlist.o
+src/netwibtest_sys_io.o: src/netwibtest_sys_io.c $(netwibsysioh) $(netwibsysioc) $(NETWIBTESTDEP)
+	$(CC) $(GCCOPT) -c src/netwibtest_sys_io.c -I. $(GCCINC) -o src/netwibtest_sys_io.o
+src/netwibtest_sys_ionew.o: src/netwibtest_sys_ionew.c $(netwibsysionewh) $(netwibsysionewc) $(NETWIBTESTDEP)
+	$(CC) $(GCCOPT) -c src/netwibtest_sys_ionew.c -I. $(GCCINC) -o src/netwibtest_sys_ionew.o
+src/netwibtest_sys_iousual.o: src/netwibtest_sys_iousual.c $(netwibsysiousualh) $(netwibsysiousualc) $(NETWIBTESTDEP)
+	$(CC) $(GCCOPT) -c src/netwibtest_sys_iousual.c -I. $(GCCINC) -o src/netwibtest_sys_iousual.o
+src/netwibtest_sys_wait.o: src/netwibtest_sys_wait.c $(netwibsyswaith) $(netwibsyswaitc) $(NETWIBTESTDEP)
+	$(CC) $(GCCOPT) -c src/netwibtest_sys_wait.c -I. $(GCCINC) -o src/netwibtest_sys_wait.o
+src/netwibtest_sys_waitlist.o: src/netwibtest_sys_waitlist.c $(netwibsyswaitlisth) $(netwibsyswaitlistc) $(NETWIBTESTDEP)
+	$(CC) $(GCCOPT) -c src/netwibtest_sys_waitlist.c -I. $(GCCINC) -o src/netwibtest_sys_waitlist.o
+src/netwibtest_sys_file.o: src/netwibtest_sys_file.c $(netwibsysfileh) $(netwibsysfilec) $(NETWIBTESTDEP)
+	$(CC) $(GCCOPT) -c src/netwibtest_sys_file.c -I. $(GCCINC) -o src/netwibtest_sys_file.o
+src/netwibtest_sys_fd.o: src/netwibtest_sys_fd.c $(netwibsysfdh) $(netwibsysfdc) $(NETWIBTESTDEP)
+	$(CC) $(GCCOPT) -c src/netwibtest_sys_fd.c -I. $(GCCINC) -o src/netwibtest_sys_fd.o
+src/netwibtest_sys_stream.o: src/netwibtest_sys_stream.c $(netwibsysstreamh) $(netwibsysstreamc) $(NETWIBTESTDEP)
+	$(CC) $(GCCOPT) -c src/netwibtest_sys_stream.c -I. $(GCCINC) -o src/netwibtest_sys_stream.o
+src/netwibtest_sys_kbd.o: src/netwibtest_sys_kbd.c $(netwibsyskbdh) $(netwibsyskbdc) $(NETWIBTESTDEP)
+	$(CC) $(GCCOPT) -c src/netwibtest_sys_kbd.c -I. $(GCCINC) -o src/netwibtest_sys_kbd.o
+src/netwibtest_sys_kbdchar.o: src/netwibtest_sys_kbdchar.c $(netwibsyskbdcharh) $(netwibsyskbdcharc) $(NETWIBTESTDEP)
+	$(CC) $(GCCOPT) -c src/netwibtest_sys_kbdchar.c -I. $(GCCINC) -o src/netwibtest_sys_kbdchar.o
+src/netwibtest_sys_kbdint.o: src/netwibtest_sys_kbdint.c $(netwibsyskbdinth) $(netwibsyskbdintc) $(NETWIBTESTDEP)
+	$(CC) $(GCCOPT) -c src/netwibtest_sys_kbdint.c -I. $(GCCINC) -o src/netwibtest_sys_kbdint.o
+src/netwibtest_sys_kbdbuf.o: src/netwibtest_sys_kbdbuf.c $(netwibsyskbdbufh) $(netwibsyskbdbufc) $(NETWIBTESTDEP)
+	$(CC) $(GCCOPT) -c src/netwibtest_sys_kbdbuf.c -I. $(GCCINC) -o src/netwibtest_sys_kbdbuf.o
+src/netwibtest_sys_kbdpress.o: src/netwibtest_sys_kbdpress.c $(netwibsyskbdpressh) $(netwibsyskbdpressc) $(NETWIBTESTDEP)
+	$(CC) $(GCCOPT) -c src/netwibtest_sys_kbdpress.c -I. $(GCCINC) -o src/netwibtest_sys_kbdpress.o
+src/netwibtest_sys_screen.o: src/netwibtest_sys_screen.c $(netwibsysscreenh) $(netwibsysscreenc) $(NETWIBTESTDEP)
+	$(CC) $(GCCOPT) -c src/netwibtest_sys_screen.c -I. $(GCCINC) -o src/netwibtest_sys_screen.o
+src/netwibtest_sys_bufenc.o: src/netwibtest_sys_bufenc.c $(netwibsysbufench) $(netwibsysbufencc) $(NETWIBTESTDEP)
+	$(CC) $(GCCOPT) -c src/netwibtest_sys_bufenc.c -I. $(GCCINC) -o src/netwibtest_sys_bufenc.o
+src/netwibtest_sys_bufdec.o: src/netwibtest_sys_bufdec.c $(netwibsysbufdech) $(netwibsysbufdecc) $(NETWIBTESTDEP)
+	$(CC) $(GCCOPT) -c src/netwibtest_sys_bufdec.c -I. $(GCCINC) -o src/netwibtest_sys_bufdec.o
+src/netwibtest_sys_disp.o: src/netwibtest_sys_disp.c $(netwibsysdisph) $(netwibsysdispc) $(NETWIBTESTDEP)
+	$(CC) $(GCCOPT) -c src/netwibtest_sys_disp.c -I. $(GCCINC) -o src/netwibtest_sys_disp.o
+src/netwibtest_sys_record.o: src/netwibtest_sys_record.c $(netwibsysrecordh) $(netwibsysrecordc) $(NETWIBTESTDEP)
+	$(CC) $(GCCOPT) -c src/netwibtest_sys_record.c -I. $(GCCINC) -o src/netwibtest_sys_record.o
+src/netwibtest_sys_beep.o: src/netwibtest_sys_beep.c $(netwibsysbeeph) $(netwibsysbeepc) $(NETWIBTESTDEP)
+	$(CC) $(GCCOPT) -c src/netwibtest_sys_beep.c -I. $(GCCINC) -o src/netwibtest_sys_beep.o
+src/netwibtest_sys_global.o: src/netwibtest_sys_global.c $(netwibsysglobalh) $(netwibsysglobalc) $(NETWIBTESTDEP)
+	$(CC) $(GCCOPT) -c src/netwibtest_sys_global.c -I. $(GCCINC) -o src/netwibtest_sys_global.o
+src/netwibtest_sys_init.o: src/netwibtest_sys_init.c $(netwibsysinith) $(netwibsysinitc) $(NETWIBTESTDEP)
+	$(CC) $(GCCOPT) -c src/netwibtest_sys_init.c -I. $(GCCINC) -o src/netwibtest_sys_init.o
+src/netwibtest_sys_error.o: src/netwibtest_sys_error.c $(netwibsyserrorh) $(netwibsyserrorc) $(NETWIBTESTDEP)
+	$(CC) $(GCCOPT) -c src/netwibtest_sys_error.c -I. $(GCCINC) -o src/netwibtest_sys_error.o
+src/netwibtest_sys_internal.o: src/netwibtest_sys_internal.c $(netwibsysinternalh) $(netwibsysinternalc) $(NETWIBTESTDEP)
+	$(CC) $(GCCOPT) -c src/netwibtest_sys_internal.c -I. $(GCCINC) -o src/netwibtest_sys_internal.o
+src/netwibtest_sys_unix.o: src/netwibtest_sys_unix.c $(netwibsysunixh) $(netwibsysunixc) $(NETWIBTESTDEP)
+	$(CC) $(GCCOPT) -c src/netwibtest_sys_unix.c -I. $(GCCINC) -o src/netwibtest_sys_unix.o
+src/netwibtest_sys_windows.o: src/netwibtest_sys_windows.c $(netwibsyswindowsh) $(netwibsyswindowsc) $(NETWIBTESTDEP)
+	$(CC) $(GCCOPT) -c src/netwibtest_sys_windows.c -I. $(GCCINC) -o src/netwibtest_sys_windows.o
+src/netwibtest_net_priv.o: src/netwibtest_net_priv.c $(netwibnetprivh) $(netwibnetprivc) $(NETWIBTESTDEP)
+	$(CC) $(GCCOPT) -c src/netwibtest_net_priv.c -I. $(GCCINC) -o src/netwibtest_net_priv.o
+src/netwibtest_net_debug.o: src/netwibtest_net_debug.c $(netwibnetdebugh) $(netwibnetdebugc) $(NETWIBTESTDEP)
+	$(CC) $(GCCOPT) -c src/netwibtest_net_debug.c -I. $(GCCINC) -o src/netwibtest_net_debug.o
+src/netwibtest_net_device.o: src/netwibtest_net_device.c $(netwibnetdeviceh) $(netwibnetdevicec) $(NETWIBTESTDEP)
+	$(CC) $(GCCOPT) -c src/netwibtest_net_device.c -I. $(GCCINC) -o src/netwibtest_net_device.o
+src/netwibtest_net_ip.o: src/netwibtest_net_ip.c $(netwibnetiph) $(netwibnetipc) $(NETWIBTESTDEP)
+	$(CC) $(GCCOPT) -c src/netwibtest_net_ip.c -I. $(GCCINC) -o src/netwibtest_net_ip.o
+src/netwibtest_net_eth.o: src/netwibtest_net_eth.c $(netwibnetethh) $(netwibnetethc) $(NETWIBTESTDEP)
+	$(CC) $(GCCOPT) -c src/netwibtest_net_eth.c -I. $(GCCINC) -o src/netwibtest_net_eth.o
+src/netwibtest_net_port.o: src/netwibtest_net_port.c $(netwibnetporth) $(netwibnetportc) $(NETWIBTESTDEP)
+	$(CC) $(GCCOPT) -c src/netwibtest_net_port.c -I. $(GCCINC) -o src/netwibtest_net_port.o
+src/netwibtest_net_ips.o: src/netwibtest_net_ips.c $(netwibnetipsh) $(netwibnetipsc) $(NETWIBTESTDEP)
+	$(CC) $(GCCOPT) -c src/netwibtest_net_ips.c -I. $(GCCINC) -o src/netwibtest_net_ips.o
+src/netwibtest_net_ipsi.o: src/netwibtest_net_ipsi.c $(netwibnetipsih) $(netwibnetipsic) $(NETWIBTESTDEP)
+	$(CC) $(GCCOPT) -c src/netwibtest_net_ipsi.c -I. $(GCCINC) -o src/netwibtest_net_ipsi.o
+src/netwibtest_net_eths.o: src/netwibtest_net_eths.c $(netwibnetethsh) $(netwibnetethsc) $(NETWIBTESTDEP)
+	$(CC) $(GCCOPT) -c src/netwibtest_net_eths.c -I. $(GCCINC) -o src/netwibtest_net_eths.o
+src/netwibtest_net_ethsi.o: src/netwibtest_net_ethsi.c $(netwibnetethsih) $(netwibnetethsic) $(NETWIBTESTDEP)
+	$(CC) $(GCCOPT) -c src/netwibtest_net_ethsi.c -I. $(GCCINC) -o src/netwibtest_net_ethsi.o
+src/netwibtest_net_ports.o: src/netwibtest_net_ports.c $(netwibnetportsh) $(netwibnetportsc) $(NETWIBTESTDEP)
+	$(CC) $(GCCOPT) -c src/netwibtest_net_ports.c -I. $(GCCINC) -o src/netwibtest_net_ports.o
+src/netwibtest_net_portsi.o: src/netwibtest_net_portsi.c $(netwibnetportsih) $(netwibnetportsic) $(NETWIBTESTDEP)
+	$(CC) $(GCCOPT) -c src/netwibtest_net_portsi.c -I. $(GCCINC) -o src/netwibtest_net_portsi.o
+src/netwibtest_net_conf.o: src/netwibtest_net_conf.c $(netwibnetconfh) $(netwibnetconfc) $(NETWIBTESTDEP)
+	$(CC) $(GCCOPT) -c src/netwibtest_net_conf.c -I. $(GCCINC) -o src/netwibtest_net_conf.o
+src/netwibtest_net_confdev.o: src/netwibtest_net_confdev.c $(netwibnetconfdevh) $(netwibnetconfdevc) $(NETWIBTESTDEP)
+	$(CC) $(GCCOPT) -c src/netwibtest_net_confdev.c -I. $(GCCINC) -o src/netwibtest_net_confdev.o
+src/netwibtest_net_confip.o: src/netwibtest_net_confip.c $(netwibnetconfiph) $(netwibnetconfipc) $(NETWIBTESTDEP)
+	$(CC) $(GCCOPT) -c src/netwibtest_net_confip.c -I. $(GCCINC) -o src/netwibtest_net_confip.o
+src/netwibtest_net_confarp.o: src/netwibtest_net_confarp.c $(netwibnetconfarph) $(netwibnetconfarpc) $(NETWIBTESTDEP)
+	$(CC) $(GCCOPT) -c src/netwibtest_net_confarp.c -I. $(GCCINC) -o src/netwibtest_net_confarp.o
+src/netwibtest_net_confrout.o: src/netwibtest_net_confrout.c $(netwibnetconfrouth) $(netwibnetconfroutc) $(NETWIBTESTDEP)
+	$(CC) $(GCCOPT) -c src/netwibtest_net_confrout.c -I. $(GCCINC) -o src/netwibtest_net_confrout.o
+src/netwibtest_net_sock.o: src/netwibtest_net_sock.c $(netwibnetsockh) $(netwibnetsockc) $(NETWIBTESTDEP)
+	$(CC) $(GCCOPT) -c src/netwibtest_net_sock.c -I. $(GCCINC) -o src/netwibtest_net_sock.o
+src/netwibtest_net_sniff.o: src/netwibtest_net_sniff.c $(netwibnetsniffh) $(netwibnetsniffc) $(NETWIBTESTDEP)
+	$(CC) $(GCCOPT) -c src/netwibtest_net_sniff.c -I. $(GCCINC) -o src/netwibtest_net_sniff.o
+src/netwibtest_net_spoof.o: src/netwibtest_net_spoof.c $(netwibnetspoofh) $(netwibnetspoofc) $(NETWIBTESTDEP)
+	$(CC) $(GCCOPT) -c src/netwibtest_net_spoof.c -I. $(GCCINC) -o src/netwibtest_net_spoof.o
+src/netwibtest_pkt_priv.o: src/netwibtest_pkt_priv.c $(netwibpktprivh) $(netwibpktprivc) $(NETWIBTESTDEP)
+	$(CC) $(GCCOPT) -c src/netwibtest_pkt_priv.c -I. $(GCCINC) -o src/netwibtest_pkt_priv.o
+src/netwibtest_pkt_debug.o: src/netwibtest_pkt_debug.c $(netwibpktdebugh) $(netwibpktdebugc) $(NETWIBTESTDEP)
+	$(CC) $(GCCOPT) -c src/netwibtest_pkt_debug.c -I. $(GCCINC) -o src/netwibtest_pkt_debug.o
+src/netwibtest_pkt_linkhdr.o: src/netwibtest_pkt_linkhdr.c $(netwibpktlinkhdrh) $(netwibpktlinkhdrc) $(NETWIBTESTDEP)
+	$(CC) $(GCCOPT) -c src/netwibtest_pkt_linkhdr.c -I. $(GCCINC) -o src/netwibtest_pkt_linkhdr.o
+src/netwibtest_pkt_iphdr.o: src/netwibtest_pkt_iphdr.c $(netwibpktiphdrh) $(netwibpktiphdrc) $(NETWIBTESTDEP)
+	$(CC) $(GCCOPT) -c src/netwibtest_pkt_iphdr.c -I. $(GCCINC) -o src/netwibtest_pkt_iphdr.o
+src/netwibtest_pkt_ip4opt.o: src/netwibtest_pkt_ip4opt.c $(netwibpktip4opth) $(netwibpktip4optc) $(NETWIBTESTDEP)
+	$(CC) $(GCCOPT) -c src/netwibtest_pkt_ip4opt.c -I. $(GCCINC) -o src/netwibtest_pkt_ip4opt.o
+src/netwibtest_pkt_ip4opts.o: src/netwibtest_pkt_ip4opts.c $(netwibpktip4optsh) $(netwibpktip4optsc) $(NETWIBTESTDEP)
+	$(CC) $(GCCOPT) -c src/netwibtest_pkt_ip4opts.c -I. $(GCCINC) -o src/netwibtest_pkt_ip4opts.o
+src/netwibtest_pkt_ip6ext.o: src/netwibtest_pkt_ip6ext.c $(netwibpktip6exth) $(netwibpktip6extc) $(NETWIBTESTDEP)
+	$(CC) $(GCCOPT) -c src/netwibtest_pkt_ip6ext.c -I. $(GCCINC) -o src/netwibtest_pkt_ip6ext.o
+src/netwibtest_pkt_ip6exts.o: src/netwibtest_pkt_ip6exts.c $(netwibpktip6extsh) $(netwibpktip6extsc) $(NETWIBTESTDEP)
+	$(CC) $(GCCOPT) -c src/netwibtest_pkt_ip6exts.c -I. $(GCCINC) -o src/netwibtest_pkt_ip6exts.o
+src/netwibtest_pkt_arphdr.o: src/netwibtest_pkt_arphdr.c $(netwibpktarphdrh) $(netwibpktarphdrc) $(NETWIBTESTDEP)
+	$(CC) $(GCCOPT) -c src/netwibtest_pkt_arphdr.c -I. $(GCCINC) -o src/netwibtest_pkt_arphdr.o
+src/netwibtest_pkt_tcphdr.o: src/netwibtest_pkt_tcphdr.c $(netwibpkttcphdrh) $(netwibpkttcphdrc) $(NETWIBTESTDEP)
+	$(CC) $(GCCOPT) -c src/netwibtest_pkt_tcphdr.c -I. $(GCCINC) -o src/netwibtest_pkt_tcphdr.o
+src/netwibtest_pkt_udphdr.o: src/netwibtest_pkt_udphdr.c $(netwibpktudphdrh) $(netwibpktudphdrc) $(NETWIBTESTDEP)
+	$(CC) $(GCCOPT) -c src/netwibtest_pkt_udphdr.c -I. $(GCCINC) -o src/netwibtest_pkt_udphdr.o
+src/netwibtest_pkt_tcpopt.o: src/netwibtest_pkt_tcpopt.c $(netwibpkttcpopth) $(netwibpkttcpoptc) $(NETWIBTESTDEP)
+	$(CC) $(GCCOPT) -c src/netwibtest_pkt_tcpopt.c -I. $(GCCINC) -o src/netwibtest_pkt_tcpopt.o
+src/netwibtest_pkt_tcpopts.o: src/netwibtest_pkt_tcpopts.c $(netwibpkttcpoptsh) $(netwibpkttcpoptsc) $(NETWIBTESTDEP)
+	$(CC) $(GCCOPT) -c src/netwibtest_pkt_tcpopts.c -I. $(GCCINC) -o src/netwibtest_pkt_tcpopts.o
+src/netwibtest_pkt_ip64bits.o: src/netwibtest_pkt_ip64bits.c $(netwibpktip64bitsh) $(netwibpktip64bitsc) $(NETWIBTESTDEP)
+	$(CC) $(GCCOPT) -c src/netwibtest_pkt_ip64bits.c -I. $(GCCINC) -o src/netwibtest_pkt_ip64bits.o
+src/netwibtest_pkt_icmp4.o: src/netwibtest_pkt_icmp4.c $(netwibpkticmp4h) $(netwibpkticmp4c) $(NETWIBTESTDEP)
+	$(CC) $(GCCOPT) -c src/netwibtest_pkt_icmp4.c -I. $(GCCINC) -o src/netwibtest_pkt_icmp4.o
+src/netwibtest_pkt_icmp6.o: src/netwibtest_pkt_icmp6.c $(netwibpkticmp6h) $(netwibpkticmp6c) $(NETWIBTESTDEP)
+	$(CC) $(GCCOPT) -c src/netwibtest_pkt_icmp6.c -I. $(GCCINC) -o src/netwibtest_pkt_icmp6.o
+src/netwibtest_pkt_icmp6nd.o: src/netwibtest_pkt_icmp6nd.c $(netwibpkticmp6ndh) $(netwibpkticmp6ndc) $(NETWIBTESTDEP)
+	$(CC) $(GCCOPT) -c src/netwibtest_pkt_icmp6nd.c -I. $(GCCINC) -o src/netwibtest_pkt_icmp6nd.o
+src/netwibtest_pkt_layer.o: src/netwibtest_pkt_layer.c $(netwibpktlayerh) $(netwibpktlayerc) $(NETWIBTESTDEP)
+	$(CC) $(GCCOPT) -c src/netwibtest_pkt_layer.c -I. $(GCCINC) -o src/netwibtest_pkt_layer.o
+src/netwibtest_pkt_packet.o: src/netwibtest_pkt_packet.c $(netwibpktpacketh) $(netwibpktpacketc) $(NETWIBTESTDEP)
+	$(CC) $(GCCOPT) -c src/netwibtest_pkt_packet.c -I. $(GCCINC) -o src/netwibtest_pkt_packet.o
+src/netwibtest_pkt_conv.o: src/netwibtest_pkt_conv.c $(netwibpktconvh) $(netwibpktconvc) $(NETWIBTESTDEP)
+	$(CC) $(GCCOPT) -c src/netwibtest_pkt_conv.c -I. $(GCCINC) -o src/netwibtest_pkt_conv.o
+src/netwibtest_pkt_ipfrag.o: src/netwibtest_pkt_ipfrag.c $(netwibpktipfragh) $(netwibpktipfragc) $(NETWIBTESTDEP)
+	$(CC) $(GCCOPT) -c src/netwibtest_pkt_ipfrag.c -I. $(GCCINC) -o src/netwibtest_pkt_ipfrag.o
+src/netwibtest_shw_priv.o: src/netwibtest_shw_priv.c $(netwibshwprivh) $(netwibshwprivc) $(NETWIBTESTDEP)
+	$(CC) $(GCCOPT) -c src/netwibtest_shw_priv.c -I. $(GCCINC) -o src/netwibtest_shw_priv.o
+src/netwibtest_shw_debug.o: src/netwibtest_shw_debug.c $(netwibshwdebugh) $(netwibshwdebugc) $(NETWIBTESTDEP)
+	$(CC) $(GCCOPT) -c src/netwibtest_shw_debug.c -I. $(GCCINC) -o src/netwibtest_shw_debug.o
+src/netwibtest_shw_array.o: src/netwibtest_shw_array.c $(netwibshwarrayh) $(netwibshwarrayc) $(NETWIBTESTDEP)
+	$(CC) $(GCCOPT) -c src/netwibtest_shw_array.c -I. $(GCCINC) -o src/netwibtest_shw_array.o
+src/netwibtest_shw_linkhdr.o: src/netwibtest_shw_linkhdr.c $(netwibshwlinkhdrh) $(netwibshwlinkhdrc) $(NETWIBTESTDEP)
+	$(CC) $(GCCOPT) -c src/netwibtest_shw_linkhdr.c -I. $(GCCINC) -o src/netwibtest_shw_linkhdr.o
+src/netwibtest_shw_iphdr.o: src/netwibtest_shw_iphdr.c $(netwibshwiphdrh) $(netwibshwiphdrc) $(NETWIBTESTDEP)
+	$(CC) $(GCCOPT) -c src/netwibtest_shw_iphdr.c -I. $(GCCINC) -o src/netwibtest_shw_iphdr.o
+src/netwibtest_shw_ip4opt.o: src/netwibtest_shw_ip4opt.c $(netwibshwip4opth) $(netwibshwip4optc) $(NETWIBTESTDEP)
+	$(CC) $(GCCOPT) -c src/netwibtest_shw_ip4opt.c -I. $(GCCINC) -o src/netwibtest_shw_ip4opt.o
+src/netwibtest_shw_ip4opts.o: src/netwibtest_shw_ip4opts.c $(netwibshwip4optsh) $(netwibshwip4optsc) $(NETWIBTESTDEP)
+	$(CC) $(GCCOPT) -c src/netwibtest_shw_ip4opts.c -I. $(GCCINC) -o src/netwibtest_shw_ip4opts.o
+src/netwibtest_shw_ip6ext.o: src/netwibtest_shw_ip6ext.c $(netwibshwip6exth) $(netwibshwip6extc) $(NETWIBTESTDEP)
+	$(CC) $(GCCOPT) -c src/netwibtest_shw_ip6ext.c -I. $(GCCINC) -o src/netwibtest_shw_ip6ext.o
+src/netwibtest_shw_ip6exts.o: src/netwibtest_shw_ip6exts.c $(netwibshwip6extsh) $(netwibshwip6extsc) $(NETWIBTESTDEP)
+	$(CC) $(GCCOPT) -c src/netwibtest_shw_ip6exts.c -I. $(GCCINC) -o src/netwibtest_shw_ip6exts.o
+src/netwibtest_shw_arphdr.o: src/netwibtest_shw_arphdr.c $(netwibshwarphdrh) $(netwibshwarphdrc) $(NETWIBTESTDEP)
+	$(CC) $(GCCOPT) -c src/netwibtest_shw_arphdr.c -I. $(GCCINC) -o src/netwibtest_shw_arphdr.o
+src/netwibtest_shw_tcphdr.o: src/netwibtest_shw_tcphdr.c $(netwibshwtcphdrh) $(netwibshwtcphdrc) $(NETWIBTESTDEP)
+	$(CC) $(GCCOPT) -c src/netwibtest_shw_tcphdr.c -I. $(GCCINC) -o src/netwibtest_shw_tcphdr.o
+src/netwibtest_shw_udphdr.o: src/netwibtest_shw_udphdr.c $(netwibshwudphdrh) $(netwibshwudphdrc) $(NETWIBTESTDEP)
+	$(CC) $(GCCOPT) -c src/netwibtest_shw_udphdr.c -I. $(GCCINC) -o src/netwibtest_shw_udphdr.o
+src/netwibtest_shw_tcpopt.o: src/netwibtest_shw_tcpopt.c $(netwibshwtcpopth) $(netwibshwtcpoptc) $(NETWIBTESTDEP)
+	$(CC) $(GCCOPT) -c src/netwibtest_shw_tcpopt.c -I. $(GCCINC) -o src/netwibtest_shw_tcpopt.o
+src/netwibtest_shw_tcpopts.o: src/netwibtest_shw_tcpopts.c $(netwibshwtcpoptsh) $(netwibshwtcpoptsc) $(NETWIBTESTDEP)
+	$(CC) $(GCCOPT) -c src/netwibtest_shw_tcpopts.c -I. $(GCCINC) -o src/netwibtest_shw_tcpopts.o
+src/netwibtest_shw_icmp4.o: src/netwibtest_shw_icmp4.c $(netwibshwicmp4h) $(netwibshwicmp4c) $(NETWIBTESTDEP)
+	$(CC) $(GCCOPT) -c src/netwibtest_shw_icmp4.c -I. $(GCCINC) -o src/netwibtest_shw_icmp4.o
+src/netwibtest_shw_icmp6.o: src/netwibtest_shw_icmp6.c $(netwibshwicmp6h) $(netwibshwicmp6c) $(NETWIBTESTDEP)
+	$(CC) $(GCCOPT) -c src/netwibtest_shw_icmp6.c -I. $(GCCINC) -o src/netwibtest_shw_icmp6.o
+src/netwibtest_shw_icmp6nd.o: src/netwibtest_shw_icmp6nd.c $(netwibshwicmp6ndh) $(netwibshwicmp6ndc) $(NETWIBTESTDEP)
+	$(CC) $(GCCOPT) -c src/netwibtest_shw_icmp6nd.c -I. $(GCCINC) -o src/netwibtest_shw_icmp6nd.o
+src/netwibtest_shw_packet.o: src/netwibtest_shw_packet.c $(netwibshwpacketh) $(netwibshwpacketc) $(NETWIBTESTDEP)
+	$(CC) $(GCCOPT) -c src/netwibtest_shw_packet.c -I. $(GCCINC) -o src/netwibtest_shw_packet.o
+
+# cleaning test objects
+incmakecleantobj:
+	rm -f src/netwibtest_dat_priv.o
+	rm -f src/netwibtest_dat_debug.o
+	rm -f src/netwibtest_dat_c.o
+	rm -f src/netwibtest_dat_c2.o
+	rm -f src/netwibtest_dat_ptr.o
+	rm -f src/netwibtest_dat_buf.o
+	rm -f src/netwibtest_dat_bufpool.o
+	rm -f src/netwibtest_dat_bufenc.o
+	rm -f src/netwibtest_dat_bufdec.o
+	rm -f src/netwibtest_dat_fmt.o
+	rm -f src/netwibtest_dat_checksum.o
+	rm -f src/netwibtest_dat_regexp.o
+	rm -f src/netwibtest_dat_ring.o
+	rm -f src/netwibtest_dat_ringi.o
+	rm -f src/netwibtest_dat_hash.o
+	rm -f src/netwibtest_dat_hashi.o
+	rm -f src/netwibtest_dat_tlv.o
+	rm -f src/netwibtest_dat_array.o
+	rm -f src/netwibtest_dat_uint64.o
+	rm -f src/netwibtest_sys_priv.o
+	rm -f src/netwibtest_sys_debug.o
+	rm -f src/netwibtest_sys_time.o
+	rm -f src/netwibtest_sys_rand.o
+	rm -f src/netwibtest_sys_path.o
+	rm -f src/netwibtest_sys_pathname.o
+	rm -f src/netwibtest_sys_pathstat.o
+	rm -f src/netwibtest_sys_dirname.o
+	rm -f src/netwibtest_sys_filename.o
+	rm -f src/netwibtest_sys_dir.o
+	rm -f src/netwibtest_sys_thread.o
+	rm -f src/netwibtest_sys_threadmut.o
+	rm -f src/netwibtest_sys_threadrwl.o
+	rm -f src/netwibtest_sys_threadcond.o
+	rm -f src/netwibtest_sys_threadtsd.o
+	rm -f src/netwibtest_sys_threadlist.o
+	rm -f src/netwibtest_sys_io.o
+	rm -f src/netwibtest_sys_ionew.o
+	rm -f src/netwibtest_sys_iousual.o
+	rm -f src/netwibtest_sys_wait.o
+	rm -f src/netwibtest_sys_waitlist.o
+	rm -f src/netwibtest_sys_file.o
+	rm -f src/netwibtest_sys_fd.o
+	rm -f src/netwibtest_sys_stream.o
+	rm -f src/netwibtest_sys_kbd.o
+	rm -f src/netwibtest_sys_kbdchar.o
+	rm -f src/netwibtest_sys_kbdint.o
+	rm -f src/netwibtest_sys_kbdbuf.o
+	rm -f src/netwibtest_sys_kbdpress.o
+	rm -f src/netwibtest_sys_screen.o
+	rm -f src/netwibtest_sys_bufenc.o
+	rm -f src/netwibtest_sys_bufdec.o
+	rm -f src/netwibtest_sys_disp.o
+	rm -f src/netwibtest_sys_record.o
+	rm -f src/netwibtest_sys_beep.o
+	rm -f src/netwibtest_sys_global.o
+	rm -f src/netwibtest_sys_init.o
+	rm -f src/netwibtest_sys_error.o
+	rm -f src/netwibtest_sys_internal.o
+	rm -f src/netwibtest_sys_unix.o
+	rm -f src/netwibtest_sys_windows.o
+	rm -f src/netwibtest_net_priv.o
+	rm -f src/netwibtest_net_debug.o
+	rm -f src/netwibtest_net_device.o
+	rm -f src/netwibtest_net_ip.o
+	rm -f src/netwibtest_net_eth.o
+	rm -f src/netwibtest_net_port.o
+	rm -f src/netwibtest_net_ips.o
+	rm -f src/netwibtest_net_ipsi.o
+	rm -f src/netwibtest_net_eths.o
+	rm -f src/netwibtest_net_ethsi.o
+	rm -f src/netwibtest_net_ports.o
+	rm -f src/netwibtest_net_portsi.o
+	rm -f src/netwibtest_net_conf.o
+	rm -f src/netwibtest_net_confdev.o
+	rm -f src/netwibtest_net_confip.o
+	rm -f src/netwibtest_net_confarp.o
+	rm -f src/netwibtest_net_confrout.o
+	rm -f src/netwibtest_net_sock.o
+	rm -f src/netwibtest_net_sniff.o
+	rm -f src/netwibtest_net_spoof.o
+	rm -f src/netwibtest_pkt_priv.o
+	rm -f src/netwibtest_pkt_debug.o
+	rm -f src/netwibtest_pkt_linkhdr.o
+	rm -f src/netwibtest_pkt_iphdr.o
+	rm -f src/netwibtest_pkt_ip4opt.o
+	rm -f src/netwibtest_pkt_ip4opts.o
+	rm -f src/netwibtest_pkt_ip6ext.o
+	rm -f src/netwibtest_pkt_ip6exts.o
+	rm -f src/netwibtest_pkt_arphdr.o
+	rm -f src/netwibtest_pkt_tcphdr.o
+	rm -f src/netwibtest_pkt_udphdr.o
+	rm -f src/netwibtest_pkt_tcpopt.o
+	rm -f src/netwibtest_pkt_tcpopts.o
+	rm -f src/netwibtest_pkt_ip64bits.o
+	rm -f src/netwibtest_pkt_icmp4.o
+	rm -f src/netwibtest_pkt_icmp6.o
+	rm -f src/netwibtest_pkt_icmp6nd.o
+	rm -f src/netwibtest_pkt_layer.o
+	rm -f src/netwibtest_pkt_packet.o
+	rm -f src/netwibtest_pkt_conv.o
+	rm -f src/netwibtest_pkt_ipfrag.o
+	rm -f src/netwibtest_shw_priv.o
+	rm -f src/netwibtest_shw_debug.o
+	rm -f src/netwibtest_shw_array.o
+	rm -f src/netwibtest_shw_linkhdr.o
+	rm -f src/netwibtest_shw_iphdr.o
+	rm -f src/netwibtest_shw_ip4opt.o
+	rm -f src/netwibtest_shw_ip4opts.o
+	rm -f src/netwibtest_shw_ip6ext.o
+	rm -f src/netwibtest_shw_ip6exts.o
+	rm -f src/netwibtest_shw_arphdr.o
+	rm -f src/netwibtest_shw_tcphdr.o
+	rm -f src/netwibtest_shw_udphdr.o
+	rm -f src/netwibtest_shw_tcpopt.o
+	rm -f src/netwibtest_shw_tcpopts.o
+	rm -f src/netwibtest_shw_icmp4.o
+	rm -f src/netwibtest_shw_icmp6.o
+	rm -f src/netwibtest_shw_icmp6nd.o
+	rm -f src/netwibtest_shw_packet.o

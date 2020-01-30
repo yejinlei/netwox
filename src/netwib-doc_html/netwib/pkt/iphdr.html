@@ -1,0 +1,110 @@
+<HTML><HEAD>
+<TITLE>netwib doc_html (version 5.39.0)</TITLE>
+</HEAD><BODY BGCOLOR="#FFFFFF" TEXT="#000000">
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../pkt.html">section index</A></H2><HR><BR>
+<PRE>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000"><B>/***************************************************************
+ * A <FONT COLOR="#000088">netwib_iphdr</FONT> permits to store :                           *
+ *  - an IPv4 header (rfc 791), or                             *
+ *  - an IPv6 header (rfc 2460)                                *
+ ***************************************************************/</B></FONT>
+typedef struct {
+  <FONT COLOR="#880000">/* common fields */</FONT>
+  <FONT COLOR="#000088">netwib_iptype</FONT> iptype;
+  <FONT COLOR="#000088">netwib_ip</FONT> src;
+  <FONT COLOR="#000088">netwib_ip</FONT> dst;
+  <FONT COLOR="#000088">netwib_uint8</FONT> ttl;
+  <FONT COLOR="#000088">netwib_ipproto</FONT> protocol;
+  <FONT COLOR="#880000">/* specific fields */</FONT>
+  union {
+    struct {
+      <FONT COLOR="#000088">netwib_uint8</FONT> ihl;
+      <FONT COLOR="#000088">netwib_uint8</FONT> tos;
+      <FONT COLOR="#000088">netwib_uint16</FONT> totlen;
+      <FONT COLOR="#000088">netwib_uint16</FONT> id;
+      <FONT COLOR="#000088">netwib_bool</FONT> reserved;
+      <FONT COLOR="#000088">netwib_bool</FONT> dontfrag;
+      <FONT COLOR="#000088">netwib_bool</FONT> morefrag;
+      <FONT COLOR="#000088">netwib_uint16</FONT> offsetfrag;
+      <FONT COLOR="#000088">netwib_uint16</FONT> check;
+      <FONT COLOR="#000088">netwib_bufext</FONT> opts; <FONT COLOR="#880000">/* IPv4 options as defined in ip4opts.h */</FONT>
+    } ip4;
+    struct {
+      <FONT COLOR="#000088">netwib_uint8</FONT> trafficclass;
+      <FONT COLOR="#000088">netwib_uint32</FONT> flowlabel;
+      <FONT COLOR="#000088">netwib_uint16</FONT> payloadlength;
+      <FONT COLOR="#000088">netwib_bufext</FONT> exts; <FONT COLOR="#880000">/* IPv6 extensions as defined in ip6exts.h */</FONT>
+    } ip6;
+  } header;
+} <FONT COLOR="#000088">netwib_iphdr</FONT>;
+typedef const <FONT COLOR="#000088">netwib_iphdr</FONT> <FONT COLOR="#000088">netwib_constiphdr</FONT>;
+<FONT COLOR="#008800">#define <FONT COLOR="#000044">NETWIB_IPHDR_MINLEN</FONT> 40</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_iphdr_initdefault
+   Description :
+     Initialize a <FONT COLOR="#000088">netwib_iphdr</FONT> with default values.
+   Input parameter(s) :
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *piphdr : <FONT COLOR="#000088">netwib_iphdr</FONT> to initialize
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_iphdr_initdefault</B>(<FONT COLOR="#000088">netwib_iptype</FONT> iptype,
+                                    <FONT COLOR="#000088">netwib_iphdr</FONT> *piphdr);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_pkt_append_iphdr
+   Description :
+     Initialize physical data from a netwib_iphdr.
+   Input parameter(s) :
+     *piphdr : netwib_iphdr
+   Input/output parameter(s) :
+     *ppht : buffer to initialize
+   Output parameter(s) :
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_pkt_append_iphdr</B>(<FONT COLOR="#000088">netwib_constiphdr</FONT> *piphdr,
+                                   <FONT COLOR="#000088">netwib_buf</FONT> *ppkt);
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_pkt_prepend_iphdr</B>(<FONT COLOR="#000088">netwib_constiphdr</FONT> *piphdr,
+                                    <FONT COLOR="#000088">netwib_buf</FONT> *ppkt);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_pkt_decode_iphdr
+   Description :
+     Decode a <FONT COLOR="#000088">netwib_iphdr</FONT> from physical data.
+   Input parameter(s) :
+     *ppkt : buffer containing physical data
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *piphdr : <FONT COLOR="#000088">netwib_iphdr</FONT> contained in pkt
+     *pskipsize : size to use to skip this header
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+     <FONT COLOR="#000044">NETWIB_ERR_NOTCONVERTED</FONT> : pkt could not be decoded
+     <FONT COLOR="#000044">NETWIB_ERR_DATAMISSING</FONT> : pkt was not big enough
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_pkt_decode_iphdr</B>(<FONT COLOR="#000088">netwib_constbuf</FONT> *ppkt,
+                                   <FONT COLOR="#000088">netwib_iphdr</FONT> *piphdr,
+                                   <FONT COLOR="#000088">netwib_uint32</FONT> *pskipsize);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000"><B>/***************************************************************
+ * A <FONT COLOR="#000088">netwib_iphdr</FONT> contains a protocol field, it is stored :    *
+ *  - IPv4 : in header.protocol                                *
+ *  - IPv6 : if exts is empty : in header.protocol,            *
+ *           else : in last extension of header.ip6.exts       *
+ ***************************************************************/</B></FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_iphdr_set_proto</B>(<FONT COLOR="#000088">netwib_iphdr</FONT> *piphdr,
+                                  <FONT COLOR="#000088">netwib_ipproto</FONT> ipproto);
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_iphdr_get_proto</B>(<FONT COLOR="#000088">netwib_constiphdr</FONT> *piphdr,
+                                  <FONT COLOR="#000088">netwib_ipproto</FONT> *pipproto);
+</PRE><BR><BR><HR><BR>
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../pkt.html">section index</A></H2>
+</BODY></HTML>

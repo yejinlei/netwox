@@ -1,0 +1,103 @@
+<HTML><HEAD>
+<TITLE>netwib doc_html (version 5.39.0)</TITLE>
+</HEAD><BODY BGCOLOR="#FFFFFF" TEXT="#000000">
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../sys.html">section index</A></H2><HR><BR>
+<PRE>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+typedef struct {
+  <FONT COLOR="#000088">netwib_wait</FONT> *pwait;
+  <FONT COLOR="#000088">netwib_uint32</FONT> waitident; <FONT COLOR="#880000">/* because waitid exists */</FONT>
+} <FONT COLOR="#000088">netwib_waitringitem</FONT>;
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_waitlist_init
+   Description :
+     Initialize a list of events. It can be use to wait for more
+     than 5 event (otherwise use netwib_wait_wait5) which is
+     easier.
+   Input parameter(s) :
+   Input/output parameter(s) :
+     **ppring : ring initialized
+   Output parameter(s) :
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_waitlist_init</B>(<FONT COLOR="#000088">netwib_ring</FONT> **ppring);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_waitlist_add
+   Description :
+     Add an event to the waiting ring.
+   Input parameter(s) :
+     waitident : id of the item to add (any value chosen by user)
+     *pwait : <FONT COLOR="#000088">netwib_wait</FONT> to add
+   Input/output parameter(s) :
+     *pring : ring where to add items
+   Output parameter(s) :
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_waitlist_add</B>(<FONT COLOR="#000088">netwib_ring</FONT> *pring,
+                               <FONT COLOR="#000088">netwib_wait</FONT> *pwait,
+                               <FONT COLOR="#000088">netwib_uint32</FONT> waitident);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_waitlist_del
+   Description :
+     Remove an event to the waiting ring.
+   Input parameter(s) :
+     waitident : id of the item to remove
+   Input/output parameter(s) :
+     *pring : ring where to remove items
+   Output parameter(s) :
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_waitlist_del</B>(<FONT COLOR="#000088">netwib_ring</FONT> *pring,
+                               <FONT COLOR="#000088">netwib_uint32</FONT> waitident);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_waitlist_wait
+   Description :
+     Wait for an event in the waiting ring. The netwib_wait
+     is never closed by this function (different behavior
+     compared to netwib_threadlist_wait).
+   Input parameter(s) :
+     *pabstime : end time
+   Input/output parameter(s) :
+     *pring : ring where to wait for
+   Output parameter(s) :
+     *pevent : true if an event occurred. If *pabstime is
+               reached *pevent is set to <FONT COLOR="#000044">NETWIB_FALSE</FONT>.
+     *pringofwaitid : ring of all events id
+                      This ring contains netwib_uintptr
+                      cast-ed to netwib_ptr. This ring is
+                      initialized only when there is an event.
+                      It's user's job to close this ring with :
+                  <B>netwib_ring_close</B>(ppringofwaitid, <FONT COLOR="#000044">NETWIB_FALSE</FONT>)
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+     <FONT COLOR="#000044">NETWIB_ERR_DATAEND</FONT>: ring is empty
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_waitlist_wait</B>(<FONT COLOR="#000088">netwib_ring</FONT> *pring,
+                                <FONT COLOR="#000088">netwib_consttime</FONT> *pabstime,
+                                <FONT COLOR="#000088">netwib_bool</FONT> *pevent,
+                                <FONT COLOR="#000088">netwib_ring</FONT> **ppringofwaitid);
+<FONT COLOR="#008800">#define <B>netwib_waitlist_waitident_init_ptr</B>(p) ((netwib_uint32)(netwib_uintptr)(p))</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000"><B>/***************************************************************
+ * For other functions, you can directly use functions of      *
+ * ring.h.                                                     *
+ * To do so, booleans "eraseitems" and "duplicateitems" have   *
+ * be set to <FONT COLOR="#000044">NETWIB_TRUE</FONT>. See <FONT COLOR="#000088">netwib_waitlist_close</FONT> for        *
+ * example.                                                    *
+ ***************************************************************/</B></FONT>
+
+<FONT COLOR="#008800">#define <B>netwib_waitlist_close</B>(ppring) <B>netwib_ring_close</B>(ppring,<FONT COLOR="#000044">NETWIB_TRUE</FONT>)</FONT>
+</PRE><BR><BR><HR><BR>
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../sys.html">section index</A></H2>
+</BODY></HTML>

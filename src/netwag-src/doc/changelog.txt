@@ -1,0 +1,522 @@
+             Laurent CONSTANTIN's network toolbox (netwag)
+
+
+            ----------------------------------------------
+            |              NETWAG 's CHANGELOG           |
+            ----------------------------------------------
+
+
+---------------------------------------------------------------------
+Version 5.39.0 - 8-Jul-2012
+
+ ++ fixed bugs ++
+  - Depending on the theme, select buttons were in black on black.
+    So, do not force a "-selectcolor" option.
+  - On Windows 7 with ActiveTcl 8.5.11, popups are opened behind
+    the main window, and the focus is not restored when popups are
+    closed.
+
+ ++ minor evolutions ++
+  - Update the url of the website: http://ntwag.sourceforge.net/
+
+---------------------------------------------------------------------
+Version 5.38.0 - 14-Fev-2010
+
+No change. Just a synchronization with the latest version of netwox.
+
+---------------------------------------------------------------------
+Version 5.37.0 - 19-Dec-2009
+
+ ++ major evolutions ++
+  - Change GPLv2 to GPLv3.
+
+
+---------------------------------------------------------------------
+Version 5.36.0 - 01-Nov-2008
+
+ ++ fixed bugs ++
+  - Help message for remote information notebook was a copy of
+    another help message.
+  - Installation directories were not created with mode 0755, so if
+    root has a strict umask, users could not read the files in the
+    directories.
+
+
+---------------------------------------------------------------------
+Version 5.35.0 - 05-Oct-2006
+
+ ++ fixed bugs ++
+  - Help messages of send button and echo checkbox were reversed.
+
+ ++ major evolutions ++
+    None in this version
+
+ ++ minor evolutions ++
+    None in this version
+
+ ++ internal evolutions (not seen by end users) ++
+    None in this version
+
+
+---------------------------------------------------------------------
+Version 5.34.0 - 05-Apr-2006
+
+No change. Just a synchronization with the latest version of netwox.
+
+---------------------------------------------------------------------
+Version 5.33.0 - 20-December-2005
+
+No change. Just a synchronization with the latest version of netwox.
+
+---------------------------------------------------------------------
+Version 5.32.0 - 24-November-2005
+
+No change. Just a synchronization with the latest version of netwox.
+
+---------------------------------------------------------------------
+Version 5.31.0 - 12-October-2005
+
+No change. Just a synchronization with the latest version of netwox.
+
+---------------------------------------------------------------------
+Version 5.30.0 - 30-March-2005
+
+No change. Just a synchronization with the latest version of netwox.
+
+---------------------------------------------------------------------
+Version 5.29.0 - 21-February-2005
+ ++ important ++
+    As some of you noticed, netw project paused since January 1st.
+    This is due to my professional/enterprise project where I have to
+    do a lot of private work. It should end on september, so I expect
+    to be back on netw on october. In the meantime, bugs will be
+    corrected, but no major tool is expected. Note: don't worry, my
+    boss is not forcing me to work on WE, but I want this project to
+    take a giant step :-)
+
+ ++ fixed bugs ++
+    None in this version
+
+ ++ major evolutions ++
+    None in this version
+
+ ++ minor evolutions ++
+  - In Search sub-notebook, the tree/sort view choice is saved in
+    session file.
+
+ ++ internal evolutions (not seen by end users) ++
+    None in this version
+
+ ++ notes ++
+  - Under Unix, when netwag is installed, no desktop icon/menu is
+    added. Icons are in netwag-src/misc/unix/ico directory (named
+    ico_netw-16x16.xpm and ico_netw-32x32.xpm). You have to add a
+    desktop icon/menu pointing to /usr/local/bin/netwag. As the exact
+    procedure depends on desktop (Gnome, KDE, FVWM, etc.), it can
+    be complicated, so it is not done during installation process.
+  - Control-K key binding permits to remove text from current
+    position to end of field. For example, in Form notebook, an entry
+    may contain 1.2.3.4, and you want to replace it by 5.6.7.8: click
+    at entry beginning, press Control-K, write/paste 5.6.7.8.
+
+---------------------------------------------------------------------
+Version 5.28.0 - 05-January-2005
+ ++ fixed bugs ++
+    None in this version
+
+ ++ major evolutions ++
+    None in this version
+
+ ++ minor evolutions ++
+  - In Form notebook, several new parameter types have their own
+    history (hostname, newsgroup, login, etc.).
+  - In Running notebook, a new button "crush" permits to crush old
+    lines (>50000 lines by default), in order to limit memory usage.
+
+ ++ internal evolutions (not seen by end users) ++
+    None in this version
+
+---------------------------------------------------------------------
+Version 5.27.0 - 30-November-2004
+
+No change. Just a synchronization with the latest version of netwox.
+
+---------------------------------------------------------------------
+Version 5.26.0 - 25-October-2004
+
+No change. Just a synchronization with the latest version of netwox.
+
+---------------------------------------------------------------------
+Version 5.25.0 - 27-September-2004
+
+No change. Just a synchronization with the latest version of netwox.
+
+---------------------------------------------------------------------
+Version 5.24.0 - 12-September-2004
+ ++ fixed bugs ++
+    None in this version
+
+ ++ major evolutions ++
+  - In form notebook, some tools have radio buttons (one choice
+    amongst several).
+
+ ++ minor evolutions ++
+  - In Running notebook, there is also a close button on left side.
+
+ ++ internal evolutions (not seen by end users) ++
+    None in this version
+
+---------------------------------------------------------------------
+Version 5.23.0 - 30-August-2004
+
+No change. Just a synchronization with the latest version of netwox.
+
+---------------------------------------------------------------------
+Version 5.22.0 - 15-August-2004
+ ++ fixed bugs ++
+  - In Search notebook, if user double-clicked on a line, and then
+    slightly moved (up or down) before Form notebook had time to
+    appear, the retrieved tool was the bad one. This caused an error
+    message to appear.
+
+ ++ major evolutions ++
+  - Search feature improved to find more easily unknown tools.
+    Search is done in title, description and synonyms (for example,
+    searching for "capture" retrieves all tools containing "sniff").
+  - Detailed description of tools is available in Help notebook. If
+    you encounter any error, or have some comments to add, please
+    contact me.
+
+ ++ minor evolutions ++
+    None in this version
+
+ ++ internal evolutions (not seen by end users) ++
+    None in this version
+
+---------------------------------------------------------------------
+Version 5.21.0 - 1-August-2004
+ ++ fixed bugs ++
+  - When no tool is selected, Help and Form notebooks display an help
+    message. This message was about "Change tool" button which was
+    renamed "Update" some time ago. So help message didn't really
+    help :)
+
+ ++ major evolutions ++
+    None in this version
+
+ ++ minor evolutions ++
+    None in this version
+
+ ++ internal evolutions (not seen by end users) ++
+  - Now, genemake does not check if wish really works. This caused
+    problem for automatic installers, or packages generation.
+  - XPM icons are available under src/compil/unix/ico directory. They
+    permit to create nice menus. They are not used during
+    installation process, but can be configured by hand depending on
+    window manager (Gnome, KDE, fvwm, etc.). Package maintainers
+    can also use them.
+
+---------------------------------------------------------------------
+Version 5.20.0 - 18-July-2004
+ ++ fixed bugs ++
+    None in this version
+
+ ++ major evolutions ++
+    None in this version
+
+ ++ minor evolutions ++
+    None in this version
+
+ ++ internal evolutions (not seen by end users) ++
+  - Simplification of netwox errors management.
+
+ ++ related work ++
+  - Donnie Werner created netwagui for Windows containing netwib,
+    netwox, netwag and Tcl/Tk. It permits quick installation on
+    computers without Tcl/Tk. Available for download at:
+    http://exploitlabs.com/files/woods/netwagui.rar
+
+---------------------------------------------------------------------
+Version 5.19.0 - 5-July-2004
+ ++ fixed bugs ++
+    None in this version
+
+ ++ major evolutions ++
+    None in this version
+
+ ++ minor evolutions ++
+  - Support of 64 bit integers in form notebook.
+
+ ++ internal evolutions (not seen by end users) ++
+    None in this version
+
+---------------------------------------------------------------------
+Version 5.18.0 - 1-June-2004
+ ++ bugs fixed ++
+    None in this version
+
+ ++ major evolutions ++
+  - File netw-ib-ox-ag-5.x.y.tgz permits to easily install netwox and
+    netwag under Unix or Windows.
+
+ ++ minor evolutions ++
+  - Under Windows 2k/2k3, session file was saved in
+    %TEMP%/netwag.ses. Now, it is saved in %APPDATA%/netwag.ses.
+    To retrieve old session, just copy it from %TEMP%/netwag.ses to
+    %APPDATA%/netwag.ses or open it from netwag's menu.
+
+ ++ internal evolutions (not seen by end users) ++
+    None in this version
+
+---------------------------------------------------------------------
+Version 5.17.0 - 24-May-2004
+ ++ bugs fixed ++
+    None in this version
+
+ ++ major evolutions ++
+    None in this version
+
+ ++ minor evolutions ++
+  - In remote info notebook, if user tries to run 2 queries, display
+    an error message.
+  - Improved message display in bottom blue text zone to ensure there
+    is no useless blank line at end.
+  - Support for backspace character, useful for tool 139 for example.
+  - In form notebook, uri and email fields have they own history.
+
+ ++ internal evolutions (not seen by end users) ++
+    None in this version
+
+---------------------------------------------------------------------
+Version 5.16.2 - 11-May-2004
+ ++ bugs fixed ++
+  - When releasing 5.16.1, micro version (.1) was not incremented
+    everywhere.
+
+---------------------------------------------------------------------
+Version 5.16.1 - 11-May-2004
+ ++ bugs fixed ++
+  - Tk version <= 8.2, does not support parameter -activebackground
+    for labels.
+
+---------------------------------------------------------------------
+Version 5.16.0 - 10-May-2004
+ ++ bugs fixed ++
+    None in this version
+
+ ++ major evolutions ++
+  - Support for wheel mouses. Tcl/Tk support for MouseWheel is
+    strange to me (focus/selection needed under Windows, strictmotif
+    variable under Unix, etc.). Now, everything works fine on my
+    computers, but if you encounter problems, please contact me.
+  - Rewrite of most Form notebook code. Fields support dynamic help.
+    Fields are aligned. Tab key skips to next field. History of
+    previously entered values is available.
+  - Several tools can run simultaneously. History of run tools
+    data is kept. Tools can be easily run again.
+  - A new button named "Interrupt" appears in remote information
+    notebook. It permits to interrupt a long name resolution for
+    example.
+  - In form Notebook, a new entry type was created to enter
+    passwords, which are not displayed on screen. They are not
+    viewable, but while netwag is running, they are stored in Tcl
+    memory, so an user with access to netwag can obtain passwords.
+    Do not leave your computer unattended while netwag is running (as
+    for any other program), so lock your screen. Note: we could
+    destroy them just after tool start, but if we want to run the
+    same tool several times, we'd have to regenerate password
+    each time.
+  Note: this version provides several new features. Don't hesitate
+        to read lessons in netwag-5.16.0-doc_html.tgz, or
+        to activate dynamic help (Options menu - Dynamic help).
+
+ ++ minor evolutions ++
+  - When a major problem occurs (netwox not found), do not restart
+    with a blank session, loosing previous session information.
+  - Better display on slow computers.
+  - Lot of small improvements.
+
+ ++ internal evolutions (not seen by end users) ++
+  - Rewrite of most functions running shell commands.
+
+
+---------------------------------------------------------------------
+Version 5.15.0 - 21-Apr-2004
+ ++ bugs fixed ++
+    None in this version
+
+ ++ major evolutions ++
+  - Output notebook contains an autoscroll button. Top buttons
+    disappears when they are not needed.
+
+ ++ minor evolutions ++
+  - Clipboard notebook is now separated in four.
+
+ ++ internal evolutions (not seen by end users) ++
+    None in this version
+
+---------------------------------------------------------------------
+Version 5.14.0 - 14-Apr-2004
+ ++ bugs fixed ++
+    None in this version
+
+ ++ major evolutions ++
+    None in this version
+
+ ++ minor evolutions ++
+  - In History notebook, selecting a line displays title of
+    associated tool.
+  - In Form notebook, when an integer has to be selected, it is
+    followed by a '+' and a '-' to increase and decrease its value.
+    Pressing Control while clicking on those buttons increase and
+    decrease by 10.
+  - Small clipboard can be shrunk till having a one line height.
+  - About window now contains the logo.
+
+ ++ internal evolutions (not seen by end users) ++
+    None in this version
+
+---------------------------------------------------------------------
+Version 5.13.0 - 05-Apr-2004
+ ++ bugs fixed ++
+  - In Form notebook, depending on previously displayed tools, the
+    ChangeTool button generated a warning. It was due to an
+    uninitialized value.
+
+ ++ major evolutions ++
+    None in this version
+
+ ++ minor evolutions ++
+  - Tools 93, 139 125 and 167 have the "..." button to select
+    root directory.
+  - In the Search notebook, pressing Enter on a tool number opens the
+    Form notebook.
+
+ ++ internal evolutions (not seen by end users) ++
+    None in this version
+
+---------------------------------------------------------------------
+Version 5.12.0 - 30-Mar-2004
+ ++ bugs fixed ++
+    None in this version
+
+ ++ major evolutions ++
+  - In form notebook, integer fields have two buttons + and - to
+    increase or decrease value.
+
+ ++ minor evolutions ++
+    None in this version
+
+ ++ internal evolutions (not seen by end users) ++
+    None in this version
+
+---------------------------------------------------------------------
+Version 5.11.0 - 22-Mar-2004
+ ++ bugs fixed ++
+    None in this version
+
+ ++ major evolutions ++
+  - In form notebook, changing a tool sets all field values.
+
+ ++ minor evolutions ++
+  - In Help and Form notebooks, generated command lines use long
+    parameters.
+  - File and directory selection windows now update current directory
+    from previous value set.
+
+ ++ internal evolutions (not seen by end users) ++
+    None in this version
+
+---------------------------------------------------------------------
+Version 5.10.0 - 3-Mar-2004
+ ++ bugs fixed ++
+    None in this version
+
+ ++ major evolutions ++
+  - Tree display in Search notebook now has two buttons to close and
+    expand branches.
+
+ ++ minor evolutions ++
+    None in this version
+
+ ++ internal evolutions (not seen by end users) ++
+    None in this version
+
+---------------------------------------------------------------------
+Version 5.9.0 - 16-Feb-2004
+ ++ bugs fixed ++
+    None in this version
+
+ ++ major evolutions ++
+  - Tool help and form is now separated in two : common parameters
+    and advanced parameters. Most users only need common parameters.
+    So, it's easier to find the parameter to set.
+
+ ++ minor evolutions ++
+  - A useless warning was displayed when netwag was run on an
+    unsupported platform.
+
+ ++ internal evolutions (not seen by end users) ++
+    None in this version
+
+---------------------------------------------------------------------
+Version 5.8.0 - 2-Feb-2004
+ ++ bugs fixed ++
+    None in this version
+
+ ++ major evolutions ++
+  - A search feature is available for text zones.
+  - Text zones can be entirely selected (Control-A).
+
+ ++ minor evolutions ++
+  - When Interrupt button is pressed, Pause button is reset.
+  - In Remote info notebook, user can now simply press Enter key.
+
+ ++ internal evolutions (not seen by end users) ++
+    None in this version
+
+---------------------------------------------------------------------
+Version 5.7.0 - 22-Jan-2004
+  No change in this version.
+
+---------------------------------------------------------------------
+Version 5.6.0 - 14-Dec-2003
+  Several features improvement were implemented in this version :
+   - all run notebooks are grouped under the same notebook
+   - double clicking on a tool in the search notebook opens the
+     form notebook
+   - tools needing file or directories parameters have a "..."
+     button in the form notebook. This button opens a dialog to
+     select a filename
+   - tool description in help notebook is better
+   - form notebook starts with tool number
+   - when netwag is started, form notebook contains a descriptive
+     message
+
+---------------------------------------------------------------------
+Version 5.5.0 - 11-Nov-2003
+  - Improvements in genemake file to support a more generic
+    installation. Thanks to Olivier Thauvin.
+  - Tools 111 to 117 had user and password defined as device buffer.
+    They worked, but netwag's form displayed bad fields.
+
+---------------------------------------------------------------------
+Version 5.4.0 - 28-Oct-2003
+  No change in this version.
+
+---------------------------------------------------------------------
+Version 5.3.0 - 19-Oct-2003
+ Creation of documentation explaining how to use netwag in 20 lessons
+ (netwag-5.3.0-doc_html.tgz).
+
+---------------------------------------------------------------------
+Version 5.2.0 - 05-Oct-2003
+  No change in this version.
+
+---------------------------------------------------------------------
+Version 5.1.0 - 23-Sep-2003
+  This version is a full rewrite. Everything changed.
+
+---------------------------------------------------------------------
+Version 5.0.0
+  This version does not exists.

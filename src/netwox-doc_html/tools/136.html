@@ -1,0 +1,73 @@
+<HTML>
+ <HEAD>
+ <TITLE>Tool 136: Web download (http://... or ftp://...)</TITLE>
+ </HEAD>
+ <BODY BGCOLOR="#FFFFFF">
+  <CENTER>   <H3>Tool 136: Web download (http://... or ftp://...)</H3>
+  </CENTER>
+
+  <P><H3>Description:</H3>
+   <PRE>
+  This tool downloads a HTTP or FTP file.
+  
+  Parameter --uri is the uri/url requested.
+  Parameters --proxy-ip, --proxy-port, --proxy-login and
+  --proxy-password defines the web proxy and credentials.
+  Parameter --user-agent defines the client name to send. For example
+  'Mozilla/5.0'.
+  Parameter --display-status indicates to display status code of reply
+  to screen.
+   </PRE>
+
+  <P><H3>Synonyms:</H3>
+  &nbsp;&nbsp;curl, wget<BR>
+
+  <P><H3>Usage:</H3>
+  &nbsp;&nbsp;netwox 136 -u uri -f file [-p ip] [-P port] [-l login] [-L password] [-U useragent] [-F|+F] [-T uint32] [-s|+s]<BR>
+
+  <P><H3>Parameters:</H3>
+<TABLE BORDER=1 CELLPADDING=4>
+ <TR>
+  <TD ALIGN=middle><I>parameter</I></TD>
+  <TD ALIGN=middle><I>description</I></TD>
+  <TD ALIGN=middle><I>example</I></TD>
+ </TR>
+ <TR><TD><TT>-u|--uri uri</TD>
+<TD>url/uri to download</TD>
+<TD>http://www.example.com/</TD></TR>
+<TR><TD><TT>-f|--dst-file file</TD>
+<TD>file to write to</TD>
+<TD>dstfile.txt</TD></TR>
+<TR><TD><TT>-p|--proxy-ip ip</TD>
+<TD>IP address of proxy</TD>
+<TD>5.6.7.8</TD></TR>
+<TR><TD><TT>-P|--proxy-port port</TD>
+<TD>port of proxy</TD>
+<TD>3128</TD></TR>
+<TR><TD><TT>-l|--proxy-login login</TD>
+<TD>login of proxy</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-L|--proxy-password password</TD>
+<TD>password of proxy</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-U|--user-agent useragent</TD>
+<TD>user agent</TD>
+<TD>Mozilla/5.0</TD></TR>
+<TR><TD><TT>-F|--ftp-passive|+F|--no-ftp-passive</TD>
+<TD>use passive FTP</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-T|--timeout uint32</TD>
+<TD>timeout in ms</TD>
+<TD>60000</TD></TR>
+<TR><TD><TT>-s|--display-status|+s|--no-display-status</TD>
+<TD>display statuscode to screen</TD>
+<TD>&nbsp; </TD></TR>
+</TABLE>
+
+  <P><H3>Examples:</H3>
+  &nbsp;&nbsp;netwox 136 -u "http://www.example.com/" -f "dstfile.txt"<BR>
+<BR>
+  &nbsp;&nbsp;netwox 136 --uri "http://www.example.com/" --dst-file "dstfile.txt"<BR>
+<BR>
+ </BODY>
+ </HTML>

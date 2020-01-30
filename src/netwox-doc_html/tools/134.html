@@ -1,0 +1,50 @@
+<HTML>
+ <HEAD>
+ <TITLE>Tool 134: Obtain urls/uris in a HMTL file</TITLE>
+ </HEAD>
+ <BODY BGCOLOR="#FFFFFF">
+  <CENTER>   <H3>Tool 134: Obtain urls/uris in a HMTL file</H3>
+  </CENTER>
+
+  <P><H3>Description:</H3>
+   <PRE>
+  This tool reads an HTML file and shows url/uri it contains.
+   </PRE>
+
+  <P><H3>Usage:</H3>
+  &nbsp;&nbsp;netwox 134 -f file [-h|+h] [-s|+s] [-t|+t] [-n|+n] [-u|+u]<BR>
+
+  <P><H3>Parameters:</H3>
+<TABLE BORDER=1 CELLPADDING=4>
+ <TR>
+  <TD ALIGN=middle><I>parameter</I></TD>
+  <TD ALIGN=middle><I>description</I></TD>
+  <TD ALIGN=middle><I>example</I></TD>
+ </TR>
+ <TR><TD><TT>-f|--filename file</TD>
+<TD>HTML file</TD>
+<TD>file.html</TD></TR>
+<TR><TD><TT>-h|--display-http|+h|--no-display-http</TD>
+<TD>display http:// uris</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-s|--display-https|+s|--no-display-https</TD>
+<TD>display https:// uris</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-t|--display-ftp|+t|--no-display-ftp</TD>
+<TD>display ftp:// uris</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-n|--display-none|+n|--no-display-none</TD>
+<TD>display local uris</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-u|--display-unknown|+u|--no-display-unknown</TD>
+<TD>display unknown uris</TD>
+<TD>&nbsp; </TD></TR>
+</TABLE>
+
+  <P><H3>Examples:</H3>
+  &nbsp;&nbsp;netwox 134 -f "file.html"<BR>
+<BR>
+  &nbsp;&nbsp;netwox 134 --filename "file.html"<BR>
+<BR>
+ </BODY>
+ </HTML>

@@ -1,0 +1,220 @@
+<HTML><HEAD>
+<TITLE>netwib doc_html (version 5.39.0)</TITLE>
+</HEAD><BODY BGCOLOR="#FFFFFF" TEXT="#000000">
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../dat.html">section index</A></H2><HR><BR>
+<PRE>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000"><B>/***************************************************************
+ * A <FONT COLOR="#000088">netwib_ring</FONT> is a double linked ring containing pointers.  *
+ * For example, a ring containing 3 items looks like this :    *
+ *                                                             *
+ * ,________________________________________________________.  *
+ * | ,----------------------------------------------------. |  *
+ * | |  ._______.   .________.   .________.   .________.  | |  *
+ * | `-&gt;|       |--&gt;|        |--&gt;|        |--&gt;|        |--' |  *
+ * |    | start |   |  ptr1  |   |  ptr2  |   |  ptr3  |    |  *
+ * `----|_______|&lt;--|________|&lt;--|________|&lt;--|________|&lt;---'  *
+ *                                                             *
+ * The ring contains pointers (ptr1, ptr2 and ptr3 in the      *
+ * example).                                                   *
+ *                                                             *
+ * When an item is removed from the ring, its associated       *
+ * information stored in the pointer can be :                  *
+ *  - left untouched : user will have to free the pointer and  *
+ *    its information                                          *
+ *  - erased : the information is lost : a function of type    *
+ *    <FONT COLOR="#000088">netwib_ring_erase_pf</FONT> has to be called                    *
+ * For example, a user might want to store allocated memory    *
+ * containing a netwib_buf. Then when the ring is closed, the  *
+ * <FONT COLOR="#000088">netwib_buf_close</FONT> function has to be called and the memory   *
+ * has to be freed.                                            *
+ ***************************************************************/</B></FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+typedef struct <FONT COLOR="#000088">netwib_ring</FONT> <FONT COLOR="#000088">netwib_ring</FONT>;
+typedef const <FONT COLOR="#000088">netwib_ring</FONT> <FONT COLOR="#000088">netwib_constring</FONT>;
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* This prototype defines a function erasing the item pitem */</FONT>
+typedef <FONT COLOR="#000088">netwib_err</FONT> (*netwib_ring_erase_pf)(<FONT COLOR="#000088">netwib_ptr</FONT> pitem);
+<FONT COLOR="#880000">/* This prototype defines a function duplicating an item */</FONT>
+typedef <FONT COLOR="#000088">netwib_err</FONT> (*netwib_ring_duplicate_pf)(<FONT COLOR="#000088">netwib_constptr</FONT> pitem,
+                                               <FONT COLOR="#000088">netwib_ptr</FONT> *pdupofitem);
+<FONT COLOR="#880000">/* This prototype defines a function comparing two items
+    - if iteminf&lt;itemsup, *pcmp is set to <FONT COLOR="#000044">NETWIB_CMP_LT</FONT>
+    - if iteminf&gt;itemsup, *pcmp is set to <FONT COLOR="#000044">NETWIB_CMP_GT</FONT>
+    - if iteminf==itemsup, *pcmp is set to <FONT COLOR="#000044">NETWIB_CMP_EQ</FONT>
+   The parameter pinfos will be set with optional information
+   given when calling the function.
+ */</FONT>
+typedef <FONT COLOR="#000088">netwib_err</FONT> (*netwib_ring_compare_pf)(<FONT COLOR="#000088">netwib_constptr</FONT> piteminf,
+                                             <FONT COLOR="#000088">netwib_constptr</FONT> pitemsup,
+                                             <FONT COLOR="#000088">netwib_ptr</FONT> pinfos,
+                                             <FONT COLOR="#000088">netwib_cmp</FONT> *pcmp);
+<FONT COLOR="#880000">/* This prototype defines a function detecting if an item
+   matches a criteria
+    - if it matches, *pbool is set to <FONT COLOR="#000044">NETWIB_TRUE</FONT>
+    - if it does not matches, *pbool is set to <FONT COLOR="#000044">NETWIB_FALSE</FONT>
+   The parameter pinfos will be set with optional information
+   given when calling the function.
+ */</FONT>
+typedef <FONT COLOR="#000088">netwib_err</FONT> (*netwib_ring_criteria_pf)(<FONT COLOR="#000088">netwib_constptr</FONT> pitem,
+                                              <FONT COLOR="#000088">netwib_ptr</FONT> pinfos,
+                                              <FONT COLOR="#000088">netwib_bool</FONT> *pbool);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_ring_init
+   Description :
+     Initialize a netwib_ring.
+   Input parameter(s) :
+     *pfunc_erase : function needed to erase items
+                    This can be NULL
+     *pfunc_duplicate : function needed to duplicate items
+                        This can be NULL
+   Input/output parameter(s) :
+   Output parameter(s) :
+     **ppring : <FONT COLOR="#000088">netwib_ring</FONT> allocated and initialized
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_ring_init</B>(<FONT COLOR="#000088">netwib_ring_erase_pf</FONT> pfunc_erase,
+                            <FONT COLOR="#000088">netwib_ring_duplicate_pf</FONT> pfunc_duplicate,
+                            <FONT COLOR="#000088">netwib_ring</FONT> **ppring);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_ring_close
+   Description :
+     Destroy a netwib_ring.
+   Input parameter(s) :
+     eraseitems : if true, function pfunc_erase (set in
+                  netwib_ring_init) is called
+   Input/output parameter(s) :
+     **ppring : <FONT COLOR="#000088">netwib_ring</FONT> to destroy
+   Output parameter(s) :
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_ring_close</B>(<FONT COLOR="#000088">netwib_ring</FONT> **ppring,
+                             <FONT COLOR="#000088">netwib_bool</FONT> eraseitems);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Types to control a <FONT COLOR="#000088">netwib_ring</FONT> */</FONT>
+typedef enum {
+  <FONT COLOR="#000044">NETWIB_RING_CTLTYPE_COUNT</FONT> = 1   <FONT COLOR="#880000">/* count number of items */</FONT>
+} <FONT COLOR="#000088">netwib_ring_ctltype</FONT>;
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_ring_ctl_set</B>(<FONT COLOR="#000088">netwib_ring</FONT> *pring,
+                               <FONT COLOR="#000088">netwib_ring_ctltype</FONT> type,
+                               <FONT COLOR="#000088">netwib_ptr</FONT> p,
+                               <FONT COLOR="#000088">netwib_uint32</FONT> ui);
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_ring_ctl_get</B>(<FONT COLOR="#000088">netwib_ring</FONT> *pring,
+                               <FONT COLOR="#000088">netwib_ring_ctltype</FONT> type,
+                               <FONT COLOR="#000088">netwib_ptr</FONT> p,
+                               <FONT COLOR="#000088">netwib_uint32</FONT> *pui);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* <FONT COLOR="#000088">netwib_err</FONT> f(<FONT COLOR="#000088">netwib_ring</FONT> *pring, <FONT COLOR="#000088">netwib_uint32</FONT> *pnumberofitems); */</FONT>
+<FONT COLOR="#008800">#define <B>netwib_ring_ctl_get_count</B>(pring,pnumberofitems) <B>netwib_ring_ctl_get</B>(pring,<FONT COLOR="#000044">NETWIB_RING_CTLTYPE_COUNT</FONT>,NULL,pnumberofitems)</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_ring_add_first
+   Description :
+     Add an item to the netwib_ring.
+   Input parameter(s) :
+     pitem : pointer to an allocated memory containing the item
+   Input/output parameter(s) :
+     *pring : <FONT COLOR="#000088">netwib_ring</FONT> where to work
+   Output parameter(s) :
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_ring_add_first</B>(<FONT COLOR="#000088">netwib_ring</FONT> *pring,
+                                 <FONT COLOR="#000088">netwib_constptr</FONT> pitem);
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_ring_add_last</B>(<FONT COLOR="#000088">netwib_ring</FONT> *pring,
+                                <FONT COLOR="#000088">netwib_constptr</FONT> pitem);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_ring_del_criteria
+   Description :
+     Del items matching a criterion.
+   Input parameter(s) :
+     pfunc_criteria : function used to decide to del an item
+                      If this function is NULL, no criterion is
+                      applied.
+   Input/output parameter(s) :
+     *pring : <FONT COLOR="#000088">netwib_ring</FONT> where to work
+     pinfos : optional parameter (can be NULL) which will be
+              used as the parameter for pfunc_criteria.
+              This may be used to send information to *pfunc_criteria.
+   Output parameter(s) :
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_ring_del_criteria</B>(<FONT COLOR="#000088">netwib_ring</FONT> *pring,
+                                    <FONT COLOR="#000088">netwib_ring_criteria_pf</FONT> pfunc_criteria,
+                                    <FONT COLOR="#000088">netwib_ptr</FONT> pinfos,
+                                    <FONT COLOR="#000088">netwib_bool</FONT> eraseitems);
+<FONT COLOR="#008800">#define <B>netwib_ring_del_all</B>(pring,eraseitems) <B>netwib_ring_del_criteria</B>(pring,NULL,NULL,eraseitems)</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_ring_del_duplicate
+   Description :
+     Del duplicate items from a netwib_ring.
+   Input parameter(s) :
+     pfunc_compare : function used to compare two items
+   Input/output parameter(s) :
+     *pring : <FONT COLOR="#000088">netwib_ring</FONT> where to work
+     pinfos : optional parameter (can be NULL) which will be
+              used as the parameter for pfunc_compare.
+              This may be used to send information to *pfunc_compare.
+   Output parameter(s) :
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_ring_del_duplicate</B>(<FONT COLOR="#000088">netwib_ring</FONT> *pring,
+                                     <FONT COLOR="#000088">netwib_ring_compare_pf</FONT> pfunc_compare,
+                                     <FONT COLOR="#000088">netwib_ptr</FONT> pinfos,
+                                     <FONT COLOR="#000088">netwib_bool</FONT> eraseitems);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_ring_sort
+   Description :
+     Sort items of the netwib_ring.
+   Input parameter(s) :
+     pfunc_compare : function used to compare two items
+   Input/output parameter(s) :
+     *pring : <FONT COLOR="#000088">netwib_ring</FONT> where to work
+     pinfos : optional parameter (can be NULL) which will be
+              used as the parameter for *pfunc_compare.
+              This may be used to send information to *pfunc_compare.
+   Output parameter(s) :
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_ring_sort</B>(<FONT COLOR="#000088">netwib_ring</FONT> *pring,
+                            <FONT COLOR="#000088">netwib_ring_compare_pf</FONT> pfunc_compare,
+                            <FONT COLOR="#000088">netwib_ptr</FONT> pinfos);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_ring_group
+   Description :
+     Group items of the netwib_ring.
+   Input parameter(s) :
+     pfunc_compare : function used to compare two items
+   Input/output parameter(s) :
+     *pring : <FONT COLOR="#000088">netwib_ring</FONT> where to work
+     pinfos : optional parameter (can be NULL) which will be
+              used as the parameter for *pfunc_compare.
+              This may be used to send information to *pfunc_compare.
+   Output parameter(s) :
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_ring_group</B>(<FONT COLOR="#000088">netwib_ring</FONT> *pring,
+                             <FONT COLOR="#000088">netwib_ring_compare_pf</FONT> pfunc_compare,
+                             <FONT COLOR="#000088">netwib_ptr</FONT> pinfos);
+</PRE><BR><BR><HR><BR>
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../dat.html">section index</A></H2>
+</BODY></HTML>

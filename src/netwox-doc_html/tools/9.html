@@ -1,0 +1,72 @@
+<HTML>
+ <HEAD>
+ <TITLE>Tool 9: Sniff and display Ethernet addresses</TITLE>
+ </HEAD>
+ <BODY BGCOLOR="#FFFFFF">
+  <CENTER>   <H3>Tool 9: Sniff and display Ethernet addresses</H3>
+  </CENTER>
+
+  <P><H3>Description:</H3>
+   <PRE>
+  This tool sniffs packets, and tries to decode them. Then, Ethernet
+  address associated to decoded IP address is displayed.
+  It uses ARP, RARP and IP to obtain this information.
+  Please note, this will be inaccurate if IP address is outside the
+  Ethernet LAN. It works well in all other cases.
+  
+  Parameter --device indicates on which device to sniff. Please note
+  that under some systems, such as Windows, sniffing on some devices is
+  not supported.
+  Parameter --filter defines the sniff filter. It permits to restrict
+  captured packets. This kind of filter is named a BPF or pcap filter.
+  Basic elements of a filter are:
+    host 1.2.3.4
+    net 192.168.10
+    net 192.168.10.0 mask 255.255.255.0
+    net 192.168.10.0/24
+    port 21
+    dst host 1.2.3.4
+    src port 2345
+    ether host a:b:c:d:e:f ('ether a:b:c:d:e:f' is not working)
+    ether src aa:bb:cc:dd:ee:ff
+    ip
+    arp
+    rarp
+    tcp
+    icmp
+    udp
+  Here are filter examples:
+    "host 1.2.3.4"
+    "net 192.168 and icmp"
+    "host 1.2.3.4 or dst port 80"
+    "(udp or tcp) and not host 1.2.3.4"
+  
+  This tool may need to be run with admin privilege in order to sniff.
+   </PRE>
+
+  <P><H3>Synonyms:</H3>
+  &nbsp;&nbsp;capture, mac, show<BR>
+
+  <P><H3>Usage:</H3>
+  &nbsp;&nbsp;netwox 9 [-d device] [-f filter]<BR>
+
+  <P><H3>Parameters:</H3>
+<TABLE BORDER=1 CELLPADDING=4>
+ <TR>
+  <TD ALIGN=middle><I>parameter</I></TD>
+  <TD ALIGN=middle><I>description</I></TD>
+  <TD ALIGN=middle><I>example</I></TD>
+ </TR>
+ <TR><TD><TT>-d|--device device</TD>
+<TD>device name</TD>
+<TD>Eth0</TD></TR>
+<TR><TD><TT>-f|--filter filter</TD>
+<TD>pcap filter</TD>
+<TD>&nbsp; </TD></TR>
+</TABLE>
+
+  <P><H3>Example:</H3>
+  &nbsp;&nbsp;netwox 9<BR>
+<BR>
+ </BODY>
+ </HTML>

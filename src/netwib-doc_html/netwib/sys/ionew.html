@@ -1,0 +1,168 @@
+<HTML><HEAD>
+<TITLE>netwib doc_html (version 5.39.0)</TITLE>
+</HEAD><BODY BGCOLOR="#FFFFFF" TEXT="#000000">
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../sys.html">section index</A></H2><HR><BR>
+<PRE>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000"><B>/***************************************************************
+ * Functions herein allow to create a new netwib_io.           *
+ ***************************************************************/</B></FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000"><B>/***************************************************************
+ * Following functions can return :                            *
+ *  - <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : the job was done (by the io or a next in *
+ *                    the chain)                               *
+ *  - <FONT COLOR="#000044">NETWIB_ERR_PLEASETRYNEXT</FONT> : the io doesn't know how to do *
+ *                               what was requested, so please *
+ *                               try next                      *
+ *  - <FONT COLOR="#000044">NETWIB_ERR_PLEASECONSTRUCT</FONT> : if way is                   *
+ *                                 <FONT COLOR="#000044">NETWIB_IO_WAYTYPE_RDWR</FONT> or   *
+ *                                _SUPPORTED, the library has  *
+ *                                to do the task using _READ   *
+ *                                and _WRITE                   *
+ *  - <FONT COLOR="#000044">NETWIB_ERR_PLEASELOOPTIME</FONT> : there is no event, so please *
+ *                                loop to reach abstime        *
+ ***************************************************************/</B></FONT>
+
+<FONT COLOR="#880000">/* Function called when <FONT COLOR="#000088">netwib_io_read</FONT> is called on the io
+   This function should return :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT>
+     <FONT COLOR="#000044">NETWIB_ERR_PLEASETRYNEXT</FONT>
+*/</FONT>
+typedef <FONT COLOR="#000088">netwib_err</FONT> (*netwib_io_read_pf)(<FONT COLOR="#000088">netwib_io</FONT> *pio,
+                                        <FONT COLOR="#000088">netwib_buf</FONT> *pbuf);
+
+<FONT COLOR="#880000">/* Function called when <FONT COLOR="#000088">netwib_io_write</FONT> is called on the io
+   This function should return :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT>
+     <FONT COLOR="#000044">NETWIB_ERR_PLEASETRYNEXT</FONT>
+*/</FONT>
+typedef <FONT COLOR="#000088">netwib_err</FONT> (*netwib_io_write_pf)(<FONT COLOR="#000088">netwib_io</FONT> *pio,
+                                         <FONT COLOR="#000088">netwib_constbuf</FONT> *pbuf);
+
+<FONT COLOR="#880000">/* Function called when <FONT COLOR="#000088">netwib_io_wait</FONT> is called on the io
+   This function should return :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT>
+     <FONT COLOR="#000044">NETWIB_ERR_PLEASETRYNEXT</FONT>
+     <FONT COLOR="#000044">NETWIB_ERR_PLEASECONSTRUCT</FONT>
+     <FONT COLOR="#000044">NETWIB_ERR_PLEASELOOPTIME</FONT>
+*/</FONT>
+typedef <FONT COLOR="#000088">netwib_err</FONT> (*netwib_io_wait_pf)(<FONT COLOR="#000088">netwib_io</FONT> *pio,
+                                        <FONT COLOR="#000088">netwib_io_waytype</FONT> way,
+                                        <FONT COLOR="#000088">netwib_consttime</FONT> *pabstime,
+                                        <FONT COLOR="#000088">netwib_bool</FONT> *pevent);
+
+<FONT COLOR="#880000">/* Function called when <FONT COLOR="#000088">netwib_io_unread</FONT> is called on the io
+   This function should return :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT>
+     <FONT COLOR="#000044">NETWIB_ERR_PLEASETRYNEXT</FONT>
+*/</FONT>
+typedef <FONT COLOR="#000088">netwib_err</FONT> (*netwib_io_unread_pf)(<FONT COLOR="#000088">netwib_io</FONT> *pio,
+                                          <FONT COLOR="#000088">netwib_constbuf</FONT> *pbuf);
+
+<FONT COLOR="#880000">/* Function called when <FONT COLOR="#000088">netwib_io_ctl_set</FONT> is called on the io
+   This function should return :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT>
+     <FONT COLOR="#000044">NETWIB_ERR_PLEASETRYNEXT</FONT>
+     <FONT COLOR="#000044">NETWIB_ERR_PLEASECONSTRUCT</FONT>
+*/</FONT>
+typedef <FONT COLOR="#000088">netwib_err</FONT> (*netwib_io_ctl_set_pf)(<FONT COLOR="#000088">netwib_io</FONT> *pio,
+                                           <FONT COLOR="#000088">netwib_io_waytype</FONT> way,
+                                           <FONT COLOR="#000088">netwib_io_ctltype</FONT> ctltype,
+                                           <FONT COLOR="#000088">netwib_ptr</FONT> p,
+                                           <FONT COLOR="#000088">netwib_uint32</FONT> ui);
+<FONT COLOR="#880000">/* Function called when <FONT COLOR="#000088">netwib_io_ctl_get</FONT> is called on the io
+   This function should return :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT>
+     <FONT COLOR="#000044">NETWIB_ERR_PLEASETRYNEXT</FONT>
+     <FONT COLOR="#000044">NETWIB_ERR_PLEASECONSTRUCT</FONT>
+*/</FONT>
+typedef <FONT COLOR="#000088">netwib_err</FONT> (*netwib_io_ctl_get_pf)(<FONT COLOR="#000088">netwib_io</FONT> *pio,
+                                           <FONT COLOR="#000088">netwib_io_waytype</FONT> way,
+                                           <FONT COLOR="#000088">netwib_io_ctltype</FONT> ctltype,
+                                           <FONT COLOR="#000088">netwib_ptr</FONT> p,
+                                           <FONT COLOR="#000088">netwib_uint32</FONT> *pui);
+
+<FONT COLOR="#880000">/* Function called when <FONT COLOR="#000088">netwib_io_close</FONT> is called on the io
+   This function should return :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT>
+*/</FONT>
+typedef <FONT COLOR="#000088">netwib_err</FONT> (*netwib_io_close_pf)(<FONT COLOR="#000088">netwib_io</FONT> *pio);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_io_init
+   Description :
+     Create a user defined netwib_io.
+   Input parameter(s) :
+     readsupported : read is supported
+     writesupported : write is supported
+     pcommon : common data which can be shared between functions
+     pfx : functions or NULL if not needed
+   Input/output parameter(s) :
+   Output parameter(s) :
+     **ppio : io created
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_io_init</B>(<FONT COLOR="#000088">netwib_bool</FONT> readsupported,
+                          <FONT COLOR="#000088">netwib_bool</FONT> writesupported,
+                          <FONT COLOR="#000088">netwib_ptr</FONT> pcommon,
+                          <FONT COLOR="#000088">netwib_io_read_pf</FONT> pfread,
+                          <FONT COLOR="#000088">netwib_io_write_pf</FONT> pfwrite,
+                          <FONT COLOR="#000088">netwib_io_wait_pf</FONT> pfwait,
+                          <FONT COLOR="#000088">netwib_io_unread_pf</FONT> pfunread,
+                          <FONT COLOR="#000088">netwib_io_ctl_set_pf</FONT> pfctl_set,
+                          <FONT COLOR="#000088">netwib_io_ctl_get_pf</FONT> pfctl_get,
+                          <FONT COLOR="#000088">netwib_io_close_pf</FONT> pfclose,
+                          <FONT COLOR="#000088">netwib_io</FONT> **ppio);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000"><B>/***************************************************************
+ * Those structure definitions should only be used in functions*
+ * for netwib_io_init.                                         *
+ ***************************************************************/</B></FONT>
+typedef struct {
+  <FONT COLOR="#000088">netwib_io</FONT> *pnext; <FONT COLOR="#880000">/* next io in the chain */</FONT>
+  <FONT COLOR="#000088">netwib_bool</FONT> supported; <FONT COLOR="#880000">/* true if way is supported */</FONT>
+  <FONT COLOR="#000088">netwib_uint32</FONT> numusers; <FONT COLOR="#880000">/* number of io using this one */</FONT>
+} <FONT COLOR="#000088">netwib_io_way_t</FONT>;
+struct <FONT COLOR="#000088">netwib_io</FONT> {
+  <FONT COLOR="#000088">netwib_io_way_t</FONT> rd; <FONT COLOR="#880000">/* read information */</FONT>
+  <FONT COLOR="#000088">netwib_io_way_t</FONT> wr; <FONT COLOR="#880000">/* write information */</FONT>
+  <FONT COLOR="#000088">netwib_ptr</FONT> pcommon; <FONT COLOR="#880000">/* pointer used in <FONT COLOR="#000088">netwib_io_init</FONT> */</FONT>
+  <FONT COLOR="#000088">netwib_io_write_pf</FONT> pfwrite;
+  <FONT COLOR="#000088">netwib_io_read_pf</FONT> pfread;
+  <FONT COLOR="#000088">netwib_io_unread_pf</FONT> pfunread;
+  <FONT COLOR="#000088">netwib_io_wait_pf</FONT> pfwait;
+  <FONT COLOR="#000088">netwib_io_ctl_set_pf</FONT> pfctl_set;
+  <FONT COLOR="#000088">netwib_io_ctl_get_pf</FONT> pfctl_get;
+  <FONT COLOR="#000088">netwib_io_close_pf</FONT> pfclose;
+};
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000"><B>/***************************************************************
+ * Previous structure is useful to do simple things. But,      *
+ * it's complicated to deal with several netwib_io_waytype.    *
+ * Those defines can be used :                                 *
+ *  - to work on "pnext", use <FONT COLOR="#000088">netwib_io_next</FONT> (in io.h)         *
+ *  - to work on "supported", use netwib_io_ctl_s/get_support  *
+ *  - to work on "numusers", use netwib_io_ctl_s/get_numusers  *
+ ***************************************************************/</B></FONT>
+
+<FONT COLOR="#880000">/* <FONT COLOR="#000088">netwib_err</FONT> f(<FONT COLOR="#000088">netwib_io</FONT> *pio, <FONT COLOR="#000088">netwib_io_waytype</FONT> way, <FONT COLOR="#000088">netwib_bool</FONT> yes); */</FONT>
+<FONT COLOR="#008800">#define <B>netwib_io_ctl_set_support</B>(pio,way,yes) <B>netwib_io_ctl_set</B>(pio,way,<FONT COLOR="#000044">NETWIB_IO_CTLTYPE_SUPPORT</FONT>,NULL,(netwib_uint32)yes)</FONT>
+<FONT COLOR="#008800">#define <B>netwib_io_ctl_get_support</B>(pio,way,pyes) <B>netwib_io_ctl_get</B>(pio,way,<FONT COLOR="#000044">NETWIB_IO_CTLTYPE_SUPPORT</FONT>,NULL,(netwib_uint32*)pyes)</FONT>
+
+<FONT COLOR="#880000">/* <FONT COLOR="#000088">netwib_err</FONT> f(<FONT COLOR="#000088">netwib_io</FONT> *pio,<FONT COLOR="#000088">netwib_io_waytype</FONT> way,<FONT COLOR="#000088">netwib_uint32</FONT> numusers);*/</FONT>
+<FONT COLOR="#008800">#define <B>netwib_io_ctl_set_numusers</B>(pio,way,numusers) <B>netwib_io_ctl_set</B>(pio,way,<FONT COLOR="#000044">NETWIB_IO_CTLTYPE_NUMUSERS</FONT>,NULL,numusers)</FONT>
+<FONT COLOR="#008800">#define <B>netwib_io_ctl_get_numusers</B>(pio,way,pnumusers) <B>netwib_io_ctl_get</B>(pio,way,<FONT COLOR="#000044">NETWIB_IO_CTLTYPE_NUMUSERS</FONT>,NULL,pnumusers)</FONT>
+<FONT COLOR="#880000">/* only increment or decrement */</FONT>
+<FONT COLOR="#008800">#define <B>netwib_io_ctl_set_numusers_inc</B>(pio,way) <B>netwib_io_ctl_set</B>(pio,way,<FONT COLOR="#000044">NETWIB_IO_CTLTYPE_NUMUSERSINC</FONT>,NULL,+1)</FONT>
+<FONT COLOR="#008800">#define <B>netwib_io_ctl_set_numusers_dec</B>(pio,way) <B>netwib_io_ctl_set</B>(pio,way,<FONT COLOR="#000044">NETWIB_IO_CTLTYPE_NUMUSERSINC</FONT>,NULL,(netwib_uint32)-1)</FONT>
+</PRE><BR><BR><HR><BR>
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../sys.html">section index</A></H2>
+</BODY></HTML>

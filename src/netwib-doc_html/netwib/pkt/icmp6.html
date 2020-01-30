@@ -1,0 +1,228 @@
+<HTML><HEAD>
+<TITLE>netwib doc_html (version 5.39.0)</TITLE>
+</HEAD><BODY BGCOLOR="#FFFFFF" TEXT="#000000">
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../pkt.html">section index</A></H2><HR><BR>
+<PRE>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000"><B>/***************************************************************
+ * Refer to RFC 2463 to obtain more information about ICMPv6.  *
+ ***************************************************************/</B></FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* ICMP6 types. Comments starting with "NI" are not implemented */</FONT>
+typedef enum {
+  <FONT COLOR="#000044">NETWIB_ICMP6TYPE_DSTUNREACH</FONT> = 1,    <FONT COLOR="#880000">/* destination unreachable */</FONT>
+  <FONT COLOR="#000044">NETWIB_ICMP6TYPE_PKTTOOBIG</FONT> = 2,     <FONT COLOR="#880000">/* packet too big */</FONT>
+  <FONT COLOR="#000044">NETWIB_ICMP6TYPE_TIMEEXCEED</FONT> = 3,    <FONT COLOR="#880000">/* time exceeded */</FONT>
+  <FONT COLOR="#000044">NETWIB_ICMP6TYPE_PARAPROB</FONT> = 4,      <FONT COLOR="#880000">/* parameter problem */</FONT>
+  <FONT COLOR="#000044">NETWIB_ICMP6TYPE_ECHOREQ</FONT> = 128,     <FONT COLOR="#880000">/* echo request */</FONT>
+  <FONT COLOR="#000044">NETWIB_ICMP6TYPE_ECHOREP</FONT> = 129,     <FONT COLOR="#880000">/* echo reply */</FONT>
+  <FONT COLOR="#000044">NETWIB_ICMP6TYPE_ROUTERSOLICIT</FONT> = 133, <FONT COLOR="#880000">/* router solicitation (rfc2461) */</FONT>
+  <FONT COLOR="#000044">NETWIB_ICMP6TYPE_ROUTERADVERT</FONT> = 134,    <FONT COLOR="#880000">/* router advert. (rfc2461) */</FONT>
+  <FONT COLOR="#000044">NETWIB_ICMP6TYPE_NEIGHBORSOLICIT</FONT> = 135, <FONT COLOR="#880000">/* neighbor soli. (rfc2461) */</FONT>
+  <FONT COLOR="#000044">NETWIB_ICMP6TYPE_NEIGHBORADVERT</FONT> = 136,  <FONT COLOR="#880000">/* neighbor advert. (rfc2461) */</FONT>
+  <FONT COLOR="#000044">NETWIB_ICMP6TYPE_REDIRECT</FONT> = 137         <FONT COLOR="#880000">/* redirect (rfc2461) */</FONT>
+} <FONT COLOR="#000088">netwib_icmp6type</FONT>;
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+typedef enum {
+  <FONT COLOR="#000044">NETWIB_ICMP6CODE_DSTUNREACH_NOROUTE</FONT> = 0,
+  <FONT COLOR="#000044">NETWIB_ICMP6CODE_DSTUNREACH_PROHI</FONT> = 1,
+  <FONT COLOR="#000044">NETWIB_ICMP6CODE_DSTUNREACH_HOST</FONT> = 3,
+  <FONT COLOR="#000044">NETWIB_ICMP6CODE_DSTUNREACH_PORT</FONT> = 4,
+  <FONT COLOR="#000044">NETWIB_ICMP6CODE_PKTTOOBIG</FONT> = 0,
+  <FONT COLOR="#000044">NETWIB_ICMP6CODE_TIMEEXCEED_TTL</FONT> = 0,
+  <FONT COLOR="#000044">NETWIB_ICMP6CODE_TIMEEXCEED_FRAG</FONT> = 1,
+  <FONT COLOR="#000044">NETWIB_ICMP6CODE_PARAPROB_HDR</FONT> = 0,
+  <FONT COLOR="#000044">NETWIB_ICMP6CODE_PARAPROB_NEXTHDR</FONT> = 1,
+  <FONT COLOR="#000044">NETWIB_ICMP6CODE_PARAPROB_OPTION</FONT> = 2,
+  <FONT COLOR="#000044">NETWIB_ICMP6CODE_ECHOREQ</FONT> = 0,
+  <FONT COLOR="#000044">NETWIB_ICMP6CODE_ECHOREP</FONT> = 0,
+  <FONT COLOR="#000044">NETWIB_ICMP6CODE_ROUTERSOLICIT</FONT> = 0,
+  <FONT COLOR="#000044">NETWIB_ICMP6CODE_ROUTERADVERT</FONT> = 0,
+  <FONT COLOR="#000044">NETWIB_ICMP6CODE_NEIGHBORSOLICIT</FONT> = 0,
+  <FONT COLOR="#000044">NETWIB_ICMP6CODE_NEIGHBORADVERT</FONT> = 0,
+  <FONT COLOR="#000044">NETWIB_ICMP6CODE_REDIRECT</FONT> = 0
+} <FONT COLOR="#000088">netwib_icmp6code</FONT>;
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_buf_append_icmp6type
+   Description :
+     Print the text corresponding to icmp type.
+   Input parameter(s) :
+     type : icmp6 type
+   Input/output parameter(s) :
+     *pbuf : <FONT COLOR="#000088">netwib_buf</FONT> receiving data
+   Output parameter(s) :
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_buf_append_icmp6type</B>(<FONT COLOR="#000088">netwib_icmp6type</FONT> type,
+                                       <FONT COLOR="#000088">netwib_buf</FONT> *pbuf);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_buf_append_icmp6code
+   Description :
+     Print the text corresponding to icmp code.
+   Input parameter(s) :
+     type : icmp6 type
+     code : icmp6 code
+   Input/output parameter(s) :
+     *pbuf : <FONT COLOR="#000088">netwib_buf</FONT> receiving data
+   Output parameter(s) :
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_buf_append_icmp6code</B>(<FONT COLOR="#000088">netwib_icmp6type</FONT> type,
+                                       <FONT COLOR="#000088">netwib_icmp6code</FONT> code,
+                                       <FONT COLOR="#000088">netwib_buf</FONT> *pbuf);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+typedef struct {
+  <FONT COLOR="#000088">netwib_uint32</FONT> reserved;
+  <FONT COLOR="#000088">netwib_bufext</FONT> badippacket;
+} <FONT COLOR="#000088">netwib_icmp6_dstunreach</FONT>;
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+typedef struct {
+  <FONT COLOR="#000088">netwib_uint32</FONT> mtu;
+  <FONT COLOR="#000088">netwib_bufext</FONT> badippacket;
+} <FONT COLOR="#000088">netwib_icmp6_pkttoobig</FONT>;
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+typedef struct {
+  <FONT COLOR="#000088">netwib_uint32</FONT> reserved;
+  <FONT COLOR="#000088">netwib_bufext</FONT> badippacket;
+} <FONT COLOR="#000088">netwib_icmp6_timeexceed</FONT>;
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+typedef struct {
+  <FONT COLOR="#000088">netwib_uint32</FONT> pointer;
+  <FONT COLOR="#000088">netwib_bufext</FONT> badippacket;
+} <FONT COLOR="#000088">netwib_icmp6_paraprob</FONT>;
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+typedef struct {
+  <FONT COLOR="#000088">netwib_uint16</FONT> id;
+  <FONT COLOR="#000088">netwib_uint16</FONT> seqnum;
+  <FONT COLOR="#000088">netwib_bufext</FONT> data;
+} <FONT COLOR="#000088">netwib_icmp6_echo</FONT>;
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+typedef struct {
+  <FONT COLOR="#000088">netwib_uint32</FONT> reserved;
+  <FONT COLOR="#000088">netwib_bufext</FONT> options; <FONT COLOR="#880000">/* buffer contains <FONT COLOR="#000088">netwib_icmp6nd</FONT> */</FONT>
+} <FONT COLOR="#000088">netwib_icmp6_routersolicit</FONT>;
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+typedef struct {
+  <FONT COLOR="#000088">netwib_uint8</FONT> curhoplimit;
+  <FONT COLOR="#000088">netwib_bool</FONT> managedaddress;
+  <FONT COLOR="#000088">netwib_bool</FONT> otherstateful;
+  <FONT COLOR="#000088">netwib_uint8</FONT> reserved;
+  <FONT COLOR="#000088">netwib_uint16</FONT> routerlifetime;
+  <FONT COLOR="#000088">netwib_uint32</FONT> reachabletime;
+  <FONT COLOR="#000088">netwib_uint32</FONT> retranstimer;
+  <FONT COLOR="#000088">netwib_bufext</FONT> options; <FONT COLOR="#880000">/* buffer contains <FONT COLOR="#000088">netwib_icmp6nd</FONT> */</FONT>
+} <FONT COLOR="#000088">netwib_icmp6_routeradvert</FONT>;
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+typedef struct {
+  <FONT COLOR="#000088">netwib_uint32</FONT> reserved;
+  <FONT COLOR="#000088">netwib_ip</FONT> target;
+  <FONT COLOR="#000088">netwib_bufext</FONT> options; <FONT COLOR="#880000">/* buffer contains <FONT COLOR="#000088">netwib_icmp6nd</FONT> */</FONT>
+} <FONT COLOR="#000088">netwib_icmp6_neighborsolicit</FONT>;
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+typedef struct {
+  <FONT COLOR="#000088">netwib_bool</FONT> router;
+  <FONT COLOR="#000088">netwib_bool</FONT> solicited;
+  <FONT COLOR="#000088">netwib_bool</FONT> override;
+  <FONT COLOR="#000088">netwib_uint32</FONT> reserved;
+  <FONT COLOR="#000088">netwib_ip</FONT> target;
+  <FONT COLOR="#000088">netwib_bufext</FONT> options; <FONT COLOR="#880000">/* buffer contains <FONT COLOR="#000088">netwib_icmp6nd</FONT> */</FONT>
+} <FONT COLOR="#000088">netwib_icmp6_neighboradvert</FONT>;
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+typedef struct {
+  <FONT COLOR="#000088">netwib_uint32</FONT> reserved;
+  <FONT COLOR="#000088">netwib_ip</FONT> target;
+  <FONT COLOR="#000088">netwib_ip</FONT> dst;
+  <FONT COLOR="#000088">netwib_bufext</FONT> options; <FONT COLOR="#880000">/* buffer contains <FONT COLOR="#000088">netwib_icmp6nd</FONT> */</FONT>
+} <FONT COLOR="#000088">netwib_icmp6_redirect</FONT>;
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+typedef struct {
+  <FONT COLOR="#000088">netwib_icmp6type</FONT> type;
+  <FONT COLOR="#000088">netwib_icmp6code</FONT> code;
+  <FONT COLOR="#000088">netwib_uint16</FONT> check;
+  union {
+    <FONT COLOR="#000088">netwib_icmp6_dstunreach</FONT> dstunreach;
+    <FONT COLOR="#000088">netwib_icmp6_pkttoobig</FONT> pkttoobig;
+    <FONT COLOR="#000088">netwib_icmp6_timeexceed</FONT> timeexceed;
+    <FONT COLOR="#000088">netwib_icmp6_paraprob</FONT> paraprob;
+    <FONT COLOR="#000088">netwib_icmp6_echo</FONT> echo; <FONT COLOR="#880000">/* used for request and reply */</FONT>
+    <FONT COLOR="#000088">netwib_icmp6_routersolicit</FONT> routersolicit;
+    <FONT COLOR="#000088">netwib_icmp6_routeradvert</FONT> routeradvert;
+    <FONT COLOR="#000088">netwib_icmp6_neighborsolicit</FONT> neighborsolicit;
+    <FONT COLOR="#000088">netwib_icmp6_neighboradvert</FONT> neighboradvert;
+    <FONT COLOR="#000088">netwib_icmp6_redirect</FONT> redirect;
+  } msg;
+} <FONT COLOR="#000088">netwib_icmp6</FONT>;
+typedef const <FONT COLOR="#000088">netwib_icmp6</FONT> <FONT COLOR="#000088">netwib_consticmp6</FONT>;
+<FONT COLOR="#008800">#define <FONT COLOR="#000044">NETWIB_ICMP6_MINLEN</FONT> 4</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_icmp6_initdefault
+   Description :
+     Initialize a <FONT COLOR="#000088">netwib_icmp6</FONT> with default values.
+   Input parameter(s) :
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *picmp6hdr : <FONT COLOR="#000088">netwib_icmp6hdr</FONT> to initialize
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_icmp6_initdefault</B>(<FONT COLOR="#000088">netwib_icmp6type</FONT> type,
+                                    <FONT COLOR="#000088">netwib_icmp6</FONT> *picmp6);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_pkt_append_icmp6
+   Description :
+     Initialize physical data from a netwib_icmp6.
+   Input parameter(s) :
+     icmp6 : netwib_icmp6
+   Input/output parameter(s) :
+     *ppht : buffer to initialize
+   Output parameter(s) :
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_pkt_append_icmp6</B>(<FONT COLOR="#000088">netwib_consticmp6</FONT> *picmp6,
+                                   <FONT COLOR="#000088">netwib_buf</FONT> *ppkt);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_pkt_decode_icmp6
+   Description :
+     Decode a <FONT COLOR="#000088">netwib_icmp6</FONT> from data coming from wire.
+   Input parameter(s) :
+     pktproto : protocol of the <FONT COLOR="#000088">netwib_icmp6</FONT> in ppkt
+     *ppkt : buffer containing physical data
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *picmp6 : <FONT COLOR="#000088">netwib_icmp6</FONT> to initialize
+     *pskipsize : size to skip this header
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_pkt_decode_icmp6</B>(<FONT COLOR="#000088">netwib_constbuf</FONT> *ppkt,
+                                   <FONT COLOR="#000088">netwib_icmp6</FONT> *picmp6,
+                                   <FONT COLOR="#000088">netwib_uint32</FONT> *pskipsize);
+
+
+</PRE><BR><BR><HR><BR>
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../pkt.html">section index</A></H2>
+</BODY></HTML>

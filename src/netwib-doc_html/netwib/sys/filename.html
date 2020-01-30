@@ -1,0 +1,104 @@
+<HTML><HEAD>
+<TITLE>netwib doc_html (version 5.39.0)</TITLE>
+</HEAD><BODY BGCOLOR="#FFFFFF" TEXT="#000000">
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../sys.html">section index</A></H2><HR><BR>
+<PRE>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_filename_exists
+   Description :
+     Check if a regular file exists.
+   Input parameter(s) :
+     *pfilename : filename
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pyes : if file exists
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_filename_exists</B>(<FONT COLOR="#000088">netwib_constbuf</FONT> *pfilename,
+                                  <FONT COLOR="#000088">netwib_bool</FONT> *pyes);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_filename_size
+   Description :
+     Get size of a file.
+   Input parameter(s) :
+     *pfilename : filename
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *psize : size of the file
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+     <FONT COLOR="#000044">NETWIB_ERR_NOTFOUND</FONT> : file was not found
+   Note :
+     On a large filesystem, if file size is greater than
+     2G, this function returns the error <FONT COLOR="#000044">NETWIB_ERR_PAFILE2G</FONT>.
+     Use <FONT COLOR="#000088">netwib_pathstat_init</FONT> instead.
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_filename_size</B>(<FONT COLOR="#000088">netwib_constbuf</FONT> *pfilename,
+                                <FONT COLOR="#000088">netwib_uint32</FONT> *psize);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_filename_create
+   Description :
+     Create an empty file. If it exists, truncate its contents.
+   Input parameter(s) :
+     *pfilename : filename
+   Input/output parameter(s) :
+   Output parameter(s) :
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_filename_create</B>(<FONT COLOR="#000088">netwib_constbuf</FONT> *pfilename);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_filename_remove
+   Description :
+     Remove a file.
+   Input parameter(s) :
+     *pfilename : filename
+   Input/output parameter(s) :
+   Output parameter(s) :
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+     <FONT COLOR="#000044">NETWIB_ERR_NOTFOUND</FONT> : file was not found
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_filename_remove</B>(<FONT COLOR="#000088">netwib_constbuf</FONT> *pfilename);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_filename_rename
+   Description :
+     Rename a file.
+   Input parameter(s) :
+     *poldfilename : old filename
+     *pnewfilename : new filename
+   Input/output parameter(s) :
+   Output parameter(s) :
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+     <FONT COLOR="#000044">NETWIB_ERR_NOTFOUND</FONT> : file was not found
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_filename_rename</B>(<FONT COLOR="#000088">netwib_constbuf</FONT> *poldfilename,
+                                  <FONT COLOR="#000088">netwib_constbuf</FONT> *pnewfilename);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_filename_copy
+   Description :
+     Copy a file.
+   Input parameter(s) :
+     *poldfilename : old filename
+     *pnewfilename : new filename
+   Input/output parameter(s) :
+   Output parameter(s) :
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+     <FONT COLOR="#000044">NETWIB_ERR_NOTFOUND</FONT> : file was not found
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_filename_copy</B>(<FONT COLOR="#000088">netwib_constbuf</FONT> *poldfilename,
+                                <FONT COLOR="#000088">netwib_constbuf</FONT> *pnewfilename);
+</PRE><BR><BR><HR><BR>
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../sys.html">section index</A></H2>
+</BODY></HTML>

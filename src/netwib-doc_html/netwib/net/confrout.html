@@ -1,0 +1,141 @@
+<HTML><HEAD>
+<TITLE>netwib doc_html (version 5.39.0)</TITLE>
+</HEAD><BODY BGCOLOR="#FFFFFF" TEXT="#000000">
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../net.html">section index</A></H2><HR><BR>
+<PRE>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+typedef struct <FONT COLOR="#000088">netwib_conf_routes_index</FONT> <FONT COLOR="#000088">netwib_conf_routes_index</FONT>;
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+typedef struct {
+  <FONT COLOR="#000088">netwib_uint32</FONT> devnum;
+  <FONT COLOR="#000088">netwib_ip</FONT> dst;
+  <FONT COLOR="#000088">netwib_ip</FONT> mask; <FONT COLOR="#880000">/* set for IPv4 */</FONT>
+  <FONT COLOR="#000088">netwib_uint32</FONT> prefix; <FONT COLOR="#880000">/* set for IPv6 */</FONT>
+  <FONT COLOR="#000088">netwib_bool</FONT> srcset;
+  <FONT COLOR="#000088">netwib_ip</FONT> src;
+  <FONT COLOR="#000088">netwib_bool</FONT> gwset;
+  <FONT COLOR="#000088">netwib_ip</FONT> gw;
+  <FONT COLOR="#000088">netwib_uint32</FONT> metric;
+} <FONT COLOR="#000088">netwib_conf_routes</FONT>;
+<FONT COLOR="#880000">/*
+  srcunset and gwunset : dst is a local device
+  srcset and gwunset   : dst in on LAN
+  srcunset and gwset   : error
+  srcset and gwset     : dst is through gw
+*/</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_conf_routes_index_init
+   Description :
+     Initialize a <FONT COLOR="#000088">netwib_conf_routes_index</FONT> used to loop through
+     a netwib_conf_routes.
+   Input parameter(s) :
+     pitem : address of <FONT COLOR="#000088">netwib_conf_routes</FONT> which will be set
+             on each call of netwib_conf_routes_next
+   Input/output parameter(s) :
+   Output parameter(s) :
+     **ppindex : <FONT COLOR="#000088">netwib_conf_routes_index</FONT> allocated and initialized
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_conf_routes_index_init</B>(<FONT COLOR="#000088">netwib_conf_routes</FONT> *pitem,
+                                         <FONT COLOR="#000088">netwib_conf_routes_index</FONT> **ppindex);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_conf_routes_index_close
+   Description :
+     Close a netwib_conf_routes_index.
+   Input parameter(s) :
+   Input/output parameter(s) :
+     **ppindex : <FONT COLOR="#000088">netwib_conf_routes_index</FONT> to close
+   Output parameter(s) :
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_conf_routes_index_close</B>(<FONT COLOR="#000088">netwib_conf_routes_index</FONT> **ppindex);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_conf_routes_index_next
+   Description :
+     Get next entry.
+   Input parameter(s) :
+   Input/output parameter(s) :
+     *pindex : <FONT COLOR="#000088">netwib_conf_routes_index</FONT> to work on
+   Output parameter(s) :
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+     <FONT COLOR="#000044">NETWIB_ERR_DATAEND</FONT> : end reached
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_conf_routes_index_next</B>(<FONT COLOR="#000088">netwib_conf_routes_index</FONT> *pindex);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_conf_routes_display
+   Description :
+     Print routes configuration.
+   Input parameter(s) :
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pbuf : <FONT COLOR="#000088">netwib_buf</FONT> receiving data
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_conf_routes_display</B>(void);
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_buf_append_conf_routes</B>(<FONT COLOR="#000088">netwib_buf</FONT> *pbuf);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_conf_routes_reach_eth
+   Description :
+     Determine device, sources addresses and destination Ethernet
+     address to use to send an IP packet to a host.
+   Input parameter(s) :
+     dstip : host to reach
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pdevice : device to use
+     *psrceth : Ethernet source address to use
+     *pdsteth : Ethernet destination address to use
+     *psrcip : IP source address to use
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok (set: all)
+     <FONT COLOR="#000044">NETWIB_ERR_ROUTELOCALDEV</FONT> : hostip is the address of a
+                                 local device (set : device)
+     <FONT COLOR="#000044">NETWIB_ERR_ROUTENOTETHER</FONT> : Ethernet is not used to reach
+                                 destination (set : none)
+     <FONT COLOR="#000044">NETWIB_ERR_ROUTENOTFOUND</FONT> : the routing table doesn't contain
+                                 a route to hostip (set : none)
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_conf_routes_reach_eth</B>(<FONT COLOR="#000088">netwib_constip</FONT> *pdstip,
+                                        <FONT COLOR="#000088">netwib_buf</FONT> *pdevice,
+                                        <FONT COLOR="#000088">netwib_eth</FONT> *psrceth,
+                                        <FONT COLOR="#000088">netwib_eth</FONT> *pdsteth,
+                                        <FONT COLOR="#000088">netwib_ip</FONT> *psrcip);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_conf_routes_reach_ip
+   Description :
+     Determine device and addresses to use to send an IP packet
+     to a host.
+   Input parameter(s) :
+     dstip : host to reach
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pdevice : device to use (for example to sniff)
+     *psrcip : IP source address to use
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok (set: all)
+     <FONT COLOR="#000044">NETWIB_ERR_ROUTELOCALDEV</FONT> : hostip is the address of a
+                                 local device (set : *pdevice)
+     <FONT COLOR="#000044">NETWIB_ERR_ROUTENOTFOUND</FONT> : the routing table doesn't contain
+                                 a route to hostip (set : none)
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_conf_routes_reach_ip</B>(<FONT COLOR="#000088">netwib_constip</FONT> *pdstip,
+                                       <FONT COLOR="#000088">netwib_buf</FONT> *pdevice,
+                                       <FONT COLOR="#000088">netwib_ip</FONT> *psrcip);
+
+</PRE><BR><BR><HR><BR>
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../net.html">section index</A></H2>
+</BODY></HTML>

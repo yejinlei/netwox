@@ -1,0 +1,106 @@
+:
+
+set -u
+
+#########
+srcdir="../../src/netwib-src/src"
+
+#########
+heredir=`pwd`
+cd $srcdir
+# we have to use an environment variable because Solaris '.' does not
+# support a parameter (test in this case) after command
+NETWENVONE=test
+export NETWENVONE
+. ./genemake test netwib
+cd $heredir
+
+
+#########
+gccwundef=""
+if [ ${NETWIBDEF_PROGCCWUNDEF} = 1 ] ; then
+  gccwundef="-Wundef"
+fi
+
+gccwsignc=""
+if [ ${NETWIBDEF_PROGCCWSIGNC} = 1 ] ; then
+  gccwsignc="-Wsign-compare"
+fi
+
+gccwextra=""
+if [ ${NETWIBDEF_PROGCCWEXTRA} = 1 ] ; then
+  gccwextra="-Wextra"
+fi
+
+#########
+echo " Creation of Makefile"
+sib="$srcdir"
+sibt="src"
+sibtt="$sibt/netwibtest"
+cat > Makefile <<EOF
+#----------------------------------------------------------------------
+# This file was generated with ./genemaketest
+
+#----------------------------------------------------------------------
+# variables you can change
+CC=$NETWIBDEF_PROGCC
+
+# Under some systems, includes contain errors so they have to be ignored
+# with : -Wno-comment, -Wno-shadow, etc.
+G=-g
+GCCOPTa=-I$sibt -I$sib \$(G) -Wall -W -Werror -Wmissing-declarations
+GCCOPTb=-Wwrite-strings -Wcast-align -Wstrict-prototypes -Wcast-qual
+GCCOPTc=-Wshadow -Wpointer-arith -Wnested-externs -Wbad-function-cast
+GCCOPTd=-Wmissing-prototypes $gccwundef $gccwsignc $gccwextra
+GCCOPTz=\$(GCCOPTa) \$(GCCOPTb) \$(GCCOPTc) \$(GCCOPTd)
+GCCOPT=$gccOpt \$(GCCOPTz)
+
+GCCOPTPIC=$gccOptPic
+GCCOPTSO=$gccOptSo
+
+GCCINC=$gccInc
+
+GCCLIB=$gccLib
+
+#----------------------------------------------------------------------
+
+# we want ...
+all: netwibtest
+EOF
+
+#########
+echo "" >> Makefile
+echo "# dependence list for netwibtest" >> Makefile
+echo "NETWIBTESTDEP=./src/netwibtest.h ./src/netwibtest_util.h ./src/conf.h" >> Makefile
+
+#########
+echo "" >> Makefile
+cat compil/unix/incmake >> Makefile
+
+#########
+cat >> Makefile <<EOF
+
+# program compilation
+netwib:
+	cd ${sib} ; make
+
+${sibtt}.o: ${sibtt}.c ${sibtt}.h \$(netwibih) \$(NETWIBTESTDEP)
+	\$(CC) \$(GCCOPT) -c ${sibtt}.c \$(GCCINC) -o ${sibtt}.o
+${sibtt}_util.o: ${sibtt}_util.c ${sibtt}_util.h \$(netwibh) \$(NETWIBTESTDEP)
+	\$(CC) \$(GCCOPT) -c ${sibtt}_util.c \$(GCCINC) -o ${sibtt}_util.o
+netwibtest: netwib \$(INCMAKETOBJ) ${sibtt}.o ${sibtt}_util.o
+	\$(CC) \$(GCCOPT) -o netwibtest ${sibtt}.o ${sibtt}_util.o \$(INCMAKETOBJ) ${sib}/libnetwib.a \$(GCCINC) \$(GCCLIB)
+
+# cleaning
+clean: incmakecleantobj
+	rm -f netwibtest
+	rm -f ${sibtt}_util.o ${sibtt}.o
+	rm -f core netwibtest.core core.*
+	cd ${sib} ; make clean
+
+cleanall: clean
+	cd ${sib} ; make cleanall
+	rm -f $sib/netwib/def.h Makefile
+
+EOF
+

@@ -1,0 +1,7 @@
+Netwag is a graphical front end for netwox. It permits to easily :
+ - search tools proposed in netwox
+ - construct command line
+ - run tools
+ - keep an history of commands
+
+Do not hesitate to read netwox documentation.

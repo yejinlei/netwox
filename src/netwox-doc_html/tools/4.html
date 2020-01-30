@@ -1,0 +1,57 @@
+<HTML>
+ <HEAD>
+ <TITLE>Tool 4: Display information about an Ethernet address</TITLE>
+ </HEAD>
+ <BODY BGCOLOR="#FFFFFF">
+  <CENTER>   <H3>Tool 4: Display information about an Ethernet address</H3>
+  </CENTER>
+
+  <P><H3>Description:</H3>
+   <PRE>
+  This tool obtains addresses related to an Ethernet address.
+  
+  Parameter --title displays title in front of each result.
+  Parameter --ip displays IP address.
+  Parameter --host displays main hostname.
+  Parameter --hosts displays list of hostnames (one IP address can have
+  several hostnames).
+  If no option (ip, host, hosts) is set, they are all displayed.
+   </PRE>
+
+  <P><H3>Synonyms:</H3>
+  &nbsp;&nbsp;computer, hostname, mac, resolve, show<BR>
+
+  <P><H3>Usage:</H3>
+  &nbsp;&nbsp;netwox 4 -e eth [-t|+t] [-i|+i] [-h|+h] [-H|+H]<BR>
+
+  <P><H3>Parameters:</H3>
+<TABLE BORDER=1 CELLPADDING=4>
+ <TR>
+  <TD ALIGN=middle><I>parameter</I></TD>
+  <TD ALIGN=middle><I>description</I></TD>
+  <TD ALIGN=middle><I>example</I></TD>
+ </TR>
+ <TR><TD><TT>-e|--eth eth</TD>
+<TD>ethernet address</TD>
+<TD>E0:69:95:6F:ED:9A</TD></TR>
+<TR><TD><TT>-t|--title|+t|--no-title</TD>
+<TD>display titles</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-i|--ip|+i|--no-ip</TD>
+<TD>obtain IP address</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-h|--host|+h|--no-host</TD>
+<TD>obtain hostname</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-H|--hosts|+H|--no-hosts</TD>
+<TD>obtain hostnames</TD>
+<TD>&nbsp; </TD></TR>
+</TABLE>
+
+  <P><H3>Examples:</H3>
+  &nbsp;&nbsp;netwox 4 -e "E0:69:95:6F:ED:9A"<BR>
+<BR>
+  &nbsp;&nbsp;netwox 4 --eth "E0:69:95:6F:ED:9A"<BR>
+<BR>
+ </BODY>
+ </HTML>

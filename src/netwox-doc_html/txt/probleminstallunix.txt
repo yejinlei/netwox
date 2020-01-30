@@ -1,0 +1,33 @@
+                        Network toolbox netwox
+
+              -------------------------------------------
+              |              KNOWN PROBLEMS             |
+              -------------------------------------------
+
+This file describes known problems (incompatibilities, unsupported
+features, errors, etc.).
+If you seek help (usage help, examples, etc.), it's better to read 
+netwib-5.39.0-doc_html.tgz or netwox-5.39.0-doc_html.tgz. You 
+can also use "man netwib" or "man netwox".
+
+Problems described in this file are (if you encounter an unknown problem,
+thanks for contacting me, as explained in ./doc/problemreport.txt):
+
+WHILE EXECUTING ./GENEMAKE
+ 1: ./genemake: Permission denied.
+
+
+
+-------------------------------------------------------------------------------
+Problem 1:
+  Problem synthesis:
+    ./genemake: Permission denied.
+  Environment affected by the problem:
+    All
+  What's causing the problem:
+    file-5.39.0-src.tgz wasn't uncompressed with a good program.
+  Solution:
+    Use:
+         tar -zxvf file-5.39.0-src.tgz
+    or
+         gunzip file-5.39.0-src.tgz ; tar -xvf file-5.39.0-src.tar

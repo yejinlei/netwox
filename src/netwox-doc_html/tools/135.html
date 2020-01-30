@@ -1,0 +1,47 @@
+<HTML>
+ <HEAD>
+ <TITLE>Tool 135: Convert urls/uris in a HMTL file to absolute urls</TITLE>
+ </HEAD>
+ <BODY BGCOLOR="#FFFFFF">
+  <CENTER>   <H3>Tool 135: Convert urls/uris in a HMTL file to absolute urls</H3>
+  </CENTER>
+
+  <P><H3>Description:</H3>
+   <PRE>
+  This tool converts urls/uris in a file.
+  For example, file index.html downloaded from http://srv/R/index.html
+  might contain urls of the form '../S/img.png'. Loading index.html in a
+  browser will lead to broken images because they are not on the local
+  computer. This tool converts '../S/img.png' to the absolute real url
+  'http://srv/S/img.png'. Here is how to use it:
+    netwox 135 index.html index2.html http://example.com/R/
+   </PRE>
+
+  <P><H3>Usage:</H3>
+  &nbsp;&nbsp;netwox 135 -i file -o file -u uri<BR>
+
+  <P><H3>Parameters:</H3>
+<TABLE BORDER=1 CELLPADDING=4>
+ <TR>
+  <TD ALIGN=middle><I>parameter</I></TD>
+  <TD ALIGN=middle><I>description</I></TD>
+  <TD ALIGN=middle><I>example</I></TD>
+ </TR>
+ <TR><TD><TT>-i|--src-file file</TD>
+<TD>input HTML file</TD>
+<TD>t.htm</TD></TR>
+<TR><TD><TT>-o|--dst-file file</TD>
+<TD>created HTML file</TD>
+<TD>out.htm</TD></TR>
+<TR><TD><TT>-u|--url uri</TD>
+<TD>absolute url of file</TD>
+<TD>http://s/t.htm </TD></TR>
+</TABLE>
+
+  <P><H3>Examples:</H3>
+  &nbsp;&nbsp;netwox 135 -i "t.htm" -o "out.htm" -u "http://s/t.htm"<BR>
+<BR>
+  &nbsp;&nbsp;netwox 135 --src-file "t.htm" --dst-file "out.htm" --url "http://s/t.htm"<BR>
+<BR>
+ </BODY>
+ </HTML>

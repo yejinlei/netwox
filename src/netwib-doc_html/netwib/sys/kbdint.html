@@ -1,0 +1,64 @@
+<HTML><HEAD>
+<TITLE>netwib doc_html (version 5.39.0)</TITLE>
+</HEAD><BODY BGCOLOR="#FFFFFF" TEXT="#000000">
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../sys.html">section index</A></H2><HR><BR>
+<PRE>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_uint32_init_kbd
+   Description :
+     Ask user to enter an integer.
+   Input parameter(s) :
+     *pmessage : message to print before
+     min : minvalue which can be entered (if 0 no min)
+     max : maxvalue which can be entered (if 0xFFFFFFFFu no max)
+     defaultnumber : default number (if 0xFFFFFFFFu no default)
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pnumber : number chosen
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_uint32_init_kbd</B>(<FONT COLOR="#000088">netwib_constbuf</FONT> *pmessage,
+                                  <FONT COLOR="#000088">netwib_uint32</FONT> min,
+                                  <FONT COLOR="#000088">netwib_uint32</FONT> max,
+                                  <FONT COLOR="#000088">netwib_uint32</FONT> defaultnumber,
+                                  <FONT COLOR="#000088">netwib_uint32</FONT> *pnumber);
+<FONT COLOR="#008800">#define <FONT COLOR="#000044">NETWIB_UINT32_INIT_KBD_NOMIN</FONT> 0</FONT>
+<FONT COLOR="#008800">#define <FONT COLOR="#000044">NETWIB_UINT32_INIT_KBD_NOMAX</FONT> 0xFFFFFFFFu</FONT>
+<FONT COLOR="#008800">#define <FONT COLOR="#000044">NETWIB_UINT32_INIT_KBD_NODEF</FONT> 0xFFFFFFFFu</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_uint64_init_kbd</B>(<FONT COLOR="#000088">netwib_constbuf</FONT> *pmessage,
+                                  <FONT COLOR="#000088">netwib_uint64</FONT> defaultnumber,
+                                  <FONT COLOR="#000088">netwib_uint64</FONT> *pnumber);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_int32_init_kbd
+   Description :
+     Ask user to enter an integer.
+   Input parameter(s) :
+     *pmessage : message to print before
+     min : minvalue which can be entered (if -0x80000000 no min)
+     max : maxvalue which can be entered (if 0x7FFFFFFF no max)
+     defaultnumber : default number (if 0x7FFFFFFF no default)
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pnumber : number chosen
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_int32_init_kbd</B>(<FONT COLOR="#000088">netwib_constbuf</FONT> *pmessage,
+                                 <FONT COLOR="#000088">netwib_int32</FONT> min,
+                                 <FONT COLOR="#000088">netwib_int32</FONT> max,
+                                 <FONT COLOR="#000088">netwib_int32</FONT> defaultnumber,
+                                 <FONT COLOR="#000088">netwib_int32</FONT> *pnumber);
+<FONT COLOR="#008800">#define <FONT COLOR="#000044">NETWIB_INT32_INIT_KBD_NOMIN</FONT> (-0x7FFFFFFF-1)</FONT>
+<FONT COLOR="#008800">#define <FONT COLOR="#000044">NETWIB_INT32_INIT_KBD_NOMAX</FONT> 0x7FFFFFFF</FONT>
+<FONT COLOR="#008800">#define <FONT COLOR="#000044">NETWIB_INT32_INIT_KBD_NODEF</FONT> 0x7FFFFFFF</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_int64_init_kbd</B>(<FONT COLOR="#000088">netwib_constbuf</FONT> *pmessage,
+                                 <FONT COLOR="#000088">netwib_int64</FONT> defaultnumber,
+                                 <FONT COLOR="#000088">netwib_int64</FONT> *pnumber);
+</PRE><BR><BR><HR><BR>
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../sys.html">section index</A></H2>
+</BODY></HTML>

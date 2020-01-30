@@ -1,0 +1,17 @@
+Description: Add platform detection support for PowerPC64 (Little Endian)
+ This patch adds platform detection support for the PowerPC 64-bit
+ architecture in little-endian mode (#762580). Credits to Ravindran Arani.
+ .
+
+--- netw-ib-ox-ag-5.39.0.orig/src/netwib-src/src/genemake
++++ netw-ib-ox-ag-5.39.0/src/netwib-src/src/genemake
+@@ -109,6 +109,9 @@ case $unamem in
+   "ppc64" | "powerpc64" )
+     NETWIBDEF_SYSARCH="ppc64"
+     ;;
++  "ppc64le" | "powerpc64le" )
++    NETWIBDEF_SYSARCH="ppc64le"
++    ;;
+   arm* )
+     NETWIBDEF_SYSARCH="arm"
+     ;;

@@ -1,0 +1,54 @@
+                 -------------------------------
+                 |        INTRODUCTION         |
+                 -------------------------------
+
+Note : if you encounter problems, read ./doc/probleminstall.txt
+
+There are 3 steps :
+ - compile and install netwox [if not already installed]
+ - install Tcl/Tk >= 8.0 [if not already installed]
+ - install netwag
+
+
+                  ------------------------------
+                  |       STEP 1 : netwox      |
+                  ------------------------------
+
+If netwox isn't installed on your system, you have to do it :
+   http://ntwox.sourceforge.net/
+Installation procedure for netwox is explained in downloaded files.
+
+
+                 -------------------------------
+                 |       STEP 2 : Tcl/Tk       |
+                 -------------------------------
+
+Tcl/Tk is a script programming language. Netwag is written is Tcl/Tk 8.
+
+You have to install Tcl/Tk version >= 8.0 :
+ - http://aspn.activestate.com/ASPN/Downloads/ActiveTcl
+ - ftp://ftp.activestate.com/ActiveTcl/Windows/
+ - http://www.tcl.tk/
+If you have a problem downloading or installing read Tcl/Tk doc.
+If you still have a problem, contact Tcl/Tk's developers.
+I cannot help you, because I do not maintain this code.
+
+
+                  -----------------------------
+                  |      STEP 3 : netwag      |
+                  -----------------------------
+
+
+File netwag539.tcl contains variables which can be modified (this is not
+compulsory) :
+ - netwag_glo_dir_tmp : temporary directory
+ - netwag_glo_file_session : session file
+ - netwag_glo_bin_netwox : path to netwox (to do if you renamed
+                           netwox539.exe)
+
+Then, by double-clicking on the file, Netwag starts.
+
+You can also add a shortcut in the Start menu (note: under Windows NT,
+directly copy the program in the Start menu because following a shortcut
+takes almost one second).
+

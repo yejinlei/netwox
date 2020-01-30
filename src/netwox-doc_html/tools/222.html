@@ -1,0 +1,41 @@
+<HTML>
+ <HEAD>
+ <TITLE>Tool 222: In a HMTL file, suppress links pointing to local urls</TITLE>
+ </HEAD>
+ <BODY BGCOLOR="#FFFFFF">
+  <CENTER>   <H3>Tool 222: In a HMTL file, suppress links pointing to local urls</H3>
+  </CENTER>
+
+  <P><H3>Description:</H3>
+   <PRE>
+  This tool suppresses links to local urls/uris located in a HTML file.
+  For example, a HTML file may contain http://s/, mailto:a@a, dir/file.
+  In this case, only the first one (http://s/) is kept. Other tags are
+  suppressed.
+   </PRE>
+
+  <P><H3>Usage:</H3>
+  &nbsp;&nbsp;netwox 222 -i file -o file<BR>
+
+  <P><H3>Parameters:</H3>
+<TABLE BORDER=1 CELLPADDING=4>
+ <TR>
+  <TD ALIGN=middle><I>parameter</I></TD>
+  <TD ALIGN=middle><I>description</I></TD>
+  <TD ALIGN=middle><I>example</I></TD>
+ </TR>
+ <TR><TD><TT>-i|--src-file file</TD>
+<TD>input HTML file</TD>
+<TD>t.htm</TD></TR>
+<TR><TD><TT>-o|--dst-file file</TD>
+<TD>created HTML file</TD>
+<TD>out.htm </TD></TR>
+</TABLE>
+
+  <P><H3>Examples:</H3>
+  &nbsp;&nbsp;netwox 222 -i "t.htm" -o "out.htm"<BR>
+<BR>
+  &nbsp;&nbsp;netwox 222 --src-file "t.htm" --dst-file "out.htm"<BR>
+<BR>
+ </BODY>
+ </HTML>

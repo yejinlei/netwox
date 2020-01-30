@@ -1,0 +1,70 @@
+<HTML><HEAD>
+<TITLE>netwib doc_html (version 5.39.0)</TITLE>
+</HEAD><BODY BGCOLOR="#FFFFFF" TEXT="#000000">
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../pkt.html">section index</A></H2><HR><BR>
+<PRE>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* UDP header */</FONT>
+typedef struct {
+  <FONT COLOR="#000088">netwib_port</FONT> src;
+  <FONT COLOR="#000088">netwib_port</FONT> dst;
+  <FONT COLOR="#000088">netwib_uint16</FONT> len;
+  <FONT COLOR="#000088">netwib_uint16</FONT> check;
+} <FONT COLOR="#000088">netwib_udphdr</FONT>;
+typedef const <FONT COLOR="#000088">netwib_udphdr</FONT> <FONT COLOR="#000088">netwib_constudphdr</FONT>;
+<FONT COLOR="#008800">#define <FONT COLOR="#000044">NETWIB_UDPHDR_LEN</FONT> 8</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_udphdr_initdefault
+   Description :
+     Initialize a <FONT COLOR="#000088">netwib_udphdr</FONT> with default values.
+   Input parameter(s) :
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pudphdr : <FONT COLOR="#000088">netwib_udphdr</FONT> to initialize
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_udphdr_initdefault</B>(<FONT COLOR="#000088">netwib_udphdr</FONT> *pudphdr);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_pkt_append_udphdr
+   Description :
+     Initialize physical data from a netwib_udphdr.
+   Input parameter(s) :
+     *pudphdr : netwib_udphdr
+   Input/output parameter(s) :
+     *ppht : buffer to initialize
+   Output parameter(s) :
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_pkt_append_udphdr</B>(<FONT COLOR="#000088">netwib_constudphdr</FONT> *pudphdr,
+                                    <FONT COLOR="#000088">netwib_buf</FONT> *ppkt);
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_pkt_prepend_udphdr</B>(<FONT COLOR="#000088">netwib_constudphdr</FONT> *pudphdr,
+                                     <FONT COLOR="#000088">netwib_buf</FONT> *ppkt);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_pkt_decode_udphdr
+   Description :
+     Decode a <FONT COLOR="#000088">netwib_udphdr</FONT> from physical data.
+   Input parameter(s) :
+     *ppkt : buffer containing physical data
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pudphdr : <FONT COLOR="#000088">netwib_udphdr</FONT> contained in pkt
+     *pskipsize : size to use to skip this header
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+     <FONT COLOR="#000044">NETWIB_ERR_NOTCONVERTED</FONT> : pkt could not be decoded
+     <FONT COLOR="#000044">NETWIB_ERR_DATAMISSING</FONT> : pkt was not big enough
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_pkt_decode_udphdr</B>(<FONT COLOR="#000088">netwib_constbuf</FONT> *ppkt,
+                                    <FONT COLOR="#000088">netwib_udphdr</FONT> *pudphdr,
+                                    <FONT COLOR="#000088">netwib_uint32</FONT> *pskipsize);
+</PRE><BR><BR><HR><BR>
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../pkt.html">section index</A></H2>
+</BODY></HTML>

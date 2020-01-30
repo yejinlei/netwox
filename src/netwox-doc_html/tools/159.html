@@ -1,0 +1,127 @@
+<HTML>
+ <HEAD>
+ <TITLE>Tool 159: SNMP Get</TITLE>
+ </HEAD>
+ <BODY BGCOLOR="#FFFFFF">
+  <CENTER>   <H3>Tool 159: SNMP Get</H3>
+  </CENTER>
+
+  <P><H3>Description:</H3>
+   <PRE>
+  This tool requests a GET on a SNMP server. It permits to retrieve the
+  value of one item.
+  
+  Parameter --oid is the oid to query. An oid is for example
+  '.1.3.6.1.2.1.1.4.0'.
+  
+  Parameter --version defines SNMP version to use (from 1 to 3).
+  Versions 1 and 2 need --community parameter to set community name.
+  Version 3 requires --username and --password. Parameter --authmd5
+  indicates if md5 authentication is used. Parameters
+  --authoritativeengineid, --authoritativeengineboots,
+  --authoritativeenginetime, --contextengineid and --contextname are
+  optional version 3 parameters.
+  Parameter --display shows packets.
+  
+  Parameter --dst-ip is the address of remote host/server.
+  Parameter --dst-port is the port number where to connect.
+  Optional parameter --src-ip defines the local IP address to use.
+  Optional parameter --src-port defines the local port number to use.
+  Optional parameter --ip4opts permits to add IP4 options encoded as
+  mixed.
+  Optional parameter --ip6exts permits to add IP6 options encoded as
+  mixed (first byte is the next header number).
+  Optional parameters --device, --src-eth and --dst-eth permits to
+  create a virtual client using fake addresses (in this case, tool have
+  to be run with admin privilege in order to sniff and spoof at
+  Ethernet level).
+   </PRE>
+
+  <P><H3>Synonyms:</H3>
+  &nbsp;&nbsp;snmpget<BR>
+
+  <P><H3>Usage:</H3>
+  &nbsp;&nbsp;netwox 159 -i ip [-c password] -q oid [-d device] [-E eth] [-e eth] [-I ip] [-P port] [-p port] [-o ip4opts] [-O ip6exts] [-v uint32] [-m|+m] [-u login] [-w password] [-A mixed_data] [-B uint32] [-M uint32] [-C mixed_data] [-N data] [-T uint32] [-y|+y]<BR>
+
+  <P><H3>Parameters:</H3>
+<TABLE BORDER=1 CELLPADDING=4>
+ <TR>
+  <TD ALIGN=middle><I>parameter</I></TD>
+  <TD ALIGN=middle><I>description</I></TD>
+  <TD ALIGN=middle><I>example</I></TD>
+ </TR>
+ <TR><TD><TT>-i|--dst-ip ip</TD>
+<TD>destination IP address</TD>
+<TD>5.6.7.8</TD></TR>
+<TR><TD><TT>-c|--community password</TD>
+<TD>SNMPv1/v2 community</TD>
+<TD>public</TD></TR>
+<TR><TD><TT>-q|--oid oid</TD>
+<TD>OID to query</TD>
+<TD>.1.3.6.1.2.1.1.4.0</TD></TR>
+<TR><TD><TT>-d|--device device</TD>
+<TD>device name</TD>
+<TD>Eth0</TD></TR>
+<TR><TD><TT>-E|--src-eth eth</TD>
+<TD>source ethernet address</TD>
+<TD>0:2:3:4:5:6</TD></TR>
+<TR><TD><TT>-e|--dst-eth eth</TD>
+<TD>destination ethernet address</TD>
+<TD>0:8:9:a:b:c</TD></TR>
+<TR><TD><TT>-I|--src-ip ip</TD>
+<TD>source IP address</TD>
+<TD>192.168.100.200</TD></TR>
+<TR><TD><TT>-P|--src-port port</TD>
+<TD>source port number</TD>
+<TD>0</TD></TR>
+<TR><TD><TT>-p|--dst-port port</TD>
+<TD>destination port number</TD>
+<TD>161</TD></TR>
+<TR><TD><TT>-o|--ip4opts ip4opts</TD>
+<TD>IPv4 options</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-O|--ip6exts ip6exts</TD>
+<TD>IPv6 extensions</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-v|--version uint32</TD>
+<TD>SNMP version (1, 2 or 3)</TD>
+<TD>1</TD></TR>
+<TR><TD><TT>-m|--md5auth|+m|--no-md5auth</TD>
+<TD>SNMPv3 auth using MD5</TD>
+<TD><I>This boolean is set.<BR>Use + or --no- to unset it.</I></TD></TR>
+<TR><TD><TT>-u|--username login</TD>
+<TD>SNMPv3 username</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-w|--password password</TD>
+<TD>SNMPv3 password</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-A|--authoritativeengineid mixed_data</TD>
+<TD>SNMPv3 authoritativeengineid</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-B|--authoritativeengineboots uint32</TD>
+<TD>SNMPv3 authoritativeengineboots</TD>
+<TD>0</TD></TR>
+<TR><TD><TT>-M|--authoritativeenginetime uint32</TD>
+<TD>SNMPv3 authoritativeenginetime</TD>
+<TD>0</TD></TR>
+<TR><TD><TT>-C|--contextengineid mixed_data</TD>
+<TD>SNMPv3 contextengineid</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-N|--contextname data</TD>
+<TD>SNMPv3 contextname</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-T|--timeout uint32</TD>
+<TD>timeout in ms</TD>
+<TD>10000</TD></TR>
+<TR><TD><TT>-y|--display|+y|--no-display</TD>
+<TD>display packets</TD>
+<TD>&nbsp; </TD></TR>
+</TABLE>
+
+  <P><H3>Examples:</H3>
+  &nbsp;&nbsp;netwox 159 -i "5.6.7.8" -q ".1.3.6.1.2.1.1.4.0"<BR>
+<BR>
+  &nbsp;&nbsp;netwox 159 --dst-ip "5.6.7.8" --oid ".1.3.6.1.2.1.1.4.0"<BR>
+<BR>
+ </BODY>
+ </HTML>

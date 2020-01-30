@@ -1,0 +1,62 @@
+<HTML>
+ <HEAD>
+ <TITLE>Tool 73: Simulate presence of a/several computer/s (arp and ping)</TITLE>
+ </HEAD>
+ <BODY BGCOLOR="#FFFFFF">
+  <CENTER>   <H3>Tool 73: Simulate presence of a/several computer/s (arp and ping)</H3>
+  </CENTER>
+
+  <P><H3>Description:</H3>
+   <PRE>
+  This tool simulates the presence of a computer. It will answer to ARP
+  requests and ping.
+  Other hosts can 'see' this virtual computer, but it will not really
+  exist. This tool is frequently used to answer ARP when a tool is
+  sending packets with a spoofed IP address.
+  Parameter --ips defines the fake IP address of this computer.
+  Parameter --eths defines the fake Ethernet address of this computer.
+  If --no-answer-arp or --no-answer-ping is set, tool does not answers
+  to ARP/IP6NeighborDiscovery and ping.
+  It works only on a Ethernet device.
+  
+  This tool may need to be run with admin privilege in order to sniff
+  and spoof.
+   </PRE>
+
+  <P><H3>Synonyms:</H3>
+  &nbsp;&nbsp;reply, virtual<BR>
+
+  <P><H3>Usage:</H3>
+  &nbsp;&nbsp;netwox 73 [-d device] -i ips -e eths [-a|+a] [-p|+p]<BR>
+
+  <P><H3>Parameters:</H3>
+<TABLE BORDER=1 CELLPADDING=4>
+ <TR>
+  <TD ALIGN=middle><I>parameter</I></TD>
+  <TD ALIGN=middle><I>description</I></TD>
+  <TD ALIGN=middle><I>example</I></TD>
+ </TR>
+ <TR><TD><TT>-d|--device device</TD>
+<TD>device name</TD>
+<TD>Eth0</TD></TR>
+<TR><TD><TT>-i|--ips ips</TD>
+<TD>list/range of IP addresses</TD>
+<TD>1.2.3.4</TD></TR>
+<TR><TD><TT>-e|--eths eths</TD>
+<TD>list/range of ethernet addresses</TD>
+<TD>0:a:b:c:d:e</TD></TR>
+<TR><TD><TT>-a|--answer-arp|+a|--no-answer-arp</TD>
+<TD>answer ARP</TD>
+<TD><I>This boolean is set.<BR>Use + or --no- to unset it.</I></TD></TR>
+<TR><TD><TT>-p|--answer-ping|+p|--no-answer-ping</TD>
+<TD>answer ICMP Echo Request</TD>
+<TD><I>This boolean is set.<BR>Use + or --no- to unset it.</I> </TD></TR>
+</TABLE>
+
+  <P><H3>Examples:</H3>
+  &nbsp;&nbsp;netwox 73 -i "1.2.3.4" -e "0:a:b:c:d:e"<BR>
+<BR>
+  &nbsp;&nbsp;netwox 73 --ips "1.2.3.4" --eths "0:a:b:c:d:e"<BR>
+<BR>
+ </BODY>
+ </HTML>

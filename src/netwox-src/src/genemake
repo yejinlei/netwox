@@ -1,0 +1,322 @@
+:
+
+set -u
+
+########################################################################
+# Those parameters are used in test mode
+argone=${1-notset}
+argtwo=${2-notset}
+if [ $argone = "notset" ] ; then
+  envone=${NETWENVONE-notset}
+  if [ $envone != "notset" ] ; then
+    argone=$envone
+  fi
+fi
+if [ $argtwo = "notset" ] ; then
+  envtwo=${NETWENVTWO-notset}
+  if [ $envtwo != "notset" ] ; then
+    argtwo=$envtwo
+  fi
+fi
+
+
+########################################################################
+. ./compil/unix/version.sh
+echo "Netwox version ${NETWOXDEF_VERSION} (${NETWOXDEF_VERSIONMAJOR} ${NETWOXDEF_VERSIONMINOR} ${NETWOXDEF_VERSIONMICRO})"
+netwv="${NETWOXDEF_VERSIONMAJOR}${NETWOXDEF_VERSIONMINOR}"
+
+
+########################################################################
+echo "Loading config.dat"
+. ./config.dat
+
+
+########################################################################
+echo "Checking programs"
+
+# compute current location of netwib-config
+netwibconfig="${NETWIBDEF_INSTDBIN}/netwib${netwv}-config"
+# special test detection
+if [ $argone = "test" ] ; then
+  netwibconfig=../../../test/netwox/compil/unix/netwib${netwv}-config
+fi
+
+progcheck ()
+{ progname=$1
+  progdesc="$2"
+
+  type $progname 2> /dev/null 1> /dev/null
+  if [ "$?Z" != "0Z" ] ; then
+    echo "Error: the $progdesc '$progname' wasn't found"
+    exit 1
+  else
+    echo " $progname yes"
+  fi
+}
+
+progcheck $netwibconfig "netwib configuration"
+progcheck $NETWOXDEF_PROGCC "compiler"
+progcheck $NETWOXDEF_PROGAR "archiver"
+progcheck $NETWOXDEF_PROGRANLIB "program"
+progcheck $NETWOXDEF_PROGFIND "find"
+progcheck $NETWOXDEF_PROGSED "sed"
+progcheck $NETWOXDEF_PROGTR "tr"
+progcheck $NETWOXDEF_PROGSORT "sort"
+
+
+########################################################################
+echo "Checking directories"
+
+dircheck ()
+{ dirname=$1
+  dirdesc="$2"
+
+  if [ ! -d $dirname ] ; then
+    echo "Warning: the $dirdesc directory '$dirname' wasn't found"
+  else
+    echo " $dirname yes"
+  fi
+}
+
+dircheck $NETWOXDEF_INSTBIN "binary"
+dircheck $NETWOXDEF_INSTMAN "man"
+dircheck $NETWOXDEF_INSTMAN1 "man1"
+
+
+########################################################################
+echo "Compilation options selection"
+
+# options
+gccOpt=$NETWOXDEF_PROGCC_OPT
+# includes
+gccInc="${NETWOXDEF_PROGCC_INC} "`$netwibconfig -c`
+# libraries
+gccLib="${NETWOXDEF_PROGCC_LIB} "`$netwibconfig -l`
+
+# for users creating packages
+if [ "Z${NETWIBDEF_INSTDESTDIR}" != "Z" ] ; then
+  gccInc="$gccInc -I${NETWIBDEF_INSTDINCLUDE}"
+  gccLib="$gccLib -L${NETWIBDEF_INSTDLIB}"
+fi
+
+
+########################################################################
+echo "Generate the different files"
+
+#########
+netwibhfile="netwib.h"
+echo " Creation of $netwibhfile"
+if [ $argone = "test" ] ; then
+  echo "#include <netwib.h>" > $netwibhfile
+else
+  echo "#include <netwib$netwv.h>" > $netwibhfile
+fi
+
+#########
+deffile="def.h"
+echo " Creation of $deffile"
+echo "#define NETWOXDEF_VERSION \"$NETWOXDEF_VERSION\"" > $deffile
+echo "#define NETWOXDEF_VERSIONMAJOR $NETWOXDEF_VERSIONMAJOR" >> $deffile
+echo "#define NETWOXDEF_VERSIONMINOR $NETWOXDEF_VERSIONMINOR" >> $deffile
+echo "#define NETWOXDEF_VERSIONMICRO $NETWOXDEF_VERSIONMICRO" >> $deffile
+echo "#define NETWOXDEF_PROGCC \"$NETWOXDEF_PROGCC\"" >> $deffile
+echo "#define NETWOXDEF_PROGAR \"$NETWOXDEF_PROGAR\"" >> $deffile
+echo "#define NETWOXDEF_PROGRANLIB \"$NETWOXDEF_PROGRANLIB\"" >> $deffile
+echo "#define NETWOXDEF_PROGFIND \"$NETWOXDEF_PROGFIND\"" >> $deffile
+echo "#define NETWOXDEF_PROGSED \"$NETWOXDEF_PROGSED\"" >> $deffile
+echo "#define NETWOXDEF_PROGTR \"$NETWOXDEF_PROGTR\"" >> $deffile
+echo "#define NETWOXDEF_INSTBIN \"$NETWOXDEF_INSTBIN\"" >> $deffile
+echo "#define NETWOXDEF_INSTMAN \"$NETWOXDEF_INSTMAN\"" >> $deffile
+echo "#define NETWOXDEF_INSTMAN1 \"$NETWOXDEF_INSTMAN1\"" >> $deffile
+
+
+#########
+echo " Creation of Makefiles"
+
+NETWOXDEF_PROGCCALIAS=`$netwibconfig -d PROGCCALIAS`
+NETWOXDEF_PROGCCWUNDEF=`$netwibconfig -d PROGCCWUNDEF`
+NETWOXDEF_PROGCCWSIGNC=`$netwibconfig -d PROGCCWSIGNC`
+NETWOXDEF_PROGCCWEXTRA=`$netwibconfig -d PROGCCWEXTRA`
+
+if [ ${NETWOXDEF_PROGCCALIAS} = 1 ] ; then
+  gccOpt="$gccOpt -fno-strict-aliasing"
+fi
+
+gccwundef=""
+if [ ${NETWOXDEF_PROGCCWUNDEF} = 1 ] ; then
+  gccwundef="-Wundef"
+fi
+
+gccwsignc=""
+if [ ${NETWOXDEF_PROGCCWSIGNC} = 1 ] ; then
+  gccwsignc="-Wsign-compare"
+fi
+
+gccwextra=""
+if [ ${NETWOXDEF_PROGCCWEXTRA} = 1 ] ; then
+  gccwextra="-Wextra"
+fi
+
+netwox_file_list ()
+{
+  thedir=$1
+  $NETWOXDEF_PROGFIND $thedir -type f -name "*.c" |\
+    $NETWOXDEF_PROGSED 's|^'$thedir'/||' | $NETWOXDEF_PROGSED 's|\.c$||' |\
+    $NETWOXDEF_PROGSORT
+}
+
+netwox_head_make ()
+{
+  cat <<EOF
+#----------------------------------------------------------------------
+# This file was generated with ./genemake
+
+#----------------------------------------------------------------------
+# variables which can be modified
+DESTDIR=$NETWOXDEF_INSTDESTDIR
+CC=$NETWOXDEF_PROGCC
+AR=$NETWOXDEF_PROGAR
+RANLIB=$NETWOXDEF_PROGRANLIB
+INSTBIN=\$(DESTDIR)$NETWOXDEF_INSTBIN
+INSTMAN1=\$(DESTDIR)$NETWOXDEF_INSTMAN1
+
+EOF
+
+if [ $argone = "test" ] ; then
+cat <<EOF
+G=-g
+GCCOPTa=\$(G) -Wall -W -Werror -Wmissing-declarations
+GCCOPTb=-Wwrite-strings -Wcast-align -Wstrict-prototypes -Wcast-qual
+GCCOPTc=-Wshadow -Wpointer-arith -Wnested-externs -Wbad-function-cast
+GCCOPTd=-Wmissing-prototypes -Wextra $gccwundef $gccwsignc
+GCCOPTz=\$(GCCOPTa) \$(GCCOPTb) \$(GCCOPTc) \$(GCCOPTd)
+GCCOPT=$gccOpt \$(GCCOPTz)
+EOF
+else
+  echo "GCCOPT=$gccOpt"
+fi
+
+cat <<EOF
+
+GCCINC=$gccInc
+
+GCCLIB=$gccLib
+
+
+#----------------------------------------------------------------------
+
+# we want ...
+EOF
+}
+
+# Modules and tools are both stored in modtool.a, because
+# when stored separately, they had cross dependencies bringing
+# problems on some systems.
+netwox_dir_make ()
+{
+  dependh=$1
+  thedir=$2
+
+  echo "  $thedir"
+
+  allfiles=`netwox_file_list $thedir | $NETWOXDEF_PROGSED 's|$|.o|' | ${NETWOXDEF_PROGTR} '\012' ' '`
+
+  dm=$thedir/Makefile
+  netwox_head_make > $dm
+  echo "all: ../modtool.a" >> $dm
+  echo "../modtool.a: $allfiles" >> $dm
+  echo "	\$(AR) -cr ../modtool.a $allfiles" >> $dm
+
+  netwox_file_list $thedir | while read f
+  do
+    if [ $dependh -eq 1 ] ; then
+      if [ $f = "tool/tool" ] ; then
+        echo "$f.o: $f.c $f.h ../tools.list ../tools.h" >> $thedir/Makefile
+      else
+        echo "$f.o: $f.c $f.h" >> $thedir/Makefile
+      fi
+    else
+      echo "$f.o: $f.c" >> $thedir/Makefile
+    fi
+    echo "	\$(CC) \$(GCCOPT) \$(GCCINC) -c -o $f.o $f.c" >> $dm
+  done
+
+}
+
+netwox_dir_make 0 tools
+netwox_dir_make 1 modules
+
+##
+netwox_main_make ()
+{
+  netwox_head_make > Makefile
+
+  echo "  ."
+
+  cat >> Makefile <<EOF
+all: netwox
+
+netwoxtools:
+	cd tools ; make
+netwoxmodules:
+	cd modules ; make
+
+netwox: netwoxmodules netwoxtools
+	\$(RANLIB) modtool.a
+	\$(CC) \$(GCCOPT) \$(GCCINC) netwox.c -o netwox modtool.a \$(GCCLIB)
+EOF
+if [ $argone != "test" ] ; then
+  echo "	echo \"\"" >> Makefile
+  echo "	@echo \"OK - You can now install netwox with 'make install'\"" >> Makefile
+fi
+cat >> Makefile <<EOF
+
+installnetwox: netwox
+	[ -d \$(INSTBIN) ] || mkdir -m 0755 -p \$(INSTBIN)
+	cp netwox \$(INSTBIN)/netwox$netwv
+	chmod 755 \$(INSTBIN)/netwox$netwv
+	rm -f \$(INSTBIN)/netwox
+	ln -s netwox$netwv \$(INSTBIN)/netwox
+
+installman:
+	[ -d \$(INSTMAN1) ] || mkdir -m 0755 -p \$(INSTMAN1)
+	cp ../doc/netwox.1 \$(INSTMAN1)/netwox$netwv.1
+	chmod 644 \$(INSTMAN1)/netwox$netwv.1
+	rm -f \$(INSTMAN1)/netwox.1
+	ln -s netwox$netwv.1 \$(INSTMAN1)/netwox.1
+
+install: installnetwox installman
+	@echo ""
+	@echo "OK - You can now run netwox with 'netwox' or '\$(INSTBIN)/netwox'"
+	@echo "I suggest you to start with 'netwox 1', as explained ../INSTALLUNIX_EN.TXT"
+
+uninstall: 
+	@echo "Several versions of netwox can be installed on the same system."
+	@echo "I left you remove exactly the version you want to remove :"
+	@echo "  \$(INSTBIN)/netwox*"
+	@echo "  \$(INSTMAN1)/netwox*.1"
+	@echo "If you are SURE about what you do, you can for example enter :"
+	@echo "  rm -rf \$(INSTBIN)/netwox*"
+	@echo "  rm -rf \$(INSTMAN1)/netwox*.1"
+
+# cleaning
+clean:
+	rm -f modules/*.o modules/*/*.o
+	rm -f tools/*.o
+	rm -f netwox modtool.a core netwox.core
+cleanall: clean
+	rm -f def.h netwib.h Makefile modules/Makefile tools/Makefile
+
+EOF
+}
+
+netwox_main_make
+
+
+########################################################################
+########################################################################
+if [ $argone != "test" ] ; then
+echo "End of genemake"
+echo ""
+echo "OK - You can now compile with 'make'"
+fi

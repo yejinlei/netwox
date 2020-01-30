@@ -1,0 +1,53 @@
+<HTML>
+ <HEAD>
+ <TITLE>Tool 55: Ping ARP</TITLE>
+ </HEAD>
+ <BODY BGCOLOR="#FFFFFF">
+  <CENTER>   <H3>Tool 55: Ping ARP</H3>
+  </CENTER>
+
+  <P><H3>Description:</H3>
+   <PRE>
+  This tool checks if a host is up. It's done sending a probe packet and
+  expecting a reply.
+  This tool sends an ARP request. If host is up, it will send back an
+  ARP Reply.
+  
+  This tool may need to be run with admin privilege in order to sniff
+  and spoof.
+   </PRE>
+
+  <P><H3>Usage:</H3>
+  &nbsp;&nbsp;netwox 55 -i ip [-c uint32] [-m uint32] [-b|+b] [-1|+1]<BR>
+
+  <P><H3>Parameters:</H3>
+<TABLE BORDER=1 CELLPADDING=4>
+ <TR>
+  <TD ALIGN=middle><I>parameter</I></TD>
+  <TD ALIGN=middle><I>description</I></TD>
+  <TD ALIGN=middle><I>example</I></TD>
+ </TR>
+ <TR><TD><TT>-i|--dst-ip ip</TD>
+<TD>destination IP address</TD>
+<TD>5.6.7.8</TD></TR>
+<TR><TD><TT>-c|--max-count uint32</TD>
+<TD>max requests</TD>
+<TD>4294967295</TD></TR>
+<TR><TD><TT>-m|--max-ms uint32</TD>
+<TD>max millisecond wait</TD>
+<TD>1000</TD></TR>
+<TR><TD><TT>-b|--beep|+b|--no-beep</TD>
+<TD>beep if reached</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-1|--display01|+1|--no-display01</TD>
+<TD>display only 0 or 1</TD>
+<TD>&nbsp; </TD></TR>
+</TABLE>
+
+  <P><H3>Examples:</H3>
+  &nbsp;&nbsp;netwox 55 -i "5.6.7.8"<BR>
+<BR>
+  &nbsp;&nbsp;netwox 55 --dst-ip "5.6.7.8"<BR>
+<BR>
+ </BODY>
+ </HTML>

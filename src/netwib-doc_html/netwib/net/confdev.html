@@ -1,0 +1,81 @@
+<HTML><HEAD>
+<TITLE>netwib doc_html (version 5.39.0)</TITLE>
+</HEAD><BODY BGCOLOR="#FFFFFF" TEXT="#000000">
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../net.html">section index</A></H2><HR><BR>
+<PRE>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+typedef struct <FONT COLOR="#000088">netwib_conf_devices_index</FONT> <FONT COLOR="#000088">netwib_conf_devices_index</FONT>;
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+typedef struct {
+  <FONT COLOR="#000088">netwib_uint32</FONT> devnum;
+  <FONT COLOR="#000088">netwib_buf</FONT> device;
+  <FONT COLOR="#000088">netwib_buf</FONT> deviceeasy;
+  <FONT COLOR="#000088">netwib_uint32</FONT> mtu;
+  <FONT COLOR="#000088">netwib_device_hwtype</FONT> hwtype;
+  <FONT COLOR="#000088">netwib_eth</FONT> eth;
+} <FONT COLOR="#000088">netwib_conf_devices</FONT>;
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_conf_devices_index_init
+   Description :
+     Initialize a <FONT COLOR="#000088">netwib_conf_devices_index</FONT> used to loop through
+     a netwib_conf_devices.
+   Input parameter(s) :
+     pitem : address of <FONT COLOR="#000088">netwib_conf_devices</FONT> which will be set
+             on each call of netwib_conf_devices_next
+   Input/output parameter(s) :
+   Output parameter(s) :
+     **ppindex : <FONT COLOR="#000088">netwib_conf_devices_index</FONT> allocated and initialized
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_conf_devices_index_init</B>(<FONT COLOR="#000088">netwib_conf_devices</FONT> *pitem,
+                                          <FONT COLOR="#000088">netwib_conf_devices_index</FONT> **ppindex);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_conf_devices_index_close
+   Description :
+     Close a netwib_conf_devices_index.
+   Input parameter(s) :
+   Input/output parameter(s) :
+     **ppindex : <FONT COLOR="#000088">netwib_conf_devices_index</FONT> to close
+   Output parameter(s) :
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_conf_devices_index_close</B>(<FONT COLOR="#000088">netwib_conf_devices_index</FONT> **ppindex);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_conf_devices_index_next
+   Description :
+     Get next entry.
+   Input parameter(s) :
+   Input/output parameter(s) :
+     *pindex : <FONT COLOR="#000088">netwib_conf_devices_index</FONT> to work on
+   Output parameter(s) :
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+     <FONT COLOR="#000044">NETWIB_ERR_DATAEND</FONT> : end reached
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_conf_devices_index_next</B>(<FONT COLOR="#000088">netwib_conf_devices_index</FONT> *pindex);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_conf_devices_display
+   Description :
+     Print devices configuration.
+   Input parameter(s) :
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pbuf : <FONT COLOR="#000088">netwib_buf</FONT> receiving data
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_conf_devices_display</B>(void);
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_buf_append_conf_devices</B>(<FONT COLOR="#000088">netwib_buf</FONT> *pbuf);
+</PRE><BR><BR><HR><BR>
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../net.html">section index</A></H2>
+</BODY></HTML>

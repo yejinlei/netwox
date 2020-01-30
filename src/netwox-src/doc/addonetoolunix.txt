@@ -1,0 +1,26 @@
+
+This file explains how to add a tool in netwox.
+
+If you want to compile netwox, you're not reading the good file. Read 
+../INSTALLUNIX.TXT.
+
+If you want to compile a small program with netwib, it's easier than 
+what's explained here : read netwib-5.39.0-src/doc/compilunix.txt.
+
+
+For example, to add tool number 4, modifying tool 3, the procedure is :
+ - cp tools/000003.c tools/000004.c
+ - edit tools/000004.c and replace "000004" by "000003"
+ - modify tools/000004.c to match your needs
+ - add two lines in tools.h
+ - add one line in tools.list
+ - run ./genemake
+ - run make
+
+If this tool needs a new module named foobar, also do :
+ - vi modules/foobar.c (to create it)
+ - vi modules/foobar.h (to create it)
+ - add module in modules.h
+ - run ./genemake
+ - run make
+

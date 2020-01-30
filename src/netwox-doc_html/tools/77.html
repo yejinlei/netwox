@@ -1,0 +1,76 @@
+<HTML>
+ <HEAD>
+ <TITLE>Tool 77: Check if seqnum are predictible</TITLE>
+ </HEAD>
+ <BODY BGCOLOR="#FFFFFF">
+  <CENTER>   <H3>Tool 77: Check if seqnum are predictible</H3>
+  </CENTER>
+
+  <P><H3>Description:</H3>
+   <PRE>
+  This tool sends a lot of TCP SYN packets, and displays seqnum (ISN) in
+  TCP SYN-ACK replies. This seqnum should be random, otherwise a blind
+  spoofing attack is possible.
+  Parameter --spoofip indicates how to generate link layer for spoofing.
+  Values 'best', 'link' or 'raw' are common choices for --spoofip. Here
+  is the list of accepted values:
+   - 'raw' means to spoof at IP4/IP6 level (it uses system IP stack). If
+     a firewall is installed, or on some systems, this might not work.
+   - 'linkf' means to spoof at link level (currently, only Ethernet is
+     supported). The 'f' means to Fill source Ethernet address.
+     However, if source IP address is spoofed, it might be impossible
+     to Fill it. So, linkf will not work: use linkb or linkfb instead.
+   - 'linkb' means to spoof at link level. The 'b' means to left a Blank
+     source Ethernet address (0:0:0:0:0:0, do not try to Fill it).
+   - 'linkfb' means to spoof at link level. The 'f' means to try to Fill
+     source Ethernet address, but if it is not possible, it is left
+     Blank.
+   - 'rawlinkf' means to try 'raw', then try 'linkf'
+   - 'rawlinkb' means to try 'raw', then try 'linkb'
+   - 'rawlinkfb' means to try 'raw', then try 'linkfb'
+   - 'linkfraw' means to try 'linkf', then try 'raw'
+   - 'linkbraw' means to try 'linkb', then try 'raw'
+   - 'linkfbraw' means to try 'linkfb', then try 'raw'
+   - 'link' is an alias for 'linkfb'
+   - 'rawlink' is an alias for 'rawlinkfb'
+   - 'linkraw' is an alias for 'linkfbraw'
+   - 'best' is an alias for 'linkraw'. It should work in all cases.
+  
+  This tool may need to be run with admin privilege in order to sniff
+  and spoof.
+   </PRE>
+
+  <P><H3>Synonyms:</H3>
+  &nbsp;&nbsp;isn<BR>
+
+  <P><H3>Usage:</H3>
+  &nbsp;&nbsp;netwox 77 -i ip -p port [-s spoofip] [-w uint32]<BR>
+
+  <P><H3>Parameters:</H3>
+<TABLE BORDER=1 CELLPADDING=4>
+ <TR>
+  <TD ALIGN=middle><I>parameter</I></TD>
+  <TD ALIGN=middle><I>description</I></TD>
+  <TD ALIGN=middle><I>example</I></TD>
+ </TR>
+ <TR><TD><TT>-i|--dst-ip ip</TD>
+<TD>destination IP address</TD>
+<TD>5.6.7.8</TD></TR>
+<TR><TD><TT>-p|--dst-port port</TD>
+<TD>destination port number</TD>
+<TD>80</TD></TR>
+<TR><TD><TT>-s|--spoofip spoofip</TD>
+<TD>IP spoof initialization type</TD>
+<TD>linkbraw</TD></TR>
+<TR><TD><TT>-w|--max-wait uint32</TD>
+<TD>maximum waiting time for answer (in msec)</TD>
+<TD>1000 </TD></TR>
+</TABLE>
+
+  <P><H3>Examples:</H3>
+  &nbsp;&nbsp;netwox 77 -i "5.6.7.8" -p "80"<BR>
+<BR>
+  &nbsp;&nbsp;netwox 77 --dst-ip "5.6.7.8" --dst-port "80"<BR>
+<BR>
+ </BODY>
+ </HTML>

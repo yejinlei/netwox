@@ -1,0 +1,93 @@
+<HTML><HEAD>
+<TITLE>netwib doc_html (version 5.39.0)</TITLE>
+</HEAD><BODY BGCOLOR="#FFFFFF" TEXT="#000000">
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../dat.html">section index</A></H2><HR><BR>
+<PRE>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* do not forget to add "#include &lt;string.h&gt;" at the beginning of
+   the file to use those defines */</FONT>
+<FONT COLOR="#880000">/* copies n bytes from memory area src to memory area dest (no overlap) */</FONT>
+<FONT COLOR="#008800">#define <B>netwib_c_memcpy</B>(dest,src,n) memcpy(dest,src,n)</FONT>
+<FONT COLOR="#880000">/* copies n bytes from memory area src to memory area dest */</FONT>
+<FONT COLOR="#008800">#define <B>netwib_c_memmove</B>(dest,src,n) memmove(dest,src,n)</FONT>
+<FONT COLOR="#880000">/* fills the first n bytes of the memory area pointed to by s with
+   the constant byte c */</FONT>
+<FONT COLOR="#008800">#define <B>netwib_c_memset</B>(d,c,n) memset(d,c,n)</FONT>
+<FONT COLOR="#880000">/* compares the first n bytes of the memory areas s1 and s2 */</FONT>
+<FONT COLOR="#008800">#define <B>netwib_c_memcmp</B>(s1,s2,n) memcmp(s1,s2,n)</FONT>
+<FONT COLOR="#880000">/* scans the first n bytes of the memory area pointed to by s for
+   the character c */</FONT>
+<FONT COLOR="#008800">#define <B>netwib_c_memchr</B>(s,c,n) memchr(s,c,n)</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* do not forget to add "#include &lt;string.h&gt;" at the beginning of
+   the file to use those defines */</FONT>
+<FONT COLOR="#880000">/* compares the two strings s1 and s2 */</FONT>
+<FONT COLOR="#008800">#define <B>netwib_c_strcmp</B>(s1,s2) strcmp(s1,s2)</FONT>
+<FONT COLOR="#880000">/* compares the first n characters of strings s1 and s2 */</FONT>
+<FONT COLOR="#008800">#define <B>netwib_c_strncmp</B>(s1,s2,n) strncmp(s1,s2,n)</FONT>
+<FONT COLOR="#880000">/* returns a pointer to the first occurrence of the character c in
+   the string s */</FONT>
+<FONT COLOR="#008800">#define <B>netwib_c_strchr</B>(s,c) strchr(s,c)</FONT>
+<FONT COLOR="#880000">/* returns a pointer to the last occurrence of the character c in
+   the string s */</FONT>
+<FONT COLOR="#008800">#define <B>netwib_c_strrchr</B>(s,c) strrchr(s,c)</FONT>
+<FONT COLOR="#880000">/* finds the first occurrence of the needle in the string haystack */</FONT>
+<FONT COLOR="#008800">#define <B>netwib_c_strstr</B>(haystack,needle) strstr(haystack,needle)</FONT>
+<FONT COLOR="#880000">/* calculates the length of the initial segment of s which consists
+   entirely of characters in accept */</FONT>
+<FONT COLOR="#008800">#define <B>netwib_c_strspn</B>(s,accept) strcspn(s,accept)</FONT>
+<FONT COLOR="#880000">/* calculates the length of the initial segment of s which consists
+   entirely of characters not in reject */</FONT>
+<FONT COLOR="#008800">#define <B>netwib_c_strcspn</B>(s,reject) strcspn(s,reject)</FONT>
+<FONT COLOR="#880000">/* locates the first occurrence in the string s of any of the
+   characters in the string accept */</FONT>
+<FONT COLOR="#008800">#define <B>netwib_c_strpbrk</B>(s,accept) strpbrk(s,accept)</FONT>
+<FONT COLOR="#880000">/* calculates the length of the string s, not including the
+   terminating `\0' character */</FONT>
+<FONT COLOR="#008800">#define <B>netwib_c_strlen</B>(s) strlen(s)</FONT>
+<FONT COLOR="#880000">/* copies the string pointed to be src to the array pointed
+   to by dest (you need to take care about overflows) */</FONT>
+<FONT COLOR="#008800">#define <B>netwib_c_strcpy</B>(dest,src) strcpy(dest,src)</FONT>
+<FONT COLOR="#880000">/* append the string pointed to be src to the array pointed
+   to by dest (you need to take care about overflows) */</FONT>
+<FONT COLOR="#008800">#define <B>netwib_c_strcat</B>(dest,src) strcat(dest,src)</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* we create those functions because they might not exists on
+   every system */</FONT>
+<FONT COLOR="#880000">/* compares the two strings s1 and s2, ignoring the case of the
+   characters */</FONT>
+int <B>netwib_c_strcasecmp</B>(<FONT COLOR="#000088">netwib_conststring</FONT> s1,
+                        <FONT COLOR="#000088">netwib_conststring</FONT> s2);
+<FONT COLOR="#880000">/* compares the first n characters of strings s1 and s2, ignoring
+   the case of the characters */</FONT>
+int <B>netwib_c_strncasecmp</B>(<FONT COLOR="#000088">netwib_conststring</FONT> s1,
+                         <FONT COLOR="#000088">netwib_conststring</FONT> s2,
+                         <FONT COLOR="#000088">netwib_uint32</FONT> n);
+<FONT COLOR="#880000">/* compares the first n bytes of the memory areas s1 and s2,
+   ignoring the case of the characters */</FONT>
+int <B>netwib_c_memcasecmp</B>(<FONT COLOR="#000088">netwib_constdata</FONT> s1,
+                        <FONT COLOR="#000088">netwib_constdata</FONT> s2,
+                        <FONT COLOR="#000088">netwib_uint32</FONT> n);
+<FONT COLOR="#880000">/* finds the first occurrence of the needle in the string haystack,
+   ignoring the case of the characters */</FONT>
+<FONT COLOR="#000088">netwib_string</FONT> <B>netwib_c_strcasestr</B>(<FONT COLOR="#000088">netwib_conststring</FONT> haystack,
+                                  <FONT COLOR="#000088">netwib_conststring</FONT> needle);
+<FONT COLOR="#880000">/* finds the start of the first occurrence of the substring needle
+   of length needlelen in the memory area haystack of length haystacklen */</FONT>
+<FONT COLOR="#000088">netwib_data</FONT> <B>netwib_c_memmem</B>(<FONT COLOR="#000088">netwib_constdata</FONT> haystack,
+                            <FONT COLOR="#000088">netwib_uint32</FONT> haystacklen,
+                            <FONT COLOR="#000088">netwib_constdata</FONT> needle,
+                            <FONT COLOR="#000088">netwib_uint32</FONT> needlelen);
+<FONT COLOR="#880000">/* idem, with case */</FONT>
+<FONT COLOR="#000088">netwib_data</FONT> <B>netwib_c_memcasemem</B>(<FONT COLOR="#000088">netwib_constdata</FONT> haystack,
+                                <FONT COLOR="#000088">netwib_uint32</FONT> haystacklen,
+                                <FONT COLOR="#000088">netwib_constdata</FONT> needle,
+                                <FONT COLOR="#000088">netwib_uint32</FONT> needlelen);
+</PRE><BR><BR><HR><BR>
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../dat.html">section index</A></H2>
+</BODY></HTML>

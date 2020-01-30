@@ -1,0 +1,46 @@
+<HTML><HEAD>
+<TITLE>netwib doc_html (version 5.39.0)</TITLE>
+</HEAD><BODY BGCOLOR="#FFFFFF" TEXT="#000000">
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../sys.html">section index</A></H2><HR><BR>
+<PRE>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_io_init_kbd_xyz
+   Description :
+     Open the keyboard. Its default state is to echo pressed
+     keys and to read line by line.
+   Input parameter(s) :
+     fd : file descriptor to eventually use
+     h : HANDLE to eventually use
+   Input/output parameter(s) :
+   Output parameter(s) :
+     **ppio : io created
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_io_init_kbddefault</B>(<FONT COLOR="#000088">netwib_io</FONT> **ppio);
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_io_init_kbd_fd</B>(int fd,
+                                 <FONT COLOR="#000088">netwib_io</FONT> **ppio);
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_io_init_kbd_handle</B>(NETWIBHANDLE h,
+                                     <FONT COLOR="#000088">netwib_io</FONT> **ppio);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* decides if pressed keys have to be displayed */</FONT>
+<FONT COLOR="#880000">/* <FONT COLOR="#000088">netwib_err</FONT> f(<FONT COLOR="#000088">netwib_io</FONT> *pio, <FONT COLOR="#000088">netwib_bool</FONT> b); */</FONT>
+<FONT COLOR="#008800">#define <B>netwib_kbd_ctl_set_echo</B>(pio,b) <B>netwib_io_ctl_set</B>(pio,<FONT COLOR="#000044">NETWIB_IO_WAYTYPE_READ</FONT>,<FONT COLOR="#000044">NETWIB_IO_CTLTYPE_KBD_ECHO</FONT>,NULL,b)</FONT>
+<FONT COLOR="#880000">/* <FONT COLOR="#000088">netwib_err</FONT> f(<FONT COLOR="#000088">netwib_io</FONT> *pio, <FONT COLOR="#000088">netwib_bool</FONT> *pb); */</FONT>
+<FONT COLOR="#008800">#define <B>netwib_kbd_ctl_get_echo</B>(pio,pb) <B>netwib_io_ctl_get</B>(pio,<FONT COLOR="#000044">NETWIB_IO_WAYTYPE_READ</FONT>,<FONT COLOR="#000044">NETWIB_IO_CTLTYPE_KBD_ECHO</FONT>,NULL,pb)</FONT>
+<FONT COLOR="#880000">/* decides if we read line by line or char by char */</FONT>
+<FONT COLOR="#880000">/* <FONT COLOR="#000088">netwib_err</FONT> f(<FONT COLOR="#000088">netwib_io</FONT> *pio, <FONT COLOR="#000088">netwib_bool</FONT> b); */</FONT>
+<FONT COLOR="#008800">#define <B>netwib_kbd_ctl_set_line</B>(pio,b) <B>netwib_io_ctl_set</B>(pio,<FONT COLOR="#000044">NETWIB_IO_WAYTYPE_READ</FONT>,<FONT COLOR="#000044">NETWIB_IO_CTLTYPE_KBD_LINE</FONT>,NULL,b)</FONT>
+<FONT COLOR="#880000">/* <FONT COLOR="#000088">netwib_err</FONT> f(<FONT COLOR="#000088">netwib_io</FONT> *pio, <FONT COLOR="#000088">netwib_bool</FONT> *pb); */</FONT>
+<FONT COLOR="#008800">#define <B>netwib_kbd_ctl_get_line</B>(pio,pb) <B>netwib_io_ctl_get</B>(pio,<FONT COLOR="#000044">NETWIB_IO_WAYTYPE_READ</FONT>,<FONT COLOR="#000044">NETWIB_IO_CTLTYPE_KBD_LINE</FONT>,NULL,pb)</FONT>
+<FONT COLOR="#880000">/* purge pressed characters not yet read */</FONT>
+<FONT COLOR="#880000">/* <FONT COLOR="#000088">netwib_err</FONT> f(<FONT COLOR="#000088">netwib_io</FONT> *pio); */</FONT>
+<FONT COLOR="#008800">#define <B>netwib_kbd_ctl_set_purge</B>(pio) <B>netwib_io_ctl_set</B>(pio,<FONT COLOR="#000044">NETWIB_IO_WAYTYPE_READ</FONT>,<FONT COLOR="#000044">NETWIB_IO_CTLTYPE_KBD_PURGE</FONT>,NULL,0)</FONT>
+
+</PRE><BR><BR><HR><BR>
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../sys.html">section index</A></H2>
+</BODY></HTML>

@@ -1,0 +1,45 @@
+<HTML>
+ <HEAD>
+ <TITLE>Tool 128: Split a file in smaller chunks</TITLE>
+ </HEAD>
+ <BODY BGCOLOR="#FFFFFF">
+  <CENTER>   <H3>Tool 128: Split a file in smaller chunks</H3>
+  </CENTER>
+
+  <P><H3>Description:</H3>
+   <PRE>
+  This tool splits a file in chunks. For example, splitting a file in
+  blocks of 1M44 permits to store it on several floppies. See also tool
+  129.
+  For example running 'netwox 128 file --chunk-size 100' will create
+  several files named file.0, file.1, etc.
+   </PRE>
+
+  <P><H3>Synonyms:</H3>
+  &nbsp;&nbsp;piece<BR>
+
+  <P><H3>Usage:</H3>
+  &nbsp;&nbsp;netwox 128 -f file [-s uint32]<BR>
+
+  <P><H3>Parameters:</H3>
+<TABLE BORDER=1 CELLPADDING=4>
+ <TR>
+  <TD ALIGN=middle><I>parameter</I></TD>
+  <TD ALIGN=middle><I>description</I></TD>
+  <TD ALIGN=middle><I>example</I></TD>
+ </TR>
+ <TR><TD><TT>-f|--file file</TD>
+<TD>file</TD>
+<TD>srcfile.txt</TD></TR>
+<TR><TD><TT>-s|--chunk-size uint32</TD>
+<TD>max chunk size in bytes</TD>
+<TD>1400000 </TD></TR>
+</TABLE>
+
+  <P><H3>Examples:</H3>
+  &nbsp;&nbsp;netwox 128 -f "srcfile.txt"<BR>
+<BR>
+  &nbsp;&nbsp;netwox 128 --file "srcfile.txt"<BR>
+<BR>
+ </BODY>
+ </HTML>

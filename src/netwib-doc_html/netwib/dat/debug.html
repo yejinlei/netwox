@@ -1,0 +1,59 @@
+<HTML><HEAD>
+<TITLE>netwib doc_html (version 5.39.0)</TITLE>
+</HEAD><BODY BGCOLOR="#FFFFFF" TEXT="#000000">
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../dat.html">section index</A></H2><HR><BR>
+<PRE>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#008800">#if <FONT COLOR="#000044">NETWIB_DEBUG_TYPE_NOTSET</FONT>==1</FONT>
+<FONT COLOR="#008800"> #define <FONT COLOR="#000044">NETWIB_DEBUG_NOTSET_UINT8</FONT>  0xAA</FONT>
+<FONT COLOR="#008800"> #define <FONT COLOR="#000044">NETWIB_DEBUG_NOTSET_UINT16</FONT> 0xAAAA</FONT>
+<FONT COLOR="#008800"> #define <FONT COLOR="#000044">NETWIB_DEBUG_NOTSET_UINT32</FONT> 0xAAAAAAAAu</FONT>
+<FONT COLOR="#008800"> #define <FONT COLOR="#000044">NETWIB_DEBUG_NOTSET_INT8</FONT>  0x7A</FONT>
+<FONT COLOR="#008800"> #define <FONT COLOR="#000044">NETWIB_DEBUG_NOTSET_INT16</FONT> 0x7AAA</FONT>
+<FONT COLOR="#008800"> #define <FONT COLOR="#000044">NETWIB_DEBUG_NOTSET_INT32</FONT> 0x7AAAAAAAu</FONT>
+<FONT COLOR="#008800"> #define <FONT COLOR="#000044">NETWIB_DEBUG_NOTSET_STRING</FONT> "-notset-"</FONT>
+<FONT COLOR="#008800"> #define <B>netwib_debug_notset_bool</B>(a) {a=<FONT COLOR="#000044">NETWIB_DEBUG_NOTSET_UINT8</FONT>;}</FONT>
+<FONT COLOR="#008800"> #define <B>netwib_debug_notset_int</B>(a) {a=<FONT COLOR="#000044">NETWIB_DEBUG_NOTSET_INT32</FONT>;}</FONT>
+<FONT COLOR="#008800"> #define <B>netwib_debug_notset_int8</B>(a) {a=<FONT COLOR="#000044">NETWIB_DEBUG_NOTSET_INT8</FONT>;}</FONT>
+<FONT COLOR="#008800"> #define <B>netwib_debug_notset_int16</B>(a) {a=<FONT COLOR="#000044">NETWIB_DEBUG_NOTSET_INT16</FONT>;}</FONT>
+<FONT COLOR="#008800"> #define <B>netwib_debug_notset_int32</B>(a) {a=<FONT COLOR="#000044">NETWIB_DEBUG_NOTSET_INT32</FONT>;}</FONT>
+<FONT COLOR="#008800"> #define <B>netwib_debug_notset_uint8</B>(a) {a=<FONT COLOR="#000044">NETWIB_DEBUG_NOTSET_UINT8</FONT>;}</FONT>
+<FONT COLOR="#008800"> #define <B>netwib_debug_notset_uint16</B>(a) {a=<FONT COLOR="#000044">NETWIB_DEBUG_NOTSET_UINT16</FONT>;}</FONT>
+<FONT COLOR="#008800"> #define <B>netwib_debug_notset_uint32</B>(a) {a=<FONT COLOR="#000044">NETWIB_DEBUG_NOTSET_UINT32</FONT>;}</FONT>
+<FONT COLOR="#008800"> #define <B>netwib_debug_notset_ptr</B>(a) {a=NULL;}</FONT>
+<FONT COLOR="#008800">#else</FONT>
+<FONT COLOR="#008800"> #define <B>netwib_debug_notset_bool</B>(a) {}</FONT>
+<FONT COLOR="#008800"> #define <B>netwib_debug_notset_int</B>(a) {}</FONT>
+<FONT COLOR="#008800"> #define <B>netwib_debug_notset_int8</B>(a) {}</FONT>
+<FONT COLOR="#008800"> #define <B>netwib_debug_notset_int16</B>(a) {}</FONT>
+<FONT COLOR="#008800"> #define <B>netwib_debug_notset_int32</B>(a) {}</FONT>
+<FONT COLOR="#008800"> #define <B>netwib_debug_notset_uint8</B>(a) {}</FONT>
+<FONT COLOR="#008800"> #define <B>netwib_debug_notset_uint16</B>(a) {}</FONT>
+<FONT COLOR="#008800"> #define <B>netwib_debug_notset_uint32</B>(a) {}</FONT>
+<FONT COLOR="#008800"> #define <B>netwib_debug_notset_ptr</B>(a) {}</FONT>
+<FONT COLOR="#008800">#endif</FONT>
+
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#008800">#if <FONT COLOR="#000044">NETWIB_DEBUG</FONT>==1</FONT>
+<FONT COLOR="#008800"> #include "debug/string.h"</FONT>
+<FONT COLOR="#008800"> #include "debug/string2.h"</FONT>
+<FONT COLOR="#008800">#endif</FONT>
+
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#008800">#if <FONT COLOR="#000044">NETWIB_DEBUG_MEMPROTECT_NEEDED</FONT>==1</FONT>
+<FONT COLOR="#008800"> #include "debug/memprotect.h"</FONT>
+<FONT COLOR="#008800">#endif</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* <FONT COLOR="#000044">NETWIB_DEBUG_MEMCORRUPT_NEEDED</FONT> is checked inside */</FONT>
+<FONT COLOR="#008800">#include "debug/memcorrupt.h"</FONT>
+
+
+</PRE><BR><BR><HR><BR>
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../dat.html">section index</A></H2>
+</BODY></HTML>

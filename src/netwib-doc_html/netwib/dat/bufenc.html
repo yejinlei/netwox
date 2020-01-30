@@ -1,0 +1,152 @@
+<HTML><HEAD>
+<TITLE>netwib doc_html (version 5.39.0)</TITLE>
+</HEAD><BODY BGCOLOR="#FFFFFF" TEXT="#000000">
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../dat.html">section index</A></H2><HR><BR>
+<PRE>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+typedef enum {
+  <FONT COLOR="#000044">NETWIB_ENCODETYPE_DATA</FONT> = 1,        <FONT COLOR="#880000">/* exact data */</FONT>
+  <FONT COLOR="#000044">NETWIB_ENCODETYPE_HEXA0</FONT>,           <FONT COLOR="#880000">/* hexadecimal */</FONT>
+  <FONT COLOR="#000044">NETWIB_ENCODETYPE_HEXA1</FONT>,           <FONT COLOR="#880000">/* hexadecimal */</FONT>
+  <FONT COLOR="#000044">NETWIB_ENCODETYPE_HEXA2</FONT>,           <FONT COLOR="#880000">/* hexadecimal */</FONT>
+  <FONT COLOR="#000044">NETWIB_ENCODETYPE_HEXA4</FONT>,           <FONT COLOR="#880000">/* hexadecimal */</FONT>
+  <FONT COLOR="#000044">NETWIB_ENCODETYPE_MIXED0</FONT>,          <FONT COLOR="#880000">/* mixed */</FONT>
+  <FONT COLOR="#000044">NETWIB_ENCODETYPE_MIXED1</FONT>,          <FONT COLOR="#880000">/* mixed */</FONT>
+  <FONT COLOR="#000044">NETWIB_ENCODETYPE_TEXT</FONT>,            <FONT COLOR="#880000">/* printable text */</FONT>
+  <FONT COLOR="#000044">NETWIB_ENCODETYPE_BASE64</FONT>,          <FONT COLOR="#880000">/* base64 */</FONT>
+  <FONT COLOR="#000044">NETWIB_ENCODETYPE_QUOTED</FONT>,          <FONT COLOR="#880000">/* quoted */</FONT>
+  <FONT COLOR="#000044">NETWIB_ENCODETYPE_NOTHING</FONT> = 100,   <FONT COLOR="#880000">/* print nothing */</FONT>
+  <FONT COLOR="#000044">NETWIB_ENCODETYPE_SYNTH</FONT>,           <FONT COLOR="#880000">/* print a synthetic form */</FONT>
+  <FONT COLOR="#880000">/* wrap to 80 columns (or less) */</FONT>
+  <FONT COLOR="#000044">NETWIB_ENCODETYPE_DATA_WRAP</FONT> = 300, <FONT COLOR="#880000">/* data */</FONT>
+  <FONT COLOR="#000044">NETWIB_ENCODETYPE_HEXA0_WRAP</FONT>,      <FONT COLOR="#880000">/* hexa (32 bytes per line) */</FONT>
+  <FONT COLOR="#000044">NETWIB_ENCODETYPE_HEXA1_WRAP</FONT>,      <FONT COLOR="#880000">/* hexa (16 bytes per line) */</FONT>
+  <FONT COLOR="#000044">NETWIB_ENCODETYPE_HEXA2_WRAP</FONT>,      <FONT COLOR="#880000">/* hexa (32 bytes per line) */</FONT>
+  <FONT COLOR="#000044">NETWIB_ENCODETYPE_HEXA4_WRAP</FONT>,      <FONT COLOR="#880000">/* hexa (32 bytes per line) */</FONT>
+  <FONT COLOR="#000044">NETWIB_ENCODETYPE_MIXED0_WRAP</FONT>,     <FONT COLOR="#880000">/* mixed (16 bytes per line) */</FONT>
+  <FONT COLOR="#000044">NETWIB_ENCODETYPE_MIXED1_WRAP</FONT>,     <FONT COLOR="#880000">/* mixed (16 bytes per line) */</FONT>
+  <FONT COLOR="#000044">NETWIB_ENCODETYPE_TEXT_WRAP</FONT>,       <FONT COLOR="#880000">/* printable text */</FONT>
+  <FONT COLOR="#000044">NETWIB_ENCODETYPE_BASE64_WRAP</FONT>,     <FONT COLOR="#880000">/* base64 */</FONT>
+  <FONT COLOR="#000044">NETWIB_ENCODETYPE_ARRAY1</FONT> = 400,    <FONT COLOR="#880000">/* array (4 bytes per line) */</FONT>
+  <FONT COLOR="#000044">NETWIB_ENCODETYPE_ARRAY4</FONT>,          <FONT COLOR="#880000">/* array (4 bytes per line) */</FONT>
+  <FONT COLOR="#000044">NETWIB_ENCODETYPE_ARRAY8</FONT>,          <FONT COLOR="#880000">/* array (4 bytes per line) */</FONT>
+  <FONT COLOR="#000044">NETWIB_ENCODETYPE_ARRAY16</FONT>,         <FONT COLOR="#880000">/* array (4 bytes per line) */</FONT>
+  <FONT COLOR="#000044">NETWIB_ENCODETYPE_ARRAY32</FONT>,         <FONT COLOR="#880000">/* array (4 bytes per line) */</FONT>
+  <FONT COLOR="#000044">NETWIB_ENCODETYPE_DUMP</FONT>,            <FONT COLOR="#880000">/* dump (16 bytes per line) */</FONT>
+  <FONT COLOR="#000044">NETWIB_ENCODETYPE_MIXED0H_WRAP</FONT>,    <FONT COLOR="#880000">/* mixed (8 bytes per line) */</FONT>
+  <FONT COLOR="#000044">NETWIB_ENCODETYPE_MIXED1H_WRAP</FONT>,    <FONT COLOR="#880000">/* mixed (8 bytes per line) */</FONT>
+  <FONT COLOR="#000044">NETWIB_ENCODETYPE_LOWERCASE</FONT>,       <FONT COLOR="#880000">/* lower case */</FONT>
+  <FONT COLOR="#000044">NETWIB_ENCODETYPE_UPPERCASE</FONT>,       <FONT COLOR="#880000">/* upper case */</FONT>
+  <FONT COLOR="#880000">/* aliases */</FONT>
+  <FONT COLOR="#000044">NETWIB_ENCODETYPE_HEXA</FONT> = <FONT COLOR="#000044">NETWIB_ENCODETYPE_HEXA1</FONT>,
+  <FONT COLOR="#000044">NETWIB_ENCODETYPE_MIXED</FONT> = <FONT COLOR="#000044">NETWIB_ENCODETYPE_MIXED1</FONT>,
+  <FONT COLOR="#000044">NETWIB_ENCODETYPE_HEXA_WRAP</FONT> = <FONT COLOR="#000044">NETWIB_ENCODETYPE_HEXA1_WRAP</FONT>,
+  <FONT COLOR="#000044">NETWIB_ENCODETYPE_MIXED_WRAP</FONT> = <FONT COLOR="#000044">NETWIB_ENCODETYPE_MIXED1_WRAP</FONT>,
+  <FONT COLOR="#000044">NETWIB_ENCODETYPE_ARRAY</FONT> = <FONT COLOR="#000044">NETWIB_ENCODETYPE_ARRAY8</FONT>,
+  <FONT COLOR="#000044">NETWIB_ENCODETYPE_MIXEDH_WRAP</FONT> = <FONT COLOR="#000044">NETWIB_ENCODETYPE_MIXED1H_WRAP</FONT>,
+  <FONT COLOR="#880000">/* for transition */</FONT>
+  <FONT COLOR="#000044">NETWIB_ENCODETYPE_TRANSITION_INIT</FONT> = 500,
+  <FONT COLOR="#000044">NETWIB_ENCODETYPE_TRANSITION_END</FONT>
+} <FONT COLOR="#000088">netwib_encodetype</FONT>;
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Examples :
+<FONT COLOR="#000044">NETWIB_ENCODETYPE_HEXA0</FONT>  : 01020304050607080910...
+<FONT COLOR="#000044">NETWIB_ENCODETYPE_HEXA1</FONT>  : 01 02 03 04 05 06 07 08 09 10 ...
+<FONT COLOR="#000044">NETWIB_ENCODETYPE_HEXA2</FONT>  : 0102 0304 0506 0708 0910 ...
+<FONT COLOR="#000044">NETWIB_ENCODETYPE_HEXA4</FONT>  : 01020304 05060708 0910...
+<FONT COLOR="#000044">NETWIB_ENCODETYPE_MIXED0</FONT> : 'abc' 112233445566
+<FONT COLOR="#000044">NETWIB_ENCODETYPE_MIXED1</FONT> : 'abc' 11 22 33 44 55 66
+<FONT COLOR="#000044">NETWIB_ENCODETYPE_HEXA0_WRAP</FONT> :
+0102030405060708091011121314151617181920212223242526272829303132
+<FONT COLOR="#000044">NETWIB_ENCODETYPE_HEXA1_WRAP</FONT> :
+01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16
+<FONT COLOR="#000044">NETWIB_ENCODETYPE_HEXA2_WRAP</FONT> :
+0102 0304 0506 0708 0910 1112 1314 1516 1718 1920 2122 2324 2526 2728 2930 3132
+<FONT COLOR="#000044">NETWIB_ENCODETYPE_HEXA4_WRAP</FONT> :
+01020304 05060708 09101112 13141516 17181920 21222324 25262728 29303132
+<FONT COLOR="#000044">NETWIB_ENCODETYPE_MIXED0_WRAP</FONT> :
+'a' 02 'a' 02 'a' 02 'a' 02 'a' 02 'a' 02 'a' 02 'a' 02
+'a' 026102 'a' 02 'a' 02 'a' 02 'a' 02 'a' 02 'a' 02
+<FONT COLOR="#000044">NETWIB_ENCODETYPE_MIXED1_WRAP</FONT> :
+'a' 02 'a' 02 'a' 02 'a' 02 'a' 02 'a' 02 'a' 02 'a' 02
+'a' 02 61 02 'a' 02 'a' 02 'a' 02 'a' 02 'a' 02 'a' 02
+<FONT COLOR="#000044">NETWIB_ENCODETYPE_ARRAY1</FONT> :
+|1|0|0|0|0|1|1|0|0|1|0|0|0|1|1|0|1|1|0|0|0|1|1|0|0|0|1|0|0|1|1|0|
+<FONT COLOR="#000044">NETWIB_ENCODETYPE_ARRAY4</FONT> :
+|__0x1__|__0x6__|_______________|_______________|_______________|
+<FONT COLOR="#000044">NETWIB_ENCODETYPE_ARRAY8</FONT> :
+|____0x80=128___|____0x11=17____|____0x80=128___|____0x11=17____|
+<FONT COLOR="#000044">NETWIB_ENCODETYPE_ARRAY16</FONT> :
+|_________0x6162=24930__________|_________0x6364=25444__________|
+<FONT COLOR="#000044">NETWIB_ENCODETYPE_ARRAY32</FONT> :
+|_____________________0x61626364=1633837924_____________________|
+<FONT COLOR="#000044">NETWIB_ENCODETYPE_DUMP</FONT> :
+61 62 63 64  65 66 67 68  69 6a 6b 6c  6d 6e 6f 70  # abcdefghijklmnop
+<FONT COLOR="#000044">NETWIB_ENCODETYPE_MIXED0H_WRAP</FONT> :
+'a' 62 'c' 64 'e' 66 'f' 68             # 61 62 63 64 65 66 67 68
+'a' 626364 'e' 66 'f' 68                # 61 62 63 64 65 66 67 68
+<FONT COLOR="#000044">NETWIB_ENCODETYPE_MIXED1H_WRAP</FONT> :
+'a' 62 'c' 64 'e' 66 'f' 68             # 61 62 63 64 65 66 67 68
+'a' 62 63 64 'e' 66 'f' 68              # 61 62 63 64 65 66 67 68
+<FONT COLOR="#000044">NETWIB_ENCODETYPE_QUOTED</FONT> :
+"abc d \\ \t \n \r \" \x00 z"
+*/</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_buf_encode
+   Description :
+     Append a encoded buffer.
+   Input parameter(s) :
+     *pbuftoencode : buffer to encode
+     encodetype : decoding type
+   Input/output parameter(s) :
+     *pbuf : <FONT COLOR="#000088">netwib_buf</FONT> updated
+   Output parameter(s) :
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+   This function supports <FONT COLOR="#000044">NETWIB_BUF_FLAGS_SENSITIVE</FONT>.
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_buf_encode</B>(<FONT COLOR="#000088">netwib_constbuf</FONT> *pbuftoencode,
+                             <FONT COLOR="#000088">netwib_encodetype</FONT> encodetype,
+                             <FONT COLOR="#000088">netwib_buf</FONT> *pbuf);
+<FONT COLOR="#880000">/* only the main ones are defined */</FONT>
+<FONT COLOR="#008800">#define <B>netwib_buf_encode_data</B>(pbuftoencode,pbuf) <B>netwib_buf_encode</B>(pbuftoencode,<FONT COLOR="#000044">NETWIB_ENCODETYPE_DATA</FONT>,pbuf)</FONT>
+<FONT COLOR="#008800">#define <B>netwib_buf_encode_hexa</B>(pbuftoencode,pbuf) <B>netwib_buf_encode</B>(pbuftoencode,<FONT COLOR="#000044">NETWIB_ENCODETYPE_HEXA</FONT>,pbuf)</FONT>
+<FONT COLOR="#008800">#define <B>netwib_buf_encode_mixed</B>(pbuftoencode,pbuf) <B>netwib_buf_encode</B>(pbuftoencode,<FONT COLOR="#000044">NETWIB_ENCODETYPE_MIXED</FONT>,pbuf)</FONT>
+<FONT COLOR="#008800">#define <B>netwib_buf_encode_text</B>(pbuftoencode,pbuf) <B>netwib_buf_encode</B>(pbuftoencode,<FONT COLOR="#000044">NETWIB_ENCODETYPE_TEXT</FONT>,pbuf)</FONT>
+<FONT COLOR="#008800">#define <B>netwib_buf_encode_base64</B>(pbuftoencode,pbuf) <B>netwib_buf_encode</B>(pbuftoencode,<FONT COLOR="#000044">NETWIB_ENCODETYPE_BASE64</FONT>,pbuf)</FONT>
+<FONT COLOR="#008800">#define <B>netwib_buf_encode_quoted</B>(pbuftoencode,pbuf) <B>netwib_buf_encode</B>(pbuftoencode,<FONT COLOR="#000044">NETWIB_ENCODETYPE_QUOTED</FONT>,pbuf)</FONT>
+<FONT COLOR="#008800">#define <B>netwib_buf_encode_dump</B>(pbuftoencode,pbuf) <B>netwib_buf_encode</B>(pbuftoencode,<FONT COLOR="#000044">NETWIB_ENCODETYPE_DUMP</FONT>,pbuf)</FONT>
+<FONT COLOR="#008800">#define <B>netwib_buf_encode_lowercase</B>(pbuftoencode,pbuf) <B>netwib_buf_encode</B>(pbuftoencode,<FONT COLOR="#000044">NETWIB_ENCODETYPE_LOWERCASE</FONT>,pbuf)</FONT>
+<FONT COLOR="#008800">#define <B>netwib_buf_encode_uppercase</B>(pbuftoencode,pbuf) <B>netwib_buf_encode</B>(pbuftoencode,<FONT COLOR="#000044">NETWIB_ENCODETYPE_UPPERCASE</FONT>,pbuf)</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+typedef struct {
+  <FONT COLOR="#000088">netwib_encodetype</FONT> last;
+  <FONT COLOR="#000088">netwib_bool</FONT> containnl;
+} <FONT COLOR="#000088">netwib_encodetype_context</FONT>;
+<FONT COLOR="#880000">/* Name : netwib_buf_encode_transition
+   Description :
+     Append a transition between two data.
+     First call has to be done with <FONT COLOR="#000044">NETWIB_ENCODETYPE_TRANSITION_INIT</FONT>.
+   Input parameter(s) :
+     encodetype : next encoding type
+   Input/output parameter(s) :
+     *pctx : context
+     *pbuf : <FONT COLOR="#000088">netwib_buf</FONT> updated
+   Output parameter(s) :
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_buf_encode_transition</B>(<FONT COLOR="#000088">netwib_encodetype_context</FONT> *pctx,
+                                        <FONT COLOR="#000088">netwib_encodetype</FONT> encodetype,
+                                        <FONT COLOR="#000088">netwib_buf</FONT> *pbuf);
+<FONT COLOR="#008800">#define <B>netwib_buf_encode_transition_init</B>(pctx) <B>netwib_buf_encode_transition</B>(pctx,<FONT COLOR="#000044">NETWIB_ENCODETYPE_TRANSITION_INIT</FONT>,NULL)</FONT>
+<FONT COLOR="#008800">#define <B>netwib_buf_encode_transition_end</B>(pctx,pbuf) <B>netwib_buf_encode_transition</B>(pctx,<FONT COLOR="#000044">NETWIB_ENCODETYPE_TRANSITION_END</FONT>,pbuf)</FONT>
+</PRE><BR><BR><HR><BR>
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../dat.html">section index</A></H2>
+</BODY></HTML>

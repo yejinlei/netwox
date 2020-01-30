@@ -1,0 +1,233 @@
+<HTML><HEAD>
+<TITLE>netwib doc_html (version 5.39.0)</TITLE>
+</HEAD><BODY BGCOLOR="#FFFFFF" TEXT="#000000">
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../dat.html">section index</A></H2><HR><BR>
+<PRE>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000"><B>/***************************************************************
+ * A <FONT COLOR="#000088">netwib_hash</FONT> is an associative array : data is related to  *
+ * a key. It's not possible to have two identical keys.        *
+ *                                                             *
+ * The hash contains pointers.                                 *
+ *                                                             *
+ * When an item is removed from the hash, its associated       *
+ * information stored in the pointer can be :                  *
+ *  - left untouched : user will have to free the pointer and  *
+ *    its information                                          *
+ *  - erased : the information is lost : a function of type    *
+ *    <FONT COLOR="#000088">netwib_hash_erase_pf</FONT> has to be called                    *
+ * For example, a user might want to store allocated memory    *
+ * containing a netwib_buf. Then when the hash is closed, the  *
+ * <FONT COLOR="#000088">netwib_buf_close</FONT> function has to be called and the memory   *
+ * has to be freed.                                            *
+ ***************************************************************/</B></FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+typedef struct <FONT COLOR="#000088">netwib_hash</FONT> <FONT COLOR="#000088">netwib_hash</FONT>;
+typedef const <FONT COLOR="#000088">netwib_hash</FONT> <FONT COLOR="#000088">netwib_consthash</FONT>;
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* This prototype defines a function erasing the item pitem */</FONT>
+typedef <FONT COLOR="#000088">netwib_err</FONT> (*netwib_hash_erase_pf)(<FONT COLOR="#000088">netwib_ptr</FONT> pitem);
+<FONT COLOR="#880000">/* This prototype defines a function duplicating an item */</FONT>
+typedef <FONT COLOR="#000088">netwib_err</FONT> (*netwib_hash_duplicate_pf)(<FONT COLOR="#000088">netwib_constptr</FONT> pitem,
+                                               <FONT COLOR="#000088">netwib_ptr</FONT> *pdupofitem);
+<FONT COLOR="#880000">/* This prototype defines a function detecting if an item
+   matches a criteria
+    - if it matches, *pbool is set to <FONT COLOR="#000044">NETWIB_TRUE</FONT>
+    - if it does not matches, *pbool is set to <FONT COLOR="#000044">NETWIB_FALSE</FONT>
+   The parameter pinfos will be set with optional information
+   given when calling the function.
+ */</FONT>
+typedef <FONT COLOR="#000088">netwib_err</FONT> (*netwib_hash_criteria_pf)(<FONT COLOR="#000088">netwib_constbuf</FONT> *pkey,
+                                              <FONT COLOR="#000088">netwib_constptr</FONT> pitem,
+                                              <FONT COLOR="#000088">netwib_ptr</FONT> pinfos,
+                                              <FONT COLOR="#000088">netwib_bool</FONT> *pbool);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_hash_init
+   Description :
+     Initialize a netwib_hash.
+   Input parameter(s) :
+     *pfunc_erase : function needed to erase items
+                    This can be NULL
+     *pfunc_duplicate : function needed to duplicate items
+                        This can be NULL
+   Input/output parameter(s) :
+   Output parameter(s) :
+     **pphash : <FONT COLOR="#000088">netwib_hash</FONT> allocated and initialized
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_hash_init</B>(<FONT COLOR="#000088">netwib_hash_erase_pf</FONT> pfunc_erase,
+                            <FONT COLOR="#000088">netwib_hash_duplicate_pf</FONT> pfunc_duplicate,
+                            <FONT COLOR="#000088">netwib_hash</FONT> **pphash);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_hash_close
+   Description :
+     Destroy a netwib_hash.
+   Input parameter(s) :
+     eraseitems : if true, function pfunc_erase (set in
+                  netwib_hash_init) is called
+   Input/output parameter(s) :
+     **pphash : <FONT COLOR="#000088">netwib_hash</FONT> to destroy
+   Output parameter(s) :
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_hash_close</B>(<FONT COLOR="#000088">netwib_hash</FONT> **pphash,
+                             <FONT COLOR="#000088">netwib_bool</FONT> eraseitems);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Types to control a <FONT COLOR="#000088">netwib_hash</FONT> */</FONT>
+typedef enum {
+  <FONT COLOR="#000044">NETWIB_HASH_CTLTYPE_COUNT</FONT> = 1   <FONT COLOR="#880000">/* count number of items */</FONT>
+} <FONT COLOR="#000088">netwib_hash_ctltype</FONT>;
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_hash_ctl_set</B>(<FONT COLOR="#000088">netwib_hash</FONT> *phash,
+                               <FONT COLOR="#000088">netwib_hash_ctltype</FONT> type,
+                               <FONT COLOR="#000088">netwib_ptr</FONT> p,
+                               <FONT COLOR="#000088">netwib_uint32</FONT> ui);
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_hash_ctl_get</B>(<FONT COLOR="#000088">netwib_hash</FONT> *phash,
+                               <FONT COLOR="#000088">netwib_hash_ctltype</FONT> type,
+                               <FONT COLOR="#000088">netwib_ptr</FONT> p,
+                               <FONT COLOR="#000088">netwib_uint32</FONT> *pui);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* <FONT COLOR="#000088">netwib_err</FONT> f(<FONT COLOR="#000088">netwib_hash</FONT> *phash, <FONT COLOR="#000088">netwib_uint32</FONT> *pnumberofitems); */</FONT>
+<FONT COLOR="#008800">#define <B>netwib_hash_ctl_get_count</B>(phash,pnumberofitems) <B>netwib_hash_ctl_get</B>(phash,<FONT COLOR="#000044">NETWIB_HASH_CTLTYPE_COUNT</FONT>,NULL,pnumberofitems)</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_hash_add
+   Description :
+     Add an item to the netwib_hash. Is the key already exists,
+     it is overwritten.
+   Input parameter(s) :
+     *pkey : key to store
+     pitem : pointer to an allocated memory containing the item
+     erasepreviousitem : if true, function pfunc_erase (set in
+                         netwib_hash_init) is called to erase the
+                         item previously located in the hash
+   Input/output parameter(s) :
+     *phash : <FONT COLOR="#000088">netwib_hash</FONT> where to work
+   Output parameter(s) :
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_hash_add</B>(<FONT COLOR="#000088">netwib_hash</FONT> *phash,
+                           <FONT COLOR="#000088">netwib_constbuf</FONT> *pkey,
+                           <FONT COLOR="#000088">netwib_constptr</FONT> pitem,
+                           <FONT COLOR="#000088">netwib_bool</FONT> erasepreviousitem);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_hash_add_hash_criteria
+   Description :
+     Add a hash into the netwib_hash. Existing keys
+     are overwritten.
+   Input parameter(s) :
+     pfunc_criteria : function used to decide to add an item
+                      If this function is NULL, no criterion is
+                      applied.
+     erasepreviousitems : if true, function pfunc_erase (set in
+                          netwib_hash_init) is called to erase the
+                          items previously located in the hash
+   Input/output parameter(s) :
+     *phash : <FONT COLOR="#000088">netwib_hash</FONT> where to work
+     *phashtoadd : <FONT COLOR="#000088">netwib_hash</FONT> to add
+     pinfos : optional parameter (can be NULL) which will be
+              used as the parameter for pfunc_criteria.
+              This may be used to send information to *pfunc_criteria.
+   Output parameter(s) :
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_hash_add_hash_criteria</B>(<FONT COLOR="#000088">netwib_hash</FONT> *phash,
+                                         <FONT COLOR="#000088">netwib_hash</FONT> *phashtoadd,
+                                         <FONT COLOR="#000088">netwib_hash_criteria_pf</FONT> pfunc_criteria,
+                                         <FONT COLOR="#000088">netwib_ptr</FONT> pinfos,
+                                         <FONT COLOR="#000088">netwib_bool</FONT> erasepreviousitems);
+<FONT COLOR="#008800">#define <B>netwib_hash_add_hash_all</B>(phash,phashtoadd,erasepreviousitems) <B>netwib_hash_add_hash_criteria</B>(phash,phashtoadd,NULL,NULL,erasepreviousitems)</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_hash_contains
+   Description :
+     Check if a key is in the hash.
+   Input parameter(s) :
+     *phash : <FONT COLOR="#000088">netwib_hash</FONT> where to work
+     *pkey : key to obtain
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pyes : true if key is found
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_hash_contains</B>(<FONT COLOR="#000088">netwib_hash</FONT> *phash,
+                                <FONT COLOR="#000088">netwib_constbuf</FONT> *pkey,
+                                <FONT COLOR="#000088">netwib_bool</FONT> *pyes);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_hash_value
+   Description :
+     Get the value of an item.
+   Input parameter(s) :
+     *phash : <FONT COLOR="#000088">netwib_hash</FONT> where to work
+     *pkey : key to obtain
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *ppitem : pointer to the memory containing the item
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+     <FONT COLOR="#000044">NETWIB_ERR_NOTFOUND</FONT> : key not found
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_hash_value</B>(<FONT COLOR="#000088">netwib_hash</FONT> *phash,
+                             <FONT COLOR="#000088">netwib_constbuf</FONT> *pkey,
+                             <FONT COLOR="#000088">netwib_ptr</FONT> *ppitem);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_hash_del
+   Description :
+     Remove an item from the netwib_hash.
+   Input parameter(s) :
+     *pkey : key to del
+     eraseitem : if true, function pfunc_erase (set in
+                 netwib_hash_init) is called to erase the
+                 item located at position
+   Input/output parameter(s) :
+     *phash : <FONT COLOR="#000088">netwib_hash</FONT> where to work
+   Output parameter(s) :
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+     <FONT COLOR="#000044">NETWIB_ERR_NOTFOUND</FONT> : key not found
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_hash_del</B>(<FONT COLOR="#000088">netwib_hash</FONT> *phash,
+                           <FONT COLOR="#000088">netwib_constbuf</FONT> *pkey,
+                           <FONT COLOR="#000088">netwib_bool</FONT> eraseitem);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_hash_del_criteria
+   Description :
+     Del items matching a criterion.
+   Input parameter(s) :
+     pfunc_criteria : function used to decide to del an item
+                      If this function is NULL, no criterion is
+                      applied.
+   Input/output parameter(s) :
+     *phash : <FONT COLOR="#000088">netwib_hash</FONT> where to work
+     pinfos : optional parameter (can be NULL) which will be
+              used as the parameter for pfunc_criteria.
+              This may be used to send information to *pfunc_criteria.
+   Output parameter(s) :
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_hash_del_criteria</B>(<FONT COLOR="#000088">netwib_hash</FONT> *phash,
+                                    <FONT COLOR="#000088">netwib_hash_criteria_pf</FONT> pfunc_criteria,
+                                    <FONT COLOR="#000088">netwib_ptr</FONT> pinfos,
+                                    <FONT COLOR="#000088">netwib_bool</FONT> eraseitems);
+<FONT COLOR="#008800">#define <B>netwib_hash_del_all</B>(phash,eraseitems) <B>netwib_hash_del_criteria</B>(phash,NULL,NULL,eraseitems)</FONT>
+</PRE><BR><BR><HR><BR>
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../dat.html">section index</A></H2>
+</BODY></HTML>

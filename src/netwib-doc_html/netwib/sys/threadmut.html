@@ -1,0 +1,71 @@
+<HTML><HEAD>
+<TITLE>netwib doc_html (version 5.39.0)</TITLE>
+</HEAD><BODY BGCOLOR="#FFFFFF" TEXT="#000000">
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../sys.html">section index</A></H2><HR><BR>
+<PRE>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+typedef struct <FONT COLOR="#000088">netwib_thread_mutex</FONT> <FONT COLOR="#000088">netwib_thread_mutex</FONT>;
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_thread_mutex_init
+   Description :
+     Initialize a mutex.
+   Input parameter(s) :
+   Input/output parameter(s) :
+     *ppmutex : <FONT COLOR="#000088">netwib_thread_mutex</FONT> initialized
+   Output parameter(s) :
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_thread_mutex_init</B>(<FONT COLOR="#000088">netwib_thread_mutex</FONT> **ppmutex);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_thread_mutex_close
+   Description :
+     Close a mutex.
+   Input parameter(s) :
+   Input/output parameter(s) :
+     *ppmutex : <FONT COLOR="#000088">netwib_thread_mutex</FONT> closed
+   Output parameter(s) :
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_thread_mutex_close</B>(<FONT COLOR="#000088">netwib_thread_mutex</FONT> **ppmutex);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_thread_mutex_lock
+   Description :
+     Wait for the mutex.
+   Input parameter(s) :
+     *pmutex : netwib_thread_mutex
+     *pabstime : end time. If *pabstime is reached, locking is
+                 not done (*plocked set to <FONT COLOR="#000044">NETWIB_FALSE</FONT>).
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *plocked : the mutex could be locked
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_thread_mutex_lock</B>(<FONT COLOR="#000088">netwib_thread_mutex</FONT> *pmutex,
+                                    <FONT COLOR="#000088">netwib_consttime</FONT> *pabstime,
+                                    <FONT COLOR="#000088">netwib_bool</FONT> *plocked);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_thread_mutex_unlock
+   Description :
+     Unlock a mutex.
+   Input parameter(s) :
+   Input/output parameter(s) :
+     *pmutex : <FONT COLOR="#000088">netwib_thread_mutex</FONT> to unlock
+   Output parameter(s) :
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_thread_mutex_unlock</B>(<FONT COLOR="#000088">netwib_thread_mutex</FONT> *pmutex);
+
+</PRE><BR><BR><HR><BR>
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../sys.html">section index</A></H2>
+</BODY></HTML>

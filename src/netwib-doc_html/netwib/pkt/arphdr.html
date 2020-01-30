@@ -1,0 +1,82 @@
+<HTML><HEAD>
+<TITLE>netwib doc_html (version 5.39.0)</TITLE>
+</HEAD><BODY BGCOLOR="#FFFFFF" TEXT="#000000">
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../pkt.html">section index</A></H2><HR><BR>
+<PRE>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000"><B>/***************************************************************
+ * Currently, only Ethernet-IPv4 is implemented as ARP.        *
+ ***************************************************************/</B></FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* ARP header */</FONT>
+typedef enum {
+  <FONT COLOR="#000044">NETWIB_ARPHDROP_ARPREQ</FONT> = 1,
+  <FONT COLOR="#000044">NETWIB_ARPHDROP_ARPREP</FONT> = 2,
+  <FONT COLOR="#000044">NETWIB_ARPHDROP_RARPREQ</FONT> = 3,
+  <FONT COLOR="#000044">NETWIB_ARPHDROP_RARPREP</FONT> = 4
+} <FONT COLOR="#000088">netwib_arphdrop</FONT>;
+typedef struct
+{ <FONT COLOR="#000088">netwib_arphdrop</FONT> op;
+  <FONT COLOR="#000088">netwib_eth</FONT> ethsrc;
+  <FONT COLOR="#000088">netwib_ip</FONT> ipsrc;
+  <FONT COLOR="#000088">netwib_eth</FONT> ethdst;
+  <FONT COLOR="#000088">netwib_ip</FONT> ipdst;
+} <FONT COLOR="#000088">netwib_arphdr</FONT>;
+typedef const <FONT COLOR="#000088">netwib_arphdr</FONT> <FONT COLOR="#000088">netwib_constarphdr</FONT>;
+<FONT COLOR="#008800">#define <FONT COLOR="#000044">NETWIB_ARPHDR_LEN</FONT> 28</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_arphdr_initdefault
+   Description :
+     Initialize a <FONT COLOR="#000088">netwib_arphdr</FONT> with default values.
+   Input parameter(s) :
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *parphdr : <FONT COLOR="#000088">netwib_arphdr</FONT> to initialize
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_arphdr_initdefault</B>(<FONT COLOR="#000088">netwib_arphdr</FONT> *parphdr);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_pkt_append_arphdr
+   Description :
+     Initialize physical data from a netwib_arphdr.
+   Input parameter(s) :
+     *parphdr : netwib_arphdr
+   Input/output parameter(s) :
+     *ppht : buffer to initialize
+   Output parameter(s) :
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_pkt_append_arphdr</B>(<FONT COLOR="#000088">netwib_constarphdr</FONT> *parphdr,
+                                    <FONT COLOR="#000088">netwib_buf</FONT> *ppkt);
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_pkt_prepend_arphdr</B>(<FONT COLOR="#000088">netwib_constarphdr</FONT> *parphdr,
+                                     <FONT COLOR="#000088">netwib_buf</FONT> *ppkt);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_pkt_decode_arphdr
+   Description :
+     Decode a <FONT COLOR="#000088">netwib_arphdr</FONT> from physical data.
+   Input parameter(s) :
+     *ppkt : buffer containing physical data
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *parphdr : <FONT COLOR="#000088">netwib_arphdr</FONT> contained in pkt
+     *pskipsize : size to use to skip this header
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+     <FONT COLOR="#000044">NETWIB_ERR_NOTCONVERTED</FONT> : pkt could not be decoded
+     <FONT COLOR="#000044">NETWIB_ERR_DATAMISSING</FONT> : pkt was not big enough
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_pkt_decode_arphdr</B>(<FONT COLOR="#000088">netwib_constbuf</FONT> *ppkt,
+                                    <FONT COLOR="#000088">netwib_arphdr</FONT> *parphdr,
+                                    <FONT COLOR="#000088">netwib_uint32</FONT> *pskipsize);
+</PRE><BR><BR><HR><BR>
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../pkt.html">section index</A></H2>
+</BODY></HTML>

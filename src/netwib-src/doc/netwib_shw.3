@@ -1,0 +1,570 @@
+.TH NETWIB_SHW 3 "08/07/2012"
+.SH NAME
+\fBnetwib\fR - section \fBshw\fR
+
+.SH HTML DOC
+If you have a browser, read netwib-5.39.0-doc_html.tgz
+which is easier to read than this manpage.
+
+.SH PRESENTATION
+This manpage contains a concatenation of includes for section
+SHW.
+.SH MODULE TYPES
+.nf
+
+
+.fi
+.SH MODULE ARRAY
+.nf
+
+/*-------------------------------------------------------------*/
+/***************************************************************
+ * An array permits to show a packet. Generally, one line      *
+ * corresponds to 32bits/4bytes, as seen in RFCs               *
+ ***************************************************************/
+/*
+For example :
+._______________________________________________________________.
+|0|1|1|0|0|1|1|0|0|1|1|0|0|1|1|0|0|1|1|0|0|1|1|0|0|1|1|0|0|1|1|0|
+|_3_|_3_|_3_|_3_|_3_|_3_|_3_|_3_|_3_|_3_|_3_|_3_|_3_|_3_|_3_|_3_|
+|0xF=15_|__0xF__|__15___|0xF=15_|__0xF__|__15___|0xF=15_|__0xF__|
+|_0x80=128='c'__|_0x80=128='c'__|_0x80=128='c'__|_0x80=128='c'__|
+| data: 0123456789012345678901234567890123456789012345678901234 |
+|       0123456789012345678901234567890123456789012345678901234 |
+|_______________________________________________________________|
+
+Ethernet________________________________________________________.
+| 00:00:01:02:03:04->00:00:05:06:97:08 type:0x0800              |
+|_______________________________________________________________|
+IP______________________________________________________________.
+|version|  ihl  |      tos      |            totlen             |
+|___4___|___5___|____0x00=0_____|___________0x0054=84___________|
+|              id               |r|D|M|       offsetfrag        |
+|___________0x0008=8____________|0|0|0|________0x0000=0_________|
+|      ttl      |   protocol    |           checksum            |
+|___0xFF=255____|____0x01=1_____|____________0x2551_____________|
+|                            source                             |
+|_________________________192.168.1.1___________________________|
+|                          destination                          |
+|_________________________192.168.1.2___________________________|
+ICMP4_echo reply________________________________________________.
+|     type      |     code      |           checksum            |
+|____0x00=0_____|____0x00=0_____|_________0xC6A9=50857__________|
+
+*/
+
+/*-------------------------------------------------------------*/
+/* "._________________." or "Title_____________." */
+\fBnetwib_err\fP \fBnetwib_show_array_head\fP(\fBnetwib_conststring\fP title,
+                                  \fBnetwib_buf\fP *pbuf);
+/* "|_________________|" */
+\fBnetwib_err\fP \fBnetwib_show_array_tail\fP(\fBnetwib_buf\fP *pbuf);
+
+/*-------------------------------------------------------------*/
+/* "|" */
+\fBnetwib_err\fP \fBnetwib_show_array_line_begin\fP(\fBnetwib_buf\fP *pbuf);
+/* "\\n" */
+\fBnetwib_err\fP \fBnetwib_show_array_line_end\fP(\fBnetwib_buf\fP *pbuf);
+
+/*-------------------------------------------------------------*/
+/* centered text surrounded by spaces and ending with "|" */
+\fBnetwib_err\fP \fBnetwib_show_array_text\fP(\fBnetwib_uint32\fP size,
+                                  \fBnetwib_conststring\fP txt,
+                                  \fBnetwib_buf\fP *pbuf);
+/* num32 is special : line_begin and line_end are internally called */
+\fI#define\fP \fBnetwib_show_array_text32\fP(text,pbuf) \fBnetwib_show_array_text\fP(32,text,pbuf)
+\fI#define\fP \fBnetwib_show_array_text16\fP(text,pbuf) \fBnetwib_show_array_text\fP(16,text,pbuf)
+\fI#define\fP \fBnetwib_show_array_text8\fP(text,pbuf) \fBnetwib_show_array_text\fP(8,text,pbuf)
+\fI#define\fP \fBnetwib_show_array_text4\fP(text,pbuf) \fBnetwib_show_array_text\fP(4,text,pbuf)
+\fI#define\fP \fBnetwib_show_array_text1\fP(text,pbuf) \fBnetwib_show_array_text\fP(1,text,pbuf)
+
+/*-------------------------------------------------------------*/
+/* centered number surrounded by "_" and ending with "|" */
+\fItypedef\fP enum {
+  \fBNETWIB_SHOW_ARRAY_NUMTYPE_BIN\fP = 1,
+  \fBNETWIB_SHOW_ARRAY_NUMTYPE_DEC\fP,
+  \fBNETWIB_SHOW_ARRAY_NUMTYPE_HEXA\fP,
+  \fBNETWIB_SHOW_ARRAY_NUMTYPE_CHAR\fP,
+  \fBNETWIB_SHOW_ARRAY_NUMTYPE_DECCHAR\fP,
+  \fBNETWIB_SHOW_ARRAY_NUMTYPE_HEXADEC\fP,
+  \fBNETWIB_SHOW_ARRAY_NUMTYPE_HEXACHAR\fP,
+  \fBNETWIB_SHOW_ARRAY_NUMTYPE_HEXADECCHAR\fP
+} \fBnetwib_show_array_numtype\fP;
+\fBnetwib_err\fP \fBnetwib_show_array_num\fP(\fBnetwib_uint32\fP size,
+                                 \fBnetwib_uint32\fP ui,
+                                 \fBnetwib_show_array_numtype\fP type,
+                                 \fBnetwib_buf\fP *pbuf);
+/* num32 is special : line_begin and line_end are internally called */
+\fI#define\fP \fBnetwib_show_array_num32\fP(ui,type,pbuf) \fBnetwib_show_array_num\fP(32,ui,type,pbuf)
+\fI#define\fP \fBnetwib_show_array_num16\fP(ui,type,pbuf) \fBnetwib_show_array_num\fP(16,ui,type,pbuf)
+\fI#define\fP \fBnetwib_show_array_num8\fP(ui,type,pbuf) \fBnetwib_show_array_num\fP(8,ui,type,pbuf)
+\fI#define\fP \fBnetwib_show_array_num4\fP(ui,type,pbuf) \fBnetwib_show_array_num\fP(4,ui,type,pbuf)
+\fI#define\fP \fBnetwib_show_array_num1\fP(ui,pbuf) \fBnetwib_show_array_num\fP(1,ui,\fBNETWIB_SHOW_ARRAY_NUMTYPE_DEC\fP,pbuf)
+
+/*-------------------------------------------------------------*/
+\fItypedef\fP enum {
+  \fBNETWIB_SHOW_ARRAY_ALIGN_LEFT\fP,
+  \fBNETWIB_SHOW_ARRAY_ALIGN_CENTER\fP,
+  \fBNETWIB_SHOW_ARRAY_ALIGN_RIGHT\fP
+} \fBnetwib_show_array_align\fP;
+/* if size==32, line_begin and line_end are internally called */
+\fBnetwib_err\fP \fBnetwib_show_array_fmt\fP(\fBnetwib_uint32\fP size,
+                                 \fBnetwib_show_array_align\fP align,
+                                 \fBnetwib_char\fP fillchar, /* ie ' ' or '_' */
+                                 \fBnetwib_buf\fP *pbuf,
+                                 \fBnetwib_conststring\fP fmt,
+                                 ...);
+/* size==32, align==\fBNETWIB_SHOW_ARRAY_ALIGN_LEFT\fP and fillchar==' ' */
+\fBnetwib_err\fP \fBnetwib_show_array_fmt32\fP(\fBnetwib_buf\fP *pbuf,
+                                   \fBnetwib_conststring\fP fmt,
+                                   ...);
+
+/*-------------------------------------------------------------*/
+/*
+ data wrapped to fit in the array. For example :
+    |title: 0123456789012345678901234567890123456789012 |
+    |       3456789012345678901234567801234567890123456 |
+    |_______567890123456789012345678____________________|
+*/
+\fBnetwib_err\fP \fBnetwib_show_array_data\fP(\fBnetwib_conststring\fP title,
+                                  \fBnetwib_constbuf\fP *pdata,
+                                  \fBnetwib_encodetype\fP encodetype,
+                                  \fBnetwib_char\fP fillchar, /* ie ' ' or '_' */
+                                  \fBnetwib_buf\fP *pbuf);
+.fi
+.SH MODULE LINKHDR
+.nf
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_linkhdr_show\fP
+   Description :
+     Print a \fBnetwib_linkhdr\fP.
+   Input parameter(s) :
+     linkhdr : \fBnetwib_linkhdr\fP to print
+     encodetype : \fBnetwib_encodetype\fP to use
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pbuf : \fBnetwib_buf\fP receiving data
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_linkhdr_show\fP(\fBnetwib_constlinkhdr\fP *plinkhdr,
+                               \fBnetwib_encodetype\fP encodetype,
+                               \fBnetwib_buf\fP *pbuf);
+.fi
+.SH MODULE IPHDR
+.nf
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_iphdr_show\fP
+   Description :
+     Print a \fBnetwib_iphdr\fP.
+   Input parameter(s) :
+     *piphdr : \fBnetwib_iphdr\fP to print
+     encodetype : \fBnetwib_encodetype\fP to use
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pbuf : \fBnetwib_buf\fP receiving data
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_iphdr_show\fP(\fBnetwib_constiphdr\fP *piphdr,
+                             \fBnetwib_encodetype\fP encodetype,
+                             \fBnetwib_buf\fP *pbuf);
+.fi
+.SH MODULE IP4OPT
+.nf
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_ip4opt_show\fP
+   Description :
+     Print a \fBnetwib_ip4opt\fP.
+   Input parameter(s) :
+     ip4opt : \fBnetwib_ip4opt\fP to print
+     encodetype : \fBnetwib_encodetype\fP to use
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pbuf : \fBnetwib_buf\fP receiving data
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_ip4opt_show\fP(\fBnetwib_constip4opt\fP *pip4opt,
+                              \fBnetwib_encodetype\fP encodetype,
+                              \fBnetwib_buf\fP *pbuf);
+.fi
+.SH MODULE IP4OPTS
+.nf
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_ip4opts_show\fP
+   Description :
+     Print a packet containing one or several IP options.
+   Input parameter(s) :
+     *ppkt : buffer containing physical data
+     encodetype : \fBnetwib_encodetype\fP to use
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pbuf : \fBnetwib_buf\fP receiving data
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_ip4opts_show\fP(\fBnetwib_constbuf\fP *ppkt,
+                               \fBnetwib_encodetype\fP encodetype,
+                               \fBnetwib_buf\fP *pbuf);
+
+.fi
+.SH MODULE IP6EXT
+.nf
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_ip6ext_show\fP
+   Description :
+     Print a \fBnetwib_ip6ext\fP.
+   Input parameter(s) :
+     ip6ext : \fBnetwib_ip6ext\fP to print
+     encodetype : \fBnetwib_encodetype\fP to use
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pbuf : \fBnetwib_buf\fP receiving data
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_ip6ext_show\fP(\fBnetwib_constip6ext\fP *pip6ext,
+                              \fBnetwib_encodetype\fP encodetype,
+                              \fBnetwib_buf\fP *pbuf);
+
+.fi
+.SH MODULE IP6EXTS
+.nf
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_ip6exts_show\fP
+   Description :
+     Print a packet containing one or several IP options.
+   Input parameter(s) :
+     pktproto : protocol of the first \fBnetwib_ip6ext\fP in ppkt
+     *ppkt : buffer containing physical data
+     encodetype : \fBnetwib_encodetype\fP to use
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pbuf : \fBnetwib_buf\fP receiving data
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_ip6exts_show\fP(\fBnetwib_ipproto\fP pktproto,
+                               \fBnetwib_constbuf\fP *ppkt,
+                               \fBnetwib_encodetype\fP encodetype,
+                               \fBnetwib_buf\fP *pbuf);
+
+.fi
+.SH MODULE ARPHDR
+.nf
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_arphdr_show\fP
+   Description :
+     Print a \fBnetwib_arphdr\fP.
+   Input parameter(s) :
+     *parphdr : \fBnetwib_arphdr\fP to print
+     encodetype : \fBnetwib_encodetype\fP to use
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pbuf : \fBnetwib_buf\fP receiving data
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_arphdr_show\fP(\fBnetwib_constarphdr\fP *parphdr,
+                              \fBnetwib_encodetype\fP encodetype,
+                              \fBnetwib_buf\fP *pbuf);
+
+.fi
+.SH MODULE TCPHDR
+.nf
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_tcphdr_show\fP
+   Description :
+     Print a \fBnetwib_tcphdr\fP.
+   Input parameter(s) :
+     *ptcphdr : \fBnetwib_tcphdr\fP to print
+     encodetype : \fBnetwib_encodetype\fP to use
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pbuf : \fBnetwib_buf\fP receiving data
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_tcphdr_show\fP(\fBnetwib_consttcphdr\fP *ptcphdr,
+                              \fBnetwib_encodetype\fP encodetype,
+                              \fBnetwib_buf\fP *pbuf);
+.fi
+.SH MODULE UDPHDR
+.nf
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_udphdr_show\fP
+   Description :
+     Print a \fBnetwib_udphdr\fP.
+   Input parameter(s) :
+     *pudphdr : \fBnetwib_udphdr\fP to print
+     encodetype : \fBnetwib_encodetype\fP to use
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pbuf : \fBnetwib_buf\fP receiving data
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_udphdr_show\fP(\fBnetwib_constudphdr\fP *pudphdr,
+                              \fBnetwib_encodetype\fP encodetype,
+                              \fBnetwib_buf\fP *pbuf);
+.fi
+.SH MODULE TCPOPT
+.nf
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_tcpopt_show\fP
+   Description :
+     Print a \fBnetwib_tcpopt\fP.
+   Input parameter(s) :
+     tcpopt : \fBnetwib_tcpopt\fP to print
+     encodetype : \fBnetwib_encodetype\fP to use
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pbuf : \fBnetwib_buf\fP receiving data
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_tcpopt_show\fP(\fBnetwib_consttcpopt\fP *ptcpopt,
+                              \fBnetwib_encodetype\fP encodetype,
+                              \fBnetwib_buf\fP *pbuf);
+
+
+
+
+.fi
+.SH MODULE TCPOPTS
+.nf
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_tcpopts_show\fP
+   Description :
+     Print a buffer containing one or several TCP option.
+   Input parameter(s) :
+     *ptcpopts : TCP options to print
+     encodetype : \fBnetwib_encodetype\fP to use
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pbuf : \fBnetwib_buf\fP receiving data
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_tcpopts_show\fP(\fBnetwib_constbuf\fP *ptcpopts,
+                               \fBnetwib_encodetype\fP encodetype,
+                               \fBnetwib_buf\fP *pbuf);
+
+
+
+
+
+
+
+.fi
+.SH MODULE ICMP4
+.nf
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_icmp4_show\fP
+   Description :
+     Print a \fBnetwib_icmp4\fP.
+   Input parameter(s) :
+     *picmp4 : \fBnetwib_icmp4\fP to print
+     encodetype : \fBnetwib_encodetype\fP to use
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pbuf : \fBnetwib_buf\fP receiving data
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_icmp4_show\fP(\fBnetwib_consticmp4\fP *picmp4,
+                             \fBnetwib_encodetype\fP encodetype,
+                             \fBnetwib_buf\fP *pbuf);
+.fi
+.SH MODULE ICMP6
+.nf
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_icmp6_show\fP
+   Description :
+     Print a \fBnetwib_icmp6\fP.
+   Input parameter(s) :
+     *picmp6 : \fBnetwib_icmp6\fP to print
+     encodetype : \fBnetwib_encodetype\fP to use
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pbuf : \fBnetwib_buf\fP receiving data
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_icmp6_show\fP(\fBnetwib_consticmp6\fP *picmp6,
+                             \fBnetwib_encodetype\fP encodetype,
+                             \fBnetwib_buf\fP *pbuf);
+.fi
+.SH MODULE ICMP6ND
+.nf
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_icmp6nd_show\fP
+   Description :
+     Print a \fBnetwib_icmp6nd\fP.
+   Input parameter(s) :
+     icmp6nd : \fBnetwib_icmp6nd\fP to print
+     encodetype : \fBnetwib_encodetype\fP to use
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pbuf : \fBnetwib_buf\fP receiving data
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_icmp6nd_show\fP(\fBnetwib_consticmp6nd\fP *picmp6nd,
+                               \fBnetwib_encodetype\fP encodetype,
+                               \fBnetwib_buf\fP *pbuf);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_icmp6nds_show\fP
+   Description :
+     Print a packet containing one or several \fBnetwib_icmp6nd\fP.
+   Input parameter(s) :
+     *ppkt : buffer containing physical data
+     encodetype : \fBnetwib_encodetype\fP to use
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pbuf : \fBnetwib_buf\fP receiving data
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_icmp6nds_show\fP(\fBnetwib_constbuf\fP *ppkt,
+                                \fBnetwib_encodetype\fP encodetype,
+                                \fBnetwib_buf\fP *pbuf);
+
+.fi
+.SH MODULE PACKET
+.nf
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_pkt_data_display\fP
+   Description :
+     Print a buffer containing simple data.
+   Input parameter(s) :
+     *pkt : buffer to print
+     encodetype : \fBnetwib_encodetype\fP to use
+   Input/output parameter(s) :
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_pkt_data_show\fP(\fBnetwib_constbuf\fP *ppkt,
+                                \fBnetwib_encodetype_context\fP *pctx,
+                                \fBnetwib_encodetype\fP encodetype,
+                                \fBnetwib_buf\fP *pbuf);
+\fBnetwib_err\fP \fBnetwib_pkt_data_display\fP(\fBnetwib_constbuf\fP *ppkt,
+                                   \fBnetwib_encodetype_context\fP *pctx,
+                                   \fBnetwib_encodetype\fP encodetype);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_pkt_link_display\fP
+   Description :
+     Print a buffer containing an Link packet.
+   Input parameter(s) :
+     *pkt : buffer to print
+     hdrencodetype : \fBnetwib_encodetype\fP to use for headers
+     dataencodetype : \fBnetwib_encodetype\fP to use for data
+   Input/output parameter(s) :
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_pkt_link_show\fP(\fBnetwib_device_dlttype\fP dlttype,
+                                \fBnetwib_constbuf\fP *ppkt,
+                                \fBnetwib_encodetype_context\fP *pctx,
+                                \fBnetwib_encodetype\fP hdrencodetype,
+                                \fBnetwib_encodetype\fP dataencodetype,
+                                \fBnetwib_buf\fP *pbuf);
+\fBnetwib_err\fP \fBnetwib_pkt_link_display\fP(\fBnetwib_device_dlttype\fP dlttype,
+                                   \fBnetwib_constbuf\fP *ppkt,
+                                   \fBnetwib_encodetype_context\fP *pctx,
+                                   \fBnetwib_encodetype\fP hdrencodetype,
+                                   \fBnetwib_encodetype\fP dataencodetype);
+
+/*-------------------------------------------------------------*/
+/* Print a buffer containing an IP packet
+   Note: currently, IPv6 packets are not decoded, but are simply
+         dumped using dataencodetype.
+ */
+\fBnetwib_err\fP \fBnetwib_pkt_ip_show\fP(\fBnetwib_constbuf\fP *ppkt,
+                              \fBnetwib_encodetype_context\fP *pctx,
+                              \fBnetwib_encodetype\fP hdrencodetype,
+                              \fBnetwib_encodetype\fP dataencodetype,
+                              \fBnetwib_buf\fP *pbuf);
+\fBnetwib_err\fP \fBnetwib_pkt_ip_display\fP(\fBnetwib_constbuf\fP *ppkt,
+                                 \fBnetwib_encodetype_context\fP *pctx,
+                                 \fBnetwib_encodetype\fP hdrencodetype,
+                                 \fBnetwib_encodetype\fP dataencodetype);
+
+/*-------------------------------------------------------------*/
+/* Print a buffer containing an UDP packet */
+\fBnetwib_err\fP \fBnetwib_pkt_udp_show\fP(\fBnetwib_constbuf\fP *ppkt,
+                               \fBnetwib_encodetype_context\fP *pctx,
+                               \fBnetwib_encodetype\fP hdrencodetype,
+                               \fBnetwib_encodetype\fP dataencodetype,
+                               \fBnetwib_buf\fP *pbuf);
+\fBnetwib_err\fP \fBnetwib_pkt_udp_display\fP(\fBnetwib_constbuf\fP *ppkt,
+                                  \fBnetwib_encodetype_context\fP *pctx,
+                                  \fBnetwib_encodetype\fP hdrencodetype,
+                                  \fBnetwib_encodetype\fP dataencodetype);
+
+/*-------------------------------------------------------------*/
+/* Print a buffer containing a TCP packet */
+\fBnetwib_err\fP \fBnetwib_pkt_tcp_show\fP(\fBnetwib_constbuf\fP *ppkt,
+                               \fBnetwib_encodetype_context\fP *pctx,
+                               \fBnetwib_encodetype\fP hdrencodetype,
+                                     \fBnetwib_encodetype\fP dataencodetype,
+                               \fBnetwib_buf\fP *pbuf);
+\fBnetwib_err\fP \fBnetwib_pkt_tcp_display\fP(\fBnetwib_constbuf\fP *ppkt,
+                                  \fBnetwib_encodetype_context\fP *pctx,
+                                  \fBnetwib_encodetype\fP hdrencodetype,
+                                  \fBnetwib_encodetype\fP dataencodetype);
+
+/*-------------------------------------------------------------*/
+/* Print a buffer containing an ICMP4 packet */
+\fBnetwib_err\fP \fBnetwib_pkt_icmp4_show\fP(\fBnetwib_constbuf\fP *ppkt,
+                                 \fBnetwib_encodetype_context\fP *pctx,
+                                 \fBnetwib_encodetype\fP hdrencodetype,
+                                 \fBnetwib_encodetype\fP dataencodetype,
+                                 \fBnetwib_buf\fP *pbuf);
+\fBnetwib_err\fP \fBnetwib_pkt_icmp4_display\fP(\fBnetwib_constbuf\fP *ppkt,
+                                    \fBnetwib_encodetype_context\fP *pctx,
+                                    \fBnetwib_encodetype\fP hdrencodetype,
+                                    \fBnetwib_encodetype\fP dataencodetype);
+
+/*-------------------------------------------------------------*/
+/* Print a buffer containing an ICMP6 packet */
+\fBnetwib_err\fP \fBnetwib_pkt_icmp6_show\fP(\fBnetwib_constbuf\fP *ppkt,
+                                 \fBnetwib_encodetype_context\fP *pctx,
+                                 \fBnetwib_encodetype\fP hdrencodetype,
+                                 \fBnetwib_encodetype\fP dataencodetype,
+                                 \fBnetwib_buf\fP *pbuf);
+\fBnetwib_err\fP \fBnetwib_pkt_icmp6_display\fP(\fBnetwib_constbuf\fP *ppkt,
+                                    \fBnetwib_encodetype_context\fP *pctx,
+                                    \fBnetwib_encodetype\fP hdrencodetype,
+                                    \fBnetwib_encodetype\fP dataencodetype);
+
+
+.fi
+.SH SEE ALSO
+.IR netwib (3),
+.IR netwib_dat (3),
+.IR netwib_sys (3),
+.IR netwib_net (3),
+.IR netwib_pkt (3),
+.IR netwib_shw (3),
+.IR netwib_err (3)

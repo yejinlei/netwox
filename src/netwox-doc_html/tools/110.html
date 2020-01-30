@@ -1,0 +1,54 @@
+<HTML>
+ <HEAD>
+ <TITLE>Tool 110: Ethernet bridge limiting flow</TITLE>
+ </HEAD>
+ <BODY BGCOLOR="#FFFFFF">
+  <CENTER>   <H3>Tool 110: Ethernet bridge limiting flow</H3>
+  </CENTER>
+
+  <P><H3>Description:</H3>
+   <PRE>
+  This tool is an Ethernet bridge. It has to be run on a computer having
+  two network cards. This computer cuts the network in two. It permits
+  to limit the flow. This can be used to simulate a slow network in
+  order to test an application.
+  A --max12 or --max21 of 0 means no limitation.
+  
+  This tool may need to be run with admin privilege in order to sniff
+  and spoof.
+   </PRE>
+
+  <P><H3>Usage:</H3>
+  &nbsp;&nbsp;netwox 110 -d device -D device [-m uint32] [-M uint32] [-v|+v]<BR>
+
+  <P><H3>Parameters:</H3>
+<TABLE BORDER=1 CELLPADDING=4>
+ <TR>
+  <TD ALIGN=middle><I>parameter</I></TD>
+  <TD ALIGN=middle><I>description</I></TD>
+  <TD ALIGN=middle><I>example</I></TD>
+ </TR>
+ <TR><TD><TT>-d|--device1 device</TD>
+<TD>first device</TD>
+<TD>Eth0</TD></TR>
+<TR><TD><TT>-D|--device2 device</TD>
+<TD>second device</TD>
+<TD>Eth0</TD></TR>
+<TR><TD><TT>-m|--max12 uint32</TD>
+<TD>max byte/sec from 1 to 2</TD>
+<TD>0</TD></TR>
+<TR><TD><TT>-M|--max21 uint32</TD>
+<TD>max byte/sec from 2 to 1</TD>
+<TD>0</TD></TR>
+<TR><TD><TT>-v|--verbose|+v|--no-verbose</TD>
+<TD>verbose</TD>
+<TD><I>This boolean is set.<BR>Use + or --no- to unset it.</I> </TD></TR>
+</TABLE>
+
+  <P><H3>Examples:</H3>
+  &nbsp;&nbsp;netwox 110 -d "Eth0" -D "Eth0"<BR>
+<BR>
+  &nbsp;&nbsp;netwox 110 --device1 "Eth0" --device2 "Eth0"<BR>
+<BR>
+ </BODY>
+ </HTML>

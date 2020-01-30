@@ -1,0 +1,52 @@
+                Laurent CONSTANTIN's network library (netwib)
+
+                      --------------------------------
+                      |           TODO LIST          |
+                      --------------------------------
+
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Tasks for occasional developers [once developed and integrated, no
+support is needed from developer] :
+
+ * Run tests in netw-ib-ox-ag-5.x.y.tgz to find bugs. This test suite can
+   be run on every system you have.
+
+ * Improve library tests in netw-ib-ox-ag-5.x.y.tgz. Branch 5 is quite young,
+   so it contains bugs. The testing suite does not detect all of them.
+   All test cases for every function should be implemented.
+
+ * Run gprof to find slow functions in the library and to optimize
+   them. Gprof can be run with help of netwox or netw-ib-ox-ag-5.x.y.tgz.
+   One of the first things to profile is netwib_conf_display which is
+   slow on some systems (ie OpenBSD or Windows).
+
+ * I should take time to review the old code.
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Tasks for long time developers [once developed and integrated, some
+support may be needed from developer] :
+
+ * Port to other systems :
+    - Tru64 UNIX
+    - AIX
+    - etc.
+   In this case, long time support is needed, because I do not have
+   a shell access to any of those systems. So, I might contact you
+   for updates or user problems.
+
+ * Currently netwib works for Ethernet cards and PPP modems. Support
+   could be added for :
+    - 802.11
+    - FDDI
+    - Token Ring (obsolete ?)
+    - etc.
+   In this case, long time support is needed, because I do not have
+   systems with such hardware. So, I might contact you for updates
+   or user problems.
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Netwib does not support IPv6 under Windows (configuration and sockets).
+Anyone wants to buy me a Windows 2003 Server license ?
+

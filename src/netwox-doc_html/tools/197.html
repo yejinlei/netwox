@@ -1,0 +1,54 @@
+<HTML>
+ <HEAD>
+ <TITLE>Tool 197: WHOIS client guessing server</TITLE>
+ </HEAD>
+ <BODY BGCOLOR="#FFFFFF">
+  <CENTER>   <H3>Tool 197: WHOIS client guessing server</H3>
+  </CENTER>
+
+  <P><H3>Description:</H3>
+   <PRE>
+  This tool is a whois client.
+  It obtains information about an object (generally a domain name).
+  It tries to guess the best whois server.
+  For example: netwox 197 --query enterprise.fr
+  
+  Parameter --dst-ip is the address of remote host/server.
+  Parameter --dst-port is the port number where to connect.
+  Optional parameter --src-ip defines the local IP address to use.
+  Optional parameter --src-port defines the local port number to use.
+  Optional parameter --ip4opts permits to add IP4 options encoded as
+  mixed.
+  Optional parameter --ip6exts permits to add IP6 options encoded as
+  mixed (first byte is the next header number).
+  Optional parameters --device, --src-eth and --dst-eth permits to
+  create a virtual client using fake addresses (in this case, tool have
+  to be run with admin privilege in order to sniff and spoof at
+  Ethernet level).
+   </PRE>
+
+  <P><H3>Usage:</H3>
+  &nbsp;&nbsp;netwox 197 -q hostname [-T uint32]<BR>
+
+  <P><H3>Parameters:</H3>
+<TABLE BORDER=1 CELLPADDING=4>
+ <TR>
+  <TD ALIGN=middle><I>parameter</I></TD>
+  <TD ALIGN=middle><I>description</I></TD>
+  <TD ALIGN=middle><I>example</I></TD>
+ </TR>
+ <TR><TD><TT>-q|--query hostname</TD>
+<TD>information to query</TD>
+<TD>www.example.com</TD></TR>
+<TR><TD><TT>-T|--timeout uint32</TD>
+<TD>timeout in milliseconds</TD>
+<TD>60000 </TD></TR>
+</TABLE>
+
+  <P><H3>Examples:</H3>
+  &nbsp;&nbsp;netwox 197 -q "www.example.com"<BR>
+<BR>
+  &nbsp;&nbsp;netwox 197 --query "www.example.com"<BR>
+<BR>
+ </BODY>
+ </HTML>

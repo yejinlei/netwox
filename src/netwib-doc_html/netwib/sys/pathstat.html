@@ -1,0 +1,60 @@
+<HTML><HEAD>
+<TITLE>netwib doc_html (version 5.39.0)</TITLE>
+</HEAD><BODY BGCOLOR="#FFFFFF" TEXT="#000000">
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../sys.html">section index</A></H2><HR><BR>
+<PRE>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+typedef enum {
+  <FONT COLOR="#000044">NETWIB_PATHSTAT_TYPE_UNKNOWN</FONT> = 0, <FONT COLOR="#880000">/* unknown type */</FONT>
+  <FONT COLOR="#000044">NETWIB_PATHSTAT_TYPE_REG</FONT>,         <FONT COLOR="#880000">/* regular file */</FONT>
+  <FONT COLOR="#000044">NETWIB_PATHSTAT_TYPE_DIR</FONT>,         <FONT COLOR="#880000">/* directory */</FONT>
+  <FONT COLOR="#000044">NETWIB_PATHSTAT_TYPE_LINK</FONT>,        <FONT COLOR="#880000">/* link */</FONT>
+  <FONT COLOR="#000044">NETWIB_PATHSTAT_TYPE_SOCK</FONT>,        <FONT COLOR="#880000">/* socket */</FONT>
+  <FONT COLOR="#000044">NETWIB_PATHSTAT_TYPE_BLOCK</FONT>,       <FONT COLOR="#880000">/* block file */</FONT>
+  <FONT COLOR="#000044">NETWIB_PATHSTAT_TYPE_CHAR</FONT>,        <FONT COLOR="#880000">/* char file */</FONT>
+  <FONT COLOR="#000044">NETWIB_PATHSTAT_TYPE_FIFO</FONT>         <FONT COLOR="#880000">/* fifo */</FONT>
+} <FONT COLOR="#000088">netwib_pathstat_type</FONT>;
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000"><B>/***************************************************************
+ * On conventional filesystems, maximum file size is           *
+ * 0x7FFFFFFF (2G) because it is stored as signed (as netwib   *
+ * defines size as unsigned, we could extend this limit to 4G, *
+ * but this poses some other problems because all underlying   *
+ * system calls have a limit of 2G).                           *
+ * On large filesystems, maximum file size can be greater and  *
+ * might not feet in an <FONT COLOR="#000088">netwib_uint32</FONT> size. If file size is    *
+ * &gt; 0x7FFFFFFF, size is set to <FONT COLOR="#000044">NETWIB_PATHSTAT_SIZE_GT2G</FONT>.     *
+ * In both cases, size64 variable contains the real value.     *
+ ***************************************************************/</B></FONT>
+<FONT COLOR="#008800">#define <FONT COLOR="#000044">NETWIB_PATHSTAT_SIZE_GT2G</FONT> 0x80000000u</FONT>
+typedef struct {
+  <FONT COLOR="#000088">netwib_pathstat_type</FONT> type;
+  <FONT COLOR="#000088">netwib_uint32</FONT> size; <FONT COLOR="#880000">/* set to <FONT COLOR="#000044">NETWIB_PATHSTAT_SIZE_GT2G</FONT>
+                         if <FONT COLOR="#000088">netwib_uint32</FONT> variable is too
+                         small to contain real size */</FONT>
+  <FONT COLOR="#000088">netwib_uint64</FONT> size64; <FONT COLOR="#880000">/* real size, not truncated */</FONT>
+  <FONT COLOR="#000088">netwib_time</FONT> mtime; <FONT COLOR="#880000">/* last modification time */</FONT>
+} <FONT COLOR="#000088">netwib_pathstat</FONT>;
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_pathstat_init
+   Description :
+     Get information of a path.
+   Input parameter(s) :
+     *ppathstat : pathstat
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *ptype : type of the path
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+     <FONT COLOR="#000044">NETWIB_ERR_OKFILENOTFOUND</FONT> : file was not found
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_pathstat_init</B>(<FONT COLOR="#000088">netwib_constbuf</FONT> *ppath,
+                                <FONT COLOR="#000088">netwib_pathstat</FONT> *pstat);
+</PRE><BR><BR><HR><BR>
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../sys.html">section index</A></H2>
+</BODY></HTML>

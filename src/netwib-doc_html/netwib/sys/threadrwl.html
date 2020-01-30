@@ -1,0 +1,103 @@
+<HTML><HEAD>
+<TITLE>netwib doc_html (version 5.39.0)</TITLE>
+</HEAD><BODY BGCOLOR="#FFFFFF" TEXT="#000000">
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../sys.html">section index</A></H2><HR><BR>
+<PRE>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+typedef struct <FONT COLOR="#000088">netwib_thread_rwlock</FONT> <FONT COLOR="#000088">netwib_thread_rwlock</FONT>;
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_thread_rwlock_init
+   Description :
+     Initialize a rwlock.
+   Input parameter(s) :
+   Input/output parameter(s) :
+     *pprwlock : <FONT COLOR="#000088">netwib_thread_rwlock</FONT> initialized
+   Output parameter(s) :
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_thread_rwlock_init</B>(<FONT COLOR="#000088">netwib_thread_rwlock</FONT> **pprwlock);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_thread_rwlock_close
+   Description :
+     Close a rwlock.
+   Input parameter(s) :
+   Input/output parameter(s) :
+     *pprwlock : <FONT COLOR="#000088">netwib_thread_rwlock</FONT> closed
+   Output parameter(s) :
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_thread_rwlock_close</B>(<FONT COLOR="#000088">netwib_thread_rwlock</FONT> **pprwlock);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_thread_rwlock_rdlock
+   Description :
+     Wait for the rwlock.
+     We lock for reading.
+   Input parameter(s) :
+     *prwlock : netwib_thread_rwlock
+     *pabstime : end time. If *pabstime is reached, locking is
+                 not done (*plocked set to <FONT COLOR="#000044">NETWIB_FALSE</FONT>).
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *plocked : the rwlock could be locked
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_thread_rwlock_rdlock</B>(<FONT COLOR="#000088">netwib_thread_rwlock</FONT> *prwlock,
+                                       <FONT COLOR="#000088">netwib_consttime</FONT> *pabstime,
+                                       <FONT COLOR="#000088">netwib_bool</FONT> *plocked);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_thread_rwlock_rdunlock
+   Description :
+     Unlock reading of a rwlock.
+   Input parameter(s) :
+   Input/output parameter(s) :
+     *prwlock : <FONT COLOR="#000088">netwib_thread_rwlock</FONT> to unlock
+   Output parameter(s) :
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_thread_rwlock_rdunlock</B>(<FONT COLOR="#000088">netwib_thread_rwlock</FONT> *prwlock);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_thread_rwlock_wrlock
+   Description :
+     Wait for the rwlock.
+     We lock for writing.
+   Input parameter(s) :
+     *prwlock : netwib_thread_rwlock
+     *pabstime : end time. If *pabstime is reached, locking is
+                 not done (*plocked set to <FONT COLOR="#000044">NETWIB_FALSE</FONT>).
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *plocked : the rwlock could be locked
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_thread_rwlock_wrlock</B>(<FONT COLOR="#000088">netwib_thread_rwlock</FONT> *prwlock,
+                                       <FONT COLOR="#000088">netwib_consttime</FONT> *pabstime,
+                                       <FONT COLOR="#000088">netwib_bool</FONT> *plocked);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_thread_rwlock_wrunlock
+   Description :
+     Unlock writing of a rwlock.
+   Input parameter(s) :
+   Input/output parameter(s) :
+     *prwlock : <FONT COLOR="#000088">netwib_thread_rwlock</FONT> to unlock
+   Output parameter(s) :
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_thread_rwlock_wrunlock</B>(<FONT COLOR="#000088">netwib_thread_rwlock</FONT> *prwlock);
+</PRE><BR><BR><HR><BR>
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../sys.html">section index</A></H2>
+</BODY></HTML>

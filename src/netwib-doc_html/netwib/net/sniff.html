@@ -1,0 +1,173 @@
+<HTML><HEAD>
+<TITLE>netwib doc_html (version 5.39.0)</TITLE>
+</HEAD><BODY BGCOLOR="#FFFFFF" TEXT="#000000">
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../net.html">section index</A></H2><HR><BR>
+<PRE>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000"><B>/***************************************************************
+ * Netwib supports Ethernet cards(netwib_device_hwtype=ETHER), *
+ * Loopback(LOOPBACK) and Serial Modems(PPP).                  *
+ * Unfortunately, these are not supported on every system as   *
+ * described in this table.                                    *
+ *                                                             *
+ *            Device_hwtype       Supported?  Returned_DLT     *
+ *  FreeBSD :                                                  *
+ *            ETHER               yes         ETHER            *
+ *            LOOPBACK            yes         NULL             *
+ *            PPP                 yes         ?[7]             *
+ *  Linux :                                                    *
+ *            ETHER               yes         ETHER            *
+ *            LOOPBACK            yes         NULL             *
+ *            PPP                 yes         ?[7]             *
+ *  OpenBSD :                                                  *
+ *            ETHER               yes         ETHER            *
+ *            LOOPBACK            yes         LOOP             *
+ *            PPP                 yes         ?[7]             *
+ *  Solaris :                                                  *
+ *            ETHER               yes         ETHER            *
+ *            LOOPBACK            no          -                *
+ *            PPP                 yes[1]      ?[7]             *
+ *  Windows 95 :                                               *
+ *            ETHER               yes         ETHER            *
+ *            LOOPBACK            no          -                *
+ *            PPP                 yes[1][2]   ETHER            *
+ *  Windows 98 :                                               *
+ *            ETHER               yes         ETHER            *
+ *            LOOPBACK            no          -                *
+ *            PPP                 yes[1]      ETHER            *
+ *  Windows Me :                                               *
+ *            ETHER               yes         ETHER            *
+ *            LOOPBACK            no          -                *
+ *            PPP                 ?[3]        ETHER            *
+ *  Windows NT4 :                                              *
+ *            ETHER               yes         ETHER            *
+ *            LOOPBACK            no          -                *
+ *            PPP                 y/n[1][4]   ETHER            *
+ *  Windows 2000 :                                             *
+ *            ETHER               yes         ETHER            *
+ *            LOOPBACK            no          -                *
+ *            PPP                 no[5]       ETHER            *
+ *  Windows XP :                                               *
+ *            ETHER               yes         ETHER            *
+ *            LOOPBACK            no          -                *
+ *            PPP                 no[6]       -                *
+ *                                                             *
+ * Notes :                                                     *
+ *  1 : System adds a fake Ethernet header                     *
+ *  2 : Windows Sockets 2 and Dialup Networking 1.3 have to    *
+ *      be installed (urls are in problemusagewindows_en.txt)  *
+ *  3 : Not tested                                             *
+ *  4 : As described in WinPCAP FAQ, it doesn't work (but, it  *
+ *      works on my computer)                                  *
+ *  5 : As described in WinPCAP FAQ, it doesn't work (on my    *
+ *      computer, when packets are sniffed, we can't spoof)    *
+ *  6 : As described in WinPCAP FAQ, it doesn't work (a        *
+ *      contributor confirmed that it doesn't work on its      *
+ *      computer)                                              *
+ *  7 : I'll summarize this info later...                      *
+ ***************************************************************/</B></FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_io_init_sniff
+   Description :
+     Open a sniff session.
+     Returned packets will start at Link header.
+   Input parameter(s) :
+     *pdevice : device where we sniff
+     *pfilter : sniff filter (NULL to sniff everything)
+   Input/output parameter(s) :
+   Output parameter(s) :
+     **ppio : io created
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_io_init_sniff</B>(<FONT COLOR="#000088">netwib_constbuf</FONT> *pdevice,
+                                <FONT COLOR="#000088">netwib_constbuf</FONT> *pfilter,
+                                <FONT COLOR="#000088">netwib_io</FONT> **ppio);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000"><B>/***************************************************************
+ * Note about sniff filters :                                  *
+ * Filters permit to select network packets we sniff.          *
+ * Basic elements of a bpf filter are :                        *
+ *    host 1.2.3.4                                             *
+ *    net 192.168.10                                           *
+ *    net 192.168.10.0 mask 255.255.255.0                      *
+ *    net 192.168.10.0/24                                      *
+ *    port 21                                                  *
+ *    dst host 1.2.3.4                                         *
+ *    src port 2345                                            *
+ *    ether host a:b:c:d:e:f ("ether a:b:c:d:e:f" is not working)
+ *    ether src aa:bb:cc:dd:ee:ff                              *
+ *    ip                                                       *
+ *    arp                                                      *
+ *    rarp                                                     *
+ *    tcp                                                      *
+ *    icmp                                                     *
+ *    udp                                                      *
+ * Here are filter examples :                                  *
+ *    host 1.2.3.4                                             *
+ *    net 192.168 and icmp                                     *
+ *    host 1.2.3.4 or dst port 80                              *
+ *    (udp or tcp) and not host 1.2.3.4                        *
+ ***************************************************************/</B></FONT>
+
+<FONT COLOR="#880000">/* change the filter */</FONT>
+<FONT COLOR="#880000">/* <FONT COLOR="#000088">netwib_err</FONT> f(<FONT COLOR="#000088">netwib_io</FONT> *pio, <FONT COLOR="#000088">netwib_constbuf</FONT> *pfilter); */</FONT>
+<FONT COLOR="#008800">#define <B>netwib_sniff_ctl_set_filter</B>(pio,pfilter) <B>netwib_io_ctl_set</B>(pio,<FONT COLOR="#000044">NETWIB_IO_WAYTYPE_SUPPORTED</FONT>,<FONT COLOR="#000044">NETWIB_IO_CTLTYPE_SNIFF_FILTER</FONT>,pfilter,0)</FONT>
+<FONT COLOR="#880000">/* <FONT COLOR="#000088">netwib_err</FONT> f(<FONT COLOR="#000088">netwib_io</FONT> *pio, <FONT COLOR="#000088">netwib_buf</FONT> *pfilter); */</FONT>
+<FONT COLOR="#008800">#define <B>netwib_sniff_ctl_get_filter</B>(pio,pfilter) <B>netwib_io_ctl_get</B>(pio,<FONT COLOR="#000044">NETWIB_IO_WAYTYPE_SUPPORTED</FONT>,<FONT COLOR="#000044">NETWIB_IO_CTLTYPE_SNIFF_FILTER</FONT>,pfilter,NULL)</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* obtain the DLT of returned packets */</FONT>
+<FONT COLOR="#880000">/* <FONT COLOR="#000088">netwib_err</FONT> f(<FONT COLOR="#000088">netwib_io</FONT> *pio, <FONT COLOR="#000088">netwib_device_dlttype</FONT> *pdlt); */</FONT>
+<FONT COLOR="#008800">#define <B>netwib_sniff_ctl_get_dlt</B>(pio,pdlt) <B>netwib_io_ctl_get</B>(pio,<FONT COLOR="#000044">NETWIB_IO_WAYTYPE_SUPPORTED</FONT>,<FONT COLOR="#000044">NETWIB_IO_CTLTYPE_SNIFF_DLT</FONT>,NULL,(netwib_uint32*)pdlt)</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000"><B>/***************************************************************
+ * This io link :                                              *
+ *  - has to be plugged on <FONT COLOR="#000088">netwib_io_init_sniff</FONT>                *
+ *  - reassemble fragmented IP packets                         *
+ *  - do nothing with other packets                            *
+ ***************************************************************/</B></FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_io_init_sniff_ipreas</B>(<FONT COLOR="#000088">netwib_io</FONT> **ppio);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000"><B>/***************************************************************
+ * This io link :                                              *
+ *  - has to be plugged on <FONT COLOR="#000088">netwib_io_init_sniff_ipreas</FONT>         *
+ *  - reorder sequences of TCP packets                         *
+ *  - remove duplicate TCP packets                             *
+ *  - do nothing with other packets                            *
+ ***************************************************************/</B></FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_io_init_sniff_tcpreord</B>(<FONT COLOR="#000088">netwib_io</FONT> **ppio);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_io_init_sniff_ip
+   Description :
+     Open a sniff session, and return only IP packets.
+     Returned packets will start at IP header (DLTTYPE_RAW).
+   Input parameter(s) :
+     *pdevice : device where we sniff
+     *pfilter : sniff filter (NULL to sniff everything)
+     ipreas : if <FONT COLOR="#000088">netwib_io_init_sniff_ipreas</FONT> has to
+              be used
+     tcpreord : if <FONT COLOR="#000088">netwib_io_init_sniff_tcpreord</FONT> has to
+                be used
+   Input/output parameter(s) :
+   Output parameter(s) :
+     **ppio : io created
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_io_init_sniff_ip</B>(<FONT COLOR="#000088">netwib_constbuf</FONT> *pdevice,
+                                   <FONT COLOR="#000088">netwib_constbuf</FONT> *pfilter,
+                                   <FONT COLOR="#000088">netwib_bool</FONT> ipreas,
+                                   <FONT COLOR="#000088">netwib_bool</FONT> tcpreord,
+                                   <FONT COLOR="#000088">netwib_io</FONT> **ppio);
+</PRE><BR><BR><HR><BR>
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../net.html">section index</A></H2>
+</BODY></HTML>

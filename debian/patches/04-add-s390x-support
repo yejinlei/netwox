@@ -1,0 +1,17 @@
+Description: Add platform detection support for IBM S390 (64-bit)
+ This patch adds platform detection support for the IBM S390 (64-bit)
+ architecture, also called s390x.
+ .
+
+--- netw-ib-ox-ag-5.39.0.orig/src/netwib-src/src/genemake
++++ netw-ib-ox-ag-5.39.0/src/netwib-src/src/genemake
+@@ -121,6 +121,9 @@ case $unamem in
+   "s390" )
+     NETWIBDEF_SYSARCH="s390"
+     ;;
++  "s390x" )
++    NETWIBDEF_SYSARCH="s390x"
++    ;;
+   sh* )
+     NETWIBDEF_SYSARCH="sh"
+     ;;

@@ -1,0 +1,87 @@
+<HTML>
+ <HEAD>
+ <TITLE>Tool 44: Spoof of packet samples : fragment, ip4opt:rr</TITLE>
+ </HEAD>
+ <BODY BGCOLOR="#FFFFFF">
+  <CENTER>   <H3>Tool 44: Spoof of packet samples : fragment, ip4opt:rr</H3>
+  </CENTER>
+
+  <P><H3>Description:</H3>
+   <PRE>
+  This tool sends hardcoded packet samples. Samples are (--sample
+  defines number): 1=udp_syslog, 2=tcp_syn, 3=tcpsynack, 4=tcpack,
+  5=ping.
+  Packets contain IP4 options and can be fragmented before been sent.
+  IP4 options contains a Record Route option.
+  Parameter --spoofip indicates how to generate link layer for spoofing.
+  Values 'best', 'link' or 'raw' are common choices for --spoofip. Here
+  is the list of accepted values:
+   - 'raw' means to spoof at IP4/IP6 level (it uses system IP stack). If
+     a firewall is installed, or on some systems, this might not work.
+   - 'linkf' means to spoof at link level (currently, only Ethernet is
+     supported). The 'f' means to Fill source Ethernet address.
+     However, if source IP address is spoofed, it might be impossible
+     to Fill it. So, linkf will not work: use linkb or linkfb instead.
+   - 'linkb' means to spoof at link level. The 'b' means to left a Blank
+     source Ethernet address (0:0:0:0:0:0, do not try to Fill it).
+   - 'linkfb' means to spoof at link level. The 'f' means to try to Fill
+     source Ethernet address, but if it is not possible, it is left
+     Blank.
+   - 'rawlinkf' means to try 'raw', then try 'linkf'
+   - 'rawlinkb' means to try 'raw', then try 'linkb'
+   - 'rawlinkfb' means to try 'raw', then try 'linkfb'
+   - 'linkfraw' means to try 'linkf', then try 'raw'
+   - 'linkbraw' means to try 'linkb', then try 'raw'
+   - 'linkfbraw' means to try 'linkfb', then try 'raw'
+   - 'link' is an alias for 'linkfb'
+   - 'rawlink' is an alias for 'rawlinkfb'
+   - 'linkraw' is an alias for 'linkfbraw'
+   - 'best' is an alias for 'linkraw'. It should work in all cases.
+  
+  This tool may need to be run with admin privilege in order to spoof.
+   </PRE>
+
+  <P><H3>Synonyms:</H3>
+  &nbsp;&nbsp;ip4 option, send<BR>
+
+  <P><H3>Usage:</H3>
+  &nbsp;&nbsp;netwox 44 [-s ip] [-d ip] [-S port] [-D port] [-n uint32] [-f uint32] [-x|+x] [-a spoofip]<BR>
+
+  <P><H3>Parameters:</H3>
+<TABLE BORDER=1 CELLPADDING=4>
+ <TR>
+  <TD ALIGN=middle><I>parameter</I></TD>
+  <TD ALIGN=middle><I>description</I></TD>
+  <TD ALIGN=middle><I>example</I></TD>
+ </TR>
+ <TR><TD><TT>-s|--ip4-src ip</TD>
+<TD>IP4 src</TD>
+<TD>192.168.100.200</TD></TR>
+<TR><TD><TT>-d|--ip4-dst ip</TD>
+<TD>IP4 dst</TD>
+<TD>5.6.7.8</TD></TR>
+<TR><TD><TT>-S|--tcp-src port</TD>
+<TD>TCP port src</TD>
+<TD>80</TD></TR>
+<TR><TD><TT>-D|--tcp-dst port</TD>
+<TD>TCP port dst</TD>
+<TD>80</TD></TR>
+<TR><TD><TT>-n|--sample uint32</TD>
+<TD>number of sample (1 to n)</TD>
+<TD>1</TD></TR>
+<TR><TD><TT>-f|--fragsize uint32</TD>
+<TD>fragment size (0=nofrag)</TD>
+<TD>0</TD></TR>
+<TR><TD><TT>-x|--display|+x|--no-display</TD>
+<TD>display</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-a|--spoofip spoofip</TD>
+<TD>IP spoof initialization type</TD>
+<TD>best </TD></TR>
+</TABLE>
+
+  <P><H3>Example:</H3>
+  &nbsp;&nbsp;netwox 44<BR>
+<BR>
+ </BODY>
+ </HTML>

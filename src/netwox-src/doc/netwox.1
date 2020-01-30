@@ -1,0 +1,82 @@
+.TH NETWOX 1 "08/07/2012"
+.SH NAME
+\fBnetwox\fR - examples/tools of the network library netwib
+
+.SH VERSION
+The version installed on this system is 5.39.0.
+
+.SH IMPORTANT
+Manpage do not contain a lot of information. Rather read
+netwox-5.39.0-doc_html.tgz.
+
+.SH SYNOPSIS
+.B netwox
+\fInumber\fR [ \fIparameters...\fR ]
+.br
+.B netwox
+\fInumber\fR --help
+.br
+.B netwox
+\fInumber\fR --help2
+.br
+.B netwox
+.br
+
+.SH PRESENTATION
+Toolbox netwox helps to find and solve network problems.
+
+It provides 223 tools :
+ - udp/tcp clients/servers
+ - spoofing
+ - sniffing
+ - address conversion
+ - etc.
+
+Netwox is mainly oriented towards network administrators and
+security auditors.
+
+Some tools are only a simplified implementation, while others are
+very sophisticated. 
+
+Netwox is available under the GNU GPL license.
+.SH DESCRIPTION
+.TP
+\fInumber\fR
+number of the tool to use
+.TP
+\fIparameters\fR
+parameters for the chosen tool \fInumber\fR.
+Parameter \fI--help\fR shows help.
+Parameter \fI--help2\fR shows description.
+.PP
+When using \fBnetwox\fR without \fInumber\fR and \fIparameters\fR,
+it enters interactive help mode. In this mode, the user has to select
+a category by pressing a key. Then by choosing a tool number, its
+corresponding usage is displayed. Note: netwag is easier than interactive
+help mode.
+
+.SH EXAMPLES
+.TP
+\fBnetwox\fR \fI23\fR \fI--help\fR
+display simple help for tool number 23
+.TP
+\fBnetwox\fR \fI23\fR \fI--help2\fR
+display full description of tool 23. It also display
+its description.
+.TP
+\fBnetwox\fR \fI23\fR \fI\fR
+run tool 23
+.TP
+\fBnetwox\fR \fI23\fR \fI--extended\fR
+run tool 23 with \fI--extended\fR parameter
+.TP
+\fBnetwox\fR \fI23\fR \fI-e\fR
+run tool 23 with \fI-e\fR parameter (synonym for \fI--extended\fR)
+.PP
+All the tools are not described in this manpage.
+Reading netwox-5.39.0-doc_html.tgz is
+recommended.
+
+.SH SEE ALSO
+.IR netwib (3)
+.IR netwag (1)

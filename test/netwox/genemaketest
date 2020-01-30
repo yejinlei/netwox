@@ -1,0 +1,50 @@
+:
+
+set -u
+
+#########
+netwibdir="../../src/netwib-src/src"
+netwoxdir="../../src/netwox-src/src"
+
+#########
+heredir=`pwd`
+cd $netwibdir
+# we have to use an environment variable because Solaris '.' does not
+# support a parameter (test in this case) after command
+NETWENVONE=test
+export NETWENVONE
+. ./genemake test netwox
+cd $heredir
+NETWIBDEF_INSTDBIN=`pwd`/compil/unix
+cd $netwoxdir
+. ./genemake test netwox
+cd $heredir
+
+#########
+echo " Creation of Makefile"
+cat > Makefile <<EOF
+#----------------------------------------------------------------------
+# This file was generated with ./genemaketest
+
+all: netwox
+
+netwib:
+	cd $netwibdir; make
+
+netwox: netwib
+	cd $netwoxdir; make
+	cp $netwoxdir/netwox netwox
+
+clean:
+	rm -f netwox
+	rm -f core netwox.core core.*
+	cd $netwibdir; make clean
+	cd $netwoxdir; make clean
+
+cleanall: clean
+	rm -f Makefile
+	cd $netwibdir; make cleanall
+	cd $netwoxdir; make cleanall
+        # do not remove compil/unix/netwib*-config which is not generated
+EOF
+

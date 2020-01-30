@@ -1,0 +1,41 @@
+<HTML>
+ <HEAD>
+ <TITLE>Tool 129: Reassemble chunks of a file</TITLE>
+ </HEAD>
+ <BODY BGCOLOR="#FFFFFF">
+  <CENTER>   <H3>Tool 129: Reassemble chunks of a file</H3>
+  </CENTER>
+
+  <P><H3>Description:</H3>
+   <PRE>
+  This tool reassembles split file. See also tool 128.
+  For example, if tool 128 created file.0, file.1, etc., tool 129 will
+  reassemble chunks: 'netwox 129 file'. Please note filename has to be
+  the same as the one used for tool 128 (the original filename).
+   </PRE>
+
+  <P><H3>Synonyms:</H3>
+  &nbsp;&nbsp;piece<BR>
+
+  <P><H3>Usage:</H3>
+  &nbsp;&nbsp;netwox 129 -f file<BR>
+
+  <P><H3>Parameters:</H3>
+<TABLE BORDER=1 CELLPADDING=4>
+ <TR>
+  <TD ALIGN=middle><I>parameter</I></TD>
+  <TD ALIGN=middle><I>description</I></TD>
+  <TD ALIGN=middle><I>example</I></TD>
+ </TR>
+ <TR><TD><TT>-f|--file file</TD>
+<TD>filename (without .1/.2/etc extension)</TD>
+<TD>dstfile.txt </TD></TR>
+</TABLE>
+
+  <P><H3>Examples:</H3>
+  &nbsp;&nbsp;netwox 129 -f "dstfile.txt"<BR>
+<BR>
+  &nbsp;&nbsp;netwox 129 --file "dstfile.txt"<BR>
+<BR>
+ </BODY>
+ </HTML>

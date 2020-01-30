@@ -1,0 +1,48 @@
+<HTML>
+ <HEAD>
+ <TITLE>Tool 5: Obtain Ethernet addresses of computers in an IP list</TITLE>
+ </HEAD>
+ <BODY BGCOLOR="#FFFFFF">
+  <CENTER>   <H3>Tool 5: Obtain Ethernet addresses of computers in an IP list</H3>
+  </CENTER>
+
+  <P><H3>Description:</H3>
+   <PRE>
+  This tool sends ARP Requests (or IP6 Neighbor Discovery) to obtain
+  Ethernet addresses of several computers.
+  For example: 'netwox 5 192.168.0.0/24,10.0.0.1-10.0.0.4'.
+  If parameter --no-unresolved is used, unresolved addresses are not
+  displayed.
+  
+  This tool may need to be run with admin privilege in order to sniff
+  and spoof (for Ethernet addresses resolving).
+   </PRE>
+
+  <P><H3>Synonyms:</H3>
+  &nbsp;&nbsp;host, mac, resolve, show<BR>
+
+  <P><H3>Usage:</H3>
+  &nbsp;&nbsp;netwox 5 [-u|+u] -i ips<BR>
+
+  <P><H3>Parameters:</H3>
+<TABLE BORDER=1 CELLPADDING=4>
+ <TR>
+  <TD ALIGN=middle><I>parameter</I></TD>
+  <TD ALIGN=middle><I>description</I></TD>
+  <TD ALIGN=middle><I>example</I></TD>
+ </TR>
+ <TR><TD><TT>-u|--unresolved|+u|--no-unresolved</TD>
+<TD>display unresolved items</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-i|--ips ips</TD>
+<TD>list/range of IP addresses</TD>
+<TD>192.168.1.0/24 </TD></TR>
+</TABLE>
+
+  <P><H3>Examples:</H3>
+  &nbsp;&nbsp;netwox 5 -i "192.168.1.0/24"<BR>
+<BR>
+  &nbsp;&nbsp;netwox 5 --ips "192.168.1.0/24"<BR>
+<BR>
+ </BODY>
+ </HTML>

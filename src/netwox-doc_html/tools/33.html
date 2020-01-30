@@ -1,0 +1,63 @@
+<HTML>
+ <HEAD>
+ <TITLE>Tool 33: Spoof EthernetArp packet</TITLE>
+ </HEAD>
+ <BODY BGCOLOR="#FFFFFF">
+  <CENTER>   <H3>Tool 33: Spoof EthernetArp packet</H3>
+  </CENTER>
+
+  <P><H3>Description:</H3>
+   <PRE>
+  This tool sends a fake packet on the network.
+  Each parameter name should be self explaining.
+  
+  This tool may need to be run with admin privilege in order to spoof.
+   </PRE>
+
+  <P><H3>Synonyms:</H3>
+  &nbsp;&nbsp;frame, hping, mac, send<BR>
+
+  <P><H3>Usage:</H3>
+  &nbsp;&nbsp;netwox 33 [-d device] [-a eth] [-b eth] [-c uint32] [-e uint32] [-f eth] [-g ip] [-h eth] [-i ip]<BR>
+
+  <P><H3>Parameters:</H3>
+<TABLE BORDER=1 CELLPADDING=4>
+ <TR>
+  <TD ALIGN=middle><I>parameter</I></TD>
+  <TD ALIGN=middle><I>description</I></TD>
+  <TD ALIGN=middle><I>example</I></TD>
+ </TR>
+ <TR><TD><TT>-d|--device device</TD>
+<TD>device for spoof</TD>
+<TD>Eth0</TD></TR>
+<TR><TD><TT>-a|--eth-src eth</TD>
+<TD>Ethernet src</TD>
+<TD>E0:69:95:6F:ED:9A</TD></TR>
+<TR><TD><TT>-b|--eth-dst eth</TD>
+<TD>Ethernet dst</TD>
+<TD>0:8:9:a:b:c</TD></TR>
+<TR><TD><TT>-c|--eth-type uint32</TD>
+<TD>Ethernet type : ARP=2054, RARP=32821</TD>
+<TD>2054</TD></TR>
+<TR><TD><TT>-e|--arp-op uint32</TD>
+<TD>ARP op : 1=ARPREQ, 2=ARPREP, 3=RARPREQ, 4=RARPREP</TD>
+<TD>1</TD></TR>
+<TR><TD><TT>-f|--arp-ethsrc eth</TD>
+<TD>ARP ethsrc</TD>
+<TD>E0:69:95:6F:ED:9A</TD></TR>
+<TR><TD><TT>-g|--arp-ipsrc ip</TD>
+<TD>ARP ipsrc</TD>
+<TD>0.0.0.0</TD></TR>
+<TR><TD><TT>-h|--arp-ethdst eth</TD>
+<TD>ARP ethdst</TD>
+<TD>0:0:0:0:0:0</TD></TR>
+<TR><TD><TT>-i|--arp-ipdst ip</TD>
+<TD>ARP ipdst</TD>
+<TD>0.0.0.0 </TD></TR>
+</TABLE>
+
+  <P><H3>Example:</H3>
+  &nbsp;&nbsp;netwox 33<BR>
+<BR>
+ </BODY>
+ </HTML>

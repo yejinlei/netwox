@@ -1,0 +1,96 @@
+<HTML><HEAD>
+<TITLE>netwib doc_html (version 5.39.0)</TITLE>
+</HEAD><BODY BGCOLOR="#FFFFFF" TEXT="#000000">
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../net.html">section index</A></H2><HR><BR>
+<PRE>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#008800">#include "priv/conf.h"</FONT>
+<FONT COLOR="#008800">#include "priv/confwork.h"</FONT>
+<FONT COLOR="#008800">#include "priv/confdev.h"</FONT>
+<FONT COLOR="#008800">#include "priv/confip.h"</FONT>
+<FONT COLOR="#008800">#include "priv/confarp.h"</FONT>
+<FONT COLOR="#008800">#include "priv/confrout.h"</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#008800">#include "priv/ranges.h"</FONT>
+<FONT COLOR="#008800">#include "priv/ips.h"</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#008800">#if defined NETWIBDEF_PRIV_DONT_WANT_SYS</FONT>
+ <FONT COLOR="#880000">/* this works because priv/libnet.c does not use <FONT COLOR="#000088">netwib_priv_sockaddr_len</FONT> */</FONT>
+<FONT COLOR="#008800"> #define <FONT COLOR="#000088">netwib_priv_sockaddr_len</FONT> int</FONT>
+<FONT COLOR="#008800">#else</FONT>
+<FONT COLOR="#008800"> #if NETWIBDEF_HAVETYPE_SOCKLEN_T==1</FONT>
+<FONT COLOR="#008800">  #if defined NETWIBDEF_SYSNAME_HPUX</FONT>
+   <FONT COLOR="#880000">/* under HP-UX 11.11, socklen_t is defined but not used in functions */</FONT>
+<FONT COLOR="#008800">   #define <FONT COLOR="#000088">netwib_priv_sockaddr_len</FONT> int</FONT>
+<FONT COLOR="#008800">  #else</FONT>
+<FONT COLOR="#008800">   #define <FONT COLOR="#000088">netwib_priv_sockaddr_len</FONT> socklen_t</FONT>
+<FONT COLOR="#008800">  #endif</FONT>
+<FONT COLOR="#008800"> #else</FONT>
+<FONT COLOR="#008800">  #define <FONT COLOR="#000088">netwib_priv_sockaddr_len</FONT> int</FONT>
+<FONT COLOR="#008800"> #endif</FONT>
+<FONT COLOR="#008800">#endif</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#008800">#include "priv/sa.h"</FONT>
+<FONT COLOR="#008800">#include "priv/ip.h"</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#008800">#include "priv/libpcap.h"</FONT>
+<FONT COLOR="#008800">#include "priv/libnet.h"</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#008800">#if NETWIBDEF_ARCH_ENDIAN == 0</FONT>
+ <FONT COLOR="#880000">/*i386*/</FONT>
+<FONT COLOR="#008800"> #define <B>netwib_priv_ntohl</B>(x) ((netwib_uint32)((((netwib_uint32)(x) &amp; 0xFFu) &lt;&lt; 24) | (((netwib_uint32)(x) &amp; 0xFF00u) &lt;&lt;  8) | (((netwib_uint32)(x) &amp; 0xFF0000u) &gt;&gt;  8) | (((netwib_uint32)(x) &amp; 0xFF000000u) &gt;&gt; 24)))</FONT>
+<FONT COLOR="#008800"> #define <B>netwib_priv_ntohs</B>(x) ((netwib_uint16)((((netwib_uint16)(x) &amp; 0xFF) &lt;&lt; 8) | (((netwib_uint16)(x) &amp; 0xFF00) &gt;&gt; 8)))</FONT>
+<FONT COLOR="#008800"> #define <B>netwib_priv_htonl</B>(x) <B>netwib_priv_ntohl</B>(x)</FONT>
+<FONT COLOR="#008800"> #define <B>netwib_priv_htons</B>(x) <B>netwib_priv_ntohs</B>(x)</FONT>
+<FONT COLOR="#008800">#elif NETWIBDEF_ARCH_ENDIAN == 1</FONT>
+ <FONT COLOR="#880000">/*68000*/</FONT>
+<FONT COLOR="#008800"> #define <B>netwib_priv_ntohl</B>(x)        (x)</FONT>
+<FONT COLOR="#008800"> #define <B>netwib_priv_ntohs</B>(x)        ((netwib_uint16)(x))</FONT>
+<FONT COLOR="#008800"> #define <B>netwib_priv_htonl</B>(x)        (x)</FONT>
+<FONT COLOR="#008800"> #define <B>netwib_priv_htons</B>(x)        ((netwib_uint16)(x))</FONT>
+<FONT COLOR="#008800">#endif</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#008800">#define <FONT COLOR="#000044">NETWIB_FB_ROUNDUP</FONT>(a) ((a)&gt;0?(1+(((a)-1)|(sizeof(long)-1))):sizeof(long))</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* currently this one is the last : we detect it later */</FONT>
+<FONT COLOR="#008800">#define <FONT COLOR="#000044">NETWIB_PRIV_CONFEASY_HWMAX</FONT> (<FONT COLOR="#000044">NETWIB_DEVICE_HWTYPE_SLIP</FONT>+1)</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#008800">#if NETWIBDEF_HAVETYPE_SOCKLEN_T==1</FONT>
+<FONT COLOR="#008800"> #define <B>netwib_c_recv</B>(a,b,c,d) recv(a,(netwib_data)(b),c,d)</FONT>
+<FONT COLOR="#008800"> #define <B>netwib_c_recvfrom</B>(a,b,c,d,e,f) recvfrom(a,(netwib_data)(b),c,d,e,f)</FONT>
+<FONT COLOR="#008800"> #define <B>netwib_c_send</B>(a,b,c,d) send(a,(netwib_constdata)(b),c,d)</FONT>
+<FONT COLOR="#008800"> #define <B>netwib_c_sendto</B>(a,b,c,d,e,f) sendto(a,(netwib_constdata)(b),c,d,e,f)</FONT>
+<FONT COLOR="#008800"> #define <B>netwib_c_setsockopt</B>(a,b,c,d,e) setsockopt(a,b,c,(netwib_constdata)(d),e)</FONT>
+<FONT COLOR="#008800">#else</FONT>
+<FONT COLOR="#008800"> #define <B>netwib_c_recv</B>(a,b,c,d) recv(a,(netwib_string)(b),c,d)</FONT>
+<FONT COLOR="#008800"> #define <B>netwib_c_recvfrom</B>(a,b,c,d,e,f) recvfrom(a,(netwib_string)(b),c,d,e,f)</FONT>
+<FONT COLOR="#008800"> #if defined NETWIBDEF_SYSNAME_HPUX</FONT>
+  <FONT COLOR="#880000">/* because system's prototype does not have "const" */</FONT>
+<FONT COLOR="#008800">  #define <B>netwib_c_send</B>(a,b,c,d) send(a,<B>netwib_priv_caststring</B>(b),c,d)</FONT>
+<FONT COLOR="#008800"> #else</FONT>
+<FONT COLOR="#008800">  #define <B>netwib_c_send</B>(a,b,c,d) send(a,(netwib_conststring)(b),c,d)</FONT>
+<FONT COLOR="#008800"> #endif</FONT>
+<FONT COLOR="#008800"> #define <B>netwib_c_sendto</B>(a,b,c,d,e,f) sendto(a,(netwib_conststring)(b),c,d,e,f)</FONT>
+<FONT COLOR="#008800"> #define <B>netwib_c_setsockopt</B>(a,b,c,d,e) setsockopt(a,b,c,(netwib_conststring)(d),e)</FONT>
+<FONT COLOR="#008800">#endif</FONT>
+<FONT COLOR="#008800">#define <B>netwib_c_getsockname</B>(a,b,c) getsockname(a,b,c)</FONT>
+<FONT COLOR="#008800">#define <B>netwib_c_getpeername</B>(a,b,c) getpeername(a,b,c)</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_priv_conf_routes_gw</B>(<FONT COLOR="#000088">netwib_constip</FONT> *pdst,
+                                      <FONT COLOR="#000088">netwib_ip</FONT> *pgw,
+                                      <FONT COLOR="#000088">netwib_uint32</FONT> *pdevnum);
+</PRE><BR><BR><HR><BR>
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../net.html">section index</A></H2>
+</BODY></HTML>

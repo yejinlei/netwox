@@ -1,0 +1,2908 @@
+.TH NETWIB_DAT 3 "08/07/2012"
+.SH NAME
+\fBnetwib\fR - section \fBdat\fR
+
+.SH HTML DOC
+If you have a browser, read netwib-5.39.0-doc_html.tgz
+which is easier to read than this manpage.
+
+.SH PRESENTATION
+This manpage contains a concatenation of includes for section
+DAT.
+.SH MODULE TYPES
+.nf
+/* integer of 8 bits */
+\fItypedef\fP NETWIBDEF_TYPE_INT8 \fBnetwib_int8\fP;
+\fItypedef\fP NETWIBDEF_TYPE_UINT8 \fBnetwib_uint8\fP;
+
+/* integer of 16 bits */
+\fItypedef\fP NETWIBDEF_TYPE_INT16 \fBnetwib_int16\fP;
+\fItypedef\fP NETWIBDEF_TYPE_UINT16 \fBnetwib_uint16\fP;
+
+/* integer of 32 bits */
+\fItypedef\fP NETWIBDEF_TYPE_INT32 \fBnetwib_int32\fP;
+\fItypedef\fP NETWIBDEF_TYPE_UINT32 \fBnetwib_uint32\fP;
+
+/* integer of 64 bits */
+#if NETWIBDEF_TYPE_INT64_FAKE == 0
+  /* define the type */
+  \fItypedef\fP NETWIBDEF_TYPE_INT64 \fBnetwib_int64\fP;
+  \fItypedef\fP NETWIBDEF_TYPE_UINT64 \fBnetwib_uint64\fP;
+  \fI#define\fP \fBNETWIB_INT64_FAKE\fP 0
+#else
+  /* define a fake structure allowing easy storage, but unusable for math */
+  \fItypedef\fP struct {
+    \fBnetwib_uint32\fP high;
+    \fBnetwib_uint32\fP low;
+  } \fBnetwib_uint64\fP;
+  \fItypedef\fP \fBnetwib_uint64\fP \fBnetwib_int64\fP;
+  \fI#define\fP \fBNETWIB_INT64_FAKE\fP 1
+#endif
+
+/* maximum size integer on the computer */
+#if \fBNETWIB_INT64_FAKE\fP == 0
+  \fItypedef\fP \fBnetwib_int64\fP \fBnetwib_intmax\fP;
+  \fItypedef\fP \fBnetwib_uint64\fP \fBnetwib_uintmax\fP;
+  \fI#define\fP \fBNETWIB_INTMAX_BITS\fP 64
+#else
+  \fItypedef\fP \fBnetwib_int32\fP \fBnetwib_intmax\fP;
+  \fItypedef\fP \fBnetwib_uint32\fP \fBnetwib_uintmax\fP;
+  \fI#define\fP \fBNETWIB_INTMAX_BITS\fP 32
+#endif
+
+/* size of pointers on the computer */
+#if NETWIBDEF_ARCH_BITS == 32
+  \fItypedef\fP \fBnetwib_int32\fP \fBnetwib_intptr\fP;
+  \fItypedef\fP \fBnetwib_uint32\fP \fBnetwib_uintptr\fP;
+  \fI#define\fP \fBNETWIB_INTPTR_BITS\fP 32
+#elif NETWIBDEF_ARCH_BITS == 64
+  \fItypedef\fP \fBnetwib_int64\fP \fBnetwib_intptr\fP;
+  \fItypedef\fP \fBnetwib_uint64\fP \fBnetwib_uintptr\fP;
+  \fI#define\fP \fBNETWIB_INTPTR_BITS\fP 64
+#else
+  #error "Unknown value for NETWIBDEF_ARCH_BITS"
+#endif
+
+/* char */
+\fItypedef\fP char \fBnetwib_char\fP;
+
+/* byte */
+\fItypedef\fP unsigned char \fBnetwib_byte\fP;
+
+/* pointer */
+\fItypedef\fP void* \fBnetwib_ptr\fP;
+\fItypedef\fP const void* \fBnetwib_constptr\fP;
+
+/* data */
+\fItypedef\fP \fBnetwib_byte\fP* \fBnetwib_data\fP;
+\fItypedef\fP const \fBnetwib_byte\fP* \fBnetwib_constdata\fP;
+/* string */
+\fItypedef\fP \fBnetwib_char\fP* \fBnetwib_string\fP;
+\fItypedef\fP const \fBnetwib_char\fP* \fBnetwib_conststring\fP;
+
+/* boolean */
+\fItypedef\fP enum {
+  \fBNETWIB_FALSE\fP = 0,
+  \fBNETWIB_TRUE\fP = !\fBNETWIB_FALSE\fP
+} \fBnetwib_bool\fP;
+
+/* comparison */
+\fItypedef\fP enum {
+  \fBNETWIB_CMP_LT\fP = -1,
+  \fBNETWIB_CMP_EQ\fP = 0,
+  \fBNETWIB_CMP_GT\fP = +1
+} \fBnetwib_cmp\fP;
+
+/* netwib contains several enum. User can define its own values
+   starting from 10000 */
+\fI#define\fP \fBNETWIB_ENUM_USER_BEGIN\fP 10000
+
+/*-------------------------------------------------------------*/
+/***************************************************************
+ * Note about return values :                                  *
+ * Every function returns a "\fBnetwib_err\fP" which indicates :     *
+ *   - \fBNETWIB_ERR_OK\fP  : everything went fine                   *
+ *   - \fBNETWIB_ERR_xyz\fP : something strange occurred...          *
+ ***************************************************************/
+
+/*-------------------------------------------------------------*/
+/***************************************************************
+ * Note about parameters :                                     *
+ * Some functions can accept NULL as parameter. This indicates *
+ * the corresponding parameter is not needed.                  *
+ * However this special case needs resources and specific      *
+ * instruction paths. So, this is not supported for parameters *
+ * such as \fBnetwib_ring\fP, \fBnetwib_ips\fP, etc. If you think we       *
+ * missed one function needing this features, please contact   *
+ * us.                                                         *
+ ***************************************************************/
+.fi
+.SH MODULE PTR
+.nf
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_ptr_malloc\fP
+   Description :
+     Allocate a memory array.
+   Input parameter(s) :
+     allocsize : size of this array
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pptr : pointer which will be malloced (so, the
+             memory will have to be freed by the
+             user with '\fBnetwib_ptr_free\fP(pptr)').
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_ptr_malloc\fP(\fBnetwib_uint32\fP allocsize,
+                             \fBnetwib_ptr\fP *pptr);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_ptr_realloc\fP
+   Description :
+     Reallocate a memory array.
+   Input parameter(s) :
+     newallocsize : new size of this array
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pptr : pointer which will be reallocated (so, the
+             memory will have to be freed by the
+             user with '\fBnetwib_ptr_free\fP(pptr)').
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_ptr_realloc\fP(\fBnetwib_uint32\fP newallocsize,
+                              \fBnetwib_ptr\fP *pptr);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_ptr_free\fP
+   Description :
+     Free a memory array.
+   Input parameter(s) :
+     *pptr : pointer to the memory to free
+   Input/output parameter(s) :
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_ptr_free\fP(\fBnetwib_ptr\fP *pptr);
+.fi
+.SH MODULE BUF
+.nf
+
+/*-------------------------------------------------------------*/
+/***************************************************************
+ * A \fBnetwib_buf\fP is the standard memory storage used in netwib. *
+ *                                                             *
+ * A \fBnetwib_buf\fP points to an array (static or malloced) which  *
+ * starts at 'first' and finishes at 'last'.                   *
+ * The memory contains user data between 'begin' and 'end'.    *
+ *    ---------------------------------------------------      *
+ *    |       |               data              |       |      *
+ *    |F|     |B|                               |E|     |L     *
+ *    ---------------------------------------------------      *
+ *   First   Begin                              End    Last    *
+ *     0       x                                 y   totalsize *
+ *                                                             *
+ * Data between 'first and begin', and data between 'end and   *
+ * last' may be corrupted when working on the buffer. To avoid *
+ * this, use \fBnetwib_buf_init_ext_buf\fP and work on the new buffer*
+ ***************************************************************/
+
+/*-------------------------------------------------------------*/
+\fItypedef\fP struct {
+  \fBnetwib_uint32\fP flags;       /* see below */
+  \fBnetwib_data\fP totalptr;      /* ptr to first */
+  \fBnetwib_uint32\fP totalsize;   /* last - first */
+  \fBnetwib_uint32\fP beginoffset; /* begin - first */
+  \fBnetwib_uint32\fP endoffset;   /* end - first */
+} \fBnetwib_buf\fP;
+\fItypedef\fP const \fBnetwib_buf\fP \fBnetwib_constbuf\fP;
+
+/*-------------------------------------------------------------*/
+/***************************************************************
+ * Field "flags" is a bit field indicating some information    *
+ * about a \fBnetwib_buf\fP.                                         *
+ ***************************************************************/
+
+/* If totalptr points :
+     0x0001 : to an allocated memory
+    ~0x0001 : to an external array (stack array or array which
+              does not need to be freed)
+   Those two modes corresponds to the two ways to initialize a
+   \fBnetwib_buf\fP :
+     - \fBnetwib_buf_init_malloc\fP : it internally allocates memory
+       and eventually reallocate it if more is needed. At the
+       end, function \fBnetwib_buf_close\fP must be called to free
+       memory.
+     - \fBnetwib_buf_init_ext_xyz\fP : buffer does not contain memory,
+       but points on an external array. At the end, function
+       \fBnetwib_buf_close\fP does not need to be called to free
+       memory (no closing function is needed).
+   This flag should not be directly modified by user.
+ */
+\fI#define\fP \fBNETWIB_BUF_FLAGS_ALLOC\fP 0x00000001u
+
+/* In the following case :
+     - flag \fBNETWIB_BUF_FLAGS_ALLOC\fP is unset, and
+     - there is no sufficient space in the array
+   we can :
+     0x0002 : allocate memory and store array content in it
+              (the array is no more used)
+    ~0x0002 : return a space limitation error
+   This flag is very useful to optimize code. When we know in
+   most cases our code will need 80 bytes, we use an array
+   of 80 bytes. In the rare cases where it is not sufficient,
+   an allocated pointer is created. Like this for most
+   frequently encountered cases, there is no need to allocate.
+   Once allocated, it works like if it was allocated from beginning.
+   Once allocated, the external array is no more used.
+   Once allocated, flag \fBNETWIB_BUF_FLAGS_ALLOC\fP is automatically
+   set.
+   If array size is greater than 2k, it's not really advantageous
+   to use this flag, because copying 2k needs almost the same time
+   as a malloc and free.
+   This is generally used with \fBnetwib_buf_init_ext_arrayempty\fP.
+   This flag defaults to false. It has to be explicitly set
+   by user.
+ */
+\fI#define\fP \fBNETWIB_BUF_FLAGS_CANALLOC\fP 0x00000002u
+
+/* If functions are :
+     0x0004 : allowed to slide data (shrunk space between First
+              and Begin), when there is no sufficient space
+              between End and Last for appending
+    ~0x0004 : not allowed to slide
+   This flag defaults to false. It has to be explicitly set
+   by user.
+*/
+\fI#define\fP \fBNETWIB_BUF_FLAGS_CANSLIDE\fP 0x00000004u
+
+/* Sometimes, a buffer contains sensitive data such as a password,
+   so we want to do a memset on this data when it is no more needed.
+   This flags says that buffer contains sensitive data. Buffer will
+   be wiped with memset(.0.) during:
+     \fBnetwib_buf_close\fP(),
+     \fBnetwib__buf_reinit\fP(),
+     \fBnetwib__buf_erase\fP(),
+     \fBnetwib_bufpool_buf_close\fP(),
+     \fBnetwib_bufpool_close\fP(),
+     and all functions using above ones.
+   It is developer's task to set this flag each time a buffer may
+   contain sensitive data.
+   Netwib supports a feature to transfer this flag (also known as
+   tainting in other languages). For example, when a sensitive
+   buffer is copied to another buffer, this one also becomes
+   sensitive.
+   Once buffer is closed, the flag is unset, so user has to set
+   it each time sensitive data is initialized. The closing
+   functions are:
+     \fBnetwib_buf_close\fP(),
+     \fBnetwib_bufpool_buf_close\fP(),
+     \fBnetwib_bufpool_close\fP().
+   WARNING:
+   This feature was conceived for PASSWORDS or cryptographic KEYS
+   stored in a \fBnetwib_buf\fP. It cannot help for other types such
+   as a \fBnetwib_string\fP, a \fBnetwib_ring\fP or a \fBnetwib_ip\fP.
+   This feature was conceived for buffer manipulation functions,
+   such as \fBnetwib_buf_append_buf\fP, and not in functions unrelated
+   to passwords or keys, such as \fBnetwib_pkt_\fP... or
+   \fBnetwib_sniff_\fP... When a function supports this feature, it is
+   indicated in its help comment before the prototype (.h file).
+   Perhaps one day, I will expand this feature to erase other kind
+   of data, but this is not the case currently.
+   To sum up, don't expect this feature to be the Solution for
+   your sensitive data management, but only a small step towards it.
+   END OF WARNING.
+   This flag defaults to false. It has to be explicitly set
+   by user.
+*/
+\fI#define\fP \fBNETWIB_BUF_FLAGS_SENSITIVE\fP 0x00000008u
+/* data is sensitive, but readonly (such as a password stored
+   in a static string which cannot be wiped, but can be
+   transfered when buffer is copied)
+*/
+\fI#define\fP \fBNETWIB_BUF_FLAGS_SENSITIVE_READONLY\fP 0x00000010u
+/* to transfer the sensitive flag to the second buffer */
+\fI#define\fP \fBnetwib__buf_transfersensitive\fP(pbuf1,pbuf2) { if ((pbuf1) != NULL && (pbuf2) != NULL) { if ((pbuf1)->flags & \fBNETWIB_BUF_FLAGS_SENSITIVE\fP) { (pbuf2)->flags |= \fBNETWIB_BUF_FLAGS_SENSITIVE\fP; } } }
+/* to wipe a local array used in parallel of a buffer */
+\fI#define\fP \fBnetwib__localarray_wipe\fP(arr) \fBnetwib_c_memset\fP((arr),0,sizeof(arr))
+\fI#define\fP \fBnetwib__localarray_ifbuf_wipe\fP(pbuf,arr) { if ((pbuf) != NULL && ((pbuf)->flags & \fBNETWIB_BUF_FLAGS_SENSITIVE\fP)) \fBnetwib__localarray_wipe\fP(arr); }
+
+/* number of used bits */
+\fI#define\fP \fBNETWIB_BUF_FLAGS_USEDBITS\fP 5
+
+/*-------------------------------------------------------------*/
+/***************************************************************
+ * Type \fBnetwib_bufext\fP is exactly the same as \fBnetwib_buf\fP. It    *
+ * permits to easily determine which kind of buffer is needed  *
+ * by a function :                                             *
+ *  - Functions having an output parameter of type \fBnetwib_buf\fP  *
+ *    must be called with the buffer previously initialized :  *
+ *    they will append data to it                              *
+ *  - Functions having an output parameter of type             *
+ *    \fBnetwib_bufext\fP will initialize it.                        *
+ * Example :                                                   *
+ *  An IP4 packet might contain an IP4 option. There is no     *
+ *  need to allocate/copy data for this option, because it is  *
+ *  simply contained in the input packet (at offset            *
+ *  20==sizeof(ip4hdr)). So in this case a \fBnetwib_bufext\fP is    *
+ *  used.                                                      *
+ ***************************************************************/
+\fItypedef\fP \fBnetwib_buf\fP \fBnetwib_bufext\fP;
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_buf_init_malloc\fP
+   Description :
+     Initialize a buf. Its memory dynamically grows.
+   Input parameter(s) :
+     allocsize : allocated size. If 0, a
+                 default value is used.
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pbuf : \fBnetwib_buf\fP initialized
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_buf_init_malloc\fP(\fBnetwib_uint32\fP allocs,
+                                  \fBnetwib_buf\fP *pbuf);
+\fI#define\fP \fBnetwib_buf_init_mallocdefault\fP(pbuf) \fBnetwib_buf_init_malloc\fP(1024,pbuf)
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_buf_init_ext_array\fP
+   Description :
+     Initialize a buf. Its memory corresponds to an external
+     fixed size array.
+   Input parameter(s) :
+     array : external array
+     arraysize : external array size
+     beginoffset : offset of begin in this array
+     endoffset : offset of end in this array
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pbuf : \fBnetwib_bufext\fP initialized
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_buf_init_ext_array\fP(\fBnetwib_constptr\fP array,
+                                     \fBnetwib_uint32\fP arraysize,
+                                     \fBnetwib_uint32\fP beginoffset,
+                                     \fBnetwib_uint32\fP endoffset,
+                                     \fBnetwib_bufext\fP *pbuf);
+\fI#define\fP \fBnetwib_buf_init_ext_arrayempty\fP(array,arraysize,pbuf) \fBnetwib_buf_init_ext_array\fP(array,arraysize,0,0,pbuf)
+\fI#define\fP \fBnetwib_buf_init_ext_arrayfilled\fP(array,arraysize,pbuf) \fBnetwib_buf_init_ext_array\fP(array,arraysize,0,arraysize,pbuf)
+\fI#define\fP \fBnetwib_buf_init_ext_arraysizeofempty\fP(array,pbuf) \fBnetwib_buf_init_ext_arrayempty\fP(array,sizeof(array),pbuf)
+\fI#define\fP \fBnetwib_buf_init_ext_arraysizeoffilled\fP(array,pbuf) \fBnetwib_buf_init_ext_arrayfilled\fP(array,sizeof(array),pbuf)
+/* A buffer containing no data */
+\fI#define\fP \fBnetwib_buf_init_ext_empty\fP(pbuf) \fBnetwib_buf_init_ext_array\fP(NULL,0,0,0,pbuf)
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_buf_init_ext_storagearray\fP
+   Description :
+     Initialize a buf. Its memory corresponds to an external
+     fixed size array or to nothing. When data is added, it may
+     be allocated. A call to \fBnetwib_buf_close\fP() will have to be done.
+   Input parameter(s) :
+     array : external array
+     arraysize : external array size
+     beginoffset : offset of begin in this array
+     endoffset : offset of end in this array
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pbuf : \fBnetwib_bufext\fP initialized
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_buf_init_ext_storagearray\fP(\fBnetwib_constptr\fP array,
+                                            \fBnetwib_uint32\fP arraysize,
+                                            \fBnetwib_bufext\fP *pbuf);
+/* An empty buffer, allocated on first append */
+\fI#define\fP \fBnetwib_buf_init_ext_storage\fP(pbuf) \fBnetwib_buf_init_ext_storagearray\fP(NULL,0,pbuf)
+/* An empty array, allocated if not sufficiently big */
+\fI#define\fP \fBnetwib_buf_init_ext_storagearraysizeof\fP(array,pbuf) \fBnetwib_buf_init_ext_storagearray\fP(array,sizeof(array),pbuf)
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_buf_init_ext_buf\fP
+   Description :
+     Initialize a buf. Its memory corresponds to an external
+     buffer.
+   Input parameter(s) :
+     *pbuf : \fBnetwib_buf\fP containing data
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pbuf : \fBnetwib_bufext\fP initialized
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+   This function supports \fBNETWIB_BUF_FLAGS_SENSITIVE\fP.
+*/
+\fBnetwib_err\fP \fBnetwib_buf_init_ext_buf\fP(\fBnetwib_constbuf\fP *pbufin,
+                                   \fBnetwib_bufext\fP *pbuf);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_buf_init_ext_string\fP
+   Description :
+     Initialize a buf. Its memory corresponds to an external
+     preset string.
+   Input parameter(s) :
+     str : external string
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pbuf : \fBnetwib_bufext\fP initialized
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_buf_init_ext_string\fP(\fBnetwib_conststring\fP str,
+                                      \fBnetwib_bufext\fP *pbuf);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_buf_append_xyz\fP
+   Description :
+     Add data to a buf.
+   Input parameter(s) :
+     data : data to add
+     datasize : size of data to add
+     str : string to add
+     c : character to add
+   Input/output parameter(s) :
+     *pbuf : \fBnetwib_buf\fP updated
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+   The \fBnetwib_buf_append_buf\fP function supports \fBNETWIB_BUF_FLAGS_SENSITIVE\fP.
+*/
+\fBnetwib_err\fP \fBnetwib_buf_append_data\fP(\fBnetwib_constdata\fP data,
+                                  \fBnetwib_uint32\fP datasize,
+                                  \fBnetwib_buf\fP *pbuf);
+\fBnetwib_err\fP \fBnetwib_buf_append_string\fP(\fBnetwib_conststring\fP str,
+                                    \fBnetwib_buf\fP *pbuf);
+\fBnetwib_err\fP \fBnetwib_buf_append_buf\fP(\fBnetwib_constbuf\fP *pbuftoappend,
+                                 \fBnetwib_buf\fP *pbuf);
+\fBnetwib_err\fP \fBnetwib_buf_append_byte\fP(\fBnetwib_byte\fP b,
+                                  \fBnetwib_buf\fP *pbuf);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_buf_prepend_buf\fP
+   Description :
+     Prepend data to a buf.
+   Input parameter(s) :
+   Input/output parameter(s) :
+     *pbuf : \fBnetwib_buf\fP updated
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+   Note :
+     Parameter canslide has no effect on this function (this is
+     logical).
+   This function supports \fBNETWIB_BUF_FLAGS_SENSITIVE\fP.
+*/
+\fBnetwib_err\fP \fBnetwib_buf_prepend_buf\fP(\fBnetwib_constbuf\fP *pbuftoprepend,
+                                  \fBnetwib_buf\fP *pbuf);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_buf_ref_string\fP
+   Description :
+     Get pointers to data stored in buf (between begin and end).
+     If buffer internal storage does not end with '\\0',
+     a new one is added. So, we can have \fBNETWIB_ERR_DATANOSPACE\fP
+     if there is no room for the '\\0'.
+   Input parameter(s) :
+     *pbuf : buffer
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pstr : pointer to start of string
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+     \fBNETWIB_ERR_DATANOSPACE\fP : no room for the '\\0'
+*/
+\fBnetwib_err\fP \fBnetwib_buf_ref_string\fP(\fBnetwib_buf\fP *pbuf,
+                                 \fBnetwib_string\fP *pstr);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_constbuf_ref_string\fP
+   Description :
+     Some as \fBnetwib_buf_ref_string\fP except it does not modify
+     the buffer to add the '\\0'.
+   Input parameter(s) :
+     *pbuf : buffer
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pstr : pointer to start of string
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+     \fBNETWIB_ERR_DATANOSPACE\fP : the char after endoffset is not a '\\0'
+*/
+\fBnetwib_err\fP \fBnetwib_constbuf_ref_string\fP(\fBnetwib_constbuf\fP *pbuf,
+                                      \fBnetwib_string\fP *pstr);
+/* to use at begin of a function to manage a local buffer */
+\fI#define\fP \fBnetwib__constbuf_ref_string\fP(pbuf, str, bufstorage, func) { \fBnetwib_err\fP bufstorageret; bufstorageret = \fBnetwib_constbuf_ref_string\fP(pbuf, &str); if (bufstorageret != \fBNETWIB_ERR_OK\fP) { if (bufstorageret == \fBNETWIB_ERR_DATANOSPACE\fP) { \fBnetwib_data\fP bufstoragearray[512]; \fBnetwib_buf\fP bufstorage; \fBnetwib_er\fP(\fBnetwib_buf_init_ext_storagearraysizeof\fP(bufstoragearray, &bufstorage)); \fBnetwib_er\fP(\fBnetwib_buf_append_buf\fP(pbuf, &bufstorage)); \fBnetwib_er\fP(\fBnetwib_buf_append_byte\fP(0, &bufstorage)); bufstorage.endoffset--; bufstorageret = func; \fBnetwib_er\fP(\fBnetwib_buf_close\fP(&bufstorage)); } return(bufstorageret); } }
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_buf_wantspace\fP
+   Description :
+     Request space in a buffer (from end to last).
+     When buffer is initialized as malloced memory, it is
+     possible to obtain unlimited space. Otherwise, we cannot
+     obtain more space than array size (unless flag
+     \fBNETWIB_BUF_FLAGS_CANALLOC\fP is set).
+   Input parameter(s) :
+     wantedspace : wanted space
+   Input/output parameter(s) :
+     *pbuf : buffer
+   Output parameter(s) :
+     *pdata : pointer to end (endoffset)
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+     \fBNETWIB_ERR_DATANOSPACE\fP : there is less than wantedspace
+*/
+\fBnetwib_err\fP \fBnetwib_buf_wantspace\fP(\fBnetwib_buf\fP *pbuf,
+                                \fBnetwib_uint32\fP wantedspace,
+                                \fBnetwib_data\fP *pdata);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_buf_wishspace\fP
+   Description :
+     Request space in a buffer (from end to last).
+     When buffer is initialized as malloced memory, it is
+     possible to obtain unlimited space. Otherwise, we cannot
+     obtain more space than array size (unless flag
+     \fBNETWIB_BUF_FLAGS_CANALLOC\fP is set).
+   Input parameter(s) :
+     wantedspace : wanted space
+   Input/output parameter(s) :
+     *pbuf : buffer
+   Output parameter(s) :
+     *pdata : pointer to end (endoffset)
+     *pobtainedspace : obtained space (from end to last)
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_buf_wishspace\fP(\fBnetwib_buf\fP *pbuf,
+                                \fBnetwib_uint32\fP wantedspace,
+                                \fBnetwib_data\fP *pdata,
+                                \fBnetwib_uint32\fP *pobtainedspace);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_buf_cmp\fP
+   Description :
+     Compare two \fBnetwib_buf\fP.
+   Input parameter(s) :
+     *pbuf1 : \fBnetwib_buf\fP to compare with buf2
+     *pbuf2 : \fBnetwib_buf\fP to compare with buf1
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pcmp :
+       \fBNETWIB_CMP_LT\fP : buf1<buf2
+       \fBNETWIB_CMP_EQ\fP : if buf1 and buf2 are equal
+       \fBNETWIB_CMP_GT\fP : buf1>buf2
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_buf_cmp\fP(\fBnetwib_constbuf\fP *pbuf1,
+                          \fBnetwib_constbuf\fP *pbuf2,
+                          \fBnetwib_cmp\fP *pcmp);
+/* ignore case */
+\fBnetwib_err\fP \fBnetwib_buf_casecmp\fP(\fBnetwib_constbuf\fP *pbuf1,
+                              \fBnetwib_constbuf\fP *pbuf2,
+                              \fBnetwib_cmp\fP *pcmp);
+/* compare to a string */
+\fBnetwib_err\fP \fBnetwib_buf_cmp_string\fP(\fBnetwib_constbuf\fP *pbuf1,
+                                 \fBnetwib_conststring\fP string2,
+                                 \fBnetwib_cmp\fP *pcmp);
+\fBnetwib_err\fP \fBnetwib_buf_casecmp_string\fP(\fBnetwib_constbuf\fP *pbuf1,
+                                     \fBnetwib_conststring\fP string2,
+                                     \fBnetwib_cmp\fP *pcmp);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_buf_shift\fP
+   Description :
+     Shift data in a buf.
+   Input parameter(s) :
+     offset : offset
+     truncbegend : truncate on begin/end edges (otherwise,
+                   truncate only on first/last edges)
+   Input/output parameter(s) :
+     *pbuf : \fBnetwib_buf\fP updated
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+   Examples :
+     buf contains         "   data  "
+     shift(buf,-1,0) =>   "  data   "
+     shift(buf,-1,1) =>   "   ata   " (d is truncated)
+     shift(buf,+1,0) =>   "    data "
+     shift(buf,+4,0) =>   "       data" (if buffer is malloced)
+     shift(buf,+4,0) =>   "       da" (if buffer is external)
+     shift(buf,+1,1) =>   "    dat  " (a is truncated)
+   Note :
+     Flag \fBNETWIB_BUF_FLAGS_CANSLIDE\fP has no effect on this
+     function (this is logical).
+*/
+\fBnetwib_err\fP \fBnetwib_buf_shift\fP(\fBnetwib_buf\fP *pbuf,
+                            \fBnetwib_int32\fP offset,
+                            \fBnetwib_bool\fP truncbegend);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_buf_close\fP
+   Description :
+     Close buf, eventually freeing data it contains.
+   Input parameter(s) :
+   Input/output parameter(s) :
+     *pbuf : buffer closed
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+   Note :
+     This function is only needed for a buffer initialized
+     with \fBnetwib_buf_init_malloc\fP, or if flag
+     \fBNETWIB_BUF_FLAGS_CANALLOC\fP is set.
+*/
+\fBnetwib_err\fP \fBnetwib_buf_close\fP(\fBnetwib_buf\fP *pbuf);
+
+/*-------------------------------------------------------------*/
+/* Frequently needed defines */
+\fI#define\fP \fBnetwib__buf_reinit\fP(pbuf) { (pbuf)->beginoffset = 0; (pbuf)->endoffset = 0; if (((pbuf)->flags & \fBNETWIB_BUF_FLAGS_SENSITIVE\fP) && !((pbuf)->flags & \fBNETWIB_BUF_FLAGS_SENSITIVE_READONLY\fP)) { \fBnetwib_c_memset\fP((pbuf)->totalptr, 0, (pbuf)->totalsize); } }
+\fI#define\fP \fBnetwib__buf_erase\fP(pbuf) { if (((pbuf)->flags & \fBNETWIB_BUF_FLAGS_SENSITIVE\fP) && !((pbuf)->flags & \fBNETWIB_BUF_FLAGS_SENSITIVE_READONLY\fP)) { \fBnetwib_c_memset\fP((pbuf)->totalptr+(pbuf)->beginoffset, 0, (pbuf)->endoffset-(pbuf)->beginoffset); } (pbuf)->endoffset = (pbuf)->beginoffset; }
+\fI#define\fP \fBnetwib__buf_ref_data_ptr\fP(pbuf) ((pbuf)->totalptr + (pbuf)->beginoffset)
+\fI#define\fP \fBnetwib__buf_ref_data_size\fP(pbuf) ((pbuf)->endoffset -(pbuf)->beginoffset)
+\fI#define\fP \fBnetwib__buf_ref_data_sizenull\fP(pbuf) ((pbuf)!=NULL?\fBnetwib__buf_ref_data_size\fP(pbuf):0)
+
+.fi
+.SH MODULE BUFPOOL
+.nf
+
+/*-------------------------------------------------------------*/
+/***************************************************************
+ * A \fBnetwib_bufpool\fP permits to obtain and release memory,      *
+ * without having to malloc and free it : this is done once.   *
+ * This is mainly advantageous for programs needing to allocate*
+ * and free frequently. For programs allocating memory and then*
+ * only freeing it at the end, function \fBnetwib_buf_init_malloc\fP *
+ * is more appropriated.                                       *
+ ***************************************************************/
+
+/*-------------------------------------------------------------*/
+\fItypedef\fP struct \fBnetwib_bufpool\fP \fBnetwib_bufpool\fP;
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_bufpool_init\fP
+   Description :
+     Initialize a \fBnetwib_bufpool\fP.
+   Input parameter(s) :
+     mt : for multithread access
+   Input/output parameter(s) :
+     **ppbufpool : bufpool initialized
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_bufpool_init\fP(\fBnetwib_bool\fP mt,
+                               \fBnetwib_bufpool\fP **ppbufpool);
+\fI#define\fP \fBnetwib_bufpool_initdefault\fP(ppbufpool) \fBnetwib_bufpool_init\fP(\fBNETWIB_FALSE\fP,ppbufpool)
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_bufpool_close\fP
+   Description :
+     Close a \fBnetwib_bufpool\fP.
+   Input parameter(s) :
+   Input/output parameter(s) :
+     **ppbufpool : bufpool closed
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_bufpool_close\fP(\fBnetwib_bufpool\fP **ppbufpool);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_bufpool_buf_init\fP
+   Description :
+     Give a buffer pointer to user.
+   Input parameter(s) :
+   Input/output parameter(s) :
+     *pbufpool : bufpool
+   Output parameter(s) :
+     *ppbuf : pointer obtained
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_bufpool_buf_init\fP(\fBnetwib_bufpool\fP *pbufpool,
+                                   \fBnetwib_buf\fP **ppbuf);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_bufpool_buf_close\fP
+   Description :
+     The user indicates he does not need the buffer anymore.
+   Input parameter(s) :
+   Input/output parameter(s) :
+     *pbufpool : bufpool
+     *ppbuf : pointer to close
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_bufpool_buf_close\fP(\fBnetwib_bufpool\fP *pbufpool,
+                                    \fBnetwib_buf\fP **ppbuf);
+
+
+
+.fi
+.SH MODULE C
+.nf
+
+/*-------------------------------------------------------------*/
+/* do not forget to add "#include <string.h>" at the beginning of
+   the file to use those defines */
+/* copies n bytes from memory area src to memory area dest (no overlap) */
+\fI#define\fP \fBnetwib_c_memcpy\fP(dest,src,n) memcpy(dest,src,n)
+/* copies n bytes from memory area src to memory area dest */
+\fI#define\fP \fBnetwib_c_memmove\fP(dest,src,n) memmove(dest,src,n)
+/* fills the first n bytes of the memory area pointed to by s with
+   the constant byte c */
+\fI#define\fP \fBnetwib_c_memset\fP(d,c,n) memset(d,c,n)
+/* compares the first n bytes of the memory areas s1 and s2 */
+\fI#define\fP \fBnetwib_c_memcmp\fP(s1,s2,n) memcmp(s1,s2,n)
+/* scans the first n bytes of the memory area pointed to by s for
+   the character c */
+\fI#define\fP \fBnetwib_c_memchr\fP(s,c,n) memchr(s,c,n)
+
+/*-------------------------------------------------------------*/
+/* do not forget to add "#include <string.h>" at the beginning of
+   the file to use those defines */
+/* compares the two strings s1 and s2 */
+\fI#define\fP \fBnetwib_c_strcmp\fP(s1,s2) strcmp(s1,s2)
+/* compares the first n characters of strings s1 and s2 */
+\fI#define\fP \fBnetwib_c_strncmp\fP(s1,s2,n) strncmp(s1,s2,n)
+/* returns a pointer to the first occurrence of the character c in
+   the string s */
+\fI#define\fP \fBnetwib_c_strchr\fP(s,c) strchr(s,c)
+/* returns a pointer to the last occurrence of the character c in
+   the string s */
+\fI#define\fP \fBnetwib_c_strrchr\fP(s,c) strrchr(s,c)
+/* finds the first occurrence of the needle in the string haystack */
+\fI#define\fP \fBnetwib_c_strstr\fP(haystack,needle) strstr(haystack,needle)
+/* calculates the length of the initial segment of s which consists
+   entirely of characters in accept */
+\fI#define\fP \fBnetwib_c_strspn\fP(s,accept) strcspn(s,accept)
+/* calculates the length of the initial segment of s which consists
+   entirely of characters not in reject */
+\fI#define\fP \fBnetwib_c_strcspn\fP(s,reject) strcspn(s,reject)
+/* locates the first occurrence in the string s of any of the
+   characters in the string accept */
+\fI#define\fP \fBnetwib_c_strpbrk\fP(s,accept) strpbrk(s,accept)
+/* calculates the length of the string s, not including the
+   terminating `\\0' character */
+\fI#define\fP \fBnetwib_c_strlen\fP(s) strlen(s)
+/* copies the string pointed to be src to the array pointed
+   to by dest (you need to take care about overflows) */
+\fI#define\fP \fBnetwib_c_strcpy\fP(dest,src) strcpy(dest,src)
+/* append the string pointed to be src to the array pointed
+   to by dest (you need to take care about overflows) */
+\fI#define\fP \fBnetwib_c_strcat\fP(dest,src) strcat(dest,src)
+
+/*-------------------------------------------------------------*/
+/* we create those functions because they might not exists on
+   every system */
+/* compares the two strings s1 and s2, ignoring the case of the
+   characters */
+int \fBnetwib_c_strcasecmp\fP(\fBnetwib_conststring\fP s1,
+                        \fBnetwib_conststring\fP s2);
+/* compares the first n characters of strings s1 and s2, ignoring
+   the case of the characters */
+int \fBnetwib_c_strncasecmp\fP(\fBnetwib_conststring\fP s1,
+                         \fBnetwib_conststring\fP s2,
+                         \fBnetwib_uint32\fP n);
+/* compares the first n bytes of the memory areas s1 and s2,
+   ignoring the case of the characters */
+int \fBnetwib_c_memcasecmp\fP(\fBnetwib_constdata\fP s1,
+                        \fBnetwib_constdata\fP s2,
+                        \fBnetwib_uint32\fP n);
+/* finds the first occurrence of the needle in the string haystack,
+   ignoring the case of the characters */
+\fBnetwib_string\fP \fBnetwib_c_strcasestr\fP(\fBnetwib_conststring\fP haystack,
+                                  \fBnetwib_conststring\fP needle);
+/* finds the start of the first occurrence of the substring needle
+   of length needlelen in the memory area haystack of length haystacklen */
+\fBnetwib_data\fP \fBnetwib_c_memmem\fP(\fBnetwib_constdata\fP haystack,
+                            \fBnetwib_uint32\fP haystacklen,
+                            \fBnetwib_constdata\fP needle,
+                            \fBnetwib_uint32\fP needlelen);
+/* idem, with case */
+\fBnetwib_data\fP \fBnetwib_c_memcasemem\fP(\fBnetwib_constdata\fP haystack,
+                                \fBnetwib_uint32\fP haystacklen,
+                                \fBnetwib_constdata\fP needle,
+                                \fBnetwib_uint32\fP needlelen);
+.fi
+.SH MODULE C2
+.nf
+/* non standard functions */
+
+/*-------------------------------------------------------------*/
+/* CHARACTER FUNCTIONS */
+
+/*-------------------------------------------------------------*/
+/* warning : param is called several times. Use those functions with care.
+   For example, they are not suitable for "\fBnetwib_c2_isalnum\fP(c++)". */
+\fI#define\fP \fBnetwib_c2_isalnum\fP(c) ( \fBnetwib_c2_isalpha\fP(c) || \fBnetwib_c2_isdigit\fP(c) )
+\fI#define\fP \fBnetwib_c2_isalpha\fP(c) ( \fBnetwib_c2_islower\fP(c) || \fBnetwib_c2_isupper\fP(c) )
+\fI#define\fP \fBnetwib_c2_isdigit\fP(c) ( ((c)>='0') && ((c)<='9') )
+\fI#define\fP \fBnetwib_c2_islower\fP(c) ( ((c)>='a') && ((c)<='z') )
+\fI#define\fP \fBnetwib_c2_isupper\fP(c) ( ((c)>='A') && ((c)<='Z') )
+\fI#define\fP \fBnetwib_c2_isxdigit\fP(c) ( \fBnetwib_c2_isdigit\fP(c) || ( ((c)>='a') && ((c)<='f') ) || ( ((c)>='A') && ((c)<='F') ) )
+\fI#define\fP \fBnetwib_c2_isprint\fP(c) ( (c)>=32 && (c)<=126 )
+\fI#define\fP \fBnetwib_c2_isprint2\fP(c) ( \fBnetwib_c2_isprint\fP(c) || (c)=='\\t' || (c)=='\\r' || (c)=='\\n' )
+\fI#define\fP \fBnetwib_c2_isspace\fP(c) ( (c)==' ' || (c)=='\\t' || (c)=='\\n' || (c)=='\\r' || (c)=='\\f' || (c)=='\\v')
+
+/*-------------------------------------------------------------*/
+/* Warning : first 2 functions change the parameter */
+\fI#define\fP \fBnetwib_c2_lower\fP(c) if (\fBnetwib_c2_isupper\fP(c)) { c += 'a' - 'A'; }
+\fI#define\fP \fBnetwib_c2_upper\fP(c) if (\fBnetwib_c2_islower\fP(c)) { c -= 'a' - 'A'; }
+/* Warning : param is called several times */
+\fI#define\fP \fBnetwib_c2_lc\fP(c) ((\fBnetwib_char\fP)(\fBnetwib_c2_isupper\fP(c)?((c)+'a'-'A'):(c)))
+\fI#define\fP \fBnetwib_c2_uc\fP(c) ((\fBnetwib_char\fP)(\fBnetwib_c2_islower\fP(c)?((c)-'a'+'A'):(c)))
+
+/*-------------------------------------------------------------*/
+/* 0->16 to '0'->'F' without error checking */
+\fI#define\fP \fBnetwib_c2_16toc\fP(x) (char)(((x)<=9)?('0'+(x)):('a'+(x)-10))
+\fI#define\fP \fBnetwib_c2_16toC\fP(x) (char)(((x)<=9)?('0'+(x)):('A'+(x)-10))
+/* '0'->'F' to 0->16 without error checking */
+\fI#define\fP \fBnetwib_c2_cto16\fP(x) (((x)>='0'&&(x)<='9')?((x)-'0'):(((x)>='a'&&(x)<='f')?(10+(x)-'a'):(10+(x)-'A')))
+/* 0->9 to '0'->'9' without error checking */
+\fI#define\fP \fBnetwib_c2_9toc\fP(x) (char)('0'+(x))
+/* '0'->'9' to 0->9 without error checking */
+\fI#define\fP \fBnetwib_c2_cto9\fP(x) ((x)-'0')
+
+/*-------------------------------------------------------------*/
+/* '0'->'F' to 0->16 with error checking */
+\fI#define\fP \fBnetwib_c2_cto16_if\fP(c,quartet) if ((c) >= '0' && (c) <= '9') { quartet = (c) - '0'; } else if ((c) >= 'a' && (c) <= 'f') { quartet = 10 + (c) - 'a'; } else if ((c) >= 'A' && (c) <= 'F') { quartet = 10 + (c) - 'A'; }
+/* '0'->'9' to 0->9 with error checking */
+\fI#define\fP \fBnetwib_c2_cto9_if\fP(c,digit) if ((c) >= '0' && (c) <= '9') { digit = (c) - '0'; }
+
+/*-------------------------------------------------------------*/
+/* INTEGER FUNCTIONS */
+
+/*-------------------------------------------------------------*/
+/* byte extract from uint16, uint32 or uint64 */
+\fI#define\fP \fBnetwib_c2_uint16_0\fP(x) (\fBnetwib_byte\fP)(((x)>>8)&0xFF)
+\fI#define\fP \fBnetwib_c2_uint16_1\fP(x) (\fBnetwib_byte\fP)((x)&0xFF)
+\fI#define\fP \fBnetwib_c2_uint32_0\fP(x) (\fBnetwib_byte\fP)(((x)>>24)&0xFF)
+\fI#define\fP \fBnetwib_c2_uint32_1\fP(x) (\fBnetwib_byte\fP)(((x)>>16)&0xFF)
+\fI#define\fP \fBnetwib_c2_uint32_2\fP(x) (\fBnetwib_byte\fP)(((x)>>8)&0xFF)
+\fI#define\fP \fBnetwib_c2_uint32_3\fP(x) (\fBnetwib_byte\fP)((x)&0xFF)
+#if \fBNETWIB_INT64_FAKE\fP == 0
+ \fI#define\fP \fBnetwib_c2_uint64_0\fP(x) (\fBnetwib_byte\fP)(((x)>>56)&0xFF)
+ \fI#define\fP \fBnetwib_c2_uint64_1\fP(x) (\fBnetwib_byte\fP)(((x)>>48)&0xFF)
+ \fI#define\fP \fBnetwib_c2_uint64_2\fP(x) (\fBnetwib_byte\fP)(((x)>>40)&0xFF)
+ \fI#define\fP \fBnetwib_c2_uint64_3\fP(x) (\fBnetwib_byte\fP)(((x)>>32)&0xFF)
+ \fI#define\fP \fBnetwib_c2_uint64_4\fP(x) (\fBnetwib_byte\fP)(((x)>>24)&0xFF)
+ \fI#define\fP \fBnetwib_c2_uint64_5\fP(x) (\fBnetwib_byte\fP)(((x)>>16)&0xFF)
+ \fI#define\fP \fBnetwib_c2_uint64_6\fP(x) (\fBnetwib_byte\fP)(((x)>>8)&0xFF)
+ \fI#define\fP \fBnetwib_c2_uint64_7\fP(x) (\fBnetwib_byte\fP)((x)&0xFF)
+ \fI#define\fP \fBnetwib_c2_uint64_32high\fP(x) (\fBnetwib_uint32\fP)((x)>>32)
+ \fI#define\fP \fBnetwib_c2_uint64_32low\fP(x) (\fBnetwib_uint32\fP)((x)&0xFFFFFFFFu)
+#else
+ \fI#define\fP \fBnetwib_c2_uint64_0\fP(x) \fBnetwib_c2_uint32_0\fP((x).high)
+ \fI#define\fP \fBnetwib_c2_uint64_1\fP(x) \fBnetwib_c2_uint32_1\fP((x).high)
+ \fI#define\fP \fBnetwib_c2_uint64_2\fP(x) \fBnetwib_c2_uint32_2\fP((x).high)
+ \fI#define\fP \fBnetwib_c2_uint64_3\fP(x) \fBnetwib_c2_uint32_3\fP((x).high)
+ \fI#define\fP \fBnetwib_c2_uint64_4\fP(x) \fBnetwib_c2_uint32_0\fP((x).low)
+ \fI#define\fP \fBnetwib_c2_uint64_5\fP(x) \fBnetwib_c2_uint32_1\fP((x).low)
+ \fI#define\fP \fBnetwib_c2_uint64_6\fP(x) \fBnetwib_c2_uint32_2\fP((x).low)
+ \fI#define\fP \fBnetwib_c2_uint64_7\fP(x) \fBnetwib_c2_uint32_3\fP((x).low)
+ \fI#define\fP \fBnetwib_c2_uint64_32high\fP(x) ((x).high)
+ \fI#define\fP \fBnetwib_c2_uint64_32low\fP(x) ((x).low)
+#endif
+
+/*-------------------------------------------------------------*/
+/* recomposition of uint16 or uint32 */
+\fI#define\fP \fBnetwib_c2_uint16_2\fP(a,b) (\fBnetwib_uint16\fP)((((\fBnetwib_byte\fP)(a))<<8)|((\fBnetwib_byte\fP)(b)))
+\fI#define\fP \fBnetwib_c2_uint32_4\fP(a,b,c,d) (\fBnetwib_uint32\fP)((((\fBnetwib_byte\fP)(a))<<24)|(((\fBnetwib_byte\fP)(b))<<16)|(((\fBnetwib_byte\fP)(c))<<8)|((\fBnetwib_byte\fP)(d)))
+#if \fBNETWIB_INT64_FAKE\fP == 0
+ \fI#define\fP \fBnetwib_c2_uint64_8\fP(a,b,c,d,e,f,g,h) (\fBnetwib_uint64\fP)((((\fBnetwib_uint64\fP)((\fBnetwib_byte\fP)(a)))<<56)|(((\fBnetwib_uint64\fP)((\fBnetwib_byte\fP)(b)))<<48)|(((\fBnetwib_uint64\fP)((\fBnetwib_byte\fP)(c)))<<40)|(((\fBnetwib_uint64\fP)((\fBnetwib_byte\fP)(d)))<<32)|(((\fBnetwib_uint64\fP)((\fBnetwib_byte\fP)(e)))<<24)|(((\fBnetwib_uint64\fP)((\fBnetwib_byte\fP)(f)))<<16)|(((\fBnetwib_uint64\fP)((\fBnetwib_byte\fP)(g)))<<8)|((\fBnetwib_uint64\fP)((\fBnetwib_byte\fP)(h))))
+#endif
+/* other 64 bit version defines are in uint64.h */
+
+/*-------------------------------------------------------------*/
+/* left and right rotation */
+\fI#define\fP \fBnetwib_c2_uint8_ror\fP(x,n) ((\fBnetwib_uint8\fP)( (\fBnetwib_uint8\fP)((x)>>(n)) | (\fBnetwib_uint8\fP)((x)<<(8-(n))) ))
+\fI#define\fP \fBnetwib_c2_uint8_rol\fP(x,n) ((\fBnetwib_uint8\fP)( (\fBnetwib_uint8\fP)((x)<<(n)) | (\fBnetwib_uint8\fP)((x)>>(8-(n))) ))
+\fI#define\fP \fBnetwib_c2_uint16_ror\fP(x,n) ((\fBnetwib_uint16\fP)( (\fBnetwib_uint16\fP)((x)>>(n)) | (\fBnetwib_uint16\fP)((x)<<(16-(n))) ))
+\fI#define\fP \fBnetwib_c2_uint16_rol\fP(x,n) ((\fBnetwib_uint16\fP)( (\fBnetwib_uint16\fP)((x)<<(n)) | (\fBnetwib_uint16\fP)((x)>>(16-(n))) ))
+\fI#define\fP \fBnetwib_c2_uint32_ror\fP(x,n) ((\fBnetwib_uint32\fP)( (\fBnetwib_uint32\fP)((x)>>(n)) | (\fBnetwib_uint32\fP)((x)<<(32-(n))) ))
+\fI#define\fP \fBnetwib_c2_uint32_rol\fP(x,n) ((\fBnetwib_uint32\fP)( (\fBnetwib_uint32\fP)((x)<<(n)) | (\fBnetwib_uint32\fP)((x)>>(32-(n))) ))
+/* 64 bit version defines are in uint64.h */
+.fi
+.SH MODULE BUFENC
+.nf
+
+/*-------------------------------------------------------------*/
+\fItypedef\fP enum {
+  \fBNETWIB_ENCODETYPE_DATA\fP = 1,        /* exact data */
+  \fBNETWIB_ENCODETYPE_HEXA0\fP,           /* hexadecimal */
+  \fBNETWIB_ENCODETYPE_HEXA1\fP,           /* hexadecimal */
+  \fBNETWIB_ENCODETYPE_HEXA2\fP,           /* hexadecimal */
+  \fBNETWIB_ENCODETYPE_HEXA4\fP,           /* hexadecimal */
+  \fBNETWIB_ENCODETYPE_MIXED0\fP,          /* mixed */
+  \fBNETWIB_ENCODETYPE_MIXED1\fP,          /* mixed */
+  \fBNETWIB_ENCODETYPE_TEXT\fP,            /* printable text */
+  \fBNETWIB_ENCODETYPE_BASE64\fP,          /* base64 */
+  \fBNETWIB_ENCODETYPE_QUOTED\fP,          /* quoted */
+  \fBNETWIB_ENCODETYPE_NOTHING\fP = 100,   /* print nothing */
+  \fBNETWIB_ENCODETYPE_SYNTH\fP,           /* print a synthetic form */
+  /* wrap to 80 columns (or less) */
+  \fBNETWIB_ENCODETYPE_DATA_WRAP\fP = 300, /* data */
+  \fBNETWIB_ENCODETYPE_HEXA0_WRAP\fP,      /* hexa (32 bytes per line) */
+  \fBNETWIB_ENCODETYPE_HEXA1_WRAP\fP,      /* hexa (16 bytes per line) */
+  \fBNETWIB_ENCODETYPE_HEXA2_WRAP\fP,      /* hexa (32 bytes per line) */
+  \fBNETWIB_ENCODETYPE_HEXA4_WRAP\fP,      /* hexa (32 bytes per line) */
+  \fBNETWIB_ENCODETYPE_MIXED0_WRAP\fP,     /* mixed (16 bytes per line) */
+  \fBNETWIB_ENCODETYPE_MIXED1_WRAP\fP,     /* mixed (16 bytes per line) */
+  \fBNETWIB_ENCODETYPE_TEXT_WRAP\fP,       /* printable text */
+  \fBNETWIB_ENCODETYPE_BASE64_WRAP\fP,     /* base64 */
+  \fBNETWIB_ENCODETYPE_ARRAY1\fP = 400,    /* array (4 bytes per line) */
+  \fBNETWIB_ENCODETYPE_ARRAY4\fP,          /* array (4 bytes per line) */
+  \fBNETWIB_ENCODETYPE_ARRAY8\fP,          /* array (4 bytes per line) */
+  \fBNETWIB_ENCODETYPE_ARRAY16\fP,         /* array (4 bytes per line) */
+  \fBNETWIB_ENCODETYPE_ARRAY32\fP,         /* array (4 bytes per line) */
+  \fBNETWIB_ENCODETYPE_DUMP\fP,            /* dump (16 bytes per line) */
+  \fBNETWIB_ENCODETYPE_MIXED0H_WRAP\fP,    /* mixed (8 bytes per line) */
+  \fBNETWIB_ENCODETYPE_MIXED1H_WRAP\fP,    /* mixed (8 bytes per line) */
+  \fBNETWIB_ENCODETYPE_LOWERCASE\fP,       /* lower case */
+  \fBNETWIB_ENCODETYPE_UPPERCASE\fP,       /* upper case */
+  /* aliases */
+  \fBNETWIB_ENCODETYPE_HEXA\fP = \fBNETWIB_ENCODETYPE_HEXA1\fP,
+  \fBNETWIB_ENCODETYPE_MIXED\fP = \fBNETWIB_ENCODETYPE_MIXED1\fP,
+  \fBNETWIB_ENCODETYPE_HEXA_WRAP\fP = \fBNETWIB_ENCODETYPE_HEXA1_WRAP\fP,
+  \fBNETWIB_ENCODETYPE_MIXED_WRAP\fP = \fBNETWIB_ENCODETYPE_MIXED1_WRAP\fP,
+  \fBNETWIB_ENCODETYPE_ARRAY\fP = \fBNETWIB_ENCODETYPE_ARRAY8\fP,
+  \fBNETWIB_ENCODETYPE_MIXEDH_WRAP\fP = \fBNETWIB_ENCODETYPE_MIXED1H_WRAP\fP,
+  /* for transition */
+  \fBNETWIB_ENCODETYPE_TRANSITION_INIT\fP = 500,
+  \fBNETWIB_ENCODETYPE_TRANSITION_END\fP
+} \fBnetwib_encodetype\fP;
+
+/*-------------------------------------------------------------*/
+/* Examples :
+\fBNETWIB_ENCODETYPE_HEXA0\fP  : 01020304050607080910...
+\fBNETWIB_ENCODETYPE_HEXA1\fP  : 01 02 03 04 05 06 07 08 09 10 ...
+\fBNETWIB_ENCODETYPE_HEXA2\fP  : 0102 0304 0506 0708 0910 ...
+\fBNETWIB_ENCODETYPE_HEXA4\fP  : 01020304 05060708 0910...
+\fBNETWIB_ENCODETYPE_MIXED0\fP : 'abc' 112233445566
+\fBNETWIB_ENCODETYPE_MIXED1\fP : 'abc' 11 22 33 44 55 66
+\fBNETWIB_ENCODETYPE_HEXA0_WRAP\fP :
+0102030405060708091011121314151617181920212223242526272829303132
+\fBNETWIB_ENCODETYPE_HEXA1_WRAP\fP :
+01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16
+\fBNETWIB_ENCODETYPE_HEXA2_WRAP\fP :
+0102 0304 0506 0708 0910 1112 1314 1516 1718 1920 2122 2324 2526 2728 2930 3132
+\fBNETWIB_ENCODETYPE_HEXA4_WRAP\fP :
+01020304 05060708 09101112 13141516 17181920 21222324 25262728 29303132
+\fBNETWIB_ENCODETYPE_MIXED0_WRAP\fP :
+'a' 02 'a' 02 'a' 02 'a' 02 'a' 02 'a' 02 'a' 02 'a' 02
+'a' 026102 'a' 02 'a' 02 'a' 02 'a' 02 'a' 02 'a' 02
+\fBNETWIB_ENCODETYPE_MIXED1_WRAP\fP :
+'a' 02 'a' 02 'a' 02 'a' 02 'a' 02 'a' 02 'a' 02 'a' 02
+'a' 02 61 02 'a' 02 'a' 02 'a' 02 'a' 02 'a' 02 'a' 02
+\fBNETWIB_ENCODETYPE_ARRAY1\fP :
+|1|0|0|0|0|1|1|0|0|1|0|0|0|1|1|0|1|1|0|0|0|1|1|0|0|0|1|0|0|1|1|0|
+\fBNETWIB_ENCODETYPE_ARRAY4\fP :
+|__0x1__|__0x6__|_______________|_______________|_______________|
+\fBNETWIB_ENCODETYPE_ARRAY8\fP :
+|____0x80=128___|____0x11=17____|____0x80=128___|____0x11=17____|
+\fBNETWIB_ENCODETYPE_ARRAY16\fP :
+|_________0x6162=24930__________|_________0x6364=25444__________|
+\fBNETWIB_ENCODETYPE_ARRAY32\fP :
+|_____________________0x61626364=1633837924_____________________|
+\fBNETWIB_ENCODETYPE_DUMP\fP :
+61 62 63 64  65 66 67 68  69 6a 6b 6c  6d 6e 6f 70  # abcdefghijklmnop
+\fBNETWIB_ENCODETYPE_MIXED0H_WRAP\fP :
+'a' 62 'c' 64 'e' 66 'f' 68             # 61 62 63 64 65 66 67 68
+'a' 626364 'e' 66 'f' 68                # 61 62 63 64 65 66 67 68
+\fBNETWIB_ENCODETYPE_MIXED1H_WRAP\fP :
+'a' 62 'c' 64 'e' 66 'f' 68             # 61 62 63 64 65 66 67 68
+'a' 62 63 64 'e' 66 'f' 68              # 61 62 63 64 65 66 67 68
+\fBNETWIB_ENCODETYPE_QUOTED\fP :
+"abc d \\\\ \\t \\n \\r \\" \\x00 z"
+*/
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_buf_encode\fP
+   Description :
+     Append a encoded buffer.
+   Input parameter(s) :
+     *pbuftoencode : buffer to encode
+     encodetype : decoding type
+   Input/output parameter(s) :
+     *pbuf : \fBnetwib_buf\fP updated
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+   This function supports \fBNETWIB_BUF_FLAGS_SENSITIVE\fP.
+*/
+\fBnetwib_err\fP \fBnetwib_buf_encode\fP(\fBnetwib_constbuf\fP *pbuftoencode,
+                             \fBnetwib_encodetype\fP encodetype,
+                             \fBnetwib_buf\fP *pbuf);
+/* only the main ones are defined */
+\fI#define\fP \fBnetwib_buf_encode_data\fP(pbuftoencode,pbuf) \fBnetwib_buf_encode\fP(pbuftoencode,\fBNETWIB_ENCODETYPE_DATA\fP,pbuf)
+\fI#define\fP \fBnetwib_buf_encode_hexa\fP(pbuftoencode,pbuf) \fBnetwib_buf_encode\fP(pbuftoencode,\fBNETWIB_ENCODETYPE_HEXA\fP,pbuf)
+\fI#define\fP \fBnetwib_buf_encode_mixed\fP(pbuftoencode,pbuf) \fBnetwib_buf_encode\fP(pbuftoencode,\fBNETWIB_ENCODETYPE_MIXED\fP,pbuf)
+\fI#define\fP \fBnetwib_buf_encode_text\fP(pbuftoencode,pbuf) \fBnetwib_buf_encode\fP(pbuftoencode,\fBNETWIB_ENCODETYPE_TEXT\fP,pbuf)
+\fI#define\fP \fBnetwib_buf_encode_base64\fP(pbuftoencode,pbuf) \fBnetwib_buf_encode\fP(pbuftoencode,\fBNETWIB_ENCODETYPE_BASE64\fP,pbuf)
+\fI#define\fP \fBnetwib_buf_encode_quoted\fP(pbuftoencode,pbuf) \fBnetwib_buf_encode\fP(pbuftoencode,\fBNETWIB_ENCODETYPE_QUOTED\fP,pbuf)
+\fI#define\fP \fBnetwib_buf_encode_dump\fP(pbuftoencode,pbuf) \fBnetwib_buf_encode\fP(pbuftoencode,\fBNETWIB_ENCODETYPE_DUMP\fP,pbuf)
+\fI#define\fP \fBnetwib_buf_encode_lowercase\fP(pbuftoencode,pbuf) \fBnetwib_buf_encode\fP(pbuftoencode,\fBNETWIB_ENCODETYPE_LOWERCASE\fP,pbuf)
+\fI#define\fP \fBnetwib_buf_encode_uppercase\fP(pbuftoencode,pbuf) \fBnetwib_buf_encode\fP(pbuftoencode,\fBNETWIB_ENCODETYPE_UPPERCASE\fP,pbuf)
+
+/*-------------------------------------------------------------*/
+\fItypedef\fP struct {
+  \fBnetwib_encodetype\fP last;
+  \fBnetwib_bool\fP containnl;
+} \fBnetwib_encodetype_context\fP;
+/* Name : \fBnetwib_buf_encode_transition\fP
+   Description :
+     Append a transition between two data.
+     First call has to be done with \fBNETWIB_ENCODETYPE_TRANSITION_INIT\fP.
+   Input parameter(s) :
+     encodetype : next encoding type
+   Input/output parameter(s) :
+     *pctx : context
+     *pbuf : \fBnetwib_buf\fP updated
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_buf_encode_transition\fP(\fBnetwib_encodetype_context\fP *pctx,
+                                        \fBnetwib_encodetype\fP encodetype,
+                                        \fBnetwib_buf\fP *pbuf);
+\fI#define\fP \fBnetwib_buf_encode_transition_init\fP(pctx) \fBnetwib_buf_encode_transition\fP(pctx,\fBNETWIB_ENCODETYPE_TRANSITION_INIT\fP,NULL)
+\fI#define\fP \fBnetwib_buf_encode_transition_end\fP(pctx,pbuf) \fBnetwib_buf_encode_transition\fP(pctx,\fBNETWIB_ENCODETYPE_TRANSITION_END\fP,pbuf)
+.fi
+.SH MODULE BUFDEC
+.nf
+
+/*-------------------------------------------------------------*/
+/***************************************************************
+ * An hexadecimal string is for example:                       *
+ *  010A 0b00Ff                                                *
+ ***************************************************************/
+
+/*-------------------------------------------------------------*/
+/***************************************************************
+ * A mixed string permits to represent data as a clear form    *
+ * using hexadecimal and text.                                 *
+ * Hexadecimal is used without "0x" or "0h"                    *
+ * Text is included between apostrophes "'"                    *
+ * The character ' is ''                                       *
+ * For example :                                               *
+ *   'hello' : data "hello"                                    *
+ *   'a' 'b' : data "ab"                                       *
+ *   41 'b'  : data "Ab" (because 'A'==0x41)                   *
+ *   'man'00 : data "man" ending with 0x00                     *
+ *   'a''b'  : data "a'b"                                      *
+ * Real examples :                                             *
+ *  'hello' 0D 0A 'this is after a newline'                    *
+ *  'one' 09 'two' 0D 0A                                       *
+ ***************************************************************/
+
+/*-------------------------------------------------------------*/
+\fItypedef\fP enum {
+  \fBNETWIB_DECODETYPE_DATA\fP = 1,        /* exact data */
+  \fBNETWIB_DECODETYPE_HEXA\fP,            /* hexadecimal */
+  \fBNETWIB_DECODETYPE_MIXED\fP,           /* mixed */
+  \fBNETWIB_DECODETYPE_BASE64\fP           /* base64 */
+} \fBnetwib_decodetype\fP;
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_buf_decode\fP
+   Description :
+     Append a decoded buffer.
+   Input parameter(s) :
+     *pbuftodecode : buffer to decode
+     decodetype : decoding type
+   Input/output parameter(s) :
+     *pbuf : \fBnetwib_buf\fP updated
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+   This function supports \fBNETWIB_BUF_FLAGS_SENSITIVE\fP.
+*/
+\fBnetwib_err\fP \fBnetwib_buf_decode\fP(\fBnetwib_constbuf\fP *pbuftodecode,
+                             \fBnetwib_decodetype\fP decodetype,
+                             \fBnetwib_buf\fP *pbuf);
+\fI#define\fP \fBnetwib_buf_decode_data\fP(pbuftodecode,pbuf) \fBnetwib_buf_decode\fP(pbuftodecode,\fBNETWIB_DECODETYPE_DATA\fP,pbuf)
+\fI#define\fP \fBnetwib_buf_decode_hexa\fP(pbuftodecode,pbuf) \fBnetwib_buf_decode\fP(pbuftodecode,\fBNETWIB_DECODETYPE_HEXA\fP,pbuf)
+\fI#define\fP \fBnetwib_buf_decode_mixed\fP(pbuftodecode,pbuf) \fBnetwib_buf_decode\fP(pbuftodecode,\fBNETWIB_DECODETYPE_MIXED\fP,pbuf)
+\fI#define\fP \fBnetwib_buf_decode_base64\fP(pbuftodecode,pbuf) \fBnetwib_buf_decode\fP(pbuftodecode,\fBNETWIB_DECODETYPE_BASE64\fP,pbuf)
+
+/*-------------------------------------------------------------*/
+/***************************************************************
+ * A quoted string is for example:                             *
+ *   hello "hello" "hel\\nlo" "abc d \\\\ \\n \\" \\x00 z"           *
+ * It is particularly adapted to decode program's parameters,  *
+ * which can be enclosed, or not, between '"' character.       *
+ * It is special :                                             *
+ *  - decoding stops after first valid parameter               *
+ *  - pbuftodecode is updated                                  *
+ * Specifications:                                             *
+ *   General :                                                 *
+ *     Leading spaces or tabulations are ignored.              *
+ *     Ending spaces, tabulations, NL or LF are ignored.       *
+ *     Buffer pbuftodecode has beginoffset updated to point    *
+ *     past the decoded string (after optional ending spaces). *
+ *     When end is reached, without reading data, error        *
+ *     \fBNETWIB_ERR_DATAEND\fP is returned.                         *
+ *   Quoted strings (ex : "aa", "a\\nb") :                      *
+ *     Char '\\' can be used before any char. It means the      *
+ *     char following, except for sequences \\a(alarm bell)     *
+ *     \\b(backspace) \\t(tab) \\n(NL) \\r(LF) and                 *
+ *     \\x(hexa code of a character).                           *
+ *     All chars, including NL and LF, are read till finding   *
+ *     the last ". If it is not found, error                   *
+ *     \fBNETWIB_ERR_DATANOTAVAIL\fP is returned (nothing is saved   *
+ *     in pbuf).                                               *
+ *   Unquoted strings (ex : aa, a\\b)                           *
+ *     Char '\\' only means char '\\'.                           *
+ *     Read is stopped when a space, tab, NL or LF is found,   *
+ *     or when end of pbuftodecode is reached.                 *
+ ***************************************************************/
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_buf_decode_quoted\fP
+   Description :
+     Append a decoded buffer.
+   Input parameter(s) :
+     *pbuftodecode : buffer to decode
+     decodetype : decoding type
+   Input/output parameter(s) :
+     *pbuf : \fBnetwib_buf\fP updated
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+   This function supports \fBNETWIB_BUF_FLAGS_SENSITIVE\fP.
+*/
+\fBnetwib_err\fP \fBnetwib_buf_decode_quoted\fP(\fBnetwib_buf\fP *pbuftodecode,
+                                    \fBnetwib_buf\fP *pbuf);
+
+.fi
+.SH MODULE FMT
+.nf
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_buf_append_fmt\fP
+   Description :
+     Add data to a buf.
+   Input parameter(s) :
+     fmt : format as explained below
+   Input/output parameter(s) :
+     *pbuf : \fBnetwib_buf\fP updated
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+   This function supports \fBNETWIB_BUF_FLAGS_SENSITIVE\fP.
+*/
+/***************************************************************
+ * Netwib provides a kind of printf format. It is not          *
+ * compatible with standard printf, but it corresponds to      *
+ * netwib usage.                                               *
+ *   %% : %                                                    *
+ *   %c : char                                                 *
+ *   %s : string                                               *
+ *   %p : pointer                                              *
+ *   %{type} : special type                                    *
+ *   %{generalformat;type:specificformat} : special type with  *
+ *                                          a format           *
+ *   %{generalformat;type} : special type with a format        *
+ *   %{type:specificformat} : special type with a format       *
+ * generalformat :                                             *
+ *   - expressed as a regexp : "[lcr].[1-9][0-9]{0,1}"         *
+ *       'lcr' : left, center, right                           *
+ *       '.'   : padding character                             *
+ *       '0-9' : minimum size                                  *
+ *   - default value : "l 0"                                   *
+ * type :                                                      *
+ *   - uint32, uint16, uint8, uintmax, uintptr, uint64, byte   *
+ *      - specificformat expressed as                          *
+ *        "[#]{0,1}[0-9]{0,2}[bouxX]{0,1}"                     *
+ *         '#' : add 'b' before binary numbers                 *
+ *               add '0' before octal numbers                  *
+ *               add '0x' before hexadecimal numbers           *
+ *         '0-9' : total size (minimum value)                  *
+ *         'bouxX' : binary, octal, decimal, hexadecimal       *
+ *      - default value for specificformat : "u"               *
+ *   - int32, int16, int8, intmax, intptr, int64               *
+ *      - specificformat expressed as "[+]{0,1}[0-9]{0,2}"     *
+ *         '+' : add a '+' before positive numbers             *
+ *         '0-9' : total size (minimum value)                  *
+ *      - default value for specificformat : ""                *
+ *   - bool                                                    *
+ *      - specificformat expressed as "[0tTyYsS]{0,1}"         *
+ *         '0' : 0/1                                           *
+ *         't' : true/false                                    *
+ *         'T' : TRUE/FALSE                                    *
+ *         'y' : yes/no                                        *
+ *         'Y' : YES/NO                                        *
+ *         's' : set/unset                                     *
+ *         'S' : SET/UNSET                                     *
+ *      - default value for specificformat : "t"               *
+ *   - cmp                                                     *
+ *      - specificformat expressed as "[=0e]{0,1}"             *
+ *         '=' : <  =  >                                       *
+ *         '0' : -  0  +                                       *
+ *         'e' : lt eq gt                                      *
+ *      - default value for specificformat : "="               *
+ *   - c(char), s(char*), p(void*)                             *
+ *      no specificformat                                      *
+ *   - buf(\fBnetwib_buf\fP*)                                        *
+ *      no specificformat                                      *
+ *   - eth(\fBnetwib_eth\fP*), ip(\fBnetwib_ip\fP*), port(\fBnetwib_port\fP)     *
+ *      no specificformat                                      *
+ *   - eths(\fBnetwib_eths\fP*), ips(\fBnetwib_ips\fP*),                   *
+ *     ports(\fBnetwib_ports\fP*)                                    *
+ *      no specificformat                                      *
+ * examples :                                                  *
+ *     %{uint32} : decimal                                     *
+ *     %{int32} : decimal                                      *
+ *     %{uint32:b} : binary                                    *
+ *     %{uint32:o} : octal                                     *
+ *     %{uint32:x} : hexadecimal                               *
+ *     %{uint32:08X} : hexadecimal                             *
+ *     %{c_20;uint32} : decimal centered in a 20 bytes block   *
+ *                      padded with _                          *
+ ***************************************************************/
+\fBnetwib_err\fP \fBnetwib_buf_append_fmt\fP(\fBnetwib_buf\fP *pbuf,
+                                 \fBnetwib_conststring\fP fmt,
+                                 ...);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_buf_decode_fmt\fP
+   Description :
+     Decode data from a buf.
+   Input parameter(s) :
+     *pbuf : \fBnetwib_buf\fP
+     fmt : format as explained above
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pnumset : number of items set (decoded)
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+     \fBNETWIB_ERR_NOTCONVERTED\fP : not decoded
+   This function supports \fBNETWIB_BUF_FLAGS_SENSITIVE\fP.
+*/
+/***************************************************************
+ * Netwib provides a kind of sscanf format. It is not          *
+ * compatible with standard sscanf, but it corresponds to      *
+ * netwib usage.                                               *
+ *   %% : %                                                    *
+ *   %c : char                                                 *
+ *   %s : string                                               *
+ *   %p : pointer                                              *
+ *   %$ : end of string (if present, must be last)             *
+ *   %{type} : special type                                    *
+ *   %{generalformat;type:specificformat} : special type with  *
+ *                                          a format           *
+ *   %{generalformat;type} : special type with a format        *
+ *   %{type:specificformat} : special type with a format       *
+ * generalformat :                                             *
+ *   - expressed as a regexp : "[*]{0,1}[lcr].[1-9][0-9]{0,1}" *
+ *     or "[*]{0,1}"                                           *
+ *       '*'   : suppresses assignment (skip field)            *
+ *       'lcr' : left, center, right                           *
+ *       '.'   : padding character                             *
+ *       '0-9' : minimum size                                  *
+ *   - default value : "l 0"                                   *
+ * type :                                                      *
+ *   They have the same meaning as for \fBnetwib_buf_append_fmt\fP,  *
+ *   but are always pointers :                                 *
+ *   - uint32 : \fBnetwib_uint32\fP*                                 *
+ *   - uint16 : \fBnetwib_uint16\fP*                                 *
+ *   - uint8  : \fBnetwib_uint8\fP*                                  *
+ *   - uintmax: \fBnetwib_uintmax\fP*                                *
+ *   - uintptr: \fBnetwib_uintptr\fP*                                *
+ *   - uint64 : \fBnetwib_uint64\fP*                                 *
+ *   - byte   : \fBnetwib_byte\fP*                                   *
+ *   - bool   : \fBnetwib_bool\fP*                                   *
+ *   - int32  : \fBnetwib_int32\fP*                                  *
+ *   - int16  : \fBnetwib_int16\fP*                                  *
+ *   - int8   : \fBnetwib_int8\fP*                                   *
+ *   - cmp    : \fBnetwib_cmp\fP*                                    *
+ *   - c      : char*                                          *
+ *   - s      : char[] (must be big enough : use buf instead)  *
+ *   - p      : \fBnetwib_ptr\fP* (or void**)                        *
+ *   - buf    : \fBnetwib_buf\fP*                                    *
+ *   - eth    : \fBnetwib_eth\fP*                                    *
+ *   - ip     : \fBnetwib_ip\fP*                                     *
+ *   - port   : \fBnetwib_port\fP*                                   *
+ *   - eths   : \fBnetwib_eths\fP*                                   *
+ *   - ips    : \fBnetwib_ips\fP*                                    *
+ *   - ports  : \fBnetwib_ports\fP*                                  *
+ * specificformat :                                            *
+ *   For "s" and "buf", the default behavior is to stop when a *
+ *   space is encountered. By using "glob" as specificformat,  *
+ *   every char is stored in the buffer (including leading and *
+ *   ending spaces).                                           *
+ ***************************************************************/
+\fBnetwib_err\fP \fBnetwib_buf_decode_fmt\fP(\fBnetwib_constbuf\fP *pbuf,
+                                 \fBnetwib_conststring\fP fmt,
+                                 ...);
+.fi
+.SH MODULE CHECKSUM
+.nf
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_checksum_buf\fP
+   Description :
+     Compute the checksum of a buffer.
+   Input parameter(s) :
+     *pbuf : buffer input data
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pchecksum : checksum of data stored in *pbuf.
+                  Note : this checksum is in host byte order
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_checksum_buf\fP(\fBnetwib_constbuf\fP *pbuf,
+                               \fBnetwib_uint16\fP *pchecksum);
+
+/*-------------------------------------------------------------*/
+\fBnetwib_err\fP \fBnetwib_checksum_init\fP(\fBnetwib_uint32\fP *ptmpchecksum);
+\fBnetwib_err\fP \fBnetwib_checksum_update_buf\fP(\fBnetwib_constbuf\fP *pbuf,
+                                      \fBnetwib_uint32\fP *ptmpchecksum);
+\fBnetwib_err\fP \fBnetwib_checksum_update_data\fP(\fBnetwib_constdata\fP data,
+                                       \fBnetwib_uint32\fP datasize,
+                                       \fBnetwib_uint32\fP *ptmpchecksum);
+\fBnetwib_err\fP \fBnetwib_checksum_close\fP(\fBnetwib_uint32\fP tmpchecksum,
+                                 \fBnetwib_uint16\fP *pchecksum);
+.fi
+.SH MODULE REGEXP
+.nf
+
+/*-------------------------------------------------------------*/
+/***************************************************************
+ * Do a "man regexp" if you don't know what is a "regular      *
+ * expression").                                               *
+ ***************************************************************/
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_buf_search_re\fP
+   Description :
+     Search a regular expression in a string.
+   Input parameter(s) :
+     *pbuf : buffer containing input data
+     regularexpression : searched regular expression.
+                         For example : "a.", "f[A-Z]", etc.
+     casesensitive : \fBNETWIB_TRUE\fP if the search has to be case
+                     sensitive
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pfound : buffer set with found data
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : the searched element was found
+     \fBNETWIB_ERR_NOTFOUND\fP : the searched element wasn't found
+   This function supports \fBNETWIB_BUF_FLAGS_SENSITIVE\fP.
+*/
+\fBnetwib_err\fP \fBnetwib_buf_search_re\fP(\fBnetwib_constbuf\fP *pbuf,
+                                \fBnetwib_constbuf\fP *pregularexpression,
+                                \fBnetwib_bool\fP casesensitive,
+                                \fBnetwib_bufext\fP *pfound);
+
+/*-------------------------------------------------------------*/
+/***************************************************************
+ * A \fBnetwib_regexp\fP contains an array of found data during a    *
+ * a regular expression search.                                *
+ * The element at index 0 defines the location of the          *
+ * global expression.                                          *
+ * Elements at index 1, 2, etc. define the found string        *
+ * between '(' and ')'.                                        *
+ *                                                             *
+ * For example, if the data is "houses" and the regular        *
+ * expression is "o(.(s))", then :                             *
+ *   re.numset = 3                                             *
+ *   re.array[0] = "ous"                                       *
+ *   re.array[1] = "us"                                        *
+ *   re.array[2] = "s"                                         *
+ *   re.array[3..63] not initialized                           *
+ ***************************************************************/
+
+/*-------------------------------------------------------------*/
+/* We cannot have more than 64 parenthesis. This should be
+   sufficient in all cases, but you may want to increase it,
+   and recompile netwib.
+ */
+\fI#define\fP \fBNETWIB_REGEXP_MAXLEN\fP 64
+\fItypedef\fP struct {
+  \fBnetwib_uint32\fP numset; /* number of buffers set */
+  \fBnetwib_bufext\fP array[\fBNETWIB_REGEXP_MAXLEN\fP];
+} \fBnetwib_regexp\fP;
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_buf_search_regexp\fP
+   Description :
+     Search a regular expression in a string.
+   Input parameter(s) :
+     *pbuf : buffer containing input data
+     regularexpression : searched regular expression.
+                         For example : "a.", "f[A-Z]", etc.
+     casesensitive : \fBNETWIB_TRUE\fP if the search has to be case
+                     sensitive
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pfound : \fBnetwib_regexp\fP containing the found data
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : the searched regular expression was found
+     \fBNETWIB_ERR_NOTFOUND\fP : the searched regexp wasn't found
+   This function supports \fBNETWIB_BUF_FLAGS_SENSITIVE\fP.
+*/
+\fBnetwib_err\fP \fBnetwib_buf_search_regexp\fP(\fBnetwib_constbuf\fP *pbuf,
+                                    \fBnetwib_constbuf\fP *pregularexpression,
+                                    \fBnetwib_bool\fP casesensitive,
+                                    \fBnetwib_regexp\fP *pfound);
+
+.fi
+.SH MODULE RING
+.nf
+
+/*-------------------------------------------------------------*/
+/***************************************************************
+ * A \fBnetwib_ring\fP is a double linked ring containing pointers.  *
+ * For example, a ring containing 3 items looks like this :    *
+ *                                                             *
+ * ,________________________________________________________.  *
+ * | ,----------------------------------------------------. |  *
+ * | |  ._______.   .________.   .________.   .________.  | |  *
+ * | `->|       |-->|        |-->|        |-->|        |--' |  *
+ * |    | start |   |  ptr1  |   |  ptr2  |   |  ptr3  |    |  *
+ * `----|_______|<--|________|<--|________|<--|________|<---'  *
+ *                                                             *
+ * The ring contains pointers (ptr1, ptr2 and ptr3 in the      *
+ * example).                                                   *
+ *                                                             *
+ * When an item is removed from the ring, its associated       *
+ * information stored in the pointer can be :                  *
+ *  - left untouched : user will have to free the pointer and  *
+ *    its information                                          *
+ *  - erased : the information is lost : a function of type    *
+ *    \fBnetwib_ring_erase_pf\fP has to be called                    *
+ * For example, a user might want to store allocated memory    *
+ * containing a \fBnetwib_buf\fP. Then when the ring is closed, the  *
+ * \fBnetwib_buf_close\fP function has to be called and the memory   *
+ * has to be freed.                                            *
+ ***************************************************************/
+
+/*-------------------------------------------------------------*/
+\fItypedef\fP struct \fBnetwib_ring\fP \fBnetwib_ring\fP;
+\fItypedef\fP const \fBnetwib_ring\fP \fBnetwib_constring\fP;
+
+/*-------------------------------------------------------------*/
+/* This prototype defines a function erasing the item pitem */
+\fItypedef\fP \fBnetwib_err\fP (*\fBnetwib_ring_erase_pf\fP)(\fBnetwib_ptr\fP pitem);
+/* This prototype defines a function duplicating an item */
+\fItypedef\fP \fBnetwib_err\fP (*\fBnetwib_ring_duplicate_pf\fP)(\fBnetwib_constptr\fP pitem,
+                                               \fBnetwib_ptr\fP *pdupofitem);
+/* This prototype defines a function comparing two items
+    - if iteminf<itemsup, *pcmp is set to \fBNETWIB_CMP_LT\fP
+    - if iteminf>itemsup, *pcmp is set to \fBNETWIB_CMP_GT\fP
+    - if iteminf==itemsup, *pcmp is set to \fBNETWIB_CMP_EQ\fP
+   The parameter pinfos will be set with optional information
+   given when calling the function.
+ */
+\fItypedef\fP \fBnetwib_err\fP (*\fBnetwib_ring_compare_pf\fP)(\fBnetwib_constptr\fP piteminf,
+                                             \fBnetwib_constptr\fP pitemsup,
+                                             \fBnetwib_ptr\fP pinfos,
+                                             \fBnetwib_cmp\fP *pcmp);
+/* This prototype defines a function detecting if an item
+   matches a criteria
+    - if it matches, *pbool is set to \fBNETWIB_TRUE\fP
+    - if it does not matches, *pbool is set to \fBNETWIB_FALSE\fP
+   The parameter pinfos will be set with optional information
+   given when calling the function.
+ */
+\fItypedef\fP \fBnetwib_err\fP (*\fBnetwib_ring_criteria_pf\fP)(\fBnetwib_constptr\fP pitem,
+                                              \fBnetwib_ptr\fP pinfos,
+                                              \fBnetwib_bool\fP *pbool);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_ring_init\fP
+   Description :
+     Initialize a \fBnetwib_ring\fP.
+   Input parameter(s) :
+     *pfunc_erase : function needed to erase items
+                    This can be NULL
+     *pfunc_duplicate : function needed to duplicate items
+                        This can be NULL
+   Input/output parameter(s) :
+   Output parameter(s) :
+     **ppring : \fBnetwib_ring\fP allocated and initialized
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_ring_init\fP(\fBnetwib_ring_erase_pf\fP pfunc_erase,
+                            \fBnetwib_ring_duplicate_pf\fP pfunc_duplicate,
+                            \fBnetwib_ring\fP **ppring);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_ring_close\fP
+   Description :
+     Destroy a \fBnetwib_ring\fP.
+   Input parameter(s) :
+     eraseitems : if true, function pfunc_erase (set in
+                  \fBnetwib_ring_init\fP) is called
+   Input/output parameter(s) :
+     **ppring : \fBnetwib_ring\fP to destroy
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_ring_close\fP(\fBnetwib_ring\fP **ppring,
+                             \fBnetwib_bool\fP eraseitems);
+
+/*-------------------------------------------------------------*/
+/* Types to control a \fBnetwib_ring\fP */
+\fItypedef\fP enum {
+  \fBNETWIB_RING_CTLTYPE_COUNT\fP = 1   /* count number of items */
+} \fBnetwib_ring_ctltype\fP;
+\fBnetwib_err\fP \fBnetwib_ring_ctl_set\fP(\fBnetwib_ring\fP *pring,
+                               \fBnetwib_ring_ctltype\fP type,
+                               \fBnetwib_ptr\fP p,
+                               \fBnetwib_uint32\fP ui);
+\fBnetwib_err\fP \fBnetwib_ring_ctl_get\fP(\fBnetwib_ring\fP *pring,
+                               \fBnetwib_ring_ctltype\fP type,
+                               \fBnetwib_ptr\fP p,
+                               \fBnetwib_uint32\fP *pui);
+
+/*-------------------------------------------------------------*/
+/* \fBnetwib_err\fP f(\fBnetwib_ring\fP *pring, \fBnetwib_uint32\fP *pnumberofitems); */
+\fI#define\fP \fBnetwib_ring_ctl_get_count\fP(pring,pnumberofitems) \fBnetwib_ring_ctl_get\fP(pring,\fBNETWIB_RING_CTLTYPE_COUNT\fP,NULL,pnumberofitems)
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_ring_add_first\fP
+   Description :
+     Add an item to the \fBnetwib_ring\fP.
+   Input parameter(s) :
+     pitem : pointer to an allocated memory containing the item
+   Input/output parameter(s) :
+     *pring : \fBnetwib_ring\fP where to work
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_ring_add_first\fP(\fBnetwib_ring\fP *pring,
+                                 \fBnetwib_constptr\fP pitem);
+\fBnetwib_err\fP \fBnetwib_ring_add_last\fP(\fBnetwib_ring\fP *pring,
+                                \fBnetwib_constptr\fP pitem);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_ring_del_criteria\fP
+   Description :
+     Del items matching a criterion.
+   Input parameter(s) :
+     pfunc_criteria : function used to decide to del an item
+                      If this function is NULL, no criterion is
+                      applied.
+   Input/output parameter(s) :
+     *pring : \fBnetwib_ring\fP where to work
+     pinfos : optional parameter (can be NULL) which will be
+              used as the parameter for pfunc_criteria.
+              This may be used to send information to *pfunc_criteria.
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_ring_del_criteria\fP(\fBnetwib_ring\fP *pring,
+                                    \fBnetwib_ring_criteria_pf\fP pfunc_criteria,
+                                    \fBnetwib_ptr\fP pinfos,
+                                    \fBnetwib_bool\fP eraseitems);
+\fI#define\fP \fBnetwib_ring_del_all\fP(pring,eraseitems) \fBnetwib_ring_del_criteria\fP(pring,NULL,NULL,eraseitems)
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_ring_del_duplicate\fP
+   Description :
+     Del duplicate items from a \fBnetwib_ring\fP.
+   Input parameter(s) :
+     pfunc_compare : function used to compare two items
+   Input/output parameter(s) :
+     *pring : \fBnetwib_ring\fP where to work
+     pinfos : optional parameter (can be NULL) which will be
+              used as the parameter for pfunc_compare.
+              This may be used to send information to *pfunc_compare.
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_ring_del_duplicate\fP(\fBnetwib_ring\fP *pring,
+                                     \fBnetwib_ring_compare_pf\fP pfunc_compare,
+                                     \fBnetwib_ptr\fP pinfos,
+                                     \fBnetwib_bool\fP eraseitems);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_ring_sort\fP
+   Description :
+     Sort items of the \fBnetwib_ring\fP.
+   Input parameter(s) :
+     pfunc_compare : function used to compare two items
+   Input/output parameter(s) :
+     *pring : \fBnetwib_ring\fP where to work
+     pinfos : optional parameter (can be NULL) which will be
+              used as the parameter for *pfunc_compare.
+              This may be used to send information to *pfunc_compare.
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_ring_sort\fP(\fBnetwib_ring\fP *pring,
+                            \fBnetwib_ring_compare_pf\fP pfunc_compare,
+                            \fBnetwib_ptr\fP pinfos);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_ring_group\fP
+   Description :
+     Group items of the \fBnetwib_ring\fP.
+   Input parameter(s) :
+     pfunc_compare : function used to compare two items
+   Input/output parameter(s) :
+     *pring : \fBnetwib_ring\fP where to work
+     pinfos : optional parameter (can be NULL) which will be
+              used as the parameter for *pfunc_compare.
+              This may be used to send information to *pfunc_compare.
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_ring_group\fP(\fBnetwib_ring\fP *pring,
+                             \fBnetwib_ring_compare_pf\fP pfunc_compare,
+                             \fBnetwib_ptr\fP pinfos);
+.fi
+.SH MODULE RINGI
+.nf
+
+/*-------------------------------------------------------------*/
+/***************************************************************
+ * A \fBnetwib_ring_index\fP is used to loop through a ring.         *
+ *                                                             *
+ * When the ring is only read, several indexes                 *
+ * can simultaneously loop through the ring.                   *
+ *                                                             *
+ * However, when the ring is edited, strange behavior can      *
+ * occur when a \fBnetwib_ring_index_xyz\fP function is called,      *
+ * depending on function used to edit the ring:                *
+ *  - \fBnetwib_ring_index_next\fP,                                  *
+ *    \fBnetwib_ring_index_previous\fP,                              *
+ *    \fBnetwib_ring_index_this_value\fP,                            *
+ *    \fBnetwib_ring_index_this_replace\fP,                          *
+ *    \fBnetwib_ring_index_this_del\fP:                              *
+ *      No problem.                                            *
+ *  - \fBnetwib_ring_index_add_before\fP,                            *
+ *    \fBnetwib_ring_index_add_after\fP,                             *
+ *    \fBnetwib_ring_add_first\fP,                                   *
+ *    \fBnetwib_ring_add_last\fP,                                    *
+ *    \fBnetwib_ring_index_add_ring_xyz\fP:                          *
+ *      The added item(s) may be returned or not returned,     *
+ *      depending on the insertion position relative to the    *
+ *      index position.                                        *
+ *  - \fBnetwib_ring_sort\fP,                                        *
+ *    \fBnetwib_ring_group\fP:                                       *
+ *      The reordered items may be returned twice or never     *
+ *      returned. There is no way to know.                     *
+ *  - \fBnetwib_ring_del_criteria\fP,                                *
+ *    \fBnetwib_ring_del_duplicate\fP:                               *
+ *      You should not use them because if the item pointed by *
+ *      the index is deleted, it will cause an access to freed *
+ *      memory. You may use them only if you are sure to not   *
+ *      delete the current item.                               *
+ *      However, after \fBnetwib_ring_index_this_del\fP, you must    *
+ *      not use them because there is not way to know if they  *
+ *      will delete internal items.                            *
+ ***************************************************************/
+
+/*-------------------------------------------------------------*/
+\fItypedef\fP struct \fBnetwib_ring_index\fP \fBnetwib_ring_index\fP;
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_ring_index_init\fP
+   Description :
+     Initialize a \fBnetwib_ring_index\fP used to loop through
+     a \fBnetwib_ring\fP.
+   Input parameter(s) :
+   Input/output parameter(s) :
+   Output parameter(s) :
+     **ppringindex : \fBnetwib_ring_index\fP allocated and initialized
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_ring_index_init\fP(\fBnetwib_constring\fP *pring,
+                                  \fBnetwib_ring_index\fP **ppringindex);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_ring_index_close\fP
+   Description :
+     Close a \fBnetwib_ringindex\fP.
+   Input parameter(s) :
+   Input/output parameter(s) :
+     **ppringindex : \fBnetwib_ring_index\fP closed
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_ring_index_close\fP(\fBnetwib_ring_index\fP **ppringindex);
+
+/*-------------------------------------------------------------*/
+/* Types to control a \fBnetwib_ring_index\fP */
+\fItypedef\fP enum {
+  \fBNETWIB_RING_INDEX_CTLTYPE_REWIND\fP = 1,  /* position at beginning */
+  \fBNETWIB_RING_INDEX_CTLTYPE_INDEX\fP        /* reset with index pos */
+} \fBnetwib_ring_index_ctltype\fP;
+/* Those functions permit to set/get parameters (pointer and
+   integer) about a \fBnetwib_ring_index\fP. It should not be used directly,
+   but by the defines.
+*/
+\fBnetwib_err\fP \fBnetwib_ring_index_ctl_set\fP(\fBnetwib_ring_index\fP *pringindex,
+                                     \fBnetwib_ring_index_ctltype\fP type,
+                                     \fBnetwib_ptr\fP p,
+                                     \fBnetwib_uint32\fP ui);
+\fBnetwib_err\fP \fBnetwib_ring_index_ctl_get\fP(\fBnetwib_ring_index\fP *pringindex,
+                                     \fBnetwib_ring_index_ctltype\fP type,
+                                     \fBnetwib_ptr\fP p,
+                                     \fBnetwib_uint32\fP *pui);
+
+/*-------------------------------------------------------------*/
+/* \fBnetwib_err\fP f(\fBnetwib_ring_index\fP *pringindex); */
+\fI#define\fP \fBnetwib_ring_index_ctl_set_rewind\fP(pringindex) \fBnetwib_ring_index_ctl_set\fP(pringindex,\fBNETWIB_RING_INDEX_CTLTYPE_REWIND\fP,NULL,0)
+/* \fBnetwib_err\fP f(\fBnetwib_ring_index\fP *pringindex,\fBnetwib_ring_index\fP *pringindexref);*/
+\fI#define\fP \fBnetwib_ring_index_ctl_set_index\fP(pringindex,pringindexref) \fBnetwib_ring_index_ctl_set\fP(pringindex,\fBNETWIB_RING_INDEX_CTLTYPE_INDEX\fP,pringindexref,0)
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_ring_index_next_criteria\fP
+   Description :
+     Get the next item in the ring.
+   Input parameter(s) :
+     pfunc_criteria : function used to decide to remove an item
+                      If this function is NULL, no criterion is
+                      applied.
+   Input/output parameter(s) :
+     *pringindex : \fBnetwib_ring_index\fP
+     pinfos : optional parameter (can be NULL) which will be
+              used as the parameter for pfunc_criteria.
+              This may be used to send information to *pfunc_criteria.
+   Output parameter(s) :
+     *ppitem : pointer to the memory containing the item
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+     \fBNETWIB_ERR_DATAEND\fP : end of the ring reached
+*/
+\fBnetwib_err\fP \fBnetwib_ring_index_next_criteria\fP(\fBnetwib_ring_index\fP *pringindex,
+                                           \fBnetwib_ring_criteria_pf\fP pfunc_criteria,
+                                           \fBnetwib_ptr\fP pinfos,
+                                           \fBnetwib_ptr\fP *ppitem);
+\fI#define\fP \fBnetwib_ring_index_next\fP(pringindex,ppitem) \fBnetwib_ring_index_next_criteria\fP(pringindex,NULL, NULL,ppitem)
+\fBnetwib_err\fP \fBnetwib_ring_index_previous_criteria\fP(\fBnetwib_ring_index\fP *pringindex,
+                                               \fBnetwib_ring_criteria_pf\fP pfunc_criteria,
+                                               \fBnetwib_ptr\fP pinfos,
+                                               \fBnetwib_ptr\fP *ppitem);
+\fI#define\fP \fBnetwib_ring_index_previous\fP(pringindex,ppitem) \fBnetwib_ring_index_previous_criteria\fP(pringindex,NULL, NULL,ppitem)
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_ring_index_add_before\fP
+   Description :
+     Add an item in the ring.
+   Input parameter(s) :
+   Input/output parameter(s) :
+     *pringindex : \fBnetwib_ring_index\fP
+   Output parameter(s) :
+     *ppitem : pointer to the memory containing the item
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_ring_index_add_before\fP(\fBnetwib_ring_index\fP *pringindex,
+                                        \fBnetwib_constptr\fP pitem);
+\fBnetwib_err\fP \fBnetwib_ring_index_add_after\fP(\fBnetwib_ring_index\fP *pringindex,
+                                       \fBnetwib_constptr\fP pitem);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_ring_index_this_value\fP
+   Description :
+     Re-give the last value.
+   Input parameter(s) :
+   Input/output parameter(s) :
+     *pringindex : \fBnetwib_ring_index\fP
+   Output parameter(s) :
+     *ppitem : pointer to the memory containing the item
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_ring_index_this_value\fP(\fBnetwib_ring_index\fP *pringindex,
+                                        \fBnetwib_ptr\fP *ppitem);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_ring_index_this_del\fP
+   Description :
+     Delete the last given value by a \fBnetwib_ring_index_next\fP
+     function.
+   Input parameter(s) :
+     eraseitem : if true, function pfunc_erase (set in
+                 \fBnetwib_hash_init\fP) is called to erase the
+                 item located at position
+   Input/output parameter(s) :
+     *pringindex : \fBnetwib_ring_index\fP
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_ring_index_this_del\fP(\fBnetwib_ring_index\fP *pringindex,
+                                      \fBnetwib_bool\fP eraseitem);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_ring_index_this_replace\fP
+   Description :
+     Replace value, but keep the same key.
+   Input parameter(s) :
+     pitem : pointer to an allocated memory containing the item
+     erasepreviousitem : if true, function pfunc_erase (set in
+                         \fBnetwib_ring_init\fP) is called to erase the
+                         item previously located in the ring
+   Input/output parameter(s) :
+     *pringindex : \fBnetwib_ring_index\fP
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_ring_index_this_replace\fP(\fBnetwib_ring_index\fP *pringindex,
+                                          \fBnetwib_constptr\fP pitem,
+                                          \fBnetwib_bool\fP erasepreviousitem);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_ring_index_add_ring_criteria\fP
+   Description :
+     Add a ring within another ring. Only items matching a
+     criterion are added.
+   Input parameter(s) :
+     *pringindex : ring is added after this index
+     *pringtoadd : \fBnetwib_ring\fP to add in pring
+     pfunc_criteria : function used to decide to add an item
+                      If this function is NULL, no criterion is
+                      applied.
+     duplicateitems : if true, function pfunc_duplicate (set in
+                      \fBnetwib_ring_init\fP) is called to duplicate
+                      items
+   Input/output parameter(s) :
+     *pring : \fBnetwib_ring\fP where to work
+     pinfos : optional parameter (can be NULL) which will be
+              used as the parameter for pfunc_criteria.
+              This may be used to send information to *pfunc_criteria.
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+   Note :
+     If an error occurs during addition, ring will only
+     contain partial data.
+*/
+\fBnetwib_err\fP \fBnetwib_ring_index_add_ring_criteria\fP(\fBnetwib_ring_index\fP *pringindex,
+                                               \fBnetwib_ring\fP *pringtoadd,
+                                               \fBnetwib_ring_criteria_pf\fP pfunc_criteria,
+                                               \fBnetwib_ptr\fP pinfos,
+                                               \fBnetwib_bool\fP duplicateitems);
+\fI#define\fP \fBnetwib_ring_index_add_ring_all\fP(pringindex,pringtoadd,duplicateitems) \fBnetwib_ring_index_add_ring_criteria\fP(pringindex,pringtoadd,NULL,NULL,duplicateitems)
+.fi
+.SH MODULE HASH
+.nf
+
+/*-------------------------------------------------------------*/
+/***************************************************************
+ * A \fBnetwib_hash\fP is an associative array : data is related to  *
+ * a key. It's not possible to have two identical keys.        *
+ *                                                             *
+ * The hash contains pointers.                                 *
+ *                                                             *
+ * When an item is removed from the hash, its associated       *
+ * information stored in the pointer can be :                  *
+ *  - left untouched : user will have to free the pointer and  *
+ *    its information                                          *
+ *  - erased : the information is lost : a function of type    *
+ *    \fBnetwib_hash_erase_pf\fP has to be called                    *
+ * For example, a user might want to store allocated memory    *
+ * containing a \fBnetwib_buf\fP. Then when the hash is closed, the  *
+ * \fBnetwib_buf_close\fP function has to be called and the memory   *
+ * has to be freed.                                            *
+ ***************************************************************/
+
+/*-------------------------------------------------------------*/
+\fItypedef\fP struct \fBnetwib_hash\fP \fBnetwib_hash\fP;
+\fItypedef\fP const \fBnetwib_hash\fP \fBnetwib_consthash\fP;
+
+/*-------------------------------------------------------------*/
+/* This prototype defines a function erasing the item pitem */
+\fItypedef\fP \fBnetwib_err\fP (*\fBnetwib_hash_erase_pf\fP)(\fBnetwib_ptr\fP pitem);
+/* This prototype defines a function duplicating an item */
+\fItypedef\fP \fBnetwib_err\fP (*\fBnetwib_hash_duplicate_pf\fP)(\fBnetwib_constptr\fP pitem,
+                                               \fBnetwib_ptr\fP *pdupofitem);
+/* This prototype defines a function detecting if an item
+   matches a criteria
+    - if it matches, *pbool is set to \fBNETWIB_TRUE\fP
+    - if it does not matches, *pbool is set to \fBNETWIB_FALSE\fP
+   The parameter pinfos will be set with optional information
+   given when calling the function.
+ */
+\fItypedef\fP \fBnetwib_err\fP (*\fBnetwib_hash_criteria_pf\fP)(\fBnetwib_constbuf\fP *pkey,
+                                              \fBnetwib_constptr\fP pitem,
+                                              \fBnetwib_ptr\fP pinfos,
+                                              \fBnetwib_bool\fP *pbool);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_hash_init\fP
+   Description :
+     Initialize a \fBnetwib_hash\fP.
+   Input parameter(s) :
+     *pfunc_erase : function needed to erase items
+                    This can be NULL
+     *pfunc_duplicate : function needed to duplicate items
+                        This can be NULL
+   Input/output parameter(s) :
+   Output parameter(s) :
+     **pphash : \fBnetwib_hash\fP allocated and initialized
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_hash_init\fP(\fBnetwib_hash_erase_pf\fP pfunc_erase,
+                            \fBnetwib_hash_duplicate_pf\fP pfunc_duplicate,
+                            \fBnetwib_hash\fP **pphash);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_hash_close\fP
+   Description :
+     Destroy a \fBnetwib_hash\fP.
+   Input parameter(s) :
+     eraseitems : if true, function pfunc_erase (set in
+                  \fBnetwib_hash_init\fP) is called
+   Input/output parameter(s) :
+     **pphash : \fBnetwib_hash\fP to destroy
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_hash_close\fP(\fBnetwib_hash\fP **pphash,
+                             \fBnetwib_bool\fP eraseitems);
+
+/*-------------------------------------------------------------*/
+/* Types to control a \fBnetwib_hash\fP */
+\fItypedef\fP enum {
+  \fBNETWIB_HASH_CTLTYPE_COUNT\fP = 1   /* count number of items */
+} \fBnetwib_hash_ctltype\fP;
+\fBnetwib_err\fP \fBnetwib_hash_ctl_set\fP(\fBnetwib_hash\fP *phash,
+                               \fBnetwib_hash_ctltype\fP type,
+                               \fBnetwib_ptr\fP p,
+                               \fBnetwib_uint32\fP ui);
+\fBnetwib_err\fP \fBnetwib_hash_ctl_get\fP(\fBnetwib_hash\fP *phash,
+                               \fBnetwib_hash_ctltype\fP type,
+                               \fBnetwib_ptr\fP p,
+                               \fBnetwib_uint32\fP *pui);
+
+/*-------------------------------------------------------------*/
+/* \fBnetwib_err\fP f(\fBnetwib_hash\fP *phash, \fBnetwib_uint32\fP *pnumberofitems); */
+\fI#define\fP \fBnetwib_hash_ctl_get_count\fP(phash,pnumberofitems) \fBnetwib_hash_ctl_get\fP(phash,\fBNETWIB_HASH_CTLTYPE_COUNT\fP,NULL,pnumberofitems)
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_hash_add\fP
+   Description :
+     Add an item to the \fBnetwib_hash\fP. Is the key already exists,
+     it is overwritten.
+   Input parameter(s) :
+     *pkey : key to store
+     pitem : pointer to an allocated memory containing the item
+     erasepreviousitem : if true, function pfunc_erase (set in
+                         \fBnetwib_hash_init\fP) is called to erase the
+                         item previously located in the hash
+   Input/output parameter(s) :
+     *phash : \fBnetwib_hash\fP where to work
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_hash_add\fP(\fBnetwib_hash\fP *phash,
+                           \fBnetwib_constbuf\fP *pkey,
+                           \fBnetwib_constptr\fP pitem,
+                           \fBnetwib_bool\fP erasepreviousitem);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_hash_add_hash_criteria\fP
+   Description :
+     Add a hash into the \fBnetwib_hash\fP. Existing keys
+     are overwritten.
+   Input parameter(s) :
+     pfunc_criteria : function used to decide to add an item
+                      If this function is NULL, no criterion is
+                      applied.
+     erasepreviousitems : if true, function pfunc_erase (set in
+                          \fBnetwib_hash_init\fP) is called to erase the
+                          items previously located in the hash
+   Input/output parameter(s) :
+     *phash : \fBnetwib_hash\fP where to work
+     *phashtoadd : \fBnetwib_hash\fP to add
+     pinfos : optional parameter (can be NULL) which will be
+              used as the parameter for pfunc_criteria.
+              This may be used to send information to *pfunc_criteria.
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_hash_add_hash_criteria\fP(\fBnetwib_hash\fP *phash,
+                                         \fBnetwib_hash\fP *phashtoadd,
+                                         \fBnetwib_hash_criteria_pf\fP pfunc_criteria,
+                                         \fBnetwib_ptr\fP pinfos,
+                                         \fBnetwib_bool\fP erasepreviousitems);
+\fI#define\fP \fBnetwib_hash_add_hash_all\fP(phash,phashtoadd,erasepreviousitems) \fBnetwib_hash_add_hash_criteria\fP(phash,phashtoadd,NULL,NULL,erasepreviousitems)
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_hash_contains\fP
+   Description :
+     Check if a key is in the hash.
+   Input parameter(s) :
+     *phash : \fBnetwib_hash\fP where to work
+     *pkey : key to obtain
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pyes : true if key is found
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_hash_contains\fP(\fBnetwib_hash\fP *phash,
+                                \fBnetwib_constbuf\fP *pkey,
+                                \fBnetwib_bool\fP *pyes);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_hash_value\fP
+   Description :
+     Get the value of an item.
+   Input parameter(s) :
+     *phash : \fBnetwib_hash\fP where to work
+     *pkey : key to obtain
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *ppitem : pointer to the memory containing the item
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+     \fBNETWIB_ERR_NOTFOUND\fP : key not found
+*/
+\fBnetwib_err\fP \fBnetwib_hash_value\fP(\fBnetwib_hash\fP *phash,
+                             \fBnetwib_constbuf\fP *pkey,
+                             \fBnetwib_ptr\fP *ppitem);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_hash_del\fP
+   Description :
+     Remove an item from the \fBnetwib_hash\fP.
+   Input parameter(s) :
+     *pkey : key to del
+     eraseitem : if true, function pfunc_erase (set in
+                 \fBnetwib_hash_init\fP) is called to erase the
+                 item located at position
+   Input/output parameter(s) :
+     *phash : \fBnetwib_hash\fP where to work
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+     \fBNETWIB_ERR_NOTFOUND\fP : key not found
+*/
+\fBnetwib_err\fP \fBnetwib_hash_del\fP(\fBnetwib_hash\fP *phash,
+                           \fBnetwib_constbuf\fP *pkey,
+                           \fBnetwib_bool\fP eraseitem);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_hash_del_criteria\fP
+   Description :
+     Del items matching a criterion.
+   Input parameter(s) :
+     pfunc_criteria : function used to decide to del an item
+                      If this function is NULL, no criterion is
+                      applied.
+   Input/output parameter(s) :
+     *phash : \fBnetwib_hash\fP where to work
+     pinfos : optional parameter (can be NULL) which will be
+              used as the parameter for pfunc_criteria.
+              This may be used to send information to *pfunc_criteria.
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_hash_del_criteria\fP(\fBnetwib_hash\fP *phash,
+                                    \fBnetwib_hash_criteria_pf\fP pfunc_criteria,
+                                    \fBnetwib_ptr\fP pinfos,
+                                    \fBnetwib_bool\fP eraseitems);
+\fI#define\fP \fBnetwib_hash_del_all\fP(phash,eraseitems) \fBnetwib_hash_del_criteria\fP(phash,NULL,NULL,eraseitems)
+.fi
+.SH MODULE HASHI
+.nf
+
+/*-------------------------------------------------------------*/
+/***************************************************************
+ * A \fBnetwib_hash_index\fP is used to loop through a hash.         *
+ *                                                             *
+ * When the hash is only read, several indexes                 *
+ * can simultaneously loop through the hash.                   *
+ *                                                             *
+ * However, when the hash is edited, strange behavior can      *
+ * occur when a \fBnetwib_hash_index_xyz\fP function is called,      *
+ * depending on function used to edit the hash:                *
+ *  - \fBnetwib_hash_contains\fP,                                    *
+ *    \fBnetwib_hash_value\fP,                                       *
+ *    \fBnetwib_hash_index_next\fP                                   *
+ *    \fBnetwib_hash_index_this_value\fP,                            *
+ *    \fBnetwib_hash_index_this_replace\fP,                          *
+ *    \fBnetwib_hash_index_this_del\fP:                              *
+ *      No problem.                                            *
+ *  - \fBnetwib_hash_add\fP,                                         *
+ *    \fBnetwib_hash_add_hash_criteria\fP:                           *
+ *      The added item(s) may be returned or not returned,     *
+ *      depending on the (unpredictable) insertion position    *
+ *      relative to the index position.                        *
+ *  - \fBnetwib_hash_del\fP,                                         *
+ *    \fBnetwib_hash_del_criteria\fP:                                *
+ *      You should not use them because if the item pointed by *
+ *      the index is deleted, it will cause an access to freed *
+ *      memory. You may use them only if you are sure to not   *
+ *      delete the current item.                               *
+ *      However, after \fBnetwib_hash_index_this_del\fP, you must    *
+ *      not use them because there is not way to know if they  *
+ *      will delete internal items.                            *
+ ***************************************************************/
+
+/*-------------------------------------------------------------*/
+\fItypedef\fP struct \fBnetwib_hash_index\fP \fBnetwib_hash_index\fP;
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_hash_index_init\fP
+   Description :
+     Initialize a \fBnetwib_hash_index\fP used to loop through
+     a \fBnetwib_hash\fP.
+   Input parameter(s) :
+   Input/output parameter(s) :
+   Output parameter(s) :
+     **pphashindex : \fBnetwib_hash_index\fP allocated and initialized
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_hash_index_init\fP(\fBnetwib_consthash\fP *phash,
+                                  \fBnetwib_hash_index\fP **pphashindex);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_hash_index_close\fP
+   Description :
+     Close a \fBnetwib_hashindex\fP.
+   Input parameter(s) :
+   Input/output parameter(s) :
+     **pphashindex : \fBnetwib_hash_index\fP closed
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_hash_index_close\fP(\fBnetwib_hash_index\fP **pphashindex);
+
+/*-------------------------------------------------------------*/
+/* Types to control a \fBnetwib_hash_index\fP */
+\fItypedef\fP enum {
+  \fBNETWIB_HASH_INDEX_CTLTYPE_REWIND\fP = 1,  /* position at beginning */
+  \fBNETWIB_HASH_INDEX_CTLTYPE_INDEX\fP        /* reset with index pos */
+} \fBnetwib_hash_index_ctltype\fP;
+/* Those functions permit to set/get parameters (pointer and
+   integer) about a \fBnetwib_hash_index\fP. It should not be used directly,
+   but by the defines.
+*/
+\fBnetwib_err\fP \fBnetwib_hash_index_ctl_set\fP(\fBnetwib_hash_index\fP *phashindex,
+                                     \fBnetwib_hash_index_ctltype\fP type,
+                                     \fBnetwib_ptr\fP p,
+                                     \fBnetwib_uint32\fP ui);
+\fBnetwib_err\fP \fBnetwib_hash_index_ctl_get\fP(\fBnetwib_hash_index\fP *phashindex,
+                                     \fBnetwib_hash_index_ctltype\fP type,
+                                     \fBnetwib_ptr\fP p,
+                                     \fBnetwib_uint32\fP *pui);
+
+/*-------------------------------------------------------------*/
+/* \fBnetwib_err\fP f(\fBnetwib_hash_index\fP *phashindex); */
+\fI#define\fP \fBnetwib_hash_index_ctl_set_rewind\fP(phashindex) \fBnetwib_hash_index_ctl_set\fP(phashindex,\fBNETWIB_HASH_INDEX_CTLTYPE_REWIND\fP,NULL,0)
+/* \fBnetwib_err\fP f(\fBnetwib_hash_index\fP *phashindex,\fBnetwib_hash_index\fP *phashindexref);*/
+\fI#define\fP \fBnetwib_hash_index_ctl_set_index\fP(phashindex,phashindexref) \fBnetwib_hash_index_ctl_set\fP(phashindex,\fBNETWIB_HASH_INDEX_CTLTYPE_INDEX\fP,phashindexref,0)
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_hash_index_next_criteria\fP
+   Description :
+     Get the next item in the hash.
+   Input parameter(s) :
+     pfunc_search : function used to match the item
+   Input/output parameter(s) :
+     *phashindex : \fBnetwib_hash_index\fP
+     pinfos : optional parameter (can be NULL) which will be
+              used as the second parameter for *pfunc_search.
+              This may be used to send information to *pfunc_search.
+   Output parameter(s) :
+     *pkey : found key
+     *ppitem : found item
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+     \fBNETWIB_ERR_DATAEND\fP : end of the hash reached
+*/
+\fBnetwib_err\fP \fBnetwib_hash_index_next_criteria\fP(\fBnetwib_hash_index\fP *phashindex,
+                                           \fBnetwib_hash_criteria_pf\fP pfunc_search,
+                                           \fBnetwib_ptr\fP pinfos,
+                                           \fBnetwib_buf\fP *pkey,
+                                           \fBnetwib_ptr\fP *ppitem);
+\fI#define\fP \fBnetwib_hash_index_next\fP(phashindex,pkey,ppitem) \fBnetwib_hash_index_next_criteria\fP(phashindex,NULL,NULL,pkey,ppitem)
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_hash_index_this_value\fP
+   Description :
+     Re-give the last value.
+   Input parameter(s) :
+   Input/output parameter(s) :
+     *phashindex : \fBnetwib_hash_index\fP
+   Output parameter(s) :
+     *pkey : found key
+     *ppitem : found item
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_hash_index_this_value\fP(\fBnetwib_hash_index\fP *phashindex,
+                                        \fBnetwib_buf\fP *pkey,
+                                        \fBnetwib_ptr\fP *ppitem);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_hash_index_this_del\fP
+   Description :
+     Delete the last given value by a \fBnetwib_hash_index_next\fP
+     function.
+   Input parameter(s) :
+     eraseitem : if true, function pfunc_erase (set in
+                 \fBnetwib_hash_init\fP) is called to erase the
+                 item located at position
+   Input/output parameter(s) :
+     *phashindex : \fBnetwib_hash_index\fP
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_hash_index_this_del\fP(\fBnetwib_hash_index\fP *phashindex,
+                                      \fBnetwib_bool\fP eraseitem);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_hash_index_this_replace\fP
+   Description :
+     Replace value, but keep the same key.
+   Input parameter(s) :
+     pitem : pointer to an allocated memory containing the item
+     erasepreviousitem : if true, function pfunc_erase (set in
+                         \fBnetwib_hash_init\fP) is called to erase the
+                         item previously located in the hash
+   Input/output parameter(s) :
+     *phashindex : \fBnetwib_hash_index\fP
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_hash_index_this_replace\fP(\fBnetwib_hash_index\fP *phashindex,
+                                          \fBnetwib_constptr\fP pitem,
+                                          \fBnetwib_bool\fP erasepreviousitem);
+.fi
+.SH MODULE TLV
+.nf
+
+/*-------------------------------------------------------------*/
+/* We need a forward declaration for \fBnetwib_eth\fP, \fBnetwib_ip4\fP and
+   \fBnetwib_port\fP.
+*/
+#include "../net/types.h"
+
+/*-------------------------------------------------------------*/
+/***************************************************************
+ * This module permits to store TLV in a \fBnetwib_buf\fP. A TLV is  *
+ * a data block containing :                                   *
+ *  - Type : \fBnetwib_tlvtype\fP                                    *
+ *  - Length : length of value                                 *
+ *  - Value : value of type 'type'                             *
+ ***************************************************************/
+
+
+/*-------------------------------------------------------------*/
+\fItypedef\fP enum {
+  \fBNETWIB_TLVTYPE_BUF\fP = 1,     /* data */
+  \fBNETWIB_TLVTYPE_UINT\fP,        /* \fBnetwib_uint32\fP 16 or 8 */
+  \fBNETWIB_TLVTYPE_ETH\fP,         /* \fBnetwib_eth\fP */
+  \fBNETWIB_TLVTYPE_IP\fP,          /* \fBnetwib_ip\fP */
+  \fBNETWIB_TLVTYPE_END\fP = 100,   /* end */
+  /* start of free numbers for user */
+  \fBNETWIB_TLVTYPE_USER_BEGIN\fP = \fBNETWIB_ENUM_USER_BEGIN\fP
+} \fBnetwib_tlvtype\fP;
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_tlv_append_xyz\fP
+   Description :
+     Add a TLV to a buf.
+   Input parameter(s) :
+     ...
+   Input/output parameter(s) :
+     *pbuf : \fBnetwib_buf\fP updated
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+   The \fBnetwib_tlv_append_buf\fP function supports \fBNETWIB_BUF_FLAGS_SENSITIVE\fP.
+*/
+\fBnetwib_err\fP \fBnetwib_tlv_append_buf\fP(\fBnetwib_constbuf\fP *pbuf,
+                                 \fBnetwib_buf\fP *ptlv);
+\fBnetwib_err\fP \fBnetwib_tlv_append_uint32\fP(\fBnetwib_uint32\fP ui,
+                                    \fBnetwib_buf\fP *ptlv);
+\fBnetwib_err\fP \fBnetwib_tlv_append_uint64\fP(\fBnetwib_uint64\fP ui,
+                                    \fBnetwib_buf\fP *ptlv);
+\fBnetwib_err\fP \fBnetwib_tlv_append_eth\fP(\fBnetwib_consteth\fP *peth,
+                                 \fBnetwib_buf\fP *ptlv);
+\fBnetwib_err\fP \fBnetwib_tlv_append_ip\fP(\fBnetwib_constip\fP *pip,
+                                \fBnetwib_buf\fP *ptlv);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_tlv_append_end\fP
+   Description :
+     Indicates the end of data. It is for example used after
+     several \fBnetwib_tlv_append_data\fP to indicates the end of data.
+   Input parameter(s) :
+   Input/output parameter(s) :
+     *pbuf : \fBnetwib_buf\fP updated
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_tlv_append_end\fP(\fBnetwib_buf\fP *ptlv);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_tlv_append_newtype\fP
+   Description :
+     Add a user defined TLV.
+   Input parameter(s) :
+     type : type
+     *pvalue : buffer containing the value
+   Input/output parameter(s) :
+     *pbuf : \fBnetwib_buf\fP updated
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_tlv_append_newtype\fP(\fBnetwib_tlvtype\fP type,
+                                     \fBnetwib_constbuf\fP *pvalue,
+                                     \fBnetwib_buf\fP *ptlv);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_tlv_xyzpend_tlv\fP
+   Description :
+     Add a predefined TLV.
+   Input parameter(s) :
+     *pnewtlv : buffer containing the preformed tlv
+   Input/output parameter(s) :
+     *pbuf : \fBnetwib_buf\fP updated
+   Output parameter(s) :
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+   Both functions supports \fBNETWIB_BUF_FLAGS_SENSITIVE\fP.
+*/
+\fBnetwib_err\fP \fBnetwib_tlv_append_tlv\fP(\fBnetwib_constbuf\fP *pnewtlv,
+                                 \fBnetwib_buf\fP *ptlv);
+\fBnetwib_err\fP \fBnetwib_tlv_prepend_tlv\fP(\fBnetwib_constbuf\fP *pnewtlv,
+                                  \fBnetwib_buf\fP *ptlv);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_tlv_entry_typelen\fP
+   Description :
+     Obtain type and length of current TLV.
+   Input parameter(s) :
+     *pbuf : \fBnetwib_buf\fP containing the TLV
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *ptype : type
+     *plength : length
+     *pskipsize : size to skip this entry
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_tlv_entry_typelen\fP(\fBnetwib_constbuf\fP *ptlv,
+                                    \fBnetwib_tlvtype\fP *ptype,
+                                    \fBnetwib_uint32\fP *plength,
+                                    \fBnetwib_uint32\fP *pskipsize);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_tlv_decode_xyz\fP
+   Description :
+     Decode a TLV from a buf.
+   Input parameter(s) :
+     *pbuf : \fBnetwib_buf\fP containing the TLV
+   Input/output parameter(s) :
+     ...
+   Output parameter(s) :
+     *pskipsize : size to skip this entry
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+   The \fBnetwib_tlv_decode_buf\fP function supports \fBNETWIB_BUF_FLAGS_SENSITIVE\fP.
+*/
+\fBnetwib_err\fP \fBnetwib_tlv_decode_buf\fP(\fBnetwib_constbuf\fP *ptlv,
+                                 \fBnetwib_bufext\fP *pbuf,
+                                 \fBnetwib_uint32\fP *pskipsize);
+\fBnetwib_err\fP \fBnetwib_tlv_decode_uint32\fP(\fBnetwib_constbuf\fP *ptlv,
+                                    \fBnetwib_uint32\fP *pui,
+                                    \fBnetwib_uint32\fP *pskipsize);
+\fBnetwib_err\fP \fBnetwib_tlv_decode_uint64\fP(\fBnetwib_constbuf\fP *ptlv,
+                                    \fBnetwib_uint64\fP *pui,
+                                    \fBnetwib_uint32\fP *pskipsize);
+\fBnetwib_err\fP \fBnetwib_tlv_decode_eth\fP(\fBnetwib_constbuf\fP *ptlv,
+                                 \fBnetwib_eth\fP *peth,
+                                 \fBnetwib_uint32\fP *pskipsize);
+\fBnetwib_err\fP \fBnetwib_tlv_decode_ip\fP(\fBnetwib_constbuf\fP *ptlv,
+                                \fBnetwib_ip\fP *pip,
+                                \fBnetwib_uint32\fP *pskipsize);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_tlv_decode_newtype\fP
+   Description :
+     Decode a user defined TLV from a buf.
+   Input parameter(s) :
+     *pbuf : \fBnetwib_buf\fP containing the TLV
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *ptype : type
+     *plength : length
+     *pvalue : buffer containing the value
+     *pskipsize : size to skip this entry
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_tlv_decode_newtype\fP(\fBnetwib_constbuf\fP *ptlv,
+                                     \fBnetwib_tlvtype\fP *ptype,
+                                     \fBnetwib_uint32\fP *plength,
+                                     \fBnetwib_bufext\fP *pvalue,
+                                     \fBnetwib_uint32\fP *pskipsize);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_tlv_decode_tlv\fP
+   Description :
+     Decode a TLV from a buf.
+   Input parameter(s) :
+     *pbuf : \fBnetwib_buf\fP containing the TLV
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pbuf : \fBnetwib_buf\fP containing the first entry
+     *pskipsize : size to skip this entry
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+   This function supports \fBNETWIB_BUF_FLAGS_SENSITIVE\fP.
+*/
+\fBnetwib_err\fP \fBnetwib_tlv_decode_tlv\fP(\fBnetwib_constbuf\fP *ptlv,
+                                 \fBnetwib_bufext\fP *pfirsttlv,
+                                 \fBnetwib_uint32\fP *pskipsize);
+.fi
+.SH MODULE ARRAY
+.nf
+
+/*-------------------------------------------------------------*/
+/***************************************************************
+ * A \fBnetwib_array\fP permits to store a dynamic number of items.  *
+ * Those items all have the same size.                         *
+ *                                                             *
+ * The common implementation of such storage is :              *
+ *   p = malloc(numitems*sizeof(item));                        *
+ *   p[1] = ...;                                               *
+ * However, if sizeof(item) is not a multiple of the processor *
+ * size, a bus error occurs on strict processors (Alpha,       *
+ * Sparc). For example, storing 5 items of size 3 can be       *
+ * represented in memory (start at address 0x76543210) :       *
+ *   .- address 0x76543210                                     *
+ *   ABCABCABCABCABC                                           *
+ * The second item is at address 0x76543213 (0x76543210+3)     *
+ * which is invalid and causes a bus error.                    *
+ * The second drawback of this common implementation is memory *
+ * management is not efficient, because when p contains a lot  *
+ * of items, this big buffer has to be reallocated.            *
+ *                                                             *
+ * Netwib's implementation is different. Instead of creating   *
+ * an array of items, netwib creates an array of pointers to   *
+ * items. This solves both above problems.                     *
+ *                                                             *
+ * Usage example:                                              *
+ *   \fBnetwib_array\fP a;                                           *
+ *   struct foobar *pfb;                                       *
+ *   \fBnetwib_er\fP(\fBnetwib_array_init\fP(sizeof(struct foobar),3,&a)); *
+ *   pfb = (struct foobar *)a.p[0];                            *
+ *   pfb->...;                                                 *
+ *   for (i = 0; i < a.size; i++) {                            *
+ *     pfb = (struct foobar *)a.p[i];                          *
+ *     pfb->...;                                               *
+ *   }                                                         *
+ *   \fBnetwib_er\fP(\fBnetwib_array_ctl_set_size\fP(&a, 6));              *
+ *   pfb = (struct foobar *)a.p[5];                            *
+ *   \fBnetwib_er\fP(\fBnetwib_array_close\fP(&a));                        *
+ ***************************************************************/
+
+/*-------------------------------------------------------------*/
+\fItypedef\fP struct {
+  \fBnetwib_ptr\fP *p;      /* array of pointers to items */
+  \fBnetwib_uint32\fP size; /* size of p array (0 -> size-1) */
+  \fBnetwib_ptr\fP opaque;  /* internal storage is here. Do not use. */
+} \fBnetwib_array\fP;
+\fItypedef\fP const \fBnetwib_array\fP \fBnetwib_constarray\fP;
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_array_init\fP
+   Description :
+     Initialize a \fBnetwib_array\fP.
+   Input parameter(s) :
+     itemsize : size of items to store
+     initialsize : initial number of items to store
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *parray : \fBnetwib_array\fP initialized
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_array_init\fP(\fBnetwib_uint32\fP itemsize,
+                             \fBnetwib_uint32\fP initialsize,
+                             \fBnetwib_array\fP *parray);
+
+/*-------------------------------------------------------------*/
+/* Name : \fBnetwib_array_close\fP
+   Description :
+     Close a \fBnetwib_array\fP.
+   Input parameter(s) :
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *parray : \fBnetwib_array\fP to close
+   Normal return values :
+     \fBNETWIB_ERR_OK\fP : ok
+*/
+\fBnetwib_err\fP \fBnetwib_array_close\fP(\fBnetwib_array\fP *parray);
+
+/*-------------------------------------------------------------*/
+/* Types to control a \fBnetwib_array\fP */
+\fItypedef\fP enum {
+  \fBNETWIB_ARRAY_CTLTYPE_SIZE\fP = 1   /* request an array to grow
+                                     or shrink */
+} \fBnetwib_array_ctltype\fP;
+\fBnetwib_err\fP \fBnetwib_array_ctl_set\fP(\fBnetwib_array\fP *parray,
+                                \fBnetwib_array_ctltype\fP type,
+                                \fBnetwib_ptr\fP p,
+                                \fBnetwib_uint32\fP ui);
+\fBnetwib_err\fP \fBnetwib_array_ctl_get\fP(\fBnetwib_array\fP *parray,
+                                \fBnetwib_array_ctltype\fP type,
+                                \fBnetwib_ptr\fP p,
+                                \fBnetwib_uint32\fP *pui);
+
+/*-------------------------------------------------------------*/
+/* \fBnetwib_err\fP f(\fBnetwib_array\fP *parray, \fBnetwib_uint32\fP newsize); */
+\fI#define\fP \fBnetwib_array_ctl_set_size\fP(parray,newsize) \fBnetwib_array_ctl_set\fP(parray,\fBNETWIB_ARRAY_CTLTYPE_SIZE\fP,NULL,newsize)
+\fI#define\fP \fBnetwib_array_ctl_get_size\fP(parray,pnewsize) \fBnetwib_array_ctl_get\fP(parray,\fBNETWIB_ARRAY_CTLTYPE_SIZE\fP,NULL,pnewsize)
+.fi
+.SH MODULE UINT64
+.nf
+
+/*-------------------------------------------------------------*/
+/***************************************************************
+ * Type \fBnetwib_uint64\fP, can be represented as:                  *
+ *  - a 64 bit integer                                         *
+ *  - a structure containing two 32 bit integers               *
+ * In the first case, math operations are supported by the     *
+ * compiler.                                                   *
+ * In the second case, following functions are needed.         *
+ ***************************************************************/
+
+/*-------------------------------------------------------------*/
+#if \fBNETWIB_INT64_FAKE\fP == 0
+ \fI#define\fP \fBnetwib__uint64_init_8\fP(a,b,c,d,e,f,g,h,x) x = \fBnetwib_c2_uint64_8\fP(a,b,c,d,e,f,g,h)
+ \fI#define\fP \fBnetwib__uint64_init_32\fP(a,b,x) x = (((\fBnetwib_uint64\fP)((\fBnetwib_uint32\fP)(a))<<32)|(\fBnetwib_uint64\fP)((\fBnetwib_uint32\fP)(b)))
+#else
+ \fI#define\fP \fBnetwib__uint64_init_8\fP(a,b,c,d,e,f,g,h,x) (x).high = \fBnetwib_c2_uint32_4\fP(a,b,c,d); (x).low = \fBnetwib_c2_uint32_4\fP(e,f,g,h)
+ \fI#define\fP \fBnetwib__uint64_init_32\fP(a,b,x) {(x).high = (a); (x).low = (b);}
+#endif
+
+
+/*-------------------------------------------------------------*/
+#if \fBNETWIB_INT64_FAKE\fP == 0
+ \fI#define\fP \fBnetwib__uint64_init_uint32\fP(a,x) x = ((\fBnetwib_uint64\fP)(a))
+#else
+ \fI#define\fP \fBnetwib__uint64_init_uint32\fP(a,x) \fBnetwib__uint64_init_32\fP(0,a,x)
+#endif
+
+/*-------------------------------------------------------------*/
+#if \fBNETWIB_INT64_FAKE\fP == 0
+ \fI#define\fP \fBnetwib__uint64_init_uintmax\fP(a,x) x = ((\fBnetwib_uint64\fP)(a))
+#else
+ #if \fBNETWIB_INTMAX_BITS\fP == 64
+  \fI#define\fP \fBnetwib__uint64_init_uintmax\fP(a,x) \fBnetwib__uint64_init_32\fP((\fBnetwib_uint32\fP)((a)>>32),(\fBnetwib_uint32\fP)((a)&0xFFFFFFFFu),x)
+ #else
+  \fI#define\fP \fBnetwib__uint64_init_uintmax\fP(a,x) \fBnetwib__uint64_init_uint32\fP(a,x)
+ #endif
+#endif
+
+/*-------------------------------------------------------------*/
+#if \fBNETWIB_INT64_FAKE\fP == 0
+ \fI#define\fP \fBnetwib__uint64_init_uintptr\fP(a,x) x = ((\fBnetwib_uint64\fP)(a))
+#else
+ #if \fBNETWIB_INTPTR_BITS\fP == 64
+  \fI#define\fP \fBnetwib__uint64_init_uintptr\fP(a,x) \fBnetwib__uint64_init_32\fP((\fBnetwib_uint32\fP)((a)>>32),(\fBnetwib_uint32\fP)((a)&0xFFFFFFFFu),x)
+ #else
+  \fI#define\fP \fBnetwib__uint64_init_uintptr\fP(a,x) \fBnetwib__uint64_init_uint32\fP(a,x)
+ #endif
+#endif
+
+
+/*-------------------------------------------------------------*/
+#if \fBNETWIB_INT64_FAKE\fP == 0
+ \fI#define\fP \fBnetwib__int64_init_int32\fP(a,x) x = ((\fBnetwib_int64\fP)(\fBnetwib_int32\fP)(a))
+#else
+ \fI#define\fP \fBnetwib__int64_init_int32\fP(a,x) { if ((\fBnetwib_int32\fP)(a) >= 0) { (x).high = 0; (x).low = (\fBnetwib_uint32\fP)(a); } else { (x).high = 0xFFFFFFFFu; (x).low = (\fBnetwib_uint32\fP)(\fBnetwib_int32\fP)(a); } }
+#endif
+
+/*-------------------------------------------------------------*/
+#if \fBNETWIB_INT64_FAKE\fP == 0
+ \fI#define\fP \fBnetwib__int64_init_intmax\fP(a,x) x = ((\fBnetwib_int64\fP)(\fBnetwib_intmax\fP)(a))
+#else
+ #if \fBNETWIB_INTMAX_BITS\fP == 64
+  \fI#define\fP \fBnetwib__int64_init_intmax\fP(a,x) \fBnetwib__uint64_init_32\fP((\fBnetwib_uint32\fP)((a)>>32),(\fBnetwib_uint32\fP)((a)&0xFFFFFFFFu),x)
+ #else
+  \fI#define\fP \fBnetwib__int64_init_intmax\fP(a,x) \fBnetwib__int64_init_int32\fP(a,x)
+ #endif
+#endif
+
+/*-------------------------------------------------------------*/
+#if \fBNETWIB_INT64_FAKE\fP == 0
+ \fI#define\fP \fBnetwib__int64_init_intptr\fP(a,x) x = ((\fBnetwib_int64\fP)(\fBnetwib_intptr\fP)(a))
+#else
+ #if \fBNETWIB_INTPTR_BITS\fP == 64
+  \fI#define\fP \fBnetwib__int64_init_intptr\fP(a,x) \fBnetwib__uint64_init_32\fP((\fBnetwib_uint32\fP)((a)>>32),(\fBnetwib_uint32\fP)((a)&0xFFFFFFFFu),x)
+ #else
+  \fI#define\fP \fBnetwib__int64_init_intptr\fP(a,x) \fBnetwib__int64_init_int32\fP(a,x)
+ #endif
+#endif
+
+
+/*-------------------------------------------------------------*/
+#if \fBNETWIB_INT64_FAKE\fP == 0
+ \fI#define\fP \fBnetwib__uint32_init_uint64\fP(a,x) x = ((\fBnetwib_uint32\fP)(a))
+#else
+ \fI#define\fP \fBnetwib__uint32_init_uint64\fP(a,x) x = ((a).low)
+#endif
+
+/*-------------------------------------------------------------*/
+#if \fBNETWIB_INT64_FAKE\fP == 0
+ \fI#define\fP \fBnetwib__uintmax_init_uint64\fP(a,x) x = ((\fBnetwib_uintmax\fP)(a))
+#else
+ #if \fBNETWIB_INTMAX_BITS\fP == 64
+  \fI#define\fP \fBnetwib__uintmax_init_uint64\fP(a,x) x = (((\fBnetwib_uintmax\fP)((\fBnetwib_uint32\fP)((a).high))<<32)|(\fBnetwib_uint64\fP)((\fBnetwib_uint32\fP)((a).low)))
+ #else
+  \fI#define\fP \fBnetwib__uintmax_init_uint64\fP(a,x) x = ((\fBnetwib_uintmax\fP)(a).low)
+ #endif
+#endif
+
+/*-------------------------------------------------------------*/
+#if \fBNETWIB_INT64_FAKE\fP == 0
+ \fI#define\fP \fBnetwib__uintptr_init_uint64\fP(a,x) x = ((\fBnetwib_uintptr\fP)(a))
+#else
+ #if \fBNETWIB_INTPTR_BITS\fP == 64
+  \fI#define\fP \fBnetwib__uintptr_init_uint64\fP(a,x) x = (((\fBnetwib_uintptr\fP)((\fBnetwib_uint32\fP)((a).high))<<32)|(\fBnetwib_uintptr\fP)((\fBnetwib_uint32\fP)((a).low)))
+ #else
+  \fI#define\fP \fBnetwib__uintptr_init_uint64\fP(a,x) x = ((\fBnetwib_uintptr\fP)(a).low)
+ #endif
+#endif
+
+
+/*-------------------------------------------------------------*/
+#if \fBNETWIB_INT64_FAKE\fP == 0
+ \fI#define\fP \fBnetwib__int32_init_int64\fP(a,x) x = ((\fBnetwib_int32\fP)(a))
+#else
+ \fI#define\fP \fBnetwib__int32_init_int64\fP(a,x) x = ((\fBnetwib_int32\fP)(a).low)
+#endif
+
+/*-------------------------------------------------------------*/
+#if \fBNETWIB_INT64_FAKE\fP == 0
+ \fI#define\fP \fBnetwib__intmax_init_int64\fP(a,x) x = ((\fBnetwib_intmax\fP)(a))
+#else
+ #if \fBNETWIB_INTMAX_BITS\fP == 64
+  \fI#define\fP \fBnetwib__intmax_init_int64\fP(a,x) x = (((\fBnetwib_intmax\fP)((\fBnetwib_uint32\fP)((a).high))<<32)|(\fBnetwib_uintmax\fP)((\fBnetwib_uint32\fP)((a).low)))
+ #else
+  \fI#define\fP \fBnetwib__intmax_init_int64\fP(a,x) x = ((\fBnetwib_intmax\fP)(a).low)
+ #endif
+#endif
+
+/*-------------------------------------------------------------*/
+#if \fBNETWIB_INT64_FAKE\fP == 0
+ \fI#define\fP \fBnetwib__intptr_init_int64\fP(a,x) x = ((\fBnetwib_intptr\fP)(a))
+#else
+ #if \fBNETWIB_INTPTR_BITS\fP == 64
+  \fI#define\fP \fBnetwib__intptr_init_int64\fP(a,x) x = (((\fBnetwib_intptr\fP)((\fBnetwib_uint32\fP)((a).high))<<32)|(\fBnetwib_uintptr\fP)((\fBnetwib_uint32\fP)((a).low)))
+ #else
+  \fI#define\fP \fBnetwib__intptr_init_int64\fP(a,x) x = ((\fBnetwib_intptr\fP)(a).low)
+ #endif
+#endif
+
+
+/*-------------------------------------------------------------*/
+#if \fBNETWIB_INT64_FAKE\fP == 0
+  \fI#define\fP \fBnetwib__uint64_add\fP(a,b,x) x = (\fBnetwib_uint64\fP)(a) + (\fBnetwib_uint64\fP)(b);
+#else
+  \fI#define\fP \fBnetwib__uint64_add\fP(a,b,x) { \fBnetwib_uint32\fP \fBnetwib__uint64_add_tmp\fP, \fBnetwib__uint64_add_carry\fP; \fBnetwib__uint64_add_tmp\fP = (a).low + (b).low; \fBnetwib__uint64_add_carry\fP = (\fBnetwib__uint64_add_tmp\fP < (a).low) ? 1 : 0; (x).low = \fBnetwib__uint64_add_tmp\fP; (x).high = (a).high + (b).high + \fBnetwib__uint64_add_carry\fP; }
+#endif
+\fI#define\fP \fBnetwib__int64_add\fP(a,b,x) \fBnetwib__uint64_add\fP(a,b,x)
+
+/*-------------------------------------------------------------*/
+#if \fBNETWIB_INT64_FAKE\fP == 0
+  \fI#define\fP \fBnetwib__uint64_sub\fP(a,b,x) x = (\fBnetwib_uint64\fP)(a) - (\fBnetwib_uint64\fP)(b);
+#else
+  \fI#define\fP \fBnetwib__uint64_sub\fP(a,b,x) { \fBnetwib_uint32\fP \fBnetwib__uint64_add_tmp\fP, \fBnetwib__uint64_add_carry\fP; \fBnetwib__uint64_add_tmp\fP = (a).low - (b).low; \fBnetwib__uint64_add_carry\fP = (\fBnetwib__uint64_add_tmp\fP > (a).low) ? 1 : 0; (x).low = \fBnetwib__uint64_add_tmp\fP; (x).high = (a).high - (b).high - \fBnetwib__uint64_add_carry\fP; }
+#endif
+\fI#define\fP \fBnetwib__int64_sub\fP(a,b,x) \fBnetwib__uint64_sub\fP(a,b,x)
+
+/*-------------------------------------------------------------*/
+void \fBnetwib__uint64_mul_private\fP(\fBnetwib_uint64\fP a,
+                                \fBnetwib_uint64\fP b,
+                                \fBnetwib_uint64\fP *px);
+#if \fBNETWIB_INT64_FAKE\fP == 0
+  \fI#define\fP \fBnetwib__uint64_mul\fP(a,b,px) *(px) = (\fBnetwib_uint64\fP)(a) * (\fBnetwib_uint64\fP)(b)
+#else
+  \fI#define\fP \fBnetwib__uint64_mul\fP(a,b,px) \fBnetwib__uint64_mul_private\fP(a,b,px)
+#endif
+\fI#define\fP \fBnetwib__int64_mul\fP(a,b,px) \fBnetwib__uint64_mul\fP(a,b,px)
+
+/*-------------------------------------------------------------*/
+void \fBnetwib__uint64_div_private\fP(\fBnetwib_uint64\fP a,
+                                \fBnetwib_uint64\fP b,
+                                \fBnetwib_uint64\fP *pq,
+                                \fBnetwib_uint64\fP *pr);
+void \fBnetwib__int64_div_private\fP(\fBnetwib_int64\fP a,
+                               \fBnetwib_int64\fP b,
+                               \fBnetwib_int64\fP *pq,
+                               \fBnetwib_int64\fP *pr);
+#if \fBNETWIB_INT64_FAKE\fP == 0
+  \fI#define\fP \fBnetwib__uint64_div\fP(a,b,pq,pr) { \fBnetwib_uint64\fP \fBnetwib__uint64_div_tmp\fP; \fBnetwib__uint64_div_tmp\fP = (\fBnetwib_uint64\fP)(a) / (\fBnetwib_uint64\fP)(b); *(pr) = (\fBnetwib_uint64\fP)(a) % (\fBnetwib_uint64\fP)(b); *(pq) = \fBnetwib__uint64_div_tmp\fP; }
+  \fI#define\fP \fBnetwib__int64_div\fP(a,b,pq,pr) { \fBnetwib_int64\fP \fBnetwib__int64_div_tmp\fP; \fBnetwib__int64_div_tmp\fP = (\fBnetwib_int64\fP)(a) / (\fBnetwib_int64\fP)(b); *(pr) = (\fBnetwib_int64\fP)(a) % (\fBnetwib_int64\fP)(b); *(pq) = \fBnetwib__int64_div_tmp\fP; }
+#else
+  \fI#define\fP \fBnetwib__uint64_div\fP(a,b,pq,pr) \fBnetwib__uint64_div_private\fP(a,b,pq,pr)
+  \fI#define\fP \fBnetwib__int64_div\fP(a,b,pq,pr) \fBnetwib__int64_div_private\fP(a,b,pq,pr)
+#endif
+
+
+/*-------------------------------------------------------------*/
+#if \fBNETWIB_INT64_FAKE\fP == 0
+  \fI#define\fP \fBnetwib__uint64_inc\fP(x) x = (\fBnetwib_uint64\fP)(x) + 1;
+#else
+  \fI#define\fP \fBnetwib__uint64_inc\fP(x) { if ((x).low == 0xFFFFFFFFu) { (x).high++; (x).low = 0; } else { (x).low++; } }
+#endif
+\fI#define\fP \fBnetwib__int64_inc\fP(x) \fBnetwib__uint64_inc\fP(x)
+
+/*-------------------------------------------------------------*/
+#if \fBNETWIB_INT64_FAKE\fP == 0
+  \fI#define\fP \fBnetwib__uint64_dec\fP(x) x = (\fBnetwib_uint64\fP)(x) - 1;
+#else
+  \fI#define\fP \fBnetwib__uint64_dec\fP(x) { if ((x).low == 0) { (x).high--; (x).low = 0xFFFFFFFFu; } else { (x).low--; } }
+#endif
+\fI#define\fP \fBnetwib__int64_dec\fP(x) \fBnetwib__uint64_dec\fP(x)
+
+/*-------------------------------------------------------------*/
+#if \fBNETWIB_INT64_FAKE\fP == 0
+  \fI#define\fP \fBnetwib__uint64_cmp_eq\fP(a,b) ((\fBnetwib_uint64\fP)(a) == (\fBnetwib_uint64\fP)(b))
+  \fI#define\fP \fBnetwib__uint64_cmp_ne\fP(a,b) ((\fBnetwib_uint64\fP)(a) != (\fBnetwib_uint64\fP)(b))
+  \fI#define\fP \fBnetwib__uint64_cmp_lt\fP(a,b) ((\fBnetwib_uint64\fP)(a) < (\fBnetwib_uint64\fP)(b))
+  \fI#define\fP \fBnetwib__uint64_cmp_le\fP(a,b) ((\fBnetwib_uint64\fP)(a) <= (\fBnetwib_uint64\fP)(b))
+  \fI#define\fP \fBnetwib__uint64_cmp_gt\fP(a,b) ((\fBnetwib_uint64\fP)(a) > (\fBnetwib_uint64\fP)(b))
+  \fI#define\fP \fBnetwib__uint64_cmp_ge\fP(a,b) ((\fBnetwib_uint64\fP)(a) >= (\fBnetwib_uint64\fP)(b))
+  \fI#define\fP \fBnetwib__int64_cmp_eq\fP(a,b) ((\fBnetwib_int64\fP)(a) == (\fBnetwib_int64\fP)(b))
+  \fI#define\fP \fBnetwib__int64_cmp_ne\fP(a,b) ((\fBnetwib_int64\fP)(a) != (\fBnetwib_int64\fP)(b))
+  \fI#define\fP \fBnetwib__int64_cmp_lt\fP(a,b) ((\fBnetwib_int64\fP)(a) < (\fBnetwib_int64\fP)(b))
+  \fI#define\fP \fBnetwib__int64_cmp_le\fP(a,b) ((\fBnetwib_int64\fP)(a) <= (\fBnetwib_int64\fP)(b))
+  \fI#define\fP \fBnetwib__int64_cmp_gt\fP(a,b) ((\fBnetwib_int64\fP)(a) > (\fBnetwib_int64\fP)(b))
+  \fI#define\fP \fBnetwib__int64_cmp_ge\fP(a,b) ((\fBnetwib_int64\fP)(a) >= (\fBnetwib_int64\fP)(b))
+#else
+  \fI#define\fP \fBnetwib__uint64_cmp_eq\fP(a,b) ( ((a).high == (b).high) && ((a).low == (b).low) )
+  \fI#define\fP \fBnetwib__uint64_cmp_ne\fP(a,b) ( ((a).high != (b).high) || ((a).low != (b).low) )
+  \fI#define\fP \fBnetwib__uint64_cmp_lt\fP(a,b) ( ((a).high < (b).high) || ( ((a).high == (b).high) && ((a).low < (b).low) ) )
+  \fI#define\fP \fBnetwib__uint64_cmp_le\fP(a,b) ( ((a).high < (b).high) || ( ((a).high == (b).high) && ((a).low <= (b).low) ) )
+  \fI#define\fP \fBnetwib__uint64_cmp_gt\fP(a,b) ( ((a).high > (b).high) || ( ((a).high == (b).high) && ((a).low > (b).low) ) )
+  \fI#define\fP \fBnetwib__uint64_cmp_ge\fP(a,b) ( ((a).high > (b).high) || ( ((a).high == (b).high) && ((a).low >= (b).low) ) )
+  \fI#define\fP \fBnetwib__int64_cmp_eq\fP(a,b) ( ((a).high == (b).high) && ((a).low == (b).low) )
+  \fI#define\fP \fBnetwib__int64_cmp_ne\fP(a,b) ( ((a).high != (b).high) || ((a).low != (b).low) )
+  \fI#define\fP \fBnetwib__int64_cmp_lt\fP(a,b) ( ((\fBnetwib_int32\fP)(a).high < (\fBnetwib_int32\fP)(b).high) || ( ((\fBnetwib_int32\fP)(a).high == (\fBnetwib_int32\fP)(b).high) && ((\fBnetwib_int32\fP)(a).low < (\fBnetwib_int32\fP)(b).low) ) )
+  \fI#define\fP \fBnetwib__int64_cmp_le\fP(a,b) ( ((\fBnetwib_int32\fP)(a).high < (\fBnetwib_int32\fP)(b).high) || ( ((\fBnetwib_int32\fP)(a).high == (\fBnetwib_int32\fP)(b).high) && ((\fBnetwib_int32\fP)(a).low <= (\fBnetwib_int32\fP)(b).low) ) )
+  \fI#define\fP \fBnetwib__int64_cmp_gt\fP(a,b) ( ((\fBnetwib_int32\fP)(a).high > (\fBnetwib_int32\fP)(b).high) || ( ((\fBnetwib_int32\fP)(a).high == (\fBnetwib_int32\fP)(b).high) && ((\fBnetwib_int32\fP)(a).low > (\fBnetwib_int32\fP)(b).low) ) )
+  \fI#define\fP \fBnetwib__int64_cmp_ge\fP(a,b) ( ((\fBnetwib_int32\fP)(a).high > (\fBnetwib_int32\fP)(b).high) || ( ((\fBnetwib_int32\fP)(a).high == (\fBnetwib_int32\fP)(b).high) && ((\fBnetwib_int32\fP)(a).low >= (\fBnetwib_int32\fP)(b).low) ) )
+#endif
+
+
+/*-------------------------------------------------------------*/
+#if \fBNETWIB_INT64_FAKE\fP == 0
+  \fI#define\fP \fBnetwib__int64_neg\fP(a,x) x = -(\fBnetwib_int64\fP)(a);
+#else
+  \fI#define\fP \fBnetwib__int64_neg\fP(a,x) { (x).high = ~(a).high; (x).low = ~(a).low; \fBnetwib__uint64_inc\fP(x); }
+#endif
+
+
+/*-------------------------------------------------------------*/
+/* For shl, shr, rol and rol, I encountered several problems with gcc
+   on 32 bit architectures:
+    - x << 64 = zero with "gcc -O"
+    - x << 64 = unchanged with "gcc -O2"
+   There are also problems under Solaris Sparc, with rol(0).
+   I decided to normalize to have a coherent behavior.
+*/
+#if \fBNETWIB_INT64_FAKE\fP == 0
+  \fI#define\fP \fBnetwib__uint64_shl\fP(a,n,x) { \fBnetwib_uint32\fP \fBnetwib__uint64_shl_n\fP = (n); if (\fBnetwib__uint64_shl_n\fP == 0) { (x) = (a); } else if (\fBnetwib__uint64_shl_n\fP >= 64) { (x) = 0; } else {(x) = (a) << \fBnetwib__uint64_shl_n\fP;} }
+#else
+  \fI#define\fP \fBnetwib__uint64_shl\fP(a,n,x) { \fBnetwib_uint32\fP \fBnetwib__uint64_shl_tmp\fP, \fBnetwib__uint64_shl_n\fP = n; if (\fBnetwib__uint64_shl_n\fP == 0) { (x).high = (a).high; (x).low = (a).low; } else if (\fBnetwib__uint64_shl_n\fP >= 64) { (x).high = 0; (x).low = 0; } else if (\fBnetwib__uint64_shl_n\fP < 32) { \fBnetwib__uint64_shl_tmp\fP = (a).high << \fBnetwib__uint64_shl_n\fP | ((a).low >> (32 - \fBnetwib__uint64_shl_n\fP)); (x).low = (a).low << \fBnetwib__uint64_shl_n\fP; (x).high = \fBnetwib__uint64_shl_tmp\fP; } else { \fBnetwib__uint64_shl_n\fP -= 32; (x).high = (a).low << \fBnetwib__uint64_shl_n\fP ; (x).low = 0; } }
+#endif
+
+/*-------------------------------------------------------------*/
+#if \fBNETWIB_INT64_FAKE\fP == 0
+  \fI#define\fP \fBnetwib__uint64_shr\fP(a,n,x) { \fBnetwib_uint32\fP \fBnetwib__uint64_shr_n\fP = (n);  if (\fBnetwib__uint64_shr_n\fP == 0) { (x) = (a); } else if (\fBnetwib__uint64_shr_n\fP >= 64) { (x) = 0; } else { x = (a) >> \fBnetwib__uint64_shr_n\fP; } }
+#else
+  \fI#define\fP \fBnetwib__uint64_shr\fP(a,n,x) { \fBnetwib_uint32\fP \fBnetwib__uint64_shr_tmp\fP, \fBnetwib__uint64_shr_n\fP = n; if (\fBnetwib__uint64_shr_n\fP == 0) { (x).high = (a).high; (x).low = (a).low; } else if (\fBnetwib__uint64_shr_n\fP >= 64) { (x).high = 0; (x).low = 0; } else if (\fBnetwib__uint64_shr_n\fP < 32) { \fBnetwib__uint64_shr_tmp\fP = (a).low >> \fBnetwib__uint64_shr_n\fP | ((a).high << (32 - \fBnetwib__uint64_shr_n\fP)); (x).high = (a).high >> \fBnetwib__uint64_shr_n\fP; (x).low = \fBnetwib__uint64_shr_tmp\fP; } else { \fBnetwib__uint64_shr_n\fP -= 32; (x).low = (a).high >> \fBnetwib__uint64_shr_n\fP; (x).high = 0; } }
+#endif
+
+/*-------------------------------------------------------------*/
+#if \fBNETWIB_INT64_FAKE\fP == 0
+  \fI#define\fP \fBnetwib__uint64_rol\fP(a,n,x) { \fBnetwib_uint32\fP \fBnetwib__uint64_rol_n\fP = (n)%64; if (\fBnetwib__uint64_rol_n\fP == 0) { x = (a); } else { x = ((\fBnetwib_uint64\fP)( (\fBnetwib_uint64\fP)((a)<<\fBnetwib__uint64_rol_n\fP) | (\fBnetwib_uint64\fP)((a)>>(64-\fBnetwib__uint64_rol_n\fP)) )); } }
+#else
+  \fI#define\fP \fBnetwib__uint64_rol\fP(a,n,x) { \fBnetwib_uint32\fP \fBnetwib__uint64_rol_tmp\fP, \fBnetwib__uint64_rol_n\fP = (n)%64; if (\fBnetwib__uint64_rol_n\fP == 0) { (x).high = (a).high; (x).low = (a).low; } else if (\fBnetwib__uint64_rol_n\fP < 32) { \fBnetwib__uint64_rol_tmp\fP = (a).high << \fBnetwib__uint64_rol_n\fP | ((a).low >> (32 - \fBnetwib__uint64_rol_n\fP)); (x).low = (a).low << \fBnetwib__uint64_rol_n\fP | ((a).high >> (32 - \fBnetwib__uint64_rol_n\fP)); (x).high = \fBnetwib__uint64_rol_tmp\fP; } else { \fBnetwib__uint64_rol_n\fP -= 32; \fBnetwib__uint64_rol_tmp\fP = (a).low << \fBnetwib__uint64_rol_n\fP | ((a).high >> (32 - \fBnetwib__uint64_rol_n\fP)); (x).low = (a).high << \fBnetwib__uint64_rol_n\fP | ((a).low >> (32 - \fBnetwib__uint64_rol_n\fP)); (x).high = \fBnetwib__uint64_rol_tmp\fP; } }
+#endif
+
+/*-------------------------------------------------------------*/
+#if \fBNETWIB_INT64_FAKE\fP == 0
+  \fI#define\fP \fBnetwib__uint64_ror\fP(a,n,x) { \fBnetwib_uint32\fP \fBnetwib__uint64_ror_n\fP = (n)%64; if (\fBnetwib__uint64_ror_n\fP == 0) { x = (a); } else { x = ((\fBnetwib_uint64\fP)( (\fBnetwib_uint64\fP)((a)>>\fBnetwib__uint64_ror_n\fP) | (\fBnetwib_uint64\fP)((a)<<(64-\fBnetwib__uint64_ror_n\fP)) )); } }
+#else
+  \fI#define\fP \fBnetwib__uint64_ror\fP(a,n,x) { \fBnetwib_uint32\fP \fBnetwib__uint64_ror_tmp\fP, \fBnetwib__uint64_ror_n\fP = (n)%64; if (\fBnetwib__uint64_ror_n\fP == 0) { (x).high = (a).high; (x).low = (a).low; } else if (\fBnetwib__uint64_ror_n\fP < 32) { \fBnetwib__uint64_ror_tmp\fP = (a).low >> \fBnetwib__uint64_ror_n\fP | ((a).high << (32 - \fBnetwib__uint64_ror_n\fP)); (x).high = (a).high >> \fBnetwib__uint64_ror_n\fP | ((a).low << (32 - \fBnetwib__uint64_ror_n\fP)); (x).low = \fBnetwib__uint64_ror_tmp\fP; } else { \fBnetwib__uint64_ror_n\fP -= 32; \fBnetwib__uint64_ror_tmp\fP = (a).high >> \fBnetwib__uint64_ror_n\fP | ((a).low << (32 - \fBnetwib__uint64_ror_n\fP)); (x).high = (a).low >> \fBnetwib__uint64_ror_n\fP | ((a).high << (32 - \fBnetwib__uint64_ror_n\fP)); (x).low = \fBnetwib__uint64_ror_tmp\fP;} }
+#endif
+
+
+/*-------------------------------------------------------------*/
+#if \fBNETWIB_INT64_FAKE\fP == 0
+  \fI#define\fP \fBnetwib__uint64_and\fP(a,b,x) x = (\fBnetwib_uint64\fP)(a) & (\fBnetwib_uint64\fP)(b);
+#else
+  \fI#define\fP \fBnetwib__uint64_and\fP(a,b,x) { (x).high = (a).high & (b).high; (x).low = (a).low & (b).low; }
+#endif
+
+/*-------------------------------------------------------------*/
+#if \fBNETWIB_INT64_FAKE\fP == 0
+  \fI#define\fP \fBnetwib__uint64_or\fP(a,b,x) x = (\fBnetwib_uint64\fP)(a) | (\fBnetwib_uint64\fP)(b);
+#else
+  \fI#define\fP \fBnetwib__uint64_or\fP(a,b,x) { (x).high = (a).high | (b).high; (x).low = (a).low | (b).low; }
+#endif
+
+/*-------------------------------------------------------------*/
+#if \fBNETWIB_INT64_FAKE\fP == 0
+  \fI#define\fP \fBnetwib__uint64_xor\fP(a,b,x) x = (\fBnetwib_uint64\fP)(a) ^ (\fBnetwib_uint64\fP)(b);
+#else
+  \fI#define\fP \fBnetwib__uint64_xor\fP(a,b,x) { (x).high = (a).high ^ (b).high; (x).low = (a).low ^ (b).low; }
+#endif
+
+/*-------------------------------------------------------------*/
+#if \fBNETWIB_INT64_FAKE\fP == 0
+  \fI#define\fP \fBnetwib__uint64_not\fP(a,x) x = ~(\fBnetwib_uint64\fP)(a);
+#else
+  \fI#define\fP \fBnetwib__uint64_not\fP(a,x) { (x).high = ~(a).high; (x).low = ~(a).low; }
+#endif
+
+
+/*-------------------------------------------------------------*/
+/* To represent values > 0xFFFFFFFF :
+    - gcc/mingw needs 0xf....fLL
+    - Microsoft Visual 6 does not support LL
+ */
+#if defined NETWIBDEF_PROGCC_VISUALC
+  \fI#define\fP \fBNETWIB_UINT_LL\fP(x) (x)
+  \fI#define\fP \fBNETWIB_INT_LL\fP(x) (x)
+#else
+  \fI#define\fP \fBNETWIB_UINT_LL\fP(x) (x ## LLU)
+  \fI#define\fP \fBNETWIB_INT_LL\fP(x) (x ## LL)
+#endif
+
+/*-------------------------------------------------------------*/
+/* To initialize a static variable */
+#if \fBNETWIB_INT64_FAKE\fP == 0
+  \fI#define\fP \fBNETWIB_UINT_STATIC\fP(ahigh,alow) (((\fBnetwib_uint64\fP)((\fBnetwib_uint32\fP)(ahigh))<<32)|(\fBnetwib_uint64\fP)((\fBnetwib_uint32\fP)(alow)))
+  \fI#define\fP \fBNETWIB_INT_STATIC\fP(ahigh,alow) (((\fBnetwib_int64\fP)((\fBnetwib_uint32\fP)(ahigh))<<32)|(\fBnetwib_uint64\fP)((\fBnetwib_uint32\fP)(alow)))
+#else
+  \fI#define\fP \fBNETWIB_UINT_STATIC\fP(ahigh,alow) {(ahigh), (alow)}
+  \fI#define\fP \fBNETWIB_INT_STATIC\fP(ahigh,alow) {(ahigh), (alow)}
+#endif
+.fi
+.SH SEE ALSO
+.IR netwib (3),
+.IR netwib_dat (3),
+.IR netwib_sys (3),
+.IR netwib_net (3),
+.IR netwib_pkt (3),
+.IR netwib_shw (3),
+.IR netwib_err (3)

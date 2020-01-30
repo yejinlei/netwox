@@ -1,0 +1,487 @@
+<HTML><HEAD>
+<TITLE>netwib doc_html (version 5.39.0)</TITLE>
+</HEAD><BODY BGCOLOR="#FFFFFF" TEXT="#000000">
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../dat.html">section index</A></H2><HR><BR>
+<PRE>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000"><B>/***************************************************************
+ * A <FONT COLOR="#000088">netwib_buf</FONT> is the standard memory storage used in netwib. *
+ *                                                             *
+ * A <FONT COLOR="#000088">netwib_buf</FONT> points to an array (static or malloced) which  *
+ * starts at 'first' and finishes at 'last'.                   *
+ * The memory contains user data between 'begin' and 'end'.    *
+ *    ---------------------------------------------------      *
+ *    |       |               data              |       |      *
+ *    |F|     |B|                               |E|     |L     *
+ *    ---------------------------------------------------      *
+ *   First   Begin                              End    Last    *
+ *     0       x                                 y   totalsize *
+ *                                                             *
+ * Data between 'first and begin', and data between 'end and   *
+ * last' may be corrupted when working on the buffer. To avoid *
+ * this, use <FONT COLOR="#000088">netwib_buf_init_ext_buf</FONT> and work on the new buffer*
+ ***************************************************************/</B></FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+typedef struct {
+  <FONT COLOR="#000088">netwib_uint32</FONT> flags;       <FONT COLOR="#880000">/* see below */</FONT>
+  <FONT COLOR="#000088">netwib_data</FONT> totalptr;      <FONT COLOR="#880000">/* ptr to first */</FONT>
+  <FONT COLOR="#000088">netwib_uint32</FONT> totalsize;   <FONT COLOR="#880000">/* last - first */</FONT>
+  <FONT COLOR="#000088">netwib_uint32</FONT> beginoffset; <FONT COLOR="#880000">/* begin - first */</FONT>
+  <FONT COLOR="#000088">netwib_uint32</FONT> endoffset;   <FONT COLOR="#880000">/* end - first */</FONT>
+} <FONT COLOR="#000088">netwib_buf</FONT>;
+typedef const <FONT COLOR="#000088">netwib_buf</FONT> <FONT COLOR="#000088">netwib_constbuf</FONT>;
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000"><B>/***************************************************************
+ * Field "flags" is a bit field indicating some information    *
+ * about a netwib_buf.                                         *
+ ***************************************************************/</B></FONT>
+
+<FONT COLOR="#880000">/* If totalptr points :
+     0x0001 : to an allocated memory
+    ~0x0001 : to an external array (stack array or array which
+              does not need to be freed)
+   Those two modes corresponds to the two ways to initialize a
+   <FONT COLOR="#000088">netwib_buf</FONT> :
+     - <FONT COLOR="#000088">netwib_buf_init_malloc</FONT> : it internally allocates memory
+       and eventually reallocate it if more is needed. At the
+       end, function <FONT COLOR="#000088">netwib_buf_close</FONT> must be called to free
+       memory.
+     - <FONT COLOR="#000088">netwib_buf_init_ext_xyz</FONT> : buffer does not contain memory,
+       but points on an external array. At the end, function
+       <FONT COLOR="#000088">netwib_buf_close</FONT> does not need to be called to free
+       memory (no closing function is needed).
+   This flag should not be directly modified by user.
+ */</FONT>
+<FONT COLOR="#008800">#define <FONT COLOR="#000044">NETWIB_BUF_FLAGS_ALLOC</FONT> 0x00000001u</FONT>
+
+<FONT COLOR="#880000">/* In the following case :
+     - flag <FONT COLOR="#000044">NETWIB_BUF_FLAGS_ALLOC</FONT> is unset, and
+     - there is no sufficient space in the array
+   we can :
+     0x0002 : allocate memory and store array content in it
+              (the array is no more used)
+    ~0x0002 : return a space limitation error
+   This flag is very useful to optimize code. When we know in
+   most cases our code will need 80 bytes, we use an array
+   of 80 bytes. In the rare cases where it is not sufficient,
+   an allocated pointer is created. Like this for most
+   frequently encountered cases, there is no need to allocate.
+   Once allocated, it works like if it was allocated from beginning.
+   Once allocated, the external array is no more used.
+   Once allocated, flag <FONT COLOR="#000044">NETWIB_BUF_FLAGS_ALLOC</FONT> is automatically
+   set.
+   If array size is greater than 2k, it's not really advantageous
+   to use this flag, because copying 2k needs almost the same time
+   as a malloc and free.
+   This is generally used with netwib_buf_init_ext_arrayempty.
+   This flag defaults to false. It has to be explicitly set
+   by user.
+ */</FONT>
+<FONT COLOR="#008800">#define <FONT COLOR="#000044">NETWIB_BUF_FLAGS_CANALLOC</FONT> 0x00000002u</FONT>
+
+<FONT COLOR="#880000">/* If functions are :
+     0x0004 : allowed to slide data (shrunk space between First
+              and Begin), when there is no sufficient space
+              between End and Last for appending
+    ~0x0004 : not allowed to slide
+   This flag defaults to false. It has to be explicitly set
+   by user.
+*/</FONT>
+<FONT COLOR="#008800">#define <FONT COLOR="#000044">NETWIB_BUF_FLAGS_CANSLIDE</FONT> 0x00000004u</FONT>
+
+<FONT COLOR="#880000">/* Sometimes, a buffer contains sensitive data such as a password,
+   so we want to do a memset on this data when it is no more needed.
+   This flags says that buffer contains sensitive data. Buffer will
+   be wiped with memset(.0.) during:
+     <B>netwib_buf_close</B>(),
+     <B>netwib__buf_reinit</B>(),
+     <B>netwib__buf_erase</B>(),
+     <B>netwib_bufpool_buf_close</B>(),
+     <B>netwib_bufpool_close</B>(),
+     and all functions using above ones.
+   It is developer's task to set this flag each time a buffer may
+   contain sensitive data.
+   Netwib supports a feature to transfer this flag (also known as
+   tainting in other languages). For example, when a sensitive
+   buffer is copied to another buffer, this one also becomes
+   sensitive.
+   Once buffer is closed, the flag is unset, so user has to set
+   it each time sensitive data is initialized. The closing
+   functions are:
+     <B>netwib_buf_close</B>(),
+     <B>netwib_bufpool_buf_close</B>(),
+     <B>netwib_bufpool_close</B>().
+   WARNING:
+   This feature was conceived for PASSWORDS or cryptographic KEYS
+   stored in a netwib_buf. It cannot help for other types such
+   as a netwib_string, a <FONT COLOR="#000088">netwib_ring</FONT> or a netwib_ip.
+   This feature was conceived for buffer manipulation functions,
+   such as netwib_buf_append_buf, and not in functions unrelated
+   to passwords or keys, such as netwib_pkt_... or
+   netwib_sniff_... When a function supports this feature, it is
+   indicated in its help comment before the prototype (.h file).
+   Perhaps one day, I will expand this feature to erase other kind
+   of data, but this is not the case currently.
+   To sum up, don't expect this feature to be the Solution for
+   your sensitive data management, but only a small step towards it.
+   END OF WARNING.
+   This flag defaults to false. It has to be explicitly set
+   by user.
+*/</FONT>
+<FONT COLOR="#008800">#define <FONT COLOR="#000044">NETWIB_BUF_FLAGS_SENSITIVE</FONT> 0x00000008u</FONT>
+<FONT COLOR="#880000">/* data is sensitive, but readonly (such as a password stored
+   in a static string which cannot be wiped, but can be
+   transfered when buffer is copied)
+*/</FONT>
+<FONT COLOR="#008800">#define <FONT COLOR="#000044">NETWIB_BUF_FLAGS_SENSITIVE_READONLY</FONT> 0x00000010u</FONT>
+<FONT COLOR="#880000">/* to transfer the sensitive flag to the second buffer */</FONT>
+<FONT COLOR="#008800">#define <B>netwib__buf_transfersensitive</B>(pbuf1,pbuf2) { if ((pbuf1) != NULL &amp;&amp; (pbuf2) != NULL) { if ((pbuf1)-&gt;flags &amp; <FONT COLOR="#000044">NETWIB_BUF_FLAGS_SENSITIVE</FONT>) { (pbuf2)-&gt;flags |= <FONT COLOR="#000044">NETWIB_BUF_FLAGS_SENSITIVE</FONT>; } } }</FONT>
+<FONT COLOR="#880000">/* to wipe a local array used in parallel of a buffer */</FONT>
+<FONT COLOR="#008800">#define <B>netwib__localarray_wipe</B>(arr) <B>netwib_c_memset</B>((arr),0,sizeof(arr))</FONT>
+<FONT COLOR="#008800">#define <B>netwib__localarray_ifbuf_wipe</B>(pbuf,arr) { if ((pbuf) != NULL &amp;&amp; ((pbuf)-&gt;flags &amp; <FONT COLOR="#000044">NETWIB_BUF_FLAGS_SENSITIVE</FONT>)) <B>netwib__localarray_wipe</B>(arr); }</FONT>
+
+<FONT COLOR="#880000">/* number of used bits */</FONT>
+<FONT COLOR="#008800">#define <FONT COLOR="#000044">NETWIB_BUF_FLAGS_USEDBITS</FONT> 5</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000"><B>/***************************************************************
+ * Type <FONT COLOR="#000088">netwib_bufext</FONT> is exactly the same as netwib_buf. It    *
+ * permits to easily determine which kind of buffer is needed  *
+ * by a function :                                             *
+ *  - Functions having an output parameter of type <FONT COLOR="#000088">netwib_buf</FONT>  *
+ *    must be called with the buffer previously initialized :  *
+ *    they will append data to it                              *
+ *  - Functions having an output parameter of type             *
+ *    <FONT COLOR="#000088">netwib_bufext</FONT> will initialize it.                        *
+ * Example :                                                   *
+ *  An IP4 packet might contain an IP4 option. There is no     *
+ *  need to allocate/copy data for this option, because it is  *
+ *  simply contained in the input packet (at offset            *
+ *  20==sizeof(ip4hdr)). So in this case a <FONT COLOR="#000088">netwib_bufext</FONT> is    *
+ *  used.                                                      *
+ ***************************************************************/</B></FONT>
+typedef <FONT COLOR="#000088">netwib_buf</FONT> <FONT COLOR="#000088">netwib_bufext</FONT>;
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_buf_init_malloc
+   Description :
+     Initialize a buf. Its memory dynamically grows.
+   Input parameter(s) :
+     allocsize : allocated size. If 0, a
+                 default value is used.
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pbuf : <FONT COLOR="#000088">netwib_buf</FONT> initialized
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_buf_init_malloc</B>(<FONT COLOR="#000088">netwib_uint32</FONT> allocs,
+                                  <FONT COLOR="#000088">netwib_buf</FONT> *pbuf);
+<FONT COLOR="#008800">#define <B>netwib_buf_init_mallocdefault</B>(pbuf) <B>netwib_buf_init_malloc</B>(1024,pbuf)</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_buf_init_ext_array
+   Description :
+     Initialize a buf. Its memory corresponds to an external
+     fixed size array.
+   Input parameter(s) :
+     array : external array
+     arraysize : external array size
+     beginoffset : offset of begin in this array
+     endoffset : offset of end in this array
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pbuf : <FONT COLOR="#000088">netwib_bufext</FONT> initialized
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_buf_init_ext_array</B>(<FONT COLOR="#000088">netwib_constptr</FONT> array,
+                                     <FONT COLOR="#000088">netwib_uint32</FONT> arraysize,
+                                     <FONT COLOR="#000088">netwib_uint32</FONT> beginoffset,
+                                     <FONT COLOR="#000088">netwib_uint32</FONT> endoffset,
+                                     <FONT COLOR="#000088">netwib_bufext</FONT> *pbuf);
+<FONT COLOR="#008800">#define <B>netwib_buf_init_ext_arrayempty</B>(array,arraysize,pbuf) <B>netwib_buf_init_ext_array</B>(array,arraysize,0,0,pbuf)</FONT>
+<FONT COLOR="#008800">#define <B>netwib_buf_init_ext_arrayfilled</B>(array,arraysize,pbuf) <B>netwib_buf_init_ext_array</B>(array,arraysize,0,arraysize,pbuf)</FONT>
+<FONT COLOR="#008800">#define <B>netwib_buf_init_ext_arraysizeofempty</B>(array,pbuf) <B>netwib_buf_init_ext_arrayempty</B>(array,sizeof(array),pbuf)</FONT>
+<FONT COLOR="#008800">#define <B>netwib_buf_init_ext_arraysizeoffilled</B>(array,pbuf) <B>netwib_buf_init_ext_arrayfilled</B>(array,sizeof(array),pbuf)</FONT>
+<FONT COLOR="#880000">/* A buffer containing no data */</FONT>
+<FONT COLOR="#008800">#define <B>netwib_buf_init_ext_empty</B>(pbuf) <B>netwib_buf_init_ext_array</B>(NULL,0,0,0,pbuf)</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_buf_init_ext_storagearray
+   Description :
+     Initialize a buf. Its memory corresponds to an external
+     fixed size array or to nothing. When data is added, it may
+     be allocated. A call to <B>netwib_buf_close</B>() will have to be done.
+   Input parameter(s) :
+     array : external array
+     arraysize : external array size
+     beginoffset : offset of begin in this array
+     endoffset : offset of end in this array
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pbuf : <FONT COLOR="#000088">netwib_bufext</FONT> initialized
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_buf_init_ext_storagearray</B>(<FONT COLOR="#000088">netwib_constptr</FONT> array,
+                                            <FONT COLOR="#000088">netwib_uint32</FONT> arraysize,
+                                            <FONT COLOR="#000088">netwib_bufext</FONT> *pbuf);
+<FONT COLOR="#880000">/* An empty buffer, allocated on first append */</FONT>
+<FONT COLOR="#008800">#define <B>netwib_buf_init_ext_storage</B>(pbuf) <B>netwib_buf_init_ext_storagearray</B>(NULL,0,pbuf)</FONT>
+<FONT COLOR="#880000">/* An empty array, allocated if not sufficiently big */</FONT>
+<FONT COLOR="#008800">#define <B>netwib_buf_init_ext_storagearraysizeof</B>(array,pbuf) <B>netwib_buf_init_ext_storagearray</B>(array,sizeof(array),pbuf)</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_buf_init_ext_buf
+   Description :
+     Initialize a buf. Its memory corresponds to an external
+     buffer.
+   Input parameter(s) :
+     *pbuf : <FONT COLOR="#000088">netwib_buf</FONT> containing data
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pbuf : <FONT COLOR="#000088">netwib_bufext</FONT> initialized
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+   This function supports <FONT COLOR="#000044">NETWIB_BUF_FLAGS_SENSITIVE</FONT>.
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_buf_init_ext_buf</B>(<FONT COLOR="#000088">netwib_constbuf</FONT> *pbufin,
+                                   <FONT COLOR="#000088">netwib_bufext</FONT> *pbuf);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_buf_init_ext_string
+   Description :
+     Initialize a buf. Its memory corresponds to an external
+     preset string.
+   Input parameter(s) :
+     str : external string
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pbuf : <FONT COLOR="#000088">netwib_bufext</FONT> initialized
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_buf_init_ext_string</B>(<FONT COLOR="#000088">netwib_conststring</FONT> str,
+                                      <FONT COLOR="#000088">netwib_bufext</FONT> *pbuf);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_buf_append_xyz
+   Description :
+     Add data to a buf.
+   Input parameter(s) :
+     data : data to add
+     datasize : size of data to add
+     str : string to add
+     c : character to add
+   Input/output parameter(s) :
+     *pbuf : <FONT COLOR="#000088">netwib_buf</FONT> updated
+   Output parameter(s) :
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+   The <FONT COLOR="#000088">netwib_buf_append_buf</FONT> function supports <FONT COLOR="#000044">NETWIB_BUF_FLAGS_SENSITIVE</FONT>.
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_buf_append_data</B>(<FONT COLOR="#000088">netwib_constdata</FONT> data,
+                                  <FONT COLOR="#000088">netwib_uint32</FONT> datasize,
+                                  <FONT COLOR="#000088">netwib_buf</FONT> *pbuf);
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_buf_append_string</B>(<FONT COLOR="#000088">netwib_conststring</FONT> str,
+                                    <FONT COLOR="#000088">netwib_buf</FONT> *pbuf);
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_buf_append_buf</B>(<FONT COLOR="#000088">netwib_constbuf</FONT> *pbuftoappend,
+                                 <FONT COLOR="#000088">netwib_buf</FONT> *pbuf);
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_buf_append_byte</B>(<FONT COLOR="#000088">netwib_byte</FONT> b,
+                                  <FONT COLOR="#000088">netwib_buf</FONT> *pbuf);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_buf_prepend_buf
+   Description :
+     Prepend data to a buf.
+   Input parameter(s) :
+   Input/output parameter(s) :
+     *pbuf : <FONT COLOR="#000088">netwib_buf</FONT> updated
+   Output parameter(s) :
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+   Note :
+     Parameter canslide has no effect on this function (this is
+     logical).
+   This function supports <FONT COLOR="#000044">NETWIB_BUF_FLAGS_SENSITIVE</FONT>.
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_buf_prepend_buf</B>(<FONT COLOR="#000088">netwib_constbuf</FONT> *pbuftoprepend,
+                                  <FONT COLOR="#000088">netwib_buf</FONT> *pbuf);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_buf_ref_string
+   Description :
+     Get pointers to data stored in buf (between begin and end).
+     If buffer internal storage does not end with '\0',
+     a new one is added. So, we can have <FONT COLOR="#000044">NETWIB_ERR_DATANOSPACE</FONT>
+     if there is no room for the '\0'.
+   Input parameter(s) :
+     *pbuf : buffer
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pstr : pointer to start of string
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+     <FONT COLOR="#000044">NETWIB_ERR_DATANOSPACE</FONT> : no room for the '\0'
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_buf_ref_string</B>(<FONT COLOR="#000088">netwib_buf</FONT> *pbuf,
+                                 <FONT COLOR="#000088">netwib_string</FONT> *pstr);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_constbuf_ref_string
+   Description :
+     Some as <FONT COLOR="#000088">netwib_buf_ref_string</FONT> except it does not modify
+     the buffer to add the '\0'.
+   Input parameter(s) :
+     *pbuf : buffer
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pstr : pointer to start of string
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+     <FONT COLOR="#000044">NETWIB_ERR_DATANOSPACE</FONT> : the char after endoffset is not a '\0'
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_constbuf_ref_string</B>(<FONT COLOR="#000088">netwib_constbuf</FONT> *pbuf,
+                                      <FONT COLOR="#000088">netwib_string</FONT> *pstr);
+<FONT COLOR="#880000">/* to use at begin of a function to manage a local buffer */</FONT>
+<FONT COLOR="#008800">#define <B>netwib__constbuf_ref_string</B>(pbuf, str, bufstorage, func) { <FONT COLOR="#000088">netwib_err</FONT> bufstorageret; bufstorageret = <B>netwib_constbuf_ref_string</B>(pbuf, &amp;str); if (bufstorageret != <FONT COLOR="#000044">NETWIB_ERR_OK</FONT>) { if (bufstorageret == <FONT COLOR="#000044">NETWIB_ERR_DATANOSPACE</FONT>) { <FONT COLOR="#000088">netwib_data</FONT> bufstoragearray[512]; <FONT COLOR="#000088">netwib_buf</FONT> bufstorage; <B>netwib_er</B>(<B>netwib_buf_init_ext_storagearraysizeof</B>(bufstoragearray, &amp;bufstorage)); <B>netwib_er</B>(<B>netwib_buf_append_buf</B>(pbuf, &amp;bufstorage)); <B>netwib_er</B>(<B>netwib_buf_append_byte</B>(0, &amp;bufstorage)); bufstorage.endoffset--; bufstorageret = func; <B>netwib_er</B>(<B>netwib_buf_close</B>(&amp;bufstorage)); } return(bufstorageret); } }</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_buf_wantspace
+   Description :
+     Request space in a buffer (from end to last).
+     When buffer is initialized as malloced memory, it is
+     possible to obtain unlimited space. Otherwise, we cannot
+     obtain more space than array size (unless flag
+     <FONT COLOR="#000044">NETWIB_BUF_FLAGS_CANALLOC</FONT> is set).
+   Input parameter(s) :
+     wantedspace : wanted space
+   Input/output parameter(s) :
+     *pbuf : buffer
+   Output parameter(s) :
+     *pdata : pointer to end (endoffset)
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+     <FONT COLOR="#000044">NETWIB_ERR_DATANOSPACE</FONT> : there is less than wantedspace
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_buf_wantspace</B>(<FONT COLOR="#000088">netwib_buf</FONT> *pbuf,
+                                <FONT COLOR="#000088">netwib_uint32</FONT> wantedspace,
+                                <FONT COLOR="#000088">netwib_data</FONT> *pdata);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_buf_wishspace
+   Description :
+     Request space in a buffer (from end to last).
+     When buffer is initialized as malloced memory, it is
+     possible to obtain unlimited space. Otherwise, we cannot
+     obtain more space than array size (unless flag
+     <FONT COLOR="#000044">NETWIB_BUF_FLAGS_CANALLOC</FONT> is set).
+   Input parameter(s) :
+     wantedspace : wanted space
+   Input/output parameter(s) :
+     *pbuf : buffer
+   Output parameter(s) :
+     *pdata : pointer to end (endoffset)
+     *pobtainedspace : obtained space (from end to last)
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_buf_wishspace</B>(<FONT COLOR="#000088">netwib_buf</FONT> *pbuf,
+                                <FONT COLOR="#000088">netwib_uint32</FONT> wantedspace,
+                                <FONT COLOR="#000088">netwib_data</FONT> *pdata,
+                                <FONT COLOR="#000088">netwib_uint32</FONT> *pobtainedspace);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_buf_cmp
+   Description :
+     Compare two netwib_buf.
+   Input parameter(s) :
+     *pbuf1 : <FONT COLOR="#000088">netwib_buf</FONT> to compare with buf2
+     *pbuf2 : <FONT COLOR="#000088">netwib_buf</FONT> to compare with buf1
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pcmp :
+       <FONT COLOR="#000044">NETWIB_CMP_LT</FONT> : buf1&lt;buf2
+       <FONT COLOR="#000044">NETWIB_CMP_EQ</FONT> : if buf1 and buf2 are equal
+       <FONT COLOR="#000044">NETWIB_CMP_GT</FONT> : buf1&gt;buf2
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_buf_cmp</B>(<FONT COLOR="#000088">netwib_constbuf</FONT> *pbuf1,
+                          <FONT COLOR="#000088">netwib_constbuf</FONT> *pbuf2,
+                          <FONT COLOR="#000088">netwib_cmp</FONT> *pcmp);
+<FONT COLOR="#880000">/* ignore case */</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_buf_casecmp</B>(<FONT COLOR="#000088">netwib_constbuf</FONT> *pbuf1,
+                              <FONT COLOR="#000088">netwib_constbuf</FONT> *pbuf2,
+                              <FONT COLOR="#000088">netwib_cmp</FONT> *pcmp);
+<FONT COLOR="#880000">/* compare to a string */</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_buf_cmp_string</B>(<FONT COLOR="#000088">netwib_constbuf</FONT> *pbuf1,
+                                 <FONT COLOR="#000088">netwib_conststring</FONT> string2,
+                                 <FONT COLOR="#000088">netwib_cmp</FONT> *pcmp);
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_buf_casecmp_string</B>(<FONT COLOR="#000088">netwib_constbuf</FONT> *pbuf1,
+                                     <FONT COLOR="#000088">netwib_conststring</FONT> string2,
+                                     <FONT COLOR="#000088">netwib_cmp</FONT> *pcmp);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_buf_shift
+   Description :
+     Shift data in a buf.
+   Input parameter(s) :
+     offset : offset
+     truncbegend : truncate on begin/end edges (otherwise,
+                   truncate only on first/last edges)
+   Input/output parameter(s) :
+     *pbuf : <FONT COLOR="#000088">netwib_buf</FONT> updated
+   Output parameter(s) :
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+   Examples :
+     buf contains         "   data  "
+     shift(buf,-1,0) =&gt;   "  data   "
+     shift(buf,-1,1) =&gt;   "   ata   " (d is truncated)
+     shift(buf,+1,0) =&gt;   "    data "
+     shift(buf,+4,0) =&gt;   "       data" (if buffer is malloced)
+     shift(buf,+4,0) =&gt;   "       da" (if buffer is external)
+     shift(buf,+1,1) =&gt;   "    dat  " (a is truncated)
+   Note :
+     Flag <FONT COLOR="#000044">NETWIB_BUF_FLAGS_CANSLIDE</FONT> has no effect on this
+     function (this is logical).
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_buf_shift</B>(<FONT COLOR="#000088">netwib_buf</FONT> *pbuf,
+                            <FONT COLOR="#000088">netwib_int32</FONT> offset,
+                            <FONT COLOR="#000088">netwib_bool</FONT> truncbegend);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_buf_close
+   Description :
+     Close buf, eventually freeing data it contains.
+   Input parameter(s) :
+   Input/output parameter(s) :
+     *pbuf : buffer closed
+   Output parameter(s) :
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+   Note :
+     This function is only needed for a buffer initialized
+     with netwib_buf_init_malloc, or if flag
+     <FONT COLOR="#000044">NETWIB_BUF_FLAGS_CANALLOC</FONT> is set.
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_buf_close</B>(<FONT COLOR="#000088">netwib_buf</FONT> *pbuf);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Frequently needed defines */</FONT>
+<FONT COLOR="#008800">#define <B>netwib__buf_reinit</B>(pbuf) { (pbuf)-&gt;beginoffset = 0; (pbuf)-&gt;endoffset = 0; if (((pbuf)-&gt;flags &amp; <FONT COLOR="#000044">NETWIB_BUF_FLAGS_SENSITIVE</FONT>) &amp;&amp; !((pbuf)-&gt;flags &amp; <FONT COLOR="#000044">NETWIB_BUF_FLAGS_SENSITIVE_READONLY</FONT>)) { <B>netwib_c_memset</B>((pbuf)-&gt;totalptr, 0, (pbuf)-&gt;totalsize); } }</FONT>
+<FONT COLOR="#008800">#define <B>netwib__buf_erase</B>(pbuf) { if (((pbuf)-&gt;flags &amp; <FONT COLOR="#000044">NETWIB_BUF_FLAGS_SENSITIVE</FONT>) &amp;&amp; !((pbuf)-&gt;flags &amp; <FONT COLOR="#000044">NETWIB_BUF_FLAGS_SENSITIVE_READONLY</FONT>)) { <B>netwib_c_memset</B>((pbuf)-&gt;totalptr+(pbuf)-&gt;beginoffset, 0, (pbuf)-&gt;endoffset-(pbuf)-&gt;beginoffset); } (pbuf)-&gt;endoffset = (pbuf)-&gt;beginoffset; }</FONT>
+<FONT COLOR="#008800">#define <B>netwib__buf_ref_data_ptr</B>(pbuf) ((pbuf)-&gt;totalptr + (pbuf)-&gt;beginoffset)</FONT>
+<FONT COLOR="#008800">#define <B>netwib__buf_ref_data_size</B>(pbuf) ((pbuf)-&gt;endoffset -(pbuf)-&gt;beginoffset)</FONT>
+<FONT COLOR="#008800">#define <B>netwib__buf_ref_data_sizenull</B>(pbuf) ((pbuf)!=NULL?<B>netwib__buf_ref_data_size</B>(pbuf):0)</FONT>
+
+</PRE><BR><BR><HR><BR>
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../dat.html">section index</A></H2>
+</BODY></HTML>

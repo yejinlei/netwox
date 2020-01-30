@@ -1,0 +1,17 @@
+Description: Add platform detection support for Renesas SH
+ This patch adds platform detection support for the Renesas
+ SuperH architecture (#703284). Credits to Nobuhiro Iwamatsu.
+ .
+
+--- netw-ib-ox-ag-5.39.0.orig/src/netwib-src/src/genemake
++++ netw-ib-ox-ag-5.39.0/src/netwib-src/src/genemake
+@@ -118,6 +118,9 @@ case $unamem in
+   "s390" )
+     NETWIBDEF_SYSARCH="s390"
+     ;;
++  sh* )
++    NETWIBDEF_SYSARCH="sh"
++    ;;
+   * )
+     echo "Error: Could not guess NETWIBDEF_SYSARCH.";
+     echo "Edit genemake to set NETWIBDEF_SYSARCH, and rerun genemake.";

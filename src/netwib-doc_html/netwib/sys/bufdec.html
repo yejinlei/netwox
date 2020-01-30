@@ -1,0 +1,44 @@
+<HTML><HEAD>
+<TITLE>netwib doc_html (version 5.39.0)</TITLE>
+</HEAD><BODY BGCOLOR="#FFFFFF" TEXT="#000000">
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../sys.html">section index</A></H2><HR><BR>
+<PRE>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_buf_append_decodetype
+   Description :
+     Append the description text of an decodetype.
+   Input parameter(s) :
+     decodetype : <FONT COLOR="#000088">netwib_decodetype</FONT> to append
+   Input/output parameter(s) :
+     *pbuf : buffer where text is appended
+   Output parameter(s) :
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_buf_append_decodetype</B>(<FONT COLOR="#000088">netwib_decodetype</FONT> decodetype,
+                                        <FONT COLOR="#000088">netwib_buf</FONT> *pbuf);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_decodetype_init_kbd
+   Description :
+     Initialize a <FONT COLOR="#000088">netwib_decodetype</FONT> with data entered through keyboard.
+   Input parameter(s) :
+     *pmessage : message to print before
+     defaultdecodetype : default decodetype to use if user enters nothing
+                         (if 0xFFFFFFFFu, means no default)
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pdecodetype : <FONT COLOR="#000088">netwib_decodetype</FONT> initialized
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_decodetype_init_kbd</B>(<FONT COLOR="#000088">netwib_constbuf</FONT> *pmessage,
+                                      <FONT COLOR="#000088">netwib_decodetype</FONT> defaultdecodetype,
+                                      <FONT COLOR="#000088">netwib_decodetype</FONT> *pdecodetype);
+<FONT COLOR="#008800">#define <FONT COLOR="#000044">NETWIB_DECODETYPE_INIT_KBD_NODEF</FONT> (netwib_decodetype)0xFFFFFFFFu</FONT>
+</PRE><BR><BR><HR><BR>
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../sys.html">section index</A></H2>
+</BODY></HTML>

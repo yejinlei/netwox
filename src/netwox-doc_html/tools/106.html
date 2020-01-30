@@ -1,0 +1,109 @@
+<HTML>
+ <HEAD>
+ <TITLE>Tool 106: Send an email</TITLE>
+ </HEAD>
+ <BODY BGCOLOR="#FFFFFF">
+  <CENTER>   <H3>Tool 106: Send an email</H3>
+  </CENTER>
+
+  <P><H3>Description:</H3>
+   <PRE>
+  This tool sends an email. It connects on a SMTP server.
+  
+  Parameter --from sets From header.
+  Parameter --from-name sets the name of user in From header.
+  Parameter --subject sets Subject header
+  Parameter --file-body is the file containing the body of message.
+  Parameter --file-att is the file containing the attachment.
+  Parameter --to sets To header.
+  Parameter --mail-from sets the MAIL FROM SMTP value. If unset, --from
+  is used.
+  Parameter --rcpt-to sets the RCPR TO SMTP value. If unset, --to is
+  used.
+  Parameter --dst-ip is the address of remote host/server.
+  Parameter --dst-port is the port number where to connect.
+  Optional parameter --src-ip defines the local IP address to use.
+  Optional parameter --src-port defines the local port number to use.
+  Optional parameter --ip4opts permits to add IP4 options encoded as
+  mixed.
+  Optional parameter --ip6exts permits to add IP6 options encoded as
+  mixed (first byte is the next header number).
+  Optional parameters --device, --src-eth and --dst-eth permits to
+  create a virtual client using fake addresses (in this case, tool have
+  to be run with admin privilege in order to sniff and spoof at
+  Ethernet level).
+   </PRE>
+
+  <P><H3>Usage:</H3>
+  &nbsp;&nbsp;netwox 106 -i ip -f email -r email -S data [-B file] [-d device] [-E eth] [-e eth] [-I ip] [-P port] [-p port] [-o ip4opts] [-O ip6exts] [-F email] [-R email] [-n data] [-A file] [-T uint32]<BR>
+
+  <P><H3>Parameters:</H3>
+<TABLE BORDER=1 CELLPADDING=4>
+ <TR>
+  <TD ALIGN=middle><I>parameter</I></TD>
+  <TD ALIGN=middle><I>description</I></TD>
+  <TD ALIGN=middle><I>example</I></TD>
+ </TR>
+ <TR><TD><TT>-i|--dst-ip ip</TD>
+<TD>destination IP address</TD>
+<TD>5.6.7.8</TD></TR>
+<TR><TD><TT>-f|--from email</TD>
+<TD>from address</TD>
+<TD>user@example.com</TD></TR>
+<TR><TD><TT>-r|--to email</TD>
+<TD>to address</TD>
+<TD>user2@example.fr</TD></TR>
+<TR><TD><TT>-S|--subject data</TD>
+<TD>email subject</TD>
+<TD>hello</TD></TR>
+<TR><TD><TT>-B|--file-body file</TD>
+<TD>file containing email body</TD>
+<TD>file-body.txt</TD></TR>
+<TR><TD><TT>-d|--device device</TD>
+<TD>device name</TD>
+<TD>Eth0</TD></TR>
+<TR><TD><TT>-E|--src-eth eth</TD>
+<TD>source ethernet address</TD>
+<TD>0:2:3:4:5:6</TD></TR>
+<TR><TD><TT>-e|--dst-eth eth</TD>
+<TD>destination ethernet address</TD>
+<TD>0:8:9:a:b:c</TD></TR>
+<TR><TD><TT>-I|--src-ip ip</TD>
+<TD>source IP address</TD>
+<TD>192.168.100.200</TD></TR>
+<TR><TD><TT>-P|--src-port port</TD>
+<TD>source port number</TD>
+<TD>0</TD></TR>
+<TR><TD><TT>-p|--dst-port port</TD>
+<TD>destination port number</TD>
+<TD>25</TD></TR>
+<TR><TD><TT>-o|--ip4opts ip4opts</TD>
+<TD>IPv4 options</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-O|--ip6exts ip6exts</TD>
+<TD>IPv6 extensions</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-F|--mail-from email</TD>
+<TD>mail from address</TD>
+<TD>me@example.com</TD></TR>
+<TR><TD><TT>-R|--rcpt-to email</TD>
+<TD>rcpt to address</TD>
+<TD>you@example.fr</TD></TR>
+<TR><TD><TT>-n|--from-name data</TD>
+<TD>from name</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-A|--file-att file</TD>
+<TD>file containing email attachment</TD>
+<TD>file-att.tgz</TD></TR>
+<TR><TD><TT>-T|--timeout uint32</TD>
+<TD>timeout in milliseconds</TD>
+<TD>180000 </TD></TR>
+</TABLE>
+
+  <P><H3>Examples:</H3>
+  &nbsp;&nbsp;netwox 106 -i "5.6.7.8" -f "user@example.com" -r "user2@example.fr" -S "hello"<BR>
+<BR>
+  &nbsp;&nbsp;netwox 106 --dst-ip "5.6.7.8" --from "user@example.com" --to "user2@example.fr" --subject "hello"<BR>
+<BR>
+ </BODY>
+ </HTML>

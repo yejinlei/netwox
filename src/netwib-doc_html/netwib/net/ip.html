@@ -1,0 +1,269 @@
+<HTML><HEAD>
+<TITLE>netwib doc_html (version 5.39.0)</TITLE>
+</HEAD><BODY BGCOLOR="#FFFFFF" TEXT="#000000">
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../net.html">section index</A></H2><HR><BR>
+<PRE>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000"><B>/***************************************************************
+ * A <FONT COLOR="#000088">netwib_ip</FONT> represents an IP address.                       *
+ ***************************************************************/</B></FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_ip_init_ip4_fields
+   Description :
+     Initialize an <FONT COLOR="#000088">netwib_ip</FONT> address.
+   Input parameter(s) :
+     a,b,c,d : bytes of the IP address
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pip : <FONT COLOR="#000088">netwib_ip</FONT> set with a.b.c.d
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_ip_init_ip4_fields</B>(<FONT COLOR="#000088">netwib_byte</FONT> a,
+                                     <FONT COLOR="#000088">netwib_byte</FONT> b,
+                                     <FONT COLOR="#000088">netwib_byte</FONT> c,
+                                     <FONT COLOR="#000088">netwib_byte</FONT> d,
+                                     <FONT COLOR="#000088">netwib_ip</FONT> *pip);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_ip_init_ip4
+   Description :
+     Initialize an <FONT COLOR="#000088">netwib_ip</FONT> address from an netwib_ip4.
+   Input parameter(s) :
+     ip4 : <FONT COLOR="#000088">netwib_ip4</FONT> address
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pip : <FONT COLOR="#000088">netwib_ip</FONT> set
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_ip_init_ip4</B>(<FONT COLOR="#000088">netwib_ip4</FONT> ip4,
+                              <FONT COLOR="#000088">netwib_ip</FONT> *pip);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_ip4_init_ip
+   Description :
+     Initialize an <FONT COLOR="#000088">netwib_ip4</FONT> address from an netwib_ip.
+   Input parameter(s) :
+     ip : <FONT COLOR="#000088">netwib_ip</FONT> address
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pip4 : <FONT COLOR="#000088">netwib_ip4</FONT> set
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+     <FONT COLOR="#000044">NETWIB_ERR_NOTCONVERTED</FONT> : the address could not be represented
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_ip4_init_ip</B>(<FONT COLOR="#000088">netwib_constip</FONT> *pip,
+                              <FONT COLOR="#000088">netwib_ip4</FONT> *pip4);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_ip_init_ip6_fields
+   Description :
+     Initialize an <FONT COLOR="#000088">netwib_ip</FONT> address.
+   Input parameter(s) :
+     a,b,c,d : "aaaa:aaaa:bbbb:bbbb:cccc:cccc:dddd:dddd"
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pip : <FONT COLOR="#000088">netwib_ip</FONT> set with "aaaa:aaaa:bbbb:b..."
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_ip_init_ip6_fields</B>(<FONT COLOR="#000088">netwib_uint32</FONT> a,
+                                     <FONT COLOR="#000088">netwib_uint32</FONT> b,
+                                     <FONT COLOR="#000088">netwib_uint32</FONT> c,
+                                     <FONT COLOR="#000088">netwib_uint32</FONT> d,
+                                     <FONT COLOR="#000088">netwib_ip</FONT> *pip);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_ip_init_ip6
+   Description :
+     Initialize an <FONT COLOR="#000088">netwib_ip</FONT> address from an netwib_ip6.
+   Input parameter(s) :
+     ip6 : <FONT COLOR="#000088">netwib_ip6</FONT> address
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pip : <FONT COLOR="#000088">netwib_ip</FONT> set
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_ip_init_ip6</B>(<FONT COLOR="#000088">netwib_constip6</FONT> *pip6,
+                              <FONT COLOR="#000088">netwib_ip</FONT> *pip);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_ip6_init_ip
+   Description :
+     Initialize an <FONT COLOR="#000088">netwib_ip6</FONT> address from an netwib_ip.
+   Input parameter(s) :
+     ip : <FONT COLOR="#000088">netwib_ip</FONT> address
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pip6 : <FONT COLOR="#000088">netwib_ip6</FONT> set
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_ip6_init_ip</B>(<FONT COLOR="#000088">netwib_constip</FONT> *pip,
+                              <FONT COLOR="#000088">netwib_ip6</FONT> *pip6);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+typedef enum {
+  <FONT COLOR="#000044">NETWIB_IP_DECODETYPE_IP4</FONT> = 1, <FONT COLOR="#880000">/* "1.2.3.4" only */</FONT>
+  <FONT COLOR="#000044">NETWIB_IP_DECODETYPE_IP6</FONT>,     <FONT COLOR="#880000">/* "aaaa:bbbb:..." only */</FONT>
+  <FONT COLOR="#000044">NETWIB_IP_DECODETYPE_IP</FONT>,      <FONT COLOR="#880000">/* try IP4 then IP6 */</FONT>
+  <FONT COLOR="#000044">NETWIB_IP_DECODETYPE_HN4</FONT>,     <FONT COLOR="#880000">/* server.example.com-&gt;IPv4 only */</FONT>
+  <FONT COLOR="#000044">NETWIB_IP_DECODETYPE_HN6</FONT>,     <FONT COLOR="#880000">/* server.example.com-&gt;IPv4 only */</FONT>
+  <FONT COLOR="#000044">NETWIB_IP_DECODETYPE_HN</FONT>,      <FONT COLOR="#880000">/* try HN4 then HN6 */</FONT>
+  <FONT COLOR="#000044">NETWIB_IP_DECODETYPE_IP4HN4</FONT>,  <FONT COLOR="#880000">/* if IP4 does not work, use HN4 */</FONT>
+  <FONT COLOR="#000044">NETWIB_IP_DECODETYPE_IP6HN6</FONT>,  <FONT COLOR="#880000">/* if IP6 does not work, use HN6 */</FONT>
+  <FONT COLOR="#000044">NETWIB_IP_DECODETYPE_IPHN</FONT>,    <FONT COLOR="#880000">/* try IP, then HN */</FONT>
+  <FONT COLOR="#000044">NETWIB_IP_DECODETYPE_BEST</FONT> = <FONT COLOR="#000044">NETWIB_IP_DECODETYPE_IPHN</FONT>  <FONT COLOR="#880000">/* best */</FONT>
+} <FONT COLOR="#000088">netwib_ip_decodetype</FONT>;
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_ip_init_buf
+   Description :
+     Convert a string "1.2.3.4", "aaaa:bbbb:..." or a
+     hostname to a netwib_ip. To convert a hostname resolving
+     to several IP addresses, function netwib_ips_add_buf
+     has to be used instead.
+   Input parameter(s) :
+     *pbuf : string to convert
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pip : <FONT COLOR="#000088">netwib_ip</FONT> set
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+     <FONT COLOR="#000044">NETWIB_ERR_NOTCONVERTED</FONT> : the address could not be resolved
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_ip_init_buf</B>(<FONT COLOR="#000088">netwib_constbuf</FONT> *pbuf,
+                              <FONT COLOR="#000088">netwib_ip_decodetype</FONT> decodetype,
+                              <FONT COLOR="#000088">netwib_ip</FONT> *pip);
+<FONT COLOR="#008800">#define <B>netwib_ip_init_buf_best</B>(pbuf,pip) <B>netwib_ip_init_buf</B>(pbuf,<FONT COLOR="#000044">NETWIB_IP_DECODETYPE_BEST</FONT>,pip)</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_ip_init_eth
+   Description :
+     Convert a <FONT COLOR="#000088">netwib_eth</FONT> to a netwib_ip.
+   Input parameter(s) :
+     eth : <FONT COLOR="#000088">netwib_eth</FONT> to convert
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pip : <FONT COLOR="#000088">netwib_ip</FONT> set with eth value
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+     <FONT COLOR="#000044">NETWIB_ERR_NOTCONVERTED</FONT> : the address could not be resolved
+   Note :
+     This function does not currently support IPv6. It have
+     to be finished.
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_ip_init_eth</B>(<FONT COLOR="#000088">netwib_consteth</FONT> *peth,
+                              <FONT COLOR="#000088">netwib_ip</FONT> *pip);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_ip_init_kbd
+   Description :
+     Initialize an <FONT COLOR="#000088">netwib_ip</FONT> with the address entered by the
+     user through the keyboard
+   Input parameter(s) :
+     message : message to print before
+     defaulthn : default hostname or ip address to use if
+                 user enters nothing. If NULL, there is no default
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pip : <FONT COLOR="#000088">netwib_ip</FONT> set with user's string
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_ip_init_kbd</B>(<FONT COLOR="#000088">netwib_constbuf</FONT> *pmessage,
+                              <FONT COLOR="#000088">netwib_constbuf</FONT> *pdefaulthn,
+                              <FONT COLOR="#000088">netwib_ip</FONT> *pip);
+<FONT COLOR="#008800">#define <FONT COLOR="#000044">NETWIB_IP_INIT_KBD_NODEF</FONT> NULL</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_ip_cmp
+   Description :
+     Compare two netwib_ip.
+   Input parameter(s) :
+     ip1 : <FONT COLOR="#000088">netwib_ip</FONT> to compare with ip2
+     ip2 : <FONT COLOR="#000088">netwib_ip</FONT> to compare with ip1
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pcmp :
+       <FONT COLOR="#000044">NETWIB_CMP_LT</FONT> : ip1&lt;ip2
+       <FONT COLOR="#000044">NETWIB_CMP_EQ</FONT> : if ip1 and ip2 are equal
+       <FONT COLOR="#000044">NETWIB_CMP_GT</FONT> : ip1&gt;ip2
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_ip_cmp</B>(<FONT COLOR="#000088">netwib_constip</FONT> *pip1,
+                         <FONT COLOR="#000088">netwib_constip</FONT> *pip2,
+                         <FONT COLOR="#000088">netwib_cmp</FONT> *pcmp);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+typedef enum {
+  <FONT COLOR="#000044">NETWIB_IP_ENCODETYPE_IP</FONT> = 1,   <FONT COLOR="#880000">/* "1.2.3.4" */</FONT>
+  <FONT COLOR="#000044">NETWIB_IP_ENCODETYPE_HN</FONT>,       <FONT COLOR="#880000">/* server.example.com */</FONT>
+  <FONT COLOR="#000044">NETWIB_IP_ENCODETYPE_HNIP</FONT>,     <FONT COLOR="#880000">/* if HN does not work, use IP */</FONT>
+  <FONT COLOR="#000044">NETWIB_IP_ENCODETYPE_HNS</FONT>,      <FONT COLOR="#880000">/* "host1,host2,etc." */</FONT>
+  <FONT COLOR="#000044">NETWIB_IP_ENCODETYPE_BEST</FONT> = <FONT COLOR="#000044">NETWIB_IP_ENCODETYPE_HNIP</FONT> <FONT COLOR="#880000">/* best */</FONT>
+} <FONT COLOR="#000088">netwib_ip_encodetype</FONT>;
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_buf_append_ip
+   Description :
+     Append a string representing a netwib_ip.
+   Input parameter(s) :
+     ip : <FONT COLOR="#000088">netwib_ip</FONT> to append
+     encodetype : encodetype to use
+   Input/output parameter(s) :
+     pbuf : buffer updated
+   Output parameter(s) :
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+     <FONT COLOR="#000044">NETWIB_ERR_NOTCONVERTED</FONT> : the address could not be resolved
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_buf_append_ip</B>(<FONT COLOR="#000088">netwib_constip</FONT> *pip,
+                                <FONT COLOR="#000088">netwib_ip_encodetype</FONT> encodetype,
+                                <FONT COLOR="#000088">netwib_buf</FONT> *pbuf);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_buf_append_iptype
+   Description :
+     Obtains the buf string corresponding to a type.
+   Input parameter(s) :
+     type : type
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pbuf : <FONT COLOR="#000088">netwib_buf</FONT> set with the buf string
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_buf_append_iptype</B>(<FONT COLOR="#000088">netwib_iptype</FONT> type,
+                                    <FONT COLOR="#000088">netwib_buf</FONT> *pbuf);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_iptype_init_kbd
+   Description :
+     Initialize a <FONT COLOR="#000088">netwib_iptype</FONT> with data entered
+     through keyboard.
+   Input parameter(s) :
+     *pmessage : message to print before
+     defaulttype : default type to use if user enters
+                   nothing (if <FONT COLOR="#000044">NETWIB_IPTYPE_UNKNOWN</FONT> means
+                   no default)
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *phwtype : <FONT COLOR="#000088">netwib_hwtype</FONT> initialized
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_iptype_init_kbd</B>(<FONT COLOR="#000088">netwib_constbuf</FONT> *pmessage,
+                                  <FONT COLOR="#000088">netwib_iptype</FONT> defaulttype,
+                                  <FONT COLOR="#000088">netwib_iptype</FONT> *ptype);
+<FONT COLOR="#008800">#define <FONT COLOR="#000044">NETWIB_IPTYPE_INIT_KBD_NODEF</FONT> <FONT COLOR="#000044">NETWIB_IPTYPE_UNKNOWN</FONT></FONT>
+</PRE><BR><BR><HR><BR>
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../net.html">section index</A></H2>
+</BODY></HTML>

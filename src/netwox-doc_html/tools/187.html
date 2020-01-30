@@ -1,0 +1,48 @@
+<HTML>
+ <HEAD>
+ <TITLE>Tool 187: Display date and time</TITLE>
+ </HEAD>
+ <BODY BGCOLOR="#FFFFFF">
+  <CENTER>   <H3>Tool 187: Display date and time</H3>
+  </CENTER>
+
+  <P><H3>Description:</H3>
+   <PRE>
+  Display current time (or --time) using several formats.
+   </PRE>
+
+  <P><H3>Usage:</H3>
+  &nbsp;&nbsp;netwox 187 [-t uint32] [-r|+r] [-u|+u] [-h|+h] [-s|+s] [-n|+n]<BR>
+
+  <P><H3>Parameters:</H3>
+<TABLE BORDER=1 CELLPADDING=4>
+ <TR>
+  <TD ALIGN=middle><I>parameter</I></TD>
+  <TD ALIGN=middle><I>description</I></TD>
+  <TD ALIGN=middle><I>example</I></TD>
+ </TR>
+ <TR><TD><TT>-t|--time uint32</TD>
+<TD>time to display</TD>
+<TD>0</TD></TR>
+<TR><TD><TT>-r|--disp-rfc822|+r|--no-disp-rfc822</TD>
+<TD>display rfc822 date</TD>
+<TD><I>This boolean is set.<BR>Use + or --no- to unset it.</I></TD></TR>
+<TR><TD><TT>-u|--disp-unixdate|+u|--no-disp-unixdate</TD>
+<TD>display unix date(1) format</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-h|--disp-human|+h|--no-disp-human</TD>
+<TD>display human readable time</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-s|--disp-sec|+s|--no-disp-sec</TD>
+<TD>display seconds</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-n|--disp-secnsec|+n|--no-disp-secnsec</TD>
+<TD>display seconds and nanoseconds</TD>
+<TD>&nbsp; </TD></TR>
+</TABLE>
+
+  <P><H3>Example:</H3>
+  &nbsp;&nbsp;netwox 187<BR>
+<BR>
+ </BODY>
+ </HTML>

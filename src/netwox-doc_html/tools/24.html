@@ -1,0 +1,59 @@
+<HTML>
+ <HEAD>
+ <TITLE>Tool 24: Convert IP addresses ranges</TITLE>
+ </HEAD>
+ <BODY BGCOLOR="#FFFFFF">
+  <CENTER>   <H3>Tool 24: Convert IP addresses ranges</H3>
+  </CENTER>
+
+  <P><H3>Description:</H3>
+   <PRE>
+  This tool converts a range of IP addresses. For example:
+    netwox 24 --ips 192.168.1.128/27 --iprange --ipnumber --ipmask
+  returns:
+    192.168.1.128-192.168.1.159
+    192.168.1.128/27
+    192.168.1.128/255.255.255.224
+  It permits to easily compute netmask.
+  To obtain information about each address in a list of IP addresses,
+  use tool 3 with option -a.
+  See also tool 213.
+   </PRE>
+
+  <P><H3>Synonyms:</H3>
+  &nbsp;&nbsp;ipcalc, netmask<BR>
+
+  <P><H3>Usage:</H3>
+  &nbsp;&nbsp;netwox 24 -i ips [-h|+h] [-r|+r] [-n|+n] [-m|+m]<BR>
+
+  <P><H3>Parameters:</H3>
+<TABLE BORDER=1 CELLPADDING=4>
+ <TR>
+  <TD ALIGN=middle><I>parameter</I></TD>
+  <TD ALIGN=middle><I>description</I></TD>
+  <TD ALIGN=middle><I>example</I></TD>
+ </TR>
+ <TR><TD><TT>-i|--ips ips</TD>
+<TD>list/range of IP addresses</TD>
+<TD>192.168.1.0/24</TD></TR>
+<TR><TD><TT>-h|--hnrange|+h|--no-hnrange</TD>
+<TD>display hostnames</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-r|--iprange|+r|--no-iprange</TD>
+<TD>display ip-ip</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-n|--ipnumber|+n|--no-ipnumber</TD>
+<TD>display ip/num</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-m|--ipmask|+m|--no-ipmask</TD>
+<TD>display ip/mask</TD>
+<TD>&nbsp; </TD></TR>
+</TABLE>
+
+  <P><H3>Examples:</H3>
+  &nbsp;&nbsp;netwox 24 -i "192.168.1.0/24"<BR>
+<BR>
+  &nbsp;&nbsp;netwox 24 --ips "192.168.1.0/24"<BR>
+<BR>
+ </BODY>
+ </HTML>

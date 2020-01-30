@@ -1,0 +1,71 @@
+<HTML>
+ <HEAD>
+ <TITLE>Tool 54: Ping UDP (EthIp spoof)</TITLE>
+ </HEAD>
+ <BODY BGCOLOR="#FFFFFF">
+  <CENTER>   <H3>Tool 54: Ping UDP (EthIp spoof)</H3>
+  </CENTER>
+
+  <P><H3>Description:</H3>
+   <PRE>
+  This tool checks if a host is up. It's done sending a probe packet and
+  expecting a reply.
+  This tool sends an UDP packet to a computer. If host permits UDP, it
+  will send back an ICMP error (if port is closed), or send back nothing
+  (if port is open). So, it's important to understand UDP port has to be
+  closed for computer to return something.
+  This tool also permits to use fake Ethernet and IP addresses.
+  
+  This tool may need to be run with admin privilege in order to sniff
+  and spoof.
+   </PRE>
+
+  <P><H3>Usage:</H3>
+  &nbsp;&nbsp;netwox 54 -i ip [-d device] [-E eth] [-e eth] [-I ip] [-p port] [-c uint32] [-m uint32] [-b|+b] [-1|+1]<BR>
+
+  <P><H3>Parameters:</H3>
+<TABLE BORDER=1 CELLPADDING=4>
+ <TR>
+  <TD ALIGN=middle><I>parameter</I></TD>
+  <TD ALIGN=middle><I>description</I></TD>
+  <TD ALIGN=middle><I>example</I></TD>
+ </TR>
+ <TR><TD><TT>-i|--dst-ip ip</TD>
+<TD>destination IP address</TD>
+<TD>5.6.7.8</TD></TR>
+<TR><TD><TT>-d|--device device</TD>
+<TD>device name</TD>
+<TD>Eth0</TD></TR>
+<TR><TD><TT>-E|--src-eth eth</TD>
+<TD>source ethernet address</TD>
+<TD>0:a:a:a:a:a</TD></TR>
+<TR><TD><TT>-e|--dst-eth eth</TD>
+<TD>destination ethernet address</TD>
+<TD>0:b:b:b:b:b</TD></TR>
+<TR><TD><TT>-I|--src-ip ip</TD>
+<TD>source IP address</TD>
+<TD>1.2.3.4</TD></TR>
+<TR><TD><TT>-p|--dst-port port</TD>
+<TD>destination port number</TD>
+<TD>80</TD></TR>
+<TR><TD><TT>-c|--max-count uint32</TD>
+<TD>max requests</TD>
+<TD>4294967295</TD></TR>
+<TR><TD><TT>-m|--max-ms uint32</TD>
+<TD>max millisecond wait</TD>
+<TD>1000</TD></TR>
+<TR><TD><TT>-b|--beep|+b|--no-beep</TD>
+<TD>beep if reached</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-1|--display01|+1|--no-display01</TD>
+<TD>display only 0 or 1</TD>
+<TD>&nbsp; </TD></TR>
+</TABLE>
+
+  <P><H3>Examples:</H3>
+  &nbsp;&nbsp;netwox 54 -i "5.6.7.8"<BR>
+<BR>
+  &nbsp;&nbsp;netwox 54 --dst-ip "5.6.7.8"<BR>
+<BR>
+ </BODY>
+ </HTML>

@@ -1,0 +1,95 @@
+<HTML>
+ <HEAD>
+ <TITLE>Tool 173: Download overview of one, or more, newsgroup messages</TITLE>
+ </HEAD>
+ <BODY BGCOLOR="#FFFFFF">
+  <CENTER>   <H3>Tool 173: Download overview of one, or more, newsgroup messages</H3>
+  </CENTER>
+
+  <P><H3>Description:</H3>
+   <PRE>
+  This tool downloads the overview of messages in a newsgroup.
+  It uses a NNTP extension named XOVER.
+  The overview contains article number, subject, author, date,
+  message-id, references, byte count, and line count.
+  
+  Parameter --newsgroup sets the newsgroup name.
+  Parameters --user and --pass defines the username and password.
+  Parameter --dst-ip is the address of remote host/server.
+  Parameter --dst-port is the port number where to connect.
+  Optional parameter --src-ip defines the local IP address to use.
+  Optional parameter --src-port defines the local port number to use.
+  Optional parameter --ip4opts permits to add IP4 options encoded as
+  mixed.
+  Optional parameter --ip6exts permits to add IP6 options encoded as
+  mixed (first byte is the next header number).
+  Optional parameters --device, --src-eth and --dst-eth permits to
+  create a virtual client using fake addresses (in this case, tool have
+  to be run with admin privilege in order to sniff and spoof at
+  Ethernet level).
+   </PRE>
+
+  <P><H3>Usage:</H3>
+  &nbsp;&nbsp;netwox 173 -i ip -g newsgroup -n uint32 [-N uint32] [-u login] [-a password] [-d device] [-E eth] [-e eth] [-I ip] [-P port] [-p port] [-o ip4opts] [-O ip6exts] [-T uint32]<BR>
+
+  <P><H3>Parameters:</H3>
+<TABLE BORDER=1 CELLPADDING=4>
+ <TR>
+  <TD ALIGN=middle><I>parameter</I></TD>
+  <TD ALIGN=middle><I>description</I></TD>
+  <TD ALIGN=middle><I>example</I></TD>
+ </TR>
+ <TR><TD><TT>-i|--dst-ip ip</TD>
+<TD>destination IP address</TD>
+<TD>5.6.7.8</TD></TR>
+<TR><TD><TT>-g|--newsgroup newsgroup</TD>
+<TD>newsgroup name</TD>
+<TD>comp.lang.c</TD></TR>
+<TR><TD><TT>-n|--firstartnum uint32</TD>
+<TD>first article number</TD>
+<TD>1</TD></TR>
+<TR><TD><TT>-N|--lastartnum uint32</TD>
+<TD>last article number</TD>
+<TD>1</TD></TR>
+<TR><TD><TT>-u|--user login</TD>
+<TD>username</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-a|--pass password</TD>
+<TD>password</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-d|--device device</TD>
+<TD>device name</TD>
+<TD>Eth0</TD></TR>
+<TR><TD><TT>-E|--src-eth eth</TD>
+<TD>source ethernet address</TD>
+<TD>0:2:3:4:5:6</TD></TR>
+<TR><TD><TT>-e|--dst-eth eth</TD>
+<TD>destination ethernet address</TD>
+<TD>0:8:9:a:b:c</TD></TR>
+<TR><TD><TT>-I|--src-ip ip</TD>
+<TD>source IP address</TD>
+<TD>192.168.100.200</TD></TR>
+<TR><TD><TT>-P|--src-port port</TD>
+<TD>source port number</TD>
+<TD>0</TD></TR>
+<TR><TD><TT>-p|--dst-port port</TD>
+<TD>destination port number</TD>
+<TD>119</TD></TR>
+<TR><TD><TT>-o|--ip4opts ip4opts</TD>
+<TD>IPv4 options</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-O|--ip6exts ip6exts</TD>
+<TD>IPv6 extensions</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-T|--timeout uint32</TD>
+<TD>timeout in ms</TD>
+<TD>60000 </TD></TR>
+</TABLE>
+
+  <P><H3>Examples:</H3>
+  &nbsp;&nbsp;netwox 173 -i "5.6.7.8" -g "comp.lang.c" -n "1"<BR>
+<BR>
+  &nbsp;&nbsp;netwox 173 --dst-ip "5.6.7.8" --newsgroup "comp.lang.c" --firstartnum "1"<BR>
+<BR>
+ </BODY>
+ </HTML>

@@ -1,0 +1,18 @@
+Description: uppercase PIC compilator option
+ gcc on s390x and sparc64 needs -fPIC instead of -fpic option
+Author: Aurelien Jarno <aurel32@debian.org>
+Bug-Debian: http://bugs.debian.org/639493
+Origin: Debian
+Forwarded: no
+
+--- netw-ib-ox-ag-5.39.0.orig/src/netwib-src/src/genemake
++++ netw-ib-ox-ag-5.39.0/src/netwib-src/src/genemake
+@@ -193,7 +193,7 @@ case $NETWIBDEF_SYSNAME in
+     gccOptSo="-shared -Xlinker \"-hlibnetwib$netwv.so\""
+     ;;
+  "Linux" )
+-    gccOptPic="-fpic"
++    gccOptPic="-fPIC"
+     gccOptSo="-shared -Xlinker \"-hlibnetwib$netwv.so\""
+     ;;
+  "MacOS" )

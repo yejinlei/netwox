@@ -1,0 +1,84 @@
+
+This file describes other installation procedures.
+
+
+         ------------------------------------------------
+         |   Installing netwib, netwox and netwag for   |
+         |                non root users                |
+         ------------------------------------------------
+
+cd netwib-src/src
+edit config.dat to set:
+  NETWIBDEF_INSTPREFIX=/home/user/netw
+./genemake
+make
+make install
+
+cd netwox-src/src/
+edit config.dat to set:
+  NETWIBDEF_INSTPREFIX=/home/user/netw
+  NETWOXDEF_INSTPREFIX=/home/user/netw
+./genemake
+make
+make install
+
+cd netwag-src/src/
+edit config.dat to set:
+  NETWOXDEF_INSTPREFIX=/home/user/netw
+  NETWAGDEF_INSTPREFIX=/home/user/netw
+./genemake
+make
+make install
+
+Now:
+ run /home/user/netw/bin/netwox
+ run /home/user/netw/bin/netwag
+
+Note: netwib-doc_html, netwox-doc_html and netwag-doc_html installation
+      is not described here. Just copy them were you want.
+
+
+         ------------------------------------------------
+         |   Installing netwib, netwox and netwag for   |
+         |        creating distribution packages        |
+         ------------------------------------------------
+
+cd netwib-src/src
+edit config.dat to set:
+  NETWIBDEF_INSTPREFIX=/usr
+  NETWIBDEF_INSTDESTDIR=/work/tmp/netwib
+./genemake
+make libnetwib.so
+make installso
+
+cd netwox-src/src/
+edit config.dat to set:
+  NETWIBDEF_INSTPREFIX=/usr
+  NETWIBDEF_INSTDESTDIR=/work/tmp/netwib
+  NETWOXDEF_INSTPREFIX=/usr
+  NETWOXDEF_INSTDESTDIR=/work/tmp/netwox
+./genemake
+make
+make install
+
+cd netwag-src/src/
+edit config.dat to set:
+  NETWOXDEF_INSTPREFIX=/usr
+  NETWOXDEF_INSTDESTDIR=/work/tmp/netwox
+  NETWAGDEF_INSTPREFIX=/usr/X11R6
+  NETWAGDEF_INSTDESTDIR=/work/tmp/netwag
+./genemake
+make
+make install
+
+Now:
+ - netwib is under /work/tmp/netwib, and ready for package creation
+ - netwox is under /work/tmp/netwox, and ready for package creation
+ - netwag is under /work/tmp/netwag, and ready for package creation
+
+Note: netwib-doc_html, netwox-doc_html and netwag-doc_html installation
+      is not described here. Just copy them were you want.
+
+Note: icons are available in src/compil/unix|windows/ico directories.
+      Use them in X11/Windows menus.
+

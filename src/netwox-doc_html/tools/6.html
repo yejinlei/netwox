@@ -1,0 +1,67 @@
+<HTML>
+ <HEAD>
+ <TITLE>Tool 6: Display how to reach an IP address</TITLE>
+ </HEAD>
+ <BODY BGCOLOR="#FFFFFF">
+  <CENTER>   <H3>Tool 6: Display how to reach an IP address</H3>
+  </CENTER>
+
+  <P><H3>Description:</H3>
+   <PRE>
+  This tool displays source and destination addresses used to reach a
+  remote computer.
+  It shows:
+   - associated device
+   - local/source IP address
+   - IP address of host to reach
+   - local/source Ethernet address
+   - destination Ethernet address (address of gateway/router if computer
+     is not on the local Ethernet LAN)
+  
+  This tool may need to be run with admin privilege in order to sniff
+  and spoof (for Ethernet addresses resolving).
+   </PRE>
+
+  <P><H3>Synonyms:</H3>
+  &nbsp;&nbsp;device, gateway, ip4, ip6, mac, router<BR>
+
+  <P><H3>Usage:</H3>
+  &nbsp;&nbsp;netwox 6 [-t|+t] [-d|+d] [-i|+i] [-I|+I] [-e|+e] [-E|+E] -q ip<BR>
+
+  <P><H3>Parameters:</H3>
+<TABLE BORDER=1 CELLPADDING=4>
+ <TR>
+  <TD ALIGN=middle><I>parameter</I></TD>
+  <TD ALIGN=middle><I>description</I></TD>
+  <TD ALIGN=middle><I>example</I></TD>
+ </TR>
+ <TR><TD><TT>-t|--title|+t|--no-title</TD>
+<TD>display titles</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-d|--device|+d|--no-device</TD>
+<TD>obtain device</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-i|--src-ip|+i|--no-src-ip</TD>
+<TD>obtain source IP</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-I|--dst-ip|+I|--no-dst-ip</TD>
+<TD>display destination IP</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-e|--src-eth|+e|--no-src-eth</TD>
+<TD>obtain source Eth</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-E|--dst-eth|+E|--no-dst-eth</TD>
+<TD>obtain destination Eth</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-q|--ip ip</TD>
+<TD>IP address</TD>
+<TD>192.168.100.200 </TD></TR>
+</TABLE>
+
+  <P><H3>Examples:</H3>
+  &nbsp;&nbsp;netwox 6 -q "192.168.100.200"<BR>
+<BR>
+  &nbsp;&nbsp;netwox 6 --ip "192.168.100.200"<BR>
+<BR>
+ </BODY>
+ </HTML>

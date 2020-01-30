@@ -1,0 +1,173 @@
+<HTML><HEAD>
+<TITLE>netwib doc_html (version 5.39.0)</TITLE>
+</HEAD><BODY BGCOLOR="#FFFFFF" TEXT="#000000">
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../net.html">section index</A></H2><HR><BR>
+<PRE>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* We need a forward declaration for netwib_ipproto.
+*/</FONT>
+<FONT COLOR="#008800">#include "../pkt/types.h"</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000"><B>/***************************************************************
+ * Parameter pip6exts permits to specify IP6 extensions (rfc   *
+ * 3542). However, this is not yet implemented.                *
+ ***************************************************************/</B></FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_io_init_sock_xyz
+   Description :
+     Initialize a socket connection.
+   Input parameter(s) :
+     localip : local IP
+     remoteip : remote IP
+     iptype : iptype to use
+     localport : local port
+     remoteport : remote port
+     *pip4opts : optional IP options to add
+   Input/output parameter(s) :
+   Output parameter(s) :
+     **ppio : <FONT COLOR="#000088">netwib_io</FONT> initialized
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_io_init_sock_udp_cli_full</B>(<FONT COLOR="#000088">netwib_constip</FONT> *plocalip,
+                                            <FONT COLOR="#000088">netwib_constip</FONT> *premoteip,
+                                            <FONT COLOR="#000088">netwib_port</FONT> localport,
+                                            <FONT COLOR="#000088">netwib_port</FONT> remoteport,
+                                            <FONT COLOR="#000088">netwib_constbuf</FONT> *pip4opts,
+                                            <FONT COLOR="#000088">netwib_ipproto</FONT> ip6extsproto,
+                                            <FONT COLOR="#000088">netwib_constbuf</FONT> *pip6exts,
+                                            <FONT COLOR="#000088">netwib_io</FONT> **ppio);
+<FONT COLOR="#008800">#define <B>netwib_io_init_sock_udp_cli</B>(plocalip,premoteip,localport,remoteport,ppio) <B>netwib_io_init_sock_udp_cli_full</B>(plocalip,premoteip,localport,remoteport,NULL,<FONT COLOR="#000044">NETWIB_IPPROTO_NONE</FONT>,NULL,ppio)</FONT>
+<FONT COLOR="#008800">#define <B>netwib_io_init_sock_udp_cli_easy</B>(premoteip,remoteport,ppio) <B>netwib_io_init_sock_udp_cli</B>(NULL,premoteip,0,remoteport,ppio)</FONT>
+
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_io_init_sock_tcp_cli_full</B>(<FONT COLOR="#000088">netwib_constip</FONT> *plocalip,
+                                            <FONT COLOR="#000088">netwib_constip</FONT> *premoteip,
+                                            <FONT COLOR="#000088">netwib_port</FONT> localport,
+                                            <FONT COLOR="#000088">netwib_port</FONT> remoteport,
+                                            <FONT COLOR="#000088">netwib_constbuf</FONT> *pip4opts,
+                                            <FONT COLOR="#000088">netwib_ipproto</FONT> ip6extsproto,
+                                            <FONT COLOR="#000088">netwib_constbuf</FONT> *pip6exts,
+                                            <FONT COLOR="#000088">netwib_io</FONT> **ppio);
+<FONT COLOR="#008800">#define <B>netwib_io_init_sock_tcp_cli</B>(plocalip,premoteip,localport,remoteport,ppio) <B>netwib_io_init_sock_tcp_cli_full</B>(plocalip,premoteip,localport,remoteport,NULL,<FONT COLOR="#000044">NETWIB_IPPROTO_NONE</FONT>,NULL,ppio)</FONT>
+<FONT COLOR="#008800">#define <B>netwib_io_init_sock_tcp_cli_easy</B>(premoteip,remoteport,ppio) <B>netwib_io_init_sock_tcp_cli</B>(NULL,premoteip,0,remoteport,ppio)</FONT>
+
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_io_init_sock_udp_ser_full</B>(<FONT COLOR="#000088">netwib_constip</FONT> *plocalip,
+                                            <FONT COLOR="#000088">netwib_port</FONT> localport,
+                                            <FONT COLOR="#000088">netwib_constbuf</FONT> *pip4opts,
+                                            <FONT COLOR="#000088">netwib_ipproto</FONT> ip6extsproto,
+                                            <FONT COLOR="#000088">netwib_constbuf</FONT> *pip6exts,
+                                            <FONT COLOR="#000088">netwib_io</FONT> **ppio);
+<FONT COLOR="#008800">#define <B>netwib_io_init_sock_udp_ser</B>(plocalip,localport,ppio) <B>netwib_io_init_sock_udp_ser_full</B>(plocalip,localport,NULL,<FONT COLOR="#000044">NETWIB_IPPROTO_NONE</FONT>,NULL,ppio)</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_io_init_sock_udp_ser_easy</B>(<FONT COLOR="#000088">netwib_iptype</FONT> iptype,
+                                            <FONT COLOR="#000088">netwib_port</FONT> localport,
+                                            <FONT COLOR="#000088">netwib_io</FONT> **ppio);
+
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_io_init_sock_tcp_ser_full</B>(<FONT COLOR="#000088">netwib_constip</FONT> *plocalip,
+                                            <FONT COLOR="#000088">netwib_port</FONT> localport,
+                                            <FONT COLOR="#000088">netwib_constbuf</FONT> *pip4opts,
+                                            <FONT COLOR="#000088">netwib_ipproto</FONT> ip6extsproto,
+                                            <FONT COLOR="#000088">netwib_constbuf</FONT> *pip6exts,
+                                            <FONT COLOR="#000088">netwib_io</FONT> **ppio);
+<FONT COLOR="#008800">#define <B>netwib_io_init_sock_tcp_ser</B>(plocalip,localport,ppio) <B>netwib_io_init_sock_tcp_ser_full</B>(plocalip,localport,NULL,<FONT COLOR="#000044">NETWIB_IPPROTO_NONE</FONT>,NULL,ppio)</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_io_init_sock_tcp_ser_easy</B>(<FONT COLOR="#000088">netwib_iptype</FONT> iptype,
+                                            <FONT COLOR="#000088">netwib_port</FONT> localport,
+                                            <FONT COLOR="#000088">netwib_io</FONT> **ppio);
+
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_io_init_sock_udp_mulser_full</B>(<FONT COLOR="#000088">netwib_constip</FONT> *plocalip,
+                                               <FONT COLOR="#000088">netwib_port</FONT> localport,
+                                               <FONT COLOR="#000088">netwib_constbuf</FONT> *pip4opts,
+                                               <FONT COLOR="#000088">netwib_ipproto</FONT> ip6extsproto,
+                                               <FONT COLOR="#000088">netwib_constbuf</FONT> *pip6exts,
+                                               <FONT COLOR="#000088">netwib_io</FONT> **ppio);
+<FONT COLOR="#008800">#define <B>netwib_io_init_sock_udp_mulser</B>(plocalip,localport,ppio) <B>netwib_io_init_sock_udp_mulser_full</B>(plocalip,localport,NULL,<FONT COLOR="#000044">NETWIB_IPPROTO_NONE</FONT>,NULL,ppio)</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_io_init_sock_udp_mulser_easy</B>(<FONT COLOR="#000088">netwib_iptype</FONT> iptype,
+                                               <FONT COLOR="#000088">netwib_port</FONT> localport,
+                                               <FONT COLOR="#000088">netwib_io</FONT> **ppio);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_sock_tcp_mulser_full
+   Description :
+     Deal with a tcp multi-client server.
+     Note : we never exit from this function.
+   Input parameter(s) :
+     localip : listening IP address
+     localport : listening port
+     ip4opts : IP options to add
+     pfunc : memory address of the function which will be
+             called for each client. For each call, the first
+             parameter ('pio') will be set with socket,
+             and the second parameter ('pinfos')
+             will be set with the optional parameter below.
+             Note : at the end, this function must not close pio
+   Input/output parameter(s) :
+     pinfos : optional parameter (can be NULL) which will be
+              used as the second parameter for *pfunc. This
+              may be used to send information to *pfunc.
+   Output parameter(s) :
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+typedef <FONT COLOR="#000088">netwib_err</FONT> (*netwib_sock_tcp_mulser_pf)(<FONT COLOR="#000088">netwib_io</FONT> *pio,
+                                                <FONT COLOR="#000088">netwib_ptr</FONT> pinfos);
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_sock_tcp_mulser_full</B>(<FONT COLOR="#000088">netwib_constip</FONT> *plocalip,
+                                       <FONT COLOR="#000088">netwib_port</FONT> localport,
+                                       <FONT COLOR="#000088">netwib_constbuf</FONT> *pip4opts,
+                                       <FONT COLOR="#000088">netwib_ipproto</FONT> ip6extsproto,
+                                       <FONT COLOR="#000088">netwib_constbuf</FONT> *pip6exts,
+                                       <FONT COLOR="#000088">netwib_sock_tcp_mulser_pf</FONT> pfunc,
+                                       <FONT COLOR="#000088">netwib_ptr</FONT> pinfos);
+<FONT COLOR="#008800">#define <B>netwib_sock_tcp_mulser</B>(plocalip,localport,pfunc,pinfos) <B>netwib_sock_tcp_mulser_full</B>(plocalip,localport,NULL,<FONT COLOR="#000044">NETWIB_IPPROTO_NONE</FONT>,NULL,pfunc,pinfos)</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_sock_tcp_mulser_easy</B>(<FONT COLOR="#000088">netwib_iptype</FONT> iptype,
+                                       <FONT COLOR="#000088">netwib_port</FONT> localport,
+                                       <FONT COLOR="#000088">netwib_sock_tcp_mulser_pf</FONT> pfunc,
+                                       <FONT COLOR="#000088">netwib_ptr</FONT> pinfos);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Set/get IP4 options */</FONT>
+<FONT COLOR="#880000">/* <FONT COLOR="#000088">netwib_err</FONT> f(<FONT COLOR="#000088">netwib_io</FONT> *pio, <FONT COLOR="#000088">netwib_constbuf</FONT> *pip4opts); */</FONT>
+<FONT COLOR="#008800">#define <B>netwib_sock_ctl_set_ip4opts</B>(pio,pip4opts) <B>netwib_io_ctl_set</B>(pio,<FONT COLOR="#000044">NETWIB_IO_WAYTYPE_SUPPORTED</FONT>,<FONT COLOR="#000044">NETWIB_IO_CTLTYPE_SOCK_IP4OPTS</FONT>,pip4opts,0)</FONT>
+<FONT COLOR="#880000">/* <FONT COLOR="#000088">netwib_err</FONT> f(<FONT COLOR="#000088">netwib_io</FONT> *pio, <FONT COLOR="#000088">netwib_buf</FONT> *pip4opts); */</FONT>
+<FONT COLOR="#008800">#define <B>netwib_sock_ctl_get_ip4opts</B>(pio,pip4opts) <B>netwib_io_ctl_get</B>(pio,<FONT COLOR="#000044">NETWIB_IO_WAYTYPE_SUPPORTED</FONT>,<FONT COLOR="#000044">NETWIB_IO_CTLTYPE_SOCK_IP4OPTS</FONT>,pip4opts,NULL)</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Set/get IP6 extensions */</FONT>
+<FONT COLOR="#880000">/* <FONT COLOR="#000088">netwib_err</FONT> f(<FONT COLOR="#000088">netwib_io</FONT> *pio, <FONT COLOR="#000088">netwib_ipproto</FONT> ip6extsproto,
+                <FONT COLOR="#000088">netwib_constbuf</FONT> *pip6exts); */</FONT>
+<FONT COLOR="#008800">#define <B>netwib_sock_ctl_set_ip6exts</B>(pio,ip6extsproto,pip6exts) <B>netwib_io_ctl_set</B>(pio,<FONT COLOR="#000044">NETWIB_IO_WAYTYPE_SUPPORTED</FONT>,<FONT COLOR="#000044">NETWIB_IO_CTLTYPE_SOCK_IP6EXTS</FONT>,pip6exts,ip6extsproto)</FONT>
+<FONT COLOR="#880000">/* <FONT COLOR="#000088">netwib_err</FONT> f(<FONT COLOR="#000088">netwib_io</FONT> *pio, <FONT COLOR="#000088">netwib_ipproto</FONT> *pip6extsproto,
+                <FONT COLOR="#000088">netwib_buf</FONT> *pip6exts); */</FONT>
+<FONT COLOR="#008800">#define <B>netwib_sock_ctl_get_ip6exts</B>(pio,pip6extsproto,pip6exts) <B>netwib_io_ctl_get</B>(pio,<FONT COLOR="#000044">NETWIB_IO_WAYTYPE_SUPPORTED</FONT>,<FONT COLOR="#000044">NETWIB_IO_CTLTYPE_SOCK_IP6EXTS</FONT>,pip6exts,pip6extsproto)</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Obtain local IP address and port */</FONT>
+<FONT COLOR="#880000">/* <FONT COLOR="#000088">netwib_err</FONT> f(<FONT COLOR="#000088">netwib_io</FONT> *pio, <FONT COLOR="#000088">netwib_ip</FONT> *pip, <FONT COLOR="#000088">netwib_port</FONT> *pport); */</FONT>
+<FONT COLOR="#008800">#define <B>netwib_sock_ctl_get_local</B>(pio,pip,pport) <B>netwib_io_ctl_get</B>(pio,<FONT COLOR="#000044">NETWIB_IO_WAYTYPE_SUPPORTED</FONT>,<FONT COLOR="#000044">NETWIB_IO_CTLTYPE_SOCK_LOCAL</FONT>,pip,pport)</FONT>
+<FONT COLOR="#880000">/* Obtain remote IP address and port */</FONT>
+<FONT COLOR="#880000">/* <FONT COLOR="#000088">netwib_err</FONT> f(<FONT COLOR="#000088">netwib_io</FONT> *pio, <FONT COLOR="#000088">netwib_ip</FONT> *pip, <FONT COLOR="#000088">netwib_port</FONT> *pport); */</FONT>
+<FONT COLOR="#008800">#define <B>netwib_sock_ctl_get_remote</B>(pio,pip,pport) <B>netwib_io_ctl_get</B>(pio,<FONT COLOR="#000044">NETWIB_IO_WAYTYPE_SUPPORTED</FONT>,<FONT COLOR="#000044">NETWIB_IO_CTLTYPE_SOCK_REMOTE</FONT>,pip,pport)</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Change multicast TTL */</FONT>
+<FONT COLOR="#880000">/* <FONT COLOR="#000088">netwib_err</FONT> f(<FONT COLOR="#000088">netwib_io</FONT> *pio, <FONT COLOR="#000088">netwib_uin32</FONT> ttl); */</FONT>
+<FONT COLOR="#008800">#define <B>netwib_sock_ctl_set_multicastttl</B>(pio,ttl) <B>netwib_io_ctl_set</B>(pio,<FONT COLOR="#000044">NETWIB_IO_WAYTYPE_SUPPORTED</FONT>,<FONT COLOR="#000044">NETWIB_IO_CTLTYPE_SOCK_MULTICASTTTL</FONT>,NULL,ttl)</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+typedef enum {
+  <FONT COLOR="#000044">NETWIB_IO_SOCKTYPE_UDP_CLI</FONT> = 1,
+  <FONT COLOR="#000044">NETWIB_IO_SOCKTYPE_TCP_CLI</FONT>,
+  <FONT COLOR="#000044">NETWIB_IO_SOCKTYPE_UDP_SER</FONT>,
+  <FONT COLOR="#000044">NETWIB_IO_SOCKTYPE_TCP_SER</FONT>,
+  <FONT COLOR="#000044">NETWIB_IO_SOCKTYPE_UDP_MULSER</FONT>,
+  <FONT COLOR="#000044">NETWIB_IO_SOCKTYPE_TCP_MULSER</FONT>
+} <FONT COLOR="#000088">netwib_io_socktype</FONT>;
+<FONT COLOR="#880000">/* Get socket type */</FONT>
+<FONT COLOR="#880000">/* <FONT COLOR="#000088">netwib_err</FONT> f(<FONT COLOR="#000088">netwib_io</FONT> *pio, <FONT COLOR="#000088">netwib_io_socktype</FONT> *psocktype); */</FONT>
+<FONT COLOR="#008800">#define <B>netwib_sock_ctl_get_socktype</B>(pio,psocktype) <B>netwib_io_ctl_get</B>(pio,<FONT COLOR="#000044">NETWIB_IO_WAYTYPE_SUPPORTED</FONT>,<FONT COLOR="#000044">NETWIB_IO_CTLTYPE_SOCK_SOCKTYPE</FONT>,psocktype,NULL)</FONT>
+</PRE><BR><BR><HR><BR>
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../net.html">section index</A></H2>
+</BODY></HTML>

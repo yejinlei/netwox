@@ -1,0 +1,2617 @@
+:
+
+set -u
+
+########################################################################
+# Those parameters are used in test mode
+argone=${1-notset}
+argtwo=${2-notset}
+if [ $argone = "notset" ] ; then
+  envone=${NETWENVONE-notset}
+  if [ $envone != "notset" ] ; then
+    argone=$envone
+  fi
+fi
+if [ $argtwo = "notset" ] ; then
+  envtwo=${NETWENVTWO-notset}
+  if [ $envtwo != "notset" ] ; then
+    argtwo=$envtwo
+  fi
+fi
+
+
+########################################################################
+. ./compil/unix/version.sh
+echo "Netwib version ${NETWIBDEF_VERSION} (${NETWIBDEF_VERSIONMAJOR} ${NETWIBDEF_VERSIONMINOR} ${NETWIBDEF_VERSIONMICRO})"
+netwv="${NETWIBDEF_VERSIONMAJOR}${NETWIBDEF_VERSIONMINOR}"
+
+
+########################################################################
+echo "Loading config.dat"
+. ./config.dat
+
+
+########################################################################
+echo "System name selection"
+
+unames=`(uname -s) 2>/dev/null || echo unknown`
+case $unames in
+  "AIX" )
+    NETWIBDEF_SYSNAME="AIX"
+    ;;
+  "FreeBSD" | "GNU/kFreeBSD" )
+    NETWIBDEF_SYSNAME="FreeBSD"
+    ;;
+  "HP-UX" )
+    NETWIBDEF_SYSNAME="HPUX"
+    ;;
+  "Linux" )
+    NETWIBDEF_SYSNAME="Linux"
+    ;;
+  "Darwin" )
+    NETWIBDEF_SYSNAME="MacOS"
+    ;;
+  "NetBSD" )
+    NETWIBDEF_SYSNAME="NetBSD"
+    ;;
+  "OpenBSD" )
+    NETWIBDEF_SYSNAME="OpenBSD"
+    ;;
+  "OSF1" )
+    NETWIBDEF_SYSNAME="Tru64UNIX"
+    ;;
+  "SunOS" )
+    NETWIBDEF_SYSNAME="Solaris"
+    ;;
+  * )
+    echo "Error: Could not guess NETWIBDEF_SYSNAME.";
+    echo "Edit genemake to set NETWIBDEF_SYSNAME, and rerun genemake.";
+    echo "Please contact Laurent to permanently solve this problem.";
+    exit 1
+    ;;
+esac
+
+echo " NETWIBDEF_SYSNAME=$NETWIBDEF_SYSNAME"
+
+
+########################################################################
+echo "System architecture selection"
+
+unamem=`(uname -m) 2>/dev/null || echo unknown`
+case $unamem in
+  "i386" | "i486" | "i586" | "i686" | "x86" | "i86pc" | i*86 )
+    NETWIBDEF_SYSARCH="i386"
+    ;;
+  "ia64" )
+    NETWIBDEF_SYSARCH="ia64"
+    ;;
+  "amd64" | "x86_64" )
+    NETWIBDEF_SYSARCH="amd64"
+    ;;
+  alpha* )
+    NETWIBDEF_SYSARCH="alpha"
+    ;;
+  "hppa" | 9000/* | hp* | parisc* )
+    NETWIBDEF_SYSARCH="hppa"
+    ;;
+  m68* )
+    NETWIBDEF_SYSARCH="m68k"
+    ;;
+  sparc* | sun* )
+    NETWIBDEF_SYSARCH="sparc"
+    ;;
+  "sparc64" )
+    NETWIBDEF_SYSARCH="sparc64"
+    ;;
+  "ppc" | "powerpc" | "macppc" | "Power Macintosh" )
+    NETWIBDEF_SYSARCH="ppc"
+    ;;
+  "ppc64" | "powerpc64" )
+    NETWIBDEF_SYSARCH="ppc64"
+    ;;
+  "ppc64le" | "powerpc64le" )
+    NETWIBDEF_SYSARCH="ppc64le"
+    ;;
+  arm* | aarch64 )
+    NETWIBDEF_SYSARCH="arm"
+    ;;
+  mips* )
+    NETWIBDEF_SYSARCH="mips"
+    ;;
+  "s390" )
+    NETWIBDEF_SYSARCH="s390"
+    ;;
+  "s390x" )
+    NETWIBDEF_SYSARCH="s390x"
+    ;;
+  sh* )
+    NETWIBDEF_SYSARCH="sh"
+    ;;
+  * )
+    echo "Error: Could not guess NETWIBDEF_SYSARCH.";
+    echo "Edit genemake to set NETWIBDEF_SYSARCH, and rerun genemake.";
+    echo "Please contact Laurent to permanently solve this problem.";
+    exit 1
+    ;;
+esac
+
+echo " NETWIBDEF_SYSARCH=$NETWIBDEF_SYSARCH"
+
+
+########################################################################
+echo "Checking programs"
+
+progcheck ()
+{ progname=$1
+  progdesc="$2"
+
+  type $progname 2> /dev/null 1> /dev/null
+  if [ "$?Z" != "0Z" ] ; then
+    echo "Error: the $progdesc '$progname' wasn't found"
+    exit 1
+  else
+    echo " $progname yes"
+  fi
+}
+
+progcheck $NETWIBDEF_PROGCC "compiler"
+progcheck $NETWIBDEF_PROGAR "archiver"
+progcheck $NETWIBDEF_PROGRANLIB "program"
+progcheck $NETWIBDEF_PROGGREP "grep"
+
+
+########################################################################
+echo "Checking directories"
+
+dircheck ()
+{ dirname=$1
+  dirdesc="$2"
+
+  if [ ! -d $dirname ] ; then
+    echo "Warning: the $dirdesc directory '$dirname' wasn't found"
+  else
+    echo " $dirname yes"
+  fi
+}
+
+dircheck $NETWIBDEF_INSTPREFIX "prefix"
+dircheck $NETWIBDEF_INSTINCLUDE "include"
+dircheck $NETWIBDEF_INSTLIB "library"
+dircheck $NETWIBDEF_INSTBIN "binary"
+dircheck $NETWIBDEF_INSTMAN "man"
+dircheck $NETWIBDEF_INSTMAN3 "man3"
+
+
+########################################################################
+echo "Compilation options selection"
+
+# options
+gccOpt=$NETWIBDEF_PROGCC_OPT
+# includes
+gccInc=$NETWIBDEF_PROGCC_INC
+# libraries
+gccLib=$NETWIBDEF_PROGCC_LIB
+
+case $NETWIBDEF_SYSNAME in
+ "AIX" )
+    gccOptPic="-fpic"
+    gccOptSo="-shared"
+    ;;
+ "FreeBSD" )
+    gccOptPic="-fpic"
+    gccOptSo="-shared -Xlinker \"-hlibnetwib$netwv.so\""
+    ;;
+ "Linux" )
+    gccOptPic="-fPIC"
+    gccOptSo="-shared -Xlinker \"-hlibnetwib$netwv.so\""
+    ;;
+ "MacOS" )
+    gccOptPic="-fpic"
+    gccOptSo="-shared -Xlinker \"-hlibnetwib$netwv.so\""
+    ;;
+ "NetBSD" )
+    gccOptPic="-fpic"
+    gccOptSo="-shared"
+    ;;
+ "OpenBSD" )
+    gccOptPic="-fpic"
+    gccOptSo="-shared"
+    ;;
+ "Solaris" )
+    gccOptPic="-fpic"
+    gccOptSo="-shared -Xlinker \"-hlibnetwib$netwv.so\""
+    gccLib="$gccLib -lsocket -lnsl -lresolv"
+    ;;
+ "HPUX" )
+    gccOptPic="-fpic"
+    gccOptSo="-shared"
+    ;;
+ "Tru64UNIX" )
+    gccOptPic="-fpic"
+    gccOptSo="-shared"
+    ;;
+ "Unsupported" )
+    gccOptPic="-fpic"
+    gccOptSo="-shared -Xlinker \"-hlibnetwib$netwv.so\""
+    ;;
+ * )
+    echo "Error: unknown NETWIBDEF_SYSNAME";
+    exit 1;;
+esac
+
+# option needed to relocate for dynamic linking
+if [ "Z$NETWIBDEF_PROGCC_OPTPIC" != "Z" ] ; then
+  # user value overwrites
+  gccOptPic=$NETWIBDEF_PROGCC_OPTPIC
+fi
+
+# option needed to construct a shared object
+if [ "Z$NETWIBDEF_PROGCC_OPTSO" != "Z" ] ; then
+  # user value overwrites
+  gccOptSo=$NETWIBDEF_PROGCC_OPTSO
+fi
+
+
+########################################################################
+checkcompilfile ()
+{
+  echo config.check.tmp.c
+}
+checkmsgfile ()
+{
+  echo config.check.tmp.msg
+}
+checkcompil ()
+{
+  checktext="$1"
+  checkccOpt="$2"
+  checkccInc="$3"
+  checkccLib="$4"
+  checkverbose="${5-0}"
+
+  # note : we do not put $gccOpt because it is too strict (Wall)
+  compilcom="$NETWIBDEF_PROGCC $checkccOpt $gccInc $checkccInc"
+  compilcom="$compilcom -o config.check.tmp"
+  compilcom="$compilcom config.check.tmp.c $gccLib $checkccLib"
+  $compilcom 2> config.check.tmp.err 1> config.check.tmp.err
+  if [ "$?Z" != "0Z" ] ; then
+    echo " $checktext no"
+    CHECKCOMPILRESULT=0
+    if [ $checkverbose -eq 1 ] ; then
+      echo "--------I used the command :"
+      echo "  $compilcom"
+      echo "--------I wasn't able to compile the following test :"
+      cat config.check.tmp.c
+      echo "--------I got the following errors :"
+      cat config.check.tmp.err
+    fi
+  else
+    echo " $checktext yes"
+    CHECKCOMPILRESULT=1
+  fi
+}
+checkcompilstd ()
+{
+  checktext="$1"
+  checkccOpt="$2"
+  checkccInc="$3"
+  checkccLib="$4"
+  checkverb="${5-0}"
+
+  # add standard defines and includes
+  mv config.check.tmp.c config.check.tmp.c2
+  echo "" > config.check.tmp.c
+  case ${NETWIBDEF_SYSNAME} in
+    "AIX" )
+      ;;
+    "FreeBSD" )
+      ;;
+    "HPUX" )
+      echo "#define _HPUX_SOURCE 1" >> config.check.tmp.c
+      echo "#define _LARGEFILE_SOURCE 1" >> config.check.tmp.c
+      echo "#define _FILE_OFFSET_BITS 64" >> config.check.tmp.c
+      ;;
+    "Linux" )
+      echo "#define _GNU_SOURCE 1" >> config.check.tmp.c
+      echo "#define _POSIX_SOURCE 1" >> config.check.tmp.c
+      echo "#define _BSD_SOURCE 1" >> config.check.tmp.c
+      echo "#define _LARGEFILE_SOURCE 1" >> config.check.tmp.c
+      echo "#define _FILE_OFFSET_BITS 64" >> config.check.tmp.c
+      ;;
+    "MacOS" )
+      ;;
+    "NetBSD" )
+      ;;
+    "OpenBSD" )
+      ;;
+    "Tru64UNIX" )
+      echo "#define _POSIX_PII 1" >> config.check.tmp.c
+      echo "#define _POSIX_C_SOURCE 1" >> config.check.tmp.c
+      echo "#define _XOPEN_SOURCE 500" >> config.check.tmp.c
+      ;;
+    "Solaris" )
+      echo "#define __EXTENSIONS__ 1" >> config.check.tmp.c
+      echo "#define _POSIX_PTHREAD_SEMANTICS 1" >> config.check.tmp.c
+      echo "#define _LARGEFILE_SOURCE 1" >> config.check.tmp.c
+      echo "#define _FILE_OFFSET_BITS 64" >> config.check.tmp.c
+      ;;
+  esac
+  echo "#include <stdlib.h>" >> config.check.tmp.c
+  echo "#include <stdio.h>" >> config.check.tmp.c
+  echo "#include <unistd.h>" >> config.check.tmp.c
+  cat config.check.tmp.c2 >> config.check.tmp.c
+  rm config.check.tmp.c2
+  checkcompil "$checktext" "$checkccOpt" "$checkccInc" "$checkccLib" $checkverb
+}
+checkexec ()
+{
+  checktext="$1"
+
+  ./config.check.tmp 2> config.check.tmp.err 1> config.check.tmp.err
+  if [ "$?Z" != "0Z" ] ; then
+    rm -f core
+    echo " exec $checktext no"
+    CHECKEXECRESULT=0
+  else
+    echo " exec $checktext yes"
+    CHECKEXECRESULT=1
+  fi
+}
+checkcompilyes ()
+{
+  echo $CHECKCOMPILRESULT
+}
+checkcompilno ()
+{
+  if [ $CHECKCOMPILRESULT -eq 0 ] ; then
+    echo 1
+  else
+    echo 0
+  fi
+}
+checkexecyes ()
+{
+  echo $CHECKEXECRESULT
+}
+checkexecresult ()
+{
+  cat config.check.tmp.err
+}
+checkceclean ()
+{
+  rm -f config.check.tmp.c config.check.tmp.c2
+  rm -f config.check.tmp config.check.tmp.err
+  rm -f config.check.tmp.msg
+  CHECKCOMPILRESULT=0
+  CHECKEXECRESULT=0
+}
+checkceclean
+
+
+########################################################################
+echo "Check if compiler works"
+
+cat > `checkcompilfile` <<EOF
+ int main(void)
+ { return(0);
+ }
+EOF
+checkcompil "simple_test" "" "" "" 1
+resulttest=`checkcompilyes`
+if [ $resulttest -eq 0 ] ; then
+  exit 1
+fi
+
+cat > `checkcompilfile` <<EOF
+ #include <stdlib.h>
+ #include <stdio.h>
+ #include <unistd.h>
+ int main(void)
+ { puts("hello");
+   return(0);
+ }
+EOF
+checkcompil "real_test" "" "" "" 1
+resulttest=`checkcompilyes`
+if [ $resulttest -eq 0 ] ; then
+  exit 1
+fi
+resulttest=`checkcompilyes`
+if [ $resulttest -eq 1 ] ; then
+  NETWIBDEF_PROGCCALIAS=1
+fi
+checkexec "real_test"
+if [ `checkexecyes` -eq 0 ] ; then
+  exit 1
+fi
+
+checkcompil "real_test with -fno-strict-aliasing" "-fno-strict-aliasing" "" ""
+NETWIBDEF_PROGCCALIAS=0
+resulttest=`checkcompilyes`
+if [ $resulttest -eq 1 ] ; then
+  NETWIBDEF_PROGCCALIAS=1
+fi
+
+# the -Werror is for FreeBSD < 5.0, which must have _POSIX_C_SOURCE
+# always defined. So to set -Wundef, it must be supported by gcc, and
+# a simple file must compile without _POSIX_C_SOURCE.
+checkcompil "real_test with -Wundef" "-Wundef -Werror" "" ""
+NETWIBDEF_PROGCCWUNDEF=0
+resulttest=`checkcompilyes`
+if [ $resulttest -eq 1 ] ; then
+  NETWIBDEF_PROGCCWUNDEF=1
+fi
+
+checkcompil "real_test with -Wsign-compare" "-Wsign-compare" "" ""
+NETWIBDEF_PROGCCWSIGNC=0
+resulttest=`checkcompilyes`
+if [ $resulttest -eq 1 ] ; then
+  NETWIBDEF_PROGCCWSIGNC=1
+fi
+
+checkcompil "real_test with -Wextra" "-Wextra" "" ""
+NETWIBDEF_PROGCCWEXTRA=0
+resulttest=`checkcompilyes`
+if [ $resulttest -eq 1 ] ; then
+  NETWIBDEF_PROGCCWEXTRA=1
+fi
+
+########################################################################
+echo "Processor endianness selection"
+NETWIBDEF_ARCH_ENDIAN="unknown"
+
+cat > `checkcompilfile` <<EOF
+ #include <stdlib.h>
+ #include <stdio.h>
+ int main(void) {
+   union {
+     struct {
+       unsigned char a;
+       unsigned char b;
+       unsigned char c;
+       unsigned char d;
+     } one;
+     unsigned int two;
+   } u;
+   u.two = 0x12345678u;
+   if (u.one.a == 0x78 && u.one.b == 0x56 &&
+       u.one.c == 0x34 && u.one.d == 0x12) {
+     puts("0");
+   } else if (u.one.a == 0x12 && u.one.b == 0x34 &&
+              u.one.c == 0x56 && u.one.d == 0x78) {
+     puts("1");
+   } else {
+     return(-1);
+   }
+   return(0);
+ }
+EOF
+checkcompilstd "compile" "" "" ""
+if [ `checkcompilyes` -eq 1 ] ; then
+  checkexec "program"
+  if [ `checkexecyes` -eq 1 ] ; then
+    NETWIBDEF_ARCH_ENDIAN=`checkexecresult`
+  fi
+fi
+checkceclean
+if [ "Z$NETWIBDEF_ARCH_ENDIAN" = "Zunknown" ] ; then
+  echo "Error: Could not guess NETWIBDEF_ARCH_ENDIAN.";
+  echo "Please contact Laurent to permanently solve this problem.";
+  exit 1
+fi
+
+echo " NETWIBDEF_ARCH_ENDIAN=$NETWIBDEF_ARCH_ENDIAN"
+
+
+########################################################################
+echo "Processor size selection"
+NETWIBDEF_ARCH_BITS="unknown"
+
+cat > `checkcompilfile` <<EOF
+ #include <stdlib.h>
+ #include <stdio.h>
+ int main(void) {
+   printf("%d\n", (int)(sizeof(void*)*8));
+   return(0);
+ }
+EOF
+checkcompilstd "compile" "" "" ""
+if [ `checkcompilyes` -eq 1 ] ; then
+  checkexec "program"
+  if [ `checkexecyes` -eq 1 ] ; then
+    NETWIBDEF_ARCH_BITS=`checkexecresult`
+  fi
+fi
+checkceclean
+if [ "Z$NETWIBDEF_ARCH_BITS" = "Zunknown" ] ; then
+  echo "Error: Could not guess NETWIBDEF_ARCH_BITS.";
+  echo "Please contact Laurent to permanently solve this problem.";
+  exit 1
+fi
+
+echo " NETWIBDEF_ARCH_BITS=$NETWIBDEF_ARCH_BITS"
+
+
+########################################################################
+echo "Processor alignment selection"
+# Note: we tried to guess using an invalid program, but this cause
+# problems. It's better to hard code them.
+NETWIBDEF_ARCH_ALIGN=1
+if [ $NETWIBDEF_SYSARCH = "i386" ] ; then
+  NETWIBDEF_ARCH_ALIGN=0
+fi
+
+echo " NETWIBDEF_ARCH_ALIGN=$NETWIBDEF_ARCH_ALIGN"
+
+
+########################################################################
+########################################################################
+echo "Obtain variables size"
+
+# common function
+variablesizebits=0
+variablesize ()
+{
+  name="$1"
+
+  variablesizebits=0
+  cat > `checkcompilfile` <<EOF
+   #include <sys/types.h>
+   int main(void)
+   { printf("%d\n", sizeof($name)*8);
+     return(0);
+   }
+EOF
+  checkcompilstd "$name" "" "" "" 1
+  if [ `checkcompilyes` -eq 1 ] ; then
+    checkexec "program"
+    if [ `checkexecyes` -eq 1 ] ; then
+      variablesizebits=`checkexecresult`
+    fi
+  fi
+  checkceclean
+  echo " type $name is of size $variablesizebits bits"
+}
+
+# obtain bit size (set to 0 if unsupported on current system)
+variablesize "char" ; netwib_bits_char=$variablesizebits
+variablesize "short" ; netwib_bits_short=$variablesizebits
+variablesize "int" ; netwib_bits_int=$variablesizebits
+variablesize "long" ; netwib_bits_long=$variablesizebits
+variablesize "long long" ; netwib_bits_long_long=$variablesizebits
+# note: we do not use intx_t because they are not always defined,
+# unsigned version can be _uintx_t or uintx_t, etc. So its better
+# to guess from standard types
+
+# set type
+echo "Summary:"
+#
+if [ $netwib_bits_char -eq 8 ] ; then
+  NETWIBDEF_TYPE_INT8="char"
+  NETWIBDEF_TYPE_UINT8="unsigned char"
+else
+  echo "Error: Could not guess NETWIBDEF_TYPE_INT8.";
+  echo "Please contact Laurent to permanently solve this problem.";
+  exit 1
+fi
+echo " NETWIBDEF_TYPE_INT8=$NETWIBDEF_TYPE_INT8"
+#
+if [ $netwib_bits_short -eq 16 ] ; then
+  NETWIBDEF_TYPE_INT16="short"
+  NETWIBDEF_TYPE_UINT16="unsigned short"
+else
+  echo "Error: Could not guess NETWIBDEF_TYPE_INT16.";
+  echo "Please contact Laurent to permanently solve this problem.";
+  exit 1
+fi
+echo " NETWIBDEF_TYPE_INT16=$NETWIBDEF_TYPE_INT16"
+#
+if [ $netwib_bits_int -eq 32 ] ; then
+  NETWIBDEF_TYPE_INT32="int"
+  NETWIBDEF_TYPE_UINT32="unsigned int"
+elif [ $netwib_bits_long -eq 32 ] ; then
+  NETWIBDEF_TYPE_INT32="long"
+  NETWIBDEF_TYPE_UINT32="unsigned long"
+else
+  echo "Error: Could not guess NETWIBDEF_TYPE_INT32.";
+  echo "Please contact Laurent to permanently solve this problem.";
+  exit 1
+fi
+echo " NETWIBDEF_TYPE_INT32=$NETWIBDEF_TYPE_INT32"
+#
+if [ $argone = "test" -a $argtwo = "netwox" -a $NETWIBDEF_ARCH_BITS -eq 32 ] ; then
+  NETWIBDEF_TYPE_INT64="unsupported"
+  NETWIBDEF_TYPE_UINT64="unsupported"
+  NETWIBDEF_TYPE_INT64_FAKE=1
+else
+  if [ $netwib_bits_long -eq 64 ] ; then
+    NETWIBDEF_TYPE_INT64="long"
+    NETWIBDEF_TYPE_UINT64="unsigned long"
+    NETWIBDEF_TYPE_INT64_FAKE=0
+  elif [ $netwib_bits_long_long -eq 64 ] ; then
+    NETWIBDEF_TYPE_INT64="long long"
+    NETWIBDEF_TYPE_UINT64="unsigned long long"
+    NETWIBDEF_TYPE_INT64_FAKE=0
+  else
+    NETWIBDEF_TYPE_INT64="unsupported"
+    NETWIBDEF_TYPE_UINT64="unsupported"
+    NETWIBDEF_TYPE_INT64_FAKE=1
+  fi
+fi
+echo " NETWIBDEF_TYPE_INT64=$NETWIBDEF_TYPE_INT64"
+
+
+########################################################################
+echo "Library selection"
+
+#---------
+# we have one thread library
+# we try to compile this fake program
+cat > `checkcompilfile` <<EOF
+ #include <pthread.h>
+ int main(void)
+ { pthread_t *p;
+   pthread_create(p, NULL, NULL, NULL);
+   return(0);
+ }
+EOF
+checkcompil "posix threads [-lpthread]" "" "" "-lpthread"
+NETWIBDEF_LIBPTHREADINSTALLED=`checkcompilyes`
+NETWIBDEF_LIBPTHREADFROMDCE=0
+NETWIBDEF_LIBPTHREADFROMMIT=0
+if [ $NETWIBDEF_LIBPTHREADINSTALLED -eq 1 ] ; then
+  gccLib="$gccLib -lpthread"
+fi
+if [ $NETWIBDEF_LIBPTHREADINSTALLED -eq 0 ] ; then
+  # try FreeBSD, OpenBSD, etc.
+  checkcompil "posix threads [-pthread]" "" "" "-pthread"
+  NETWIBDEF_LIBPTHREADINSTALLED=`checkcompilyes`
+  if [ $NETWIBDEF_LIBPTHREADINSTALLED -eq 1 ] ; then
+    gccLib="$gccLib -pthread"
+  fi
+fi
+if [ $NETWIBDEF_LIBPTHREADINSTALLED -eq 0 ] ; then
+  checkcompil "posix threads [-pthread NetBSD]" "" "-I/usr/pkg/include" "-L/usr/pkg/lib -lpthread"
+  NETWIBDEF_LIBPTHREADINSTALLED=`checkcompilyes`
+  if [ $NETWIBDEF_LIBPTHREADINSTALLED -eq 1 ] ; then
+    gccInc="$gccInc -I/usr/pkg/include"
+    gccLib="$gccLib -L/usr/pkg/lib -lpthread"
+    echo "You might need to run export LD_RUN_PATH='/usr/pkg/lib:...' before make"
+  fi
+fi
+if [ $NETWIBDEF_LIBPTHREADINSTALLED -eq 0 ] ; then
+  # try MIT implementation (SuSE 5.1)
+  checkcompil "posix threads [-lpthreads]" "-D_MIT_POSIX_THREADS=1" "" "-lpthreads"
+  NETWIBDEF_LIBPTHREADINSTALLED=`checkcompilyes`
+  if [ $NETWIBDEF_LIBPTHREADINSTALLED -eq 1 ] ; then
+    gccOpt="$gccOpt -D_MIT_POSIX_THREADS=1"
+    gccLib="$gccLib -lpthreads"
+    NETWIBDEF_LIBPTHREADFROMMIT=1
+  fi
+fi
+checkceclean
+if [ $NETWIBDEF_LIBPTHREADINSTALLED -eq 0 ] ; then
+  # try DCE (prototypes of posix draft 4)
+  cat > `checkcompilfile` <<EOF
+   #include <pthread.h>
+   int main(void)
+   { pthread_t *p;
+     pthread_attr_t a;
+     pthread_create(p, a, NULL, NULL);
+     return(0);
+   }
+EOF
+  checkcompil "posix threads [-ldce]" "" "" "-ldce"
+  NETWIBDEF_LIBPTHREADINSTALLED=`checkcompilyes`
+  if [ $NETWIBDEF_LIBPTHREADINSTALLED -eq 1 ] ; then
+    gccLib="$gccLib -ldce"
+    NETWIBDEF_LIBPTHREADFROMDCE=1
+  fi
+  checkceclean
+fi
+if [ $NETWIBDEF_LIBPTHREADINSTALLED -eq 0 ] ; then
+  echo "Error: we could not find a thread library"
+  exit 1
+fi
+
+#---------
+# we have libpcap
+NETWIBDEF_LIBPCAPINSTALLED=0
+NETWIBDEF_LIBPCAPFROMREDHAT=0
+gccIncPcap=""
+if [ -d /usr/include/pcap/ ] ; then
+  echo " /usr/include/pcap/ exists"
+  gccIncPcap="$gccIncPcap -I/usr/include/pcap/"
+  NETWIBDEF_LIBPCAPFROMREDHAT=1
+fi
+gccLibPcap="-lpcap"
+# we try to compile this fake program
+cat > `checkcompilfile` <<EOF
+ #include <pcap.h>
+ int main(void)
+ { char e[1000];
+   void * t;
+   t = pcap_open_live(e, 0, 0, 0, e);
+   return(0);
+ }
+EOF
+checkcompil "libpcap" "" "$gccIncPcap" "$gccLibPcap"
+NETWIBDEF_LIBPCAPINSTALLED=`checkcompilyes`
+if [ $NETWIBDEF_LIBPCAPINSTALLED -eq 0 ] ; then
+  gccIncPcap="$gccIncPcap -I/usr/local/include/"
+  gccLibPcap="$gccLibPcap -L/usr/local/lib/"
+  checkcompil "libpcap [2nd try]" "" "$gccIncPcap" "$gccLibPcap" 1
+  NETWIBDEF_LIBPCAPINSTALLED=`checkcompilyes`
+fi
+if [ $NETWIBDEF_LIBPCAPINSTALLED -eq 1 ] ; then
+  gccInc="$gccInc $gccIncPcap"
+  gccLib="$gccLib $gccLibPcap"
+fi
+checkceclean
+
+#---------
+# we have libnet
+NETWIBDEF_LIBNETINSTALLED=0
+NETWIBDEF_LIBNETVERSION11=0
+gccOptLnet=""
+gccIncLnet=""
+gccLibLnet=""
+type libnet-config 2> /dev/null 1> /dev/null
+if [ "$?Z" != "0Z" ] ; then
+  gccLibLnet="$gccLibLnet -lnet"
+else
+  echo " libnet-config yes"
+  gccOptLnet="$gccOptLnet "`libnet-config --defines`
+  gccLibLnet="$gccLibLnet "`libnet-config --libs`
+fi
+# we try to compile this fake program
+cat > `checkcompilfile` <<EOF
+ int libnet_destroy_packet(char **b);
+ int main(void)
+ { char **t;
+   libnet_destroy_packet(t);
+   return(0);
+ }
+EOF
+checkcompil "libnet 1.0" "$gccOptLnet" "$gccIncLnet" "$gccLibLnet"
+NETWIBDEF_LIBNETINSTALLED=`checkcompilyes`
+if [ $NETWIBDEF_LIBNETINSTALLED -eq 0 ] ; then
+  checkcompil "libnet 1.0 [2nd try]" "$gccOptLnet" "$gccIncLnet -I/usr/local/include/" "$gccLibLnet -L/usr/local/lib/"
+  NETWIBDEF_LIBNETINSTALLED=`checkcompilyes`
+  if [ $NETWIBDEF_LIBNETINSTALLED -eq 1 ] ; then
+    gccIncLnet="$gccIncLnet -I/usr/local/include/"
+    gccLibLnet="$gccLibLnet -L/usr/local/lib/"
+  fi
+fi
+if [ $NETWIBDEF_LIBNETINSTALLED -eq 0 ] ; then
+  # we try to compile this fake program
+  cat > `checkcompilfile` <<EOF
+   void libnet_destroy(void *b);
+   int main(void)
+   { char *t;
+     libnet_destroy(t);
+     return(0);
+   }
+EOF
+  checkcompil "libnet 1.1" "$gccOptLnet" "$gccIncLnet" "$gccLibLnet"
+  NETWIBDEF_LIBNETINSTALLED=`checkcompilyes`
+  if [ $NETWIBDEF_LIBNETINSTALLED -eq 1 ] ; then
+    NETWIBDEF_LIBNETVERSION11=1
+  else
+    checkcompil "libnet 1.1 [2nd try]" "$gccOptLnet" "$gccIncLnet -I/usr/local/include/" "$gccLibLnet -L/usr/local/lib/" 1
+    NETWIBDEF_LIBNETINSTALLED=`checkcompilyes`
+    if [ $NETWIBDEF_LIBNETINSTALLED -eq 1 ] ; then
+      gccIncLnet="$gccIncLnet -I/usr/local/include/"
+      gccLibLnet="$gccLibLnet -L/usr/local/lib/"
+      NETWIBDEF_LIBNETVERSION11=1
+    fi
+  fi
+fi
+if [ $NETWIBDEF_LIBNETINSTALLED -eq 1 ] ; then
+  gccOpt="$gccOpt $gccOptLnet"
+  gccInc="$gccInc $gccIncLnet"
+  gccLib="$gccLib $gccLibLnet"
+fi
+checkceclean
+
+
+#---------
+NETWIBDEF_SUPPORT_SNIFF=0
+if [ $NETWIBDEF_LIBPCAPINSTALLED -eq 1 ] ; then
+  NETWIBDEF_SUPPORT_SNIFF=1
+fi
+NETWIBDEF_SUPPORT_SPOOF=0
+if [ $NETWIBDEF_LIBNETINSTALLED -eq 1 ] ; then
+  NETWIBDEF_SUPPORT_SPOOF=1
+fi
+NETWIBDEF_SUPPORT_ENCODETYPE_PCAP=0
+if [ $NETWIBDEF_LIBPCAPINSTALLED -eq 1 ] ; then
+  NETWIBDEF_SUPPORT_ENCODETYPE_PCAP=1
+fi
+
+#---------
+# we have util library
+# we try to compile this fake program
+cat > `checkcompilfile` <<EOF
+ #include <stdlib.h>
+ #include <pty.h>
+ int main(void)
+ { openpty(NULL, NULL, NULL, NULL, NULL);
+   return(0);
+ }
+EOF
+checkcompil "pty/tty (-lutil)" "" "" "-lutil"
+NETWIBDEF_LIBUTILINSTALLED=`checkcompilyes`
+if [ $NETWIBDEF_LIBUTILINSTALLED -eq 1 ] ; then
+  gccLib="$gccLib -lutil"
+fi
+checkceclean
+
+
+########################################################################
+########################################################################
+echo "Check present includes"
+
+checkcompilinc ()
+{
+  incname="$1"
+  incname2=${2-notset}
+  incname3=${3-notset}
+  incname4=${4-notset}
+  incname5=${5-notset}
+
+  addinc=""
+  echo "" >> `checkcompilfile`
+  if [ $incname2 != "notset" ] ; then
+    echo "#include <$incname2>" >> `checkcompilfile`
+    addinc="$incname2"
+  fi
+  if [ $incname3 != "notset" ] ; then
+    echo "#include <$incname3>" >> `checkcompilfile`
+    if [ "Z$addinc" = "Z" ] ; then
+      addinc="$incname3"
+    else
+      addinc="$addinc,$incname3"
+    fi
+  fi
+  if [ $incname4 != "notset" ] ; then
+    echo "#include <$incname4>" >> `checkcompilfile`
+    if [ "Z$addinc" = "Z" ] ; then
+      addinc="$incname4"
+    else
+      addinc="$addinc,$incname4"
+    fi
+  fi
+  if [ $incname5 != "notset" ] ; then
+    echo "#include <$incname5>" >> `checkcompilfile`
+    if [ "Z$addinc" = "Z" ] ; then
+      addinc="$incname5"
+    else
+      addinc="$addinc,$incname5"
+    fi
+  fi
+  if [ "Z$addinc" != "Z" ] ; then
+    addinc=" [+$addinc]"
+  fi
+  echo "#include <$incname>" >> `checkcompilfile`
+  echo "int main(void) { return(0); }" >> `checkcompilfile`
+  checkcompil "$incname$addinc" "" "" ""
+}
+
+#---
+checkcompilinc "pthread.h"
+NETWIBDEF_HAVEINCL_PTHREAD=`checkcompilyes`
+checkceclean
+
+#---
+checkcompilinc "stropts.h"
+NETWIBDEF_HAVEINCL_STROPTS=`checkcompilyes`
+checkceclean
+
+#---
+checkcompilinc "sched.h"
+NETWIBDEF_HAVEINCL_SCHED=`checkcompilyes`
+checkceclean
+
+#---
+checkcompilinc "pty.h"
+NETWIBDEF_HAVEINCL_PTY=`checkcompilyes`
+checkceclean
+
+#---
+checkcompilinc "sys/poll.h"
+NETWIBDEF_HAVEINCL_SYS_POLL=`checkcompilyes`
+checkceclean
+if [ $NETWIBDEF_HAVEINCL_SYS_POLL -eq 0 ] ; then
+  # OpenBSD needs stdlib to be included before
+  checkcompilinc "sys/poll.h" "stdlib.h"
+  NETWIBDEF_HAVEINCL_SYS_POLL=`checkcompilyes`
+  checkceclean
+fi
+
+#---
+checkcompilinc "sys/param.h"
+NETWIBDEF_HAVEINCL_SYS_PARAM=`checkcompilyes`
+checkceclean
+
+#---
+checkcompilinc "sys/sysctl.h"
+NETWIBDEF_HAVEINCL_SYS_SYSCTL=`checkcompilyes`
+checkceclean
+if [ $NETWIBDEF_HAVEINCL_SYS_SYSCTL -eq 0 ] ; then
+  checkcompilinc "sys/sysctl.h" "sys/types.h"
+  NETWIBDEF_HAVEINCL_SYS_SYSCTL=`checkcompilyes`
+  checkceclean
+fi
+if [ $NETWIBDEF_HAVEINCL_SYS_SYSCTL -eq 0 ] ; then
+  if [ $NETWIBDEF_HAVEINCL_SYS_PARAM -eq 1 ] ; then
+    checkcompilinc "sys/sysctl.h" "sys/types.h" "sys/param.h"
+    NETWIBDEF_HAVEINCL_SYS_SYSCTL=`checkcompilyes`
+    checkceclean
+  fi
+fi
+
+#---
+checkcompilinc "sys/ioctl.h"
+NETWIBDEF_HAVEINCL_SYS_IOCTL=`checkcompilyes`
+checkceclean
+
+#---
+checkcompilinc "sys/sockio.h"
+NETWIBDEF_HAVEINCL_SYS_SOCKIO=`checkcompilyes`
+checkceclean
+
+#---
+checkcompilinc "sys/dlpi.h"
+NETWIBDEF_HAVEINCL_SYS_DLPI=`checkcompilyes`
+checkceclean
+if [ $NETWIBDEF_HAVEINCL_SYS_DLPI -eq 0 ] ; then
+  checkcompilinc "sys/dlpi.h" "sys/types.h"
+  NETWIBDEF_HAVEINCL_SYS_DLPI=`checkcompilyes`
+  checkceclean
+fi
+
+#---
+checkcompilinc "sys/bufmod.h"
+NETWIBDEF_HAVEINCL_SYS_BUFMOD=`checkcompilyes`
+checkceclean
+if [ $NETWIBDEF_HAVEINCL_SYS_BUFMOD -eq 0 ] ; then
+  checkcompilinc "sys/bufmod.h" "sys/types.h"
+  NETWIBDEF_HAVEINCL_SYS_BUFMOD=`checkcompilyes`
+  checkceclean
+fi
+
+#---
+checkcompilinc "sys/mman.h"
+NETWIBDEF_HAVEINCL_SYS_MMAN=`checkcompilyes`
+checkceclean
+if [ $NETWIBDEF_HAVEINCL_SYS_MMAN -eq 0 ] ; then
+  checkcompilinc "sys/mman.h" "sys/types.h"
+  NETWIBDEF_HAVEINCL_SYS_MMAN=`checkcompilyes`
+  checkceclean
+fi
+
+#---
+checkcompilinc "net/ethernet.h"
+NETWIBDEF_HAVEINCL_NET_ETHERNET=`checkcompilyes`
+checkceclean
+if [ $NETWIBDEF_HAVEINCL_NET_ETHERNET -eq 0 ] ; then
+  checkcompilinc "net/ethernet.h" "sys/types.h"
+  NETWIBDEF_HAVEINCL_NET_ETHERNET=`checkcompilyes`
+  checkceclean
+fi
+
+#---
+checkcompilinc "net/if_arp.h"
+NETWIBDEF_HAVEINCL_NET_IF_ARP=`checkcompilyes`
+checkceclean
+if [ $NETWIBDEF_HAVEINCL_NET_IF_ARP -eq 0 ] ; then
+  checkcompilinc "net/if_arp.h" "sys/types.h" "sys/socket.h"
+  NETWIBDEF_HAVEINCL_NET_IF_ARP=`checkcompilyes`
+  checkceclean
+fi
+
+#---
+checkcompilinc "net/if_types.h"
+NETWIBDEF_HAVEINCL_NET_IF_TYPES=`checkcompilyes`
+checkceclean
+
+#---
+checkcompilinc "net/if_dl.h"
+NETWIBDEF_HAVEINCL_NET_IF_DL=`checkcompilyes`
+checkceclean
+if [ $NETWIBDEF_HAVEINCL_NET_IF_DL -eq 0 ] ; then
+  checkcompilinc "net/if_dl.h" "sys/types.h"
+  NETWIBDEF_HAVEINCL_NET_IF_DL=`checkcompilyes`
+  checkceclean
+fi
+if [ $NETWIBDEF_HAVEINCL_NET_IF_DL -eq 0 ] ; then
+  checkcompilinc "net/if_dl.h" "sys/types.h" "sys/socket.h"
+  NETWIBDEF_HAVEINCL_NET_IF_DL=`checkcompilyes`
+  checkceclean
+fi
+
+#---
+checkcompilinc "net/bpf.h"
+NETWIBDEF_HAVEINCL_NET_BPF=`checkcompilyes`
+checkceclean
+if [ $NETWIBDEF_HAVEINCL_NET_BPF -eq 0 ] ; then
+  checkcompilinc "net/bpf.h" "sys/types.h"
+  NETWIBDEF_HAVEINCL_NET_BPF=`checkcompilyes`
+  checkceclean
+fi
+if [ $NETWIBDEF_HAVEINCL_NET_BPF -eq 0 ] ; then
+  checkcompilinc "net/bpf.h" "sys/types.h" "sys/time.h"
+  NETWIBDEF_HAVEINCL_NET_BPF=`checkcompilyes`
+  checkceclean
+fi
+
+#---
+checkcompilinc "netinet/if_ether.h"
+NETWIBDEF_HAVEINCL_NETINET_IF_ETHER=`checkcompilyes`
+checkceclean
+if [ $NETWIBDEF_HAVEINCL_NETINET_IF_ETHER -eq 0 ] ; then
+  checkcompilinc "netinet/if_ether.h" "sys/types.h" "sys/socket.h"
+  NETWIBDEF_HAVEINCL_NETINET_IF_ETHER=`checkcompilyes`
+  checkceclean
+fi
+if [ $NETWIBDEF_HAVEINCL_NETINET_IF_ETHER -eq 0 ] ; then
+  checkcompilinc "netinet/if_ether.h" "sys/types.h" "sys/socket.h" "net/if.h"
+  NETWIBDEF_HAVEINCL_NETINET_IF_ETHER=`checkcompilyes`
+  checkceclean
+fi
+if [ $NETWIBDEF_HAVEINCL_NETINET_IF_ETHER -eq 0 ] ; then
+  checkcompilinc "netinet/if_ether.h" "sys/types.h" "sys/socket.h" "netinet/in.h"
+  NETWIBDEF_HAVEINCL_NETINET_IF_ETHER=`checkcompilyes`
+  checkceclean
+fi
+if [ $NETWIBDEF_HAVEINCL_NETINET_IF_ETHER -eq 0 ] ; then
+  checkcompilinc "netinet/if_ether.h" "sys/types.h" "sys/socket.h" "net/if.h" "netinet/in.h"
+  NETWIBDEF_HAVEINCL_NETINET_IF_ETHER=`checkcompilyes`
+  checkceclean
+fi
+
+#---
+checkcompilinc "netinet/ether.h"
+NETWIBDEF_HAVEINCL_NETINET_ETHER=`checkcompilyes`
+checkceclean
+
+#---
+checkcompilinc "netpacket/packet.h"
+NETWIBDEF_HAVEINCL_NETPACKET_PACKET=`checkcompilyes`
+checkceclean
+
+#---
+checkcompilinc "asm/page.h"
+NETWIBDEF_HAVEINCL_ASM_PAGE=`checkcompilyes`
+checkceclean
+
+#---
+checkcompilinc "mach/machine/vm_param.h"
+NETWIBDEF_HAVEINCL_MACH_MACHINE_VMPARAM=`checkcompilyes`
+checkceclean
+
+#---
+checkcompilinc "machine/param.h"
+NETWIBDEF_HAVEINCL_MACHINE_PARAM=`checkcompilyes`
+checkceclean
+
+
+########################################################################
+########################################################################
+echo "Check include conflicts"
+
+#---
+# Under OpenBSD, if_arp.h conflicts with if.h. In this case,
+# if_arp.h must not be included.
+if [ $NETWIBDEF_HAVEINCL_NET_IF_ARP -eq 1 ] ; then
+  checkcompilinc "net/if_arp.h" "sys/types.h" "sys/socket.h" "net/if.h"
+  NETWIBDEF_HAVEINCL_NET_IF_ARP=`checkcompilyes`
+  checkceclean
+fi
+
+
+########################################################################
+########################################################################
+echo "Check present types"
+
+#---
+cat > `checkcompilfile` <<EOF
+ int main(void)
+ { size_t s;
+   return(0);
+ }
+EOF
+checkcompilstd "size_t" "" "" ""
+NETWIBDEF_HAVETYPE_SIZE_T=`checkcompilyes`
+checkceclean
+
+#---
+cat > `checkcompilfile` <<EOF
+ #include <sys/types.h>
+ #include <sys/socket.h>
+ int main(void)
+ { socklen_t s;
+   return(0);
+ }
+EOF
+checkcompilstd "socklen_t" "" "" ""
+NETWIBDEF_HAVETYPE_SOCKLEN_T=`checkcompilyes`
+checkceclean
+
+#---
+cat > `checkcompilfile` <<EOF
+ #include <signal.h>
+ int main(void)
+ { sighandler_t s;
+   return(0);
+ }
+EOF
+checkcompilstd "sighandler_t" "" "" ""
+NETWIBDEF_HAVETYPE_SIGHANDLER_T=`checkcompilyes`
+checkceclean
+
+#---
+cat > `checkcompilfile` <<EOF
+ #include <signal.h>
+ int main(void)
+ { sig_t s;
+   return(0);
+ }
+EOF
+checkcompilstd "sig_t" "" "" ""
+NETWIBDEF_HAVETYPE_SIG_T=`checkcompilyes`
+checkceclean
+
+#---
+cat > `checkcompilfile` <<EOF
+ int main(void)
+ { off_t o;
+   return(0);
+ }
+EOF
+checkcompilstd "off_t" "" "" ""
+NETWIBDEF_HAVETYPE_OFF_T=`checkcompilyes`
+checkceclean
+if [ $NETWIBDEF_HAVETYPE_OFF_T -eq 0 ] ; then
+  checkcompilstd "off_t" "sys/types.h" "" ""
+  NETWIBDEF_HAVETYPE_OFF_T=`checkcompilyes`
+  checkceclean
+fi
+
+#---
+cat > `checkcompilfile` <<EOF
+ #include <pthread.h>
+ int main(void)
+ { pthread_rwlock_t s;
+   return(0);
+ }
+EOF
+checkcompilstd "pthread_rwlock_t" "" "" ""
+NETWIBDEF_HAVETYPE_PTHREAD_RWLOCK_T=`checkcompilyes`
+checkceclean
+
+#---
+cat > `checkcompilfile` <<EOF
+ #include <sys/types.h>
+ #include <sys/socket.h>
+ #include <netinet/in.h>
+ int main(void)
+ { struct sockaddr_in6 *psain6;
+   psain6->sin6_addr.s6_addr[0] = 3;
+   return(0);
+ }
+EOF
+checkcompilstd "sockaddr_in6" "" "" ""
+NETWIBDEF_HAVETYPE_SOCKADDR_IN6=`checkcompilyes`
+checkceclean
+
+
+########################################################################
+########################################################################
+echo "Check present fields"
+
+#---
+cat > `checkcompilfile` <<EOF
+ #include <time.h>
+ int main(void)
+ { struct tm *ptm;
+   ptm->tm_gmtoff = 0;
+   return(0);
+ }
+EOF
+checkcompilstd "tm_gmtoff" "" "" ""
+NETWIBDEF_HAVEFIELD_TM_GMTOFF=`checkcompilyes`
+checkceclean
+
+#---
+cat > `checkcompilfile` <<EOF
+ #include <sys/types.h>
+ #include <sys/socket.h>
+ int main(void)
+ { struct sockaddr *psa;
+   psa->sa_len = 0;
+   return(0);
+ }
+EOF
+checkcompilstd "sockaddr.sa_len" "" "" ""
+NETWIBDEF_HAVEFIELD_SOCKADDR_SALEN=`checkcompilyes`
+checkceclean
+
+#---
+cat > `checkcompilfile` <<EOF
+ #include <sys/types.h>
+ #include <sys/socket.h>
+ #include <netinet/in.h>
+ int main(void)
+ { struct sockaddr_in *psain;
+   psain->sin_len = 0;
+   return(0);
+ }
+EOF
+checkcompilstd "sockaddr_in.sain_len" "" "" ""
+NETWIBDEF_HAVEFIELD_SOCKADDRIN_SINLEN=`checkcompilyes`
+checkceclean
+
+#---
+cat > `checkcompilfile` <<EOF
+ #include <sys/types.h>
+ #include <sys/socket.h>
+ #include <netinet/in.h>
+ int main(void)
+ { struct sockaddr_in6 *psain6;
+   psain6->sin6_len = 0;
+   return(0);
+ }
+EOF
+checkcompilstd "sockaddr_in.sain_len" "" "" ""
+NETWIBDEF_HAVEFIELD_SOCKADDRIN6_SIN6LEN=`checkcompilyes`
+checkceclean
+
+
+########################################################################
+########################################################################
+echo "Check present functions"
+
+#---
+cat > `checkcompilfile` <<EOF
+ int ether_ntohost(char *para1, char *para2);
+ int main(void)
+ { char p1[10], p2[10];
+   ether_ntohost(p1, p2);
+   return(0);
+ }
+EOF
+checkcompilstd "ether_ntohost" "" "" ""
+NETWIBDEF_HAVEFUNC_ETHER_NTOHOST=`checkcompilyes`
+checkceclean
+
+#---
+cat > `checkcompilfile` <<EOF
+ int ether_hostton(char *para1, char *para2);
+ int main(void)
+ { char p1[10], p2[10];
+   int t;
+   t=strlen("t")+strlen("u"); /*otherwise, no bug ...*/
+   ether_hostton(p1, p2);
+   return(0);
+ }
+EOF
+checkcompilstd "ether_hostton" "" "" ""
+NETWIBDEF_HAVEFUNC_ETHER_HOSTTON=`checkcompilyes`
+if [ $NETWIBDEF_HAVEFUNC_ETHER_HOSTTON -eq 1 ] ; then
+  checkexec "ether_hostton"
+  NETWIBDEF_HAVEFUNC_ETHER_HOSTTON=`checkexecyes`
+  if [ $NETWIBDEF_HAVEFUNC_ETHER_HOSTTON -eq 0 ] ; then
+    echo "Warning: you are on a computer with a bad ether_hostton."
+    echo "         The library netwib will still be usable, but read "
+    echo "         ../doc/probleminstallunix.txt if you want to"
+    echo "         use the file /etc/ethers."
+    echo "Press ENTER to continue."
+    read foobar
+  fi
+fi
+checkceclean
+
+#---
+cat > `checkcompilfile` <<EOF
+ char *hstrerror(int para);
+ int main(void)
+ { char *p;
+   p=hstrerror(10);
+   return(0);
+ }
+EOF
+checkcompilstd "hstrerror" "" "" ""
+NETWIBDEF_HAVEFUNC_HSTRERROR=`checkcompilyes`
+checkceclean
+
+#---
+cat > `checkcompilfile` <<EOF
+ int main(void)
+ { char *p;
+   snprintf(p, 3, "%d",5);
+   return(0);
+ }
+EOF
+checkcompilstd "snprintf" "" "" ""
+NETWIBDEF_HAVEFUNC_SNPRINTF=`checkcompilyes`
+checkceclean
+
+#---
+NETWIBDEF_HAVEFUNC_PCAP_FREECODE=0
+if [ $NETWIBDEF_LIBPCAPINSTALLED = 1 ] ; then
+  cat > `checkcompilfile` <<EOF
+   #include <pcap.h>
+   int main(void)
+   { pcap_freecode(NULL);
+     return(0);
+   }
+EOF
+  checkcompilstd "pcap_freecode (1 param)" "" "" ""
+  NETWIBDEF_HAVEFUNC_PCAP_FREECODE=`checkcompilyes`
+  checkceclean
+fi
+
+#---
+NETWIBDEF_HAVEFUNC_PCAP_FREECODE2=0
+if [ $NETWIBDEF_LIBPCAPINSTALLED = 1 ] ; then
+  cat > `checkcompilfile` <<EOF
+   #include <pcap.h>
+   int main(void)
+   { pcap_freecode(NULL, NULL);
+     return(0);
+   }
+EOF
+  checkcompilstd "pcap_freecode (2 param)" "" "" ""
+  NETWIBDEF_HAVEFUNC_PCAP_FREECODE2=`checkcompilyes`
+  checkceclean
+fi
+
+#---
+NETWIBDEF_HAVEFUNC_PCAP_OPENDEAD=0
+if [ $NETWIBDEF_LIBPCAPINSTALLED = 1 ] ; then
+  cat > `checkcompilfile` <<EOF
+   #include <pcap.h>
+   int main(void)
+   { pcap_open_dead(0, 0);
+     return(0);
+   }
+EOF
+  checkcompilstd "pcap_open_dead" "" "" ""
+  NETWIBDEF_HAVEFUNC_PCAP_OPENDEAD=`checkcompilyes`
+  checkceclean
+fi
+
+#---
+cat > `checkcompilfile` <<EOF
+ #include <sys/poll.h>
+ int main(void)
+ { char *p;
+   poll(NULL, 0, 0);
+   return(0);
+ }
+EOF
+checkcompilstd "poll" "" "" ""
+NETWIBDEF_HAVEFUNC_POLL=`checkcompilyes`
+checkceclean
+
+#---
+cat > `checkcompilfile` <<EOF
+ #include <dirent.h>
+ int main(void)
+ { long l;
+   l = dirfd(NULL);
+   return(0);
+ }
+EOF
+checkcompilstd "dirfd" "" "" ""
+NETWIBDEF_HAVEFUNC_DIRFD=`checkcompilyes`
+checkceclean
+
+#---
+cat > `checkcompilfile` <<EOF
+ int main(void)
+ { long l;
+   l = fpathconf(0, _PC_PATH_MAX);
+   return(0);
+ }
+EOF
+checkcompilstd "fpathconf" "" "" ""
+NETWIBDEF_HAVEFUNC_FPATHCONF=`checkcompilyes`
+checkceclean
+
+#---
+cat > `checkcompilfile` <<EOF
+ int main(void)
+ { long l;
+   l = pathconf("/", _PC_PATH_MAX);
+   return(0);
+ }
+EOF
+checkcompilstd "pathconf" "" "" ""
+NETWIBDEF_HAVEFUNC_PATHCONF=`checkcompilyes`
+checkceclean
+
+#---
+cat > `checkcompilfile` <<EOF
+ int main(void)
+ { long l;
+   l = sysconf(_SC_OPEN_MAX);
+   return(0);
+ }
+EOF
+checkcompilstd "sysconf" "" "" ""
+NETWIBDEF_HAVEFUNC_SYSCONF=`checkcompilyes`
+checkceclean
+
+#---
+cat > `checkcompilfile` <<EOF
+ int main(void)
+ { long l;
+   l = getpagesize();
+   return(0);
+ }
+EOF
+checkcompilstd "getpagesize" "" "" ""
+NETWIBDEF_HAVEFUNC_GETPAGESIZE=`checkcompilyes`
+checkceclean
+
+#---
+cat > `checkcompilfile` <<EOF
+ #include <sys/time.h>
+ #include <sys/resource.h>
+ int main(void)
+ { long l;
+   l = getrlimit(0,NULL);
+   return(0);
+ }
+EOF
+checkcompilstd "getrlimit" "" "" ""
+NETWIBDEF_HAVEFUNC_GETRLIMIT=`checkcompilyes`
+checkceclean
+
+#---
+cat > `checkcompilfile` <<EOF
+ #include <time.h>
+ int main(void)
+ { nanosleep(NULL,NULL);
+   return(0);
+ }
+EOF
+checkcompilstd "nanosleep" "" "" ""
+NETWIBDEF_HAVEFUNC_NANOSLEEP=`checkcompilyes`
+if [ $NETWIBDEF_HAVEFUNC_NANOSLEEP -eq 0 ] ; then
+  checkcompilstd "nanosleep [-lrt]" "" "" "-lrt"
+  NETWIBDEF_HAVEFUNC_NANOSLEEP=`checkcompilyes`
+  if [ $NETWIBDEF_HAVEFUNC_NANOSLEEP -eq 1 ] ; then
+    gccLib="$gccLib -lrt"
+  fi
+fi
+if [ $NETWIBDEF_HAVEFUNC_NANOSLEEP -eq 0 ] ; then
+  checkcompilstd "nanosleep [-lposix4]" "" "" "-lposix4"
+  NETWIBDEF_HAVEFUNC_NANOSLEEP=`checkcompilyes`
+  if [ $NETWIBDEF_HAVEFUNC_NANOSLEEP -eq 1 ] ; then
+    gccLib="$gccLib -lposix4"
+  fi
+fi
+checkceclean
+
+#---
+cat > `checkcompilfile` <<EOF
+ int main(void)
+ { usleep(0);
+   return(0);
+ }
+EOF
+checkcompilstd "usleep" "" "" ""
+NETWIBDEF_HAVEFUNC_USLEEP=`checkcompilyes`
+checkceclean
+
+#---
+cat > `checkcompilfile` <<EOF
+ #include <sys/time.h>
+ int main(void)
+ { gettimeofday(NULL, NULL);
+   return(0);
+ }
+EOF
+checkcompilstd "gettimeofday" "" "" ""
+NETWIBDEF_HAVEFUNC_GETTIMEOFDAY=`checkcompilyes`
+checkceclean
+
+#---
+cat > `checkcompilfile` <<EOF
+ #include <time.h>
+ int main(void)
+ { clock_gettime(0, NULL);
+   return(0);
+ }
+EOF
+checkcompilstd "clock_gettime" "" "" ""
+NETWIBDEF_HAVEFUNC_CLOCK_GETTIME=`checkcompilyes`
+if [ $NETWIBDEF_HAVEFUNC_CLOCK_GETTIME -eq 0 ] ; then
+  checkcompilstd "clock_gettime [-lrt]" "" "" "-lrt"
+  NETWIBDEF_HAVEFUNC_CLOCK_GETTIME=`checkcompilyes`
+  if [ $NETWIBDEF_HAVEFUNC_CLOCK_GETTIME -eq 1 ] ; then
+    gccLib="$gccLib -lrt"
+  fi
+fi
+if [ $NETWIBDEF_HAVEFUNC_CLOCK_GETTIME -eq 0 ] ; then
+  checkcompilstd "clock_gettime [-lposix4]" "" "" "-lposix4"
+  NETWIBDEF_HAVEFUNC_CLOCK_GETTIME=`checkcompilyes`
+  if [ $NETWIBDEF_HAVEFUNC_CLOCK_GETTIME -eq 1 ] ; then
+    gccLib="$gccLib -lposix4"
+  fi
+fi
+checkceclean
+
+#---
+NETWIBDEF_HAVEFUNC_PTHREAD_DELAY_NP=0
+if [ $NETWIBDEF_HAVEINCL_PTHREAD = 1 ] ; then
+  cat > `checkcompilfile` <<EOF
+   #include <pthread.h>
+   int main(void)
+   { pthread_delay_np(NULL);
+     return(0);
+   }
+EOF
+  checkcompilstd "pthread_delay_np" "" "" ""
+  NETWIBDEF_HAVEFUNC_PTHREAD_DELAY_NP=`checkcompilyes`
+  checkceclean
+fi
+
+#---
+NETWIBDEF_HAVEFUNC_PTHREAD_MUTEX_TIMEDLOCK=0
+if [ $NETWIBDEF_HAVEINCL_PTHREAD = 1 ] ; then
+  cat > `checkcompilfile` <<EOF
+   #include <pthread.h>
+   int main(void)
+   { pthread_mutex_timedlock(NULL, NULL);
+     return(0);
+   }
+EOF
+  checkcompilstd "pthread_mutex_timedlock" "" "" ""
+  NETWIBDEF_HAVEFUNC_PTHREAD_MUTEX_TIMEDLOCK=`checkcompilyes`
+  checkceclean
+fi
+
+#---
+NETWIBDEF_HAVEFUNC_PTHREAD_RWLOCK_TIMEDRDLOCK=0
+if [ $NETWIBDEF_HAVEINCL_PTHREAD = 1 ] ; then
+  cat > `checkcompilfile` <<EOF
+   #include <pthread.h>
+   int main(void)
+   { pthread_rwlock_timedrdlock(NULL, NULL);
+     return(0);
+   }
+EOF
+  checkcompilstd "pthread_rwlock_timedrdlock" "" "" ""
+  NETWIBDEF_HAVEFUNC_PTHREAD_RWLOCK_TIMEDRDLOCK=`checkcompilyes`
+  checkceclean
+fi
+
+#---
+NETWIBDEF_HAVEFUNC_PTHREAD_RWLOCK_TIMEDWRLOCK=0
+if [ $NETWIBDEF_HAVEINCL_PTHREAD = 1 ] ; then
+  cat > `checkcompilfile` <<EOF
+   #include <pthread.h>
+   int main(void)
+   { pthread_rwlock_timedwrlock(NULL, NULL);
+     return(0);
+   }
+EOF
+  checkcompilstd "pthread_rwlock_timedwrlock" "" "" ""
+  NETWIBDEF_HAVEFUNC_PTHREAD_RWLOCK_TIMEDWRLOCK=`checkcompilyes`
+  checkceclean
+fi
+
+#---
+NETWIBDEF_HAVEFUNC_PTHREAD_YIELD=0
+if [ $NETWIBDEF_HAVEINCL_PTHREAD = 1 ] ; then
+  cat > `checkcompilfile` <<EOF
+   #include <pthread.h>
+   int main(void)
+   { pthread_yield();
+     return(0);
+   }
+EOF
+  checkcompilstd "pthread_yield" "" "" ""
+  NETWIBDEF_HAVEFUNC_PTHREAD_YIELD=`checkcompilyes`
+  checkceclean
+fi
+
+#---
+NETWIBDEF_HAVEFUNC_SCHED_YIELD=0
+if [ $NETWIBDEF_HAVEINCL_SCHED = 1 ] ; then
+  cat > `checkcompilfile` <<EOF
+   #include <sched.h>
+   int main(void)
+   { sched_yield();
+     return(0);
+   }
+EOF
+  checkcompilstd "sched_yield" "" "" ""
+  NETWIBDEF_HAVEFUNC_SCHED_YIELD=`checkcompilyes`
+  if [ $NETWIBDEF_HAVEINCL_SCHED = 0 ] ; then
+    checkcompilstd "sched_yield [-lposix4]" "" "" "-lposix4"
+    NETWIBDEF_HAVEFUNC_SCHED_YIELD=`checkcompilyes`
+    if [ $NETWIBDEF_HAVEFUNC_SCHED_YIELD -eq 1 ] ; then
+      gccLib="$gccLib -lposix4"
+    fi
+  fi
+  checkceclean
+fi
+
+#---
+cat > `checkcompilfile` <<EOF
+ #define _POSIX_PTHREAD_SEMANTICS 1 /* for Solaris */
+ #include <pwd.h>
+ #include <grp.h>
+ int main(void)
+ { getpwnam_r(NULL, NULL, NULL, 0, NULL);
+   return(0);
+ }
+EOF
+checkcompilstd "getpwnam_r" "" "" ""
+NETWIBDEF_HAVEFUNC_GETPWNAM_R=`checkcompilyes`
+checkceclean
+
+#---
+cat > `checkcompilfile` <<EOF
+ #define _POSIX_PTHREAD_SEMANTICS 1 /* for Solaris */
+ #include <pwd.h>
+ #include <grp.h>
+ int main(void)
+ { getgrnam_r(NULL, NULL, NULL, 0, NULL);
+   return(0);
+ }
+EOF
+checkcompilstd "getgrnam_r" "" "" ""
+NETWIBDEF_HAVEFUNC_GETGRNAM_R=`checkcompilyes`
+checkceclean
+
+#---
+cat > `checkcompilfile` <<EOF
+ #define _POSIX_PTHREAD_SEMANTICS 1 /* for Solaris */
+ #include <pwd.h>
+ #include <grp.h>
+ int main(void)
+ { getgrgid_r(NULL, NULL, NULL, 0, NULL);
+   return(0);
+ }
+EOF
+checkcompilstd "getgrgid_r" "" "" ""
+NETWIBDEF_HAVEFUNC_GETGRGID_R=`checkcompilyes`
+checkceclean
+
+#---
+if [ $NETWIBDEF_LIBPTHREADFROMDCE -eq 1 ] ; then
+cat > `checkcompilfile` <<EOF
+ #include <dirent.h>
+ int main(void) { readdir_r(NULL, NULL); return(0); }
+EOF
+else
+cat > `checkcompilfile` <<EOF
+ #include <dirent.h>
+ int main(void) { readdir_r(NULL, NULL, NULL); return(0); }
+EOF
+fi
+checkcompilstd "readdir_r" "" "" ""
+NETWIBDEF_HAVEFUNC_READDIR_R=`checkcompilyes`
+checkceclean
+
+#---
+cat > `checkcompilfile` <<EOF
+ /* _REENTRANT must be present for Tru64 UNIX 4.0 */
+ #define _REENTRANT 1
+ #include <netdb.h>
+ int main(void)
+ { gethostbyname_r(NULL, NULL, NULL, 0, NULL, NULL);
+   return(0);
+ }
+EOF
+checkcompilstd "gethostbyname_r" "" "" ""
+NETWIBDEF_HAVEFUNC_GETHOSTBYNAME_R=`checkcompilyes`
+checkceclean
+
+#---
+cat > `checkcompilfile` <<EOF
+ /* _REENTRANT must be present for Tru64 UNIX 4.0 */
+ #define _REENTRANT 1
+ #include <netdb.h>
+ int main(void)
+ { gethostbyaddr_r(NULL, 0, 0, NULL, NULL, 0, NULL, NULL);
+   return(0);
+ }
+EOF
+checkcompilstd "gethostbyaddr_r" "" "" ""
+NETWIBDEF_HAVEFUNC_GETHOSTBYADDR_R=`checkcompilyes`
+checkceclean
+
+#---
+cat > `checkcompilfile` <<EOF
+ #include <netdb.h>
+ int main(void)
+ { getnameinfo(NULL, 0, NULL, 0, NULL, 0, 0);
+   return(0);
+ }
+EOF
+checkcompilstd "getnameinfo" "" "" ""
+NETWIBDEF_HAVEFUNC_GETNAMEINFO=`checkcompilyes`
+checkceclean
+
+#---
+cat > `checkcompilfile` <<EOF
+ #include <netdb.h>
+ int main(void)
+ { getaddrinfo(NULL, NULL, NULL, NULL);
+   return(0);
+ }
+EOF
+checkcompilstd "getaddrinfo" "" "" ""
+NETWIBDEF_HAVEFUNC_GETADDRINFO=`checkcompilyes`
+checkceclean
+
+#---
+cat > `checkcompilfile` <<EOF
+ #include <netdb.h>
+ int main(void)
+ { getipnodebyname(NULL, 0, 0, NULL);
+   return(0);
+ }
+EOF
+checkcompilstd "getipnodebyname" "" "" ""
+NETWIBDEF_HAVEFUNC_GETIPNODEBYNAME=`checkcompilyes`
+checkceclean
+
+#---
+cat > `checkcompilfile` <<EOF
+ #include <netdb.h>
+ int main(void)
+ { getipnodebyaddr(NULL, 0, 0, NULL);
+   return(0);
+ }
+EOF
+checkcompilstd "getipnodebyaddr" "" "" ""
+NETWIBDEF_HAVEFUNC_GETIPNODEBYADDR=`checkcompilyes`
+checkceclean
+
+#---
+cat > `checkcompilfile` <<EOF
+ #include <time.h>
+ int main(void)
+ { localtime_r(NULL, NULL);
+   return(0);
+ }
+EOF
+checkcompilstd "localtime_r" "" "" ""
+NETWIBDEF_HAVEFUNC_LOCALTIME_R=`checkcompilyes`
+checkceclean
+
+
+########################################################################
+########################################################################
+echo "Check present variables"
+
+#---
+cat > `checkcompilfile` <<EOF
+ #include <netdb.h>
+ int main(void)
+ { h_errno = 0;
+   return(0);
+ }
+EOF
+checkcompilstd "h_errno" "" "" ""
+NETWIBDEF_HAVEVAR_HERRNO=`checkcompilyes`
+checkceclean
+
+#---
+cat > `checkcompilfile` <<EOF
+ #include <limits.h>
+ int main(void)
+ { int i = PATH_MAX;
+   return(0);
+ }
+EOF
+checkcompilstd "PATH_MAX" "" "" ""
+NETWIBDEF_HAVEVAR_PATH_MAX=`checkcompilyes`
+checkceclean
+
+#---
+cat > `checkcompilfile` <<EOF
+ #include <limits.h>
+ int main(void)
+ { int i = NAME_MAX;
+   return(0);
+ }
+EOF
+checkcompilstd "NAME_MAX" "" "" ""
+NETWIBDEF_HAVEVAR_NAME_MAX=`checkcompilyes`
+checkceclean
+
+#---
+echo "#include <sys/types.h>" > `checkcompilfile`
+if [ $NETWIBDEF_HAVEINCL_SYS_MMAN -eq 1 ] ; then
+ echo "#include <sys/mman.h>" >> `checkcompilfile`
+fi
+if [ $NETWIBDEF_HAVEINCL_SYS_PARAM -eq 1 ] ; then
+ echo "#include <sys/param.h>" >> `checkcompilfile`
+fi
+if [ $NETWIBDEF_HAVEINCL_MACHINE_PARAM -eq 1 ] ; then
+ echo "#include <machine/param.h>" >> `checkcompilfile`
+fi
+if [ $NETWIBDEF_HAVEINCL_ASM_PAGE -eq 1 ] ; then
+ echo "#include <asm/page.h>" >> `checkcompilfile`
+fi
+if [ $NETWIBDEF_HAVEINCL_MACH_MACHINE_VMPARAM -eq 1 ] ; then
+ echo "#include <mach/machine/vm_param.h>" >> `checkcompilfile`
+fi
+echo "int main(void){int i; i = PAGE_SIZE;}" >> `checkcompilfile`
+checkcompilstd "PAGE_SIZE" "" "" ""
+NETWIBDEF_HAVEVAR_PAGE_SIZE=`checkcompilyes`
+checkceclean
+
+#---
+echo "" > `checkcompilfile`
+if [ $NETWIBDEF_HAVEINCL_SYS_MMAN -eq 1 ] ; then
+ echo "#include <sys/mman.h>" >> `checkcompilfile`
+fi
+if [ $NETWIBDEF_HAVEINCL_SYS_PARAM -eq 1 ] ; then
+ echo "#include <sys/param.h>" >> `checkcompilfile`
+fi
+if [ $NETWIBDEF_HAVEINCL_MACHINE_PARAM -eq 1 ] ; then
+ echo "#include <machine/param.h>" >> `checkcompilfile`
+fi
+if [ $NETWIBDEF_HAVEINCL_ASM_PAGE -eq 1 ] ; then
+ echo "#include <asm/page.h>" >> `checkcompilfile`
+fi
+echo "int main(void){int i; i = PAGESIZE;}" >> `checkcompilfile`
+checkcompilstd "PAGESIZE" "" "" ""
+NETWIBDEF_HAVEVAR_PAGESIZE=`checkcompilyes`
+checkceclean
+
+#---
+cat > `checkcompilfile` <<EOF
+ #include <sys/types.h>
+ #include <sys/socket.h>
+ #include <net/if.h>
+ #include <sys/ioctl.h>
+ #include <net/bpf.h>
+ int main(void)
+ { int fd, un;
+   ioctl(fd, BIOCSHDRCMPLT, &un);
+   return(0);
+ }
+EOF
+checkcompilstd "BIOCSHDRCMPLT" "" "" ""
+NETWIBDEF_HAVEVAR_BIOCSHDRCMPLT=`checkcompilyes`
+checkceclean
+
+#---
+cat > `checkcompilfile` <<EOF
+ #include <sys/types.h>
+ #include <sys/socket.h>
+ #include <sys/ioctl.h>
+ #include <sys/sockio.h>
+ int main(void)
+ { int fd, un;
+   ioctl(fd, SIOCGLIFCONF, &un);
+   return(0);
+ }
+EOF
+checkcompilstd "SIOCGLIFCONF" "" "" ""
+NETWIBDEF_HAVEVAR_SIOCGLIFCONF=`checkcompilyes`
+checkceclean
+
+#---
+cat > `checkcompilfile` <<EOF
+ #include <sys/types.h>
+ #include <sys/socket.h>
+ int main(void)
+ { int i = AF_INET6;
+   return(0);
+ }
+EOF
+checkcompilstd "AF_INET6" "" "" ""
+NETWIBDEF_HAVEVAR_AF_INET6=`checkcompilyes`
+checkceclean
+
+#---
+cat > `checkcompilfile` <<EOF
+ #include <unistd.h>
+ int main(void)
+ { int i = _SC_GETPW_R_SIZE_MAX;
+   return(0);
+ }
+EOF
+checkcompilstd "_SC_GETPW_R_SIZE_MAX" "" "" ""
+NETWIBDEF_HAVEVAR_SC_GETPW_R_SIZE_MAX=`checkcompilyes`
+checkceclean
+
+#---
+cat > `checkcompilfile` <<EOF
+ #include <unistd.h>
+ int main(void)
+ { int i = _SC_GETGR_R_SIZE_MAX;
+   return(0);
+ }
+EOF
+checkcompilstd "_SC_GETGR_R_SIZE_MAX" "" "" ""
+NETWIBDEF_HAVEVAR_SC_GETGR_R_SIZE_MAX=`checkcompilyes`
+checkceclean
+
+
+########################################################################
+########################################################################
+echo "Generate the different files"
+
+#########
+deffile="netwib/def.h"
+echo " Creation of $deffile"
+echo "#define NETWIBDEF_SYSNAME_Unix 1" > $deffile
+echo "#define NETWIBDEF_SYSNAME \"$NETWIBDEF_SYSNAME\"" >> $deffile
+echo "#define NETWIBDEF_SYSNAME_$NETWIBDEF_SYSNAME 1" >> $deffile
+echo "#define NETWIBDEF_SYSARCH \"$NETWIBDEF_SYSARCH\"" >> $deffile
+echo "#define NETWIBDEF_SYSARCH_$NETWIBDEF_SYSARCH 1" >> $deffile
+echo "#define NETWIBDEF_ARCH_ENDIAN $NETWIBDEF_ARCH_ENDIAN" >> $deffile
+echo "#define NETWIBDEF_ARCH_BITS $NETWIBDEF_ARCH_BITS" >> $deffile
+echo "#define NETWIBDEF_ARCH_ALIGN $NETWIBDEF_ARCH_ALIGN" >> $deffile
+echo "#define NETWIBDEF_VERSION \"$NETWIBDEF_VERSION\"" >> $deffile
+echo "#define NETWIBDEF_VERSIONMAJOR $NETWIBDEF_VERSIONMAJOR" >> $deffile
+echo "#define NETWIBDEF_VERSIONMINOR $NETWIBDEF_VERSIONMINOR" >> $deffile
+echo "#define NETWIBDEF_VERSIONMICRO $NETWIBDEF_VERSIONMICRO" >> $deffile
+echo "#define NETWIBDEF_LIBPTHREADINSTALLED $NETWIBDEF_LIBPTHREADINSTALLED">>$deffile
+echo "#define NETWIBDEF_LIBPTHREADFROMDCE $NETWIBDEF_LIBPTHREADFROMDCE">>$deffile
+echo "#define NETWIBDEF_LIBPTHREADFROMMIT $NETWIBDEF_LIBPTHREADFROMMIT">>$deffile
+echo "#define NETWIBDEF_LIBPCAPINSTALLED $NETWIBDEF_LIBPCAPINSTALLED">>$deffile
+echo "#define NETWIBDEF_LIBPCAPFROMREDHAT $NETWIBDEF_LIBPCAPFROMREDHAT">>$deffile
+echo "#define NETWIBDEF_LIBNETINSTALLED $NETWIBDEF_LIBNETINSTALLED" >> $deffile
+echo "#define NETWIBDEF_LIBNETVERSION11 $NETWIBDEF_LIBNETVERSION11" >> $deffile
+echo "#define NETWIBDEF_LIBUTILINSTALLED $NETWIBDEF_LIBUTILINSTALLED" >> $deffile
+echo "#define NETWIBDEF_PROGCC \"$NETWIBDEF_PROGCC\"" >> $deffile
+echo "#define NETWIBDEF_PROGCCALIAS $NETWIBDEF_PROGCCALIAS" >> $deffile
+echo "#define NETWIBDEF_PROGCCWUNDEF $NETWIBDEF_PROGCCWUNDEF" >> $deffile
+echo "#define NETWIBDEF_PROGCCWSIGNC $NETWIBDEF_PROGCCWSIGNC" >> $deffile
+echo "#define NETWIBDEF_PROGCCWEXTRA $NETWIBDEF_PROGCCWEXTRA" >> $deffile
+echo "#define NETWIBDEF_PROGAR \"$NETWIBDEF_PROGAR\"" >> $deffile
+echo "#define NETWIBDEF_PROGRANLIB \"$NETWIBDEF_PROGRANLIB\"" >> $deffile
+echo "#define NETWIBDEF_PROGGREP \"$NETWIBDEF_PROGGREP\"" >> $deffile
+echo "#define NETWIBDEF_INSTPREFIX \"$NETWIBDEF_INSTPREFIX\"" >> $deffile
+echo "#define NETWIBDEF_INSTINCLUDE \"$NETWIBDEF_INSTINCLUDE\"" >> $deffile
+echo "#define NETWIBDEF_INSTLIB \"$NETWIBDEF_INSTLIB\"" >> $deffile
+echo "#define NETWIBDEF_INSTBIN \"$NETWIBDEF_INSTBIN\"" >> $deffile
+echo "#define NETWIBDEF_INSTMAN \"$NETWIBDEF_INSTMAN\"" >> $deffile
+echo "#define NETWIBDEF_INSTMAN3 \"$NETWIBDEF_INSTMAN3\"" >> $deffile
+echo "#define NETWIBDEF_SUPPORT_SNIFF $NETWIBDEF_SUPPORT_SNIFF" >> $deffile
+echo "#define NETWIBDEF_SUPPORT_SPOOF $NETWIBDEF_SUPPORT_SPOOF" >> $deffile
+echo "#define NETWIBDEF_SUPPORT_ENCODETYPE_PCAP $NETWIBDEF_SUPPORT_ENCODETYPE_PCAP" >> $deffile
+echo "#define NETWIBDEF_TYPE_INT8 $NETWIBDEF_TYPE_INT8" >> $deffile
+echo "#define NETWIBDEF_TYPE_UINT8 $NETWIBDEF_TYPE_UINT8" >> $deffile
+echo "#define NETWIBDEF_TYPE_INT16 $NETWIBDEF_TYPE_INT16" >> $deffile
+echo "#define NETWIBDEF_TYPE_UINT16 $NETWIBDEF_TYPE_UINT16" >> $deffile
+echo "#define NETWIBDEF_TYPE_INT32 $NETWIBDEF_TYPE_INT32" >> $deffile
+echo "#define NETWIBDEF_TYPE_UINT32 $NETWIBDEF_TYPE_UINT32" >> $deffile
+echo "#define NETWIBDEF_TYPE_INT64 $NETWIBDEF_TYPE_INT64" >> $deffile
+echo "#define NETWIBDEF_TYPE_UINT64 $NETWIBDEF_TYPE_UINT64" >> $deffile
+echo "#define NETWIBDEF_TYPE_INT64_FAKE $NETWIBDEF_TYPE_INT64_FAKE" >> $deffile
+echo "#define NETWIBDEF_HAVEINCL_PTHREAD $NETWIBDEF_HAVEINCL_PTHREAD" >> $deffile
+echo "#define NETWIBDEF_HAVEINCL_STROPTS $NETWIBDEF_HAVEINCL_STROPTS" >> $deffile
+echo "#define NETWIBDEF_HAVEINCL_SCHED $NETWIBDEF_HAVEINCL_SCHED" >> $deffile
+echo "#define NETWIBDEF_HAVEINCL_PTY $NETWIBDEF_HAVEINCL_PTY" >> $deffile
+echo "#define NETWIBDEF_HAVEINCL_SYS_POLL $NETWIBDEF_HAVEINCL_SYS_POLL" >> $deffile
+echo "#define NETWIBDEF_HAVEINCL_SYS_PARAM $NETWIBDEF_HAVEINCL_SYS_PARAM" >> $deffile
+echo "#define NETWIBDEF_HAVEINCL_SYS_SYSCTL $NETWIBDEF_HAVEINCL_SYS_SYSCTL" >> $deffile
+echo "#define NETWIBDEF_HAVEINCL_SYS_IOCTL $NETWIBDEF_HAVEINCL_SYS_IOCTL" >> $deffile
+echo "#define NETWIBDEF_HAVEINCL_SYS_SOCKIO $NETWIBDEF_HAVEINCL_SYS_SOCKIO" >> $deffile
+echo "#define NETWIBDEF_HAVEINCL_SYS_DLPI $NETWIBDEF_HAVEINCL_SYS_DLPI" >> $deffile
+echo "#define NETWIBDEF_HAVEINCL_SYS_BUFMOD $NETWIBDEF_HAVEINCL_SYS_BUFMOD" >> $deffile
+echo "#define NETWIBDEF_HAVEINCL_SYS_MMAN $NETWIBDEF_HAVEINCL_SYS_MMAN" >> $deffile
+echo "#define NETWIBDEF_HAVEINCL_NET_ETHERNET $NETWIBDEF_HAVEINCL_NET_ETHERNET" >> $deffile
+echo "#define NETWIBDEF_HAVEINCL_NET_IF_ARP $NETWIBDEF_HAVEINCL_NET_IF_ARP" >> $deffile
+echo "#define NETWIBDEF_HAVEINCL_NET_IF_TYPES $NETWIBDEF_HAVEINCL_NET_IF_TYPES" >> $deffile
+echo "#define NETWIBDEF_HAVEINCL_NET_IF_DL $NETWIBDEF_HAVEINCL_NET_IF_DL" >> $deffile
+echo "#define NETWIBDEF_HAVEINCL_NET_BPF $NETWIBDEF_HAVEINCL_NET_BPF" >> $deffile
+echo "#define NETWIBDEF_HAVEINCL_NETINET_IF_ETHER $NETWIBDEF_HAVEINCL_NETINET_IF_ETHER" >> $deffile
+echo "#define NETWIBDEF_HAVEINCL_NETINET_ETHER $NETWIBDEF_HAVEINCL_NETINET_ETHER" >> $deffile
+echo "#define NETWIBDEF_HAVEINCL_NETPACKET_PACKET $NETWIBDEF_HAVEINCL_NETPACKET_PACKET" >> $deffile
+echo "#define NETWIBDEF_HAVEINCL_ASM_PAGE $NETWIBDEF_HAVEINCL_ASM_PAGE" >> $deffile
+echo "#define NETWIBDEF_HAVEINCL_MACH_MACHINE_VMPARAM $NETWIBDEF_HAVEINCL_MACH_MACHINE_VMPARAM" >> $deffile
+echo "#define NETWIBDEF_HAVEINCL_MACHINE_PARAM $NETWIBDEF_HAVEINCL_MACHINE_PARAM" >> $deffile
+echo "#define NETWIBDEF_HAVETYPE_SIZE_T $NETWIBDEF_HAVETYPE_SIZE_T" >> $deffile
+echo "#define NETWIBDEF_HAVETYPE_SOCKLEN_T $NETWIBDEF_HAVETYPE_SOCKLEN_T" >> $deffile
+echo "#define NETWIBDEF_HAVETYPE_SIGHANDLER_T $NETWIBDEF_HAVETYPE_SIGHANDLER_T" >> $deffile
+echo "#define NETWIBDEF_HAVETYPE_SIG_T $NETWIBDEF_HAVETYPE_SIG_T" >> $deffile
+echo "#define NETWIBDEF_HAVETYPE_OFF_T $NETWIBDEF_HAVETYPE_OFF_T" >> $deffile
+echo "#define NETWIBDEF_HAVETYPE_PTHREAD_RWLOCK_T $NETWIBDEF_HAVETYPE_PTHREAD_RWLOCK_T" >> $deffile
+echo "#define NETWIBDEF_HAVETYPE_SOCKADDR_IN6 $NETWIBDEF_HAVETYPE_SOCKADDR_IN6" >> $deffile
+echo "#define NETWIBDEF_HAVEFIELD_TM_GMTOFF $NETWIBDEF_HAVEFIELD_TM_GMTOFF" >> $deffile
+echo "#define NETWIBDEF_HAVEFIELD_SOCKADDR_SALEN $NETWIBDEF_HAVEFIELD_SOCKADDR_SALEN" >> $deffile
+echo "#define NETWIBDEF_HAVEFIELD_SOCKADDRIN_SINLEN $NETWIBDEF_HAVEFIELD_SOCKADDRIN_SINLEN" >> $deffile
+echo "#define NETWIBDEF_HAVEFIELD_SOCKADDRIN6_SIN6LEN $NETWIBDEF_HAVEFIELD_SOCKADDRIN6_SIN6LEN" >> $deffile
+echo "#define NETWIBDEF_HAVEFUNC_ETHER_NTOHOST $NETWIBDEF_HAVEFUNC_ETHER_NTOHOST" >> $deffile
+echo "#define NETWIBDEF_HAVEFUNC_ETHER_HOSTTON $NETWIBDEF_HAVEFUNC_ETHER_HOSTTON" >> $deffile
+echo "#define NETWIBDEF_HAVEFUNC_HSTRERROR $NETWIBDEF_HAVEFUNC_HSTRERROR" >> $deffile
+echo "#define NETWIBDEF_HAVEFUNC_SNPRINTF $NETWIBDEF_HAVEFUNC_SNPRINTF" >> $deffile
+echo "#define NETWIBDEF_HAVEFUNC_PCAP_FREECODE $NETWIBDEF_HAVEFUNC_PCAP_FREECODE" >> $deffile
+echo "#define NETWIBDEF_HAVEFUNC_PCAP_FREECODE2 $NETWIBDEF_HAVEFUNC_PCAP_FREECODE2" >> $deffile
+echo "#define NETWIBDEF_HAVEFUNC_PCAP_OPENDEAD $NETWIBDEF_HAVEFUNC_PCAP_OPENDEAD" >> $deffile
+echo "#define NETWIBDEF_HAVEFUNC_POLL $NETWIBDEF_HAVEFUNC_POLL" >> $deffile
+echo "#define NETWIBDEF_HAVEFUNC_DIRFD $NETWIBDEF_HAVEFUNC_DIRFD" >> $deffile
+echo "#define NETWIBDEF_HAVEFUNC_FPATHCONF $NETWIBDEF_HAVEFUNC_FPATHCONF" >> $deffile
+echo "#define NETWIBDEF_HAVEFUNC_PATHCONF $NETWIBDEF_HAVEFUNC_PATHCONF" >> $deffile
+echo "#define NETWIBDEF_HAVEFUNC_SYSCONF $NETWIBDEF_HAVEFUNC_SYSCONF" >> $deffile
+echo "#define NETWIBDEF_HAVEFUNC_GETPAGESIZE $NETWIBDEF_HAVEFUNC_GETPAGESIZE" >> $deffile
+echo "#define NETWIBDEF_HAVEFUNC_GETRLIMIT $NETWIBDEF_HAVEFUNC_GETRLIMIT" >> $deffile
+echo "#define NETWIBDEF_HAVEFUNC_NANOSLEEP $NETWIBDEF_HAVEFUNC_NANOSLEEP" >> $deffile
+echo "#define NETWIBDEF_HAVEFUNC_USLEEP $NETWIBDEF_HAVEFUNC_USLEEP" >> $deffile
+echo "#define NETWIBDEF_HAVEFUNC_GETTIMEOFDAY $NETWIBDEF_HAVEFUNC_GETTIMEOFDAY" >> $deffile
+echo "#define NETWIBDEF_HAVEFUNC_CLOCK_GETTIME $NETWIBDEF_HAVEFUNC_CLOCK_GETTIME" >> $deffile
+echo "#define NETWIBDEF_HAVEFUNC_PTHREAD_DELAY_NP $NETWIBDEF_HAVEFUNC_PTHREAD_DELAY_NP" >> $deffile
+echo "#define NETWIBDEF_HAVEFUNC_PTHREAD_MUTEX_TIMEDLOCK $NETWIBDEF_HAVEFUNC_PTHREAD_MUTEX_TIMEDLOCK" >> $deffile
+echo "#define NETWIBDEF_HAVEFUNC_PTHREAD_RWLOCK_TIMEDRDLOCK $NETWIBDEF_HAVEFUNC_PTHREAD_RWLOCK_TIMEDRDLOCK" >> $deffile
+echo "#define NETWIBDEF_HAVEFUNC_PTHREAD_RWLOCK_TIMEDWRLOCK $NETWIBDEF_HAVEFUNC_PTHREAD_RWLOCK_TIMEDWRLOCK" >> $deffile
+echo "#define NETWIBDEF_HAVEFUNC_PTHREAD_YIELD $NETWIBDEF_HAVEFUNC_PTHREAD_YIELD" >> $deffile
+echo "#define NETWIBDEF_HAVEFUNC_SCHED_YIELD $NETWIBDEF_HAVEFUNC_SCHED_YIELD" >> $deffile
+echo "#define NETWIBDEF_HAVEFUNC_GETPWNAM_R $NETWIBDEF_HAVEFUNC_GETPWNAM_R" >> $deffile
+echo "#define NETWIBDEF_HAVEFUNC_GETGRNAM_R $NETWIBDEF_HAVEFUNC_GETGRNAM_R" >> $deffile
+echo "#define NETWIBDEF_HAVEFUNC_GETGRGID_R $NETWIBDEF_HAVEFUNC_GETGRGID_R" >> $deffile
+echo "#define NETWIBDEF_HAVEFUNC_READDIR_R $NETWIBDEF_HAVEFUNC_READDIR_R" >> $deffile
+echo "#define NETWIBDEF_HAVEFUNC_GETHOSTBYNAME_R $NETWIBDEF_HAVEFUNC_GETHOSTBYNAME_R" >> $deffile
+echo "#define NETWIBDEF_HAVEFUNC_GETHOSTBYADDR_R $NETWIBDEF_HAVEFUNC_GETHOSTBYADDR_R" >> $deffile
+echo "#define NETWIBDEF_HAVEFUNC_GETNAMEINFO $NETWIBDEF_HAVEFUNC_GETNAMEINFO" >> $deffile
+echo "#define NETWIBDEF_HAVEFUNC_GETADDRINFO $NETWIBDEF_HAVEFUNC_GETADDRINFO" >> $deffile
+echo "#define NETWIBDEF_HAVEFUNC_GETIPNODEBYNAME $NETWIBDEF_HAVEFUNC_GETIPNODEBYNAME" >> $deffile
+echo "#define NETWIBDEF_HAVEFUNC_GETIPNODEBYADDR $NETWIBDEF_HAVEFUNC_GETIPNODEBYADDR" >> $deffile
+echo "#define NETWIBDEF_HAVEFUNC_LOCALTIME_R $NETWIBDEF_HAVEFUNC_LOCALTIME_R" >> $deffile
+echo "#define NETWIBDEF_HAVEVAR_HERRNO $NETWIBDEF_HAVEVAR_HERRNO" >> $deffile
+echo "#define NETWIBDEF_HAVEVAR_PATH_MAX $NETWIBDEF_HAVEVAR_PATH_MAX" >> $deffile
+echo "#define NETWIBDEF_HAVEVAR_NAME_MAX $NETWIBDEF_HAVEVAR_NAME_MAX" >> $deffile
+echo "#define NETWIBDEF_HAVEVAR_PAGE_SIZE $NETWIBDEF_HAVEVAR_PAGE_SIZE" >> $deffile
+echo "#define NETWIBDEF_HAVEVAR_PAGESIZE $NETWIBDEF_HAVEVAR_PAGESIZE" >> $deffile
+echo "#define NETWIBDEF_HAVEVAR_BIOCSHDRCMPLT $NETWIBDEF_HAVEVAR_BIOCSHDRCMPLT" >> $deffile
+echo "#define NETWIBDEF_HAVEVAR_SIOCGLIFCONF $NETWIBDEF_HAVEVAR_SIOCGLIFCONF" >> $deffile
+echo "#define NETWIBDEF_HAVEVAR_AF_INET6 $NETWIBDEF_HAVEVAR_AF_INET6" >> $deffile
+echo "#define NETWIBDEF_HAVEVAR_SC_GETPW_R_SIZE_MAX $NETWIBDEF_HAVEVAR_SC_GETPW_R_SIZE_MAX" >> $deffile
+echo "#define NETWIBDEF_HAVEVAR_SC_GETGR_R_SIZE_MAX $NETWIBDEF_HAVEVAR_SC_GETGR_R_SIZE_MAX" >> $deffile
+
+
+#########
+netwibconfig="./compil/unix/netwib-config"
+echo " Creation of $netwibconfig"
+cat > $netwibconfig <<EOF
+#!/bin/sh
+#----------------------------------------------------------------------
+# This file was generated with ./genemake
+
+# this function displays usage of netwib-config
+usage ()
+{ prog=\$1
+  errorcode=\$2
+
+  cat <<UEOF
+Usages: 
+  \$prog -v
+  \$prog --version
+  \$prog -c
+  \$prog --cflags
+  \$prog -l
+  \$prog --libs
+  \$prog -d variable_name_from__netwib_def.h
+Examples:
+  gcc -o t t.c \\\`\$prog --cflags --libs\\\`
+  gcc -o t t.c \\\`\$prog -c -l\\\`
+  gcc -o t t.c \\\`\$prog -cl\\\`
+  \$prog -v
+  \$prog -d SYSVER
+UEOF
+
+  exit \$errorcode
+}
+
+# this function displays the value of a define
+adefine()
+{ var=\$1
+  case \$var in
+    SYSNAME) echo $NETWIBDEF_SYSNAME ;;
+    SYSNAME_$NETWIBDEF_SYSNAME) echo 1 ;;
+    SYSARCH) echo $NETWIBDEF_SYSARCH ;;
+    SYSARCH_$NETWIBDEF_SYSARCH) echo 1 ;;
+    ARCH_ENDIAN) echo $NETWIBDEF_ARCH_ENDIAN ;;
+    ARCH_BITS) echo $NETWIBDEF_ARCH_BITS ;;
+    ARCH_ALIGN) echo $NETWIBDEF_ARCH_ALIGN ;;
+    VERSION) echo $NETWIBDEF_VERSION ;;
+    VERSIONMAJOR) echo $NETWIBDEF_VERSIONMAJOR ;;
+    VERSIONMINOR) echo $NETWIBDEF_VERSIONMINOR ;;
+    VERSIONMICRO) echo $NETWIBDEF_VERSIONMICRO ;;
+    LIBPTHREADINSTALLED) echo $NETWIBDEF_LIBPTHREADINSTALLED ;;
+    LIBPTHREADFROMDCE) echo $NETWIBDEF_LIBPTHREADFROMDCE ;;
+    LIBPTHREADFROMMIT) echo $NETWIBDEF_LIBPTHREADFROMMIT ;;
+    LIBPCAPINSTALLED) echo $NETWIBDEF_LIBPCAPINSTALLED ;;
+    LIBPCAPFROMREDHAT) echo $NETWIBDEF_LIBPCAPFROMREDHAT ;;
+    LIBNETINSTALLED) echo $NETWIBDEF_LIBNETINSTALLED ;;
+    LIBNETVERSION11) echo $NETWIBDEF_LIBNETVERSION11 ;;
+    LIBUTILINSTALLED) echo $NETWIBDEF_LIBUTILINSTALLED ;;
+    PROGCC) echo $NETWIBDEF_PROGCC ;;
+    PROGCCALIAS) echo $NETWIBDEF_PROGCCALIAS ;;
+    PROGCCWUNDEF) echo $NETWIBDEF_PROGCCWUNDEF ;;
+    PROGCCWSIGNC) echo $NETWIBDEF_PROGCCWSIGNC ;;
+    PROGCCWEXTRA) echo $NETWIBDEF_PROGCCWEXTRA ;;
+    PROGAR) echo $NETWIBDEF_PROGAR ;;
+    PROGRANLIB) echo $NETWIBDEF_PROGRANLIB ;;
+    PROGGREP) echo $NETWIBDEF_PROGGREP ;;
+    INSTPREFIX) echo $NETWIBDEF_INSTPREFIX ;;
+    INSTINCLUDE) echo $NETWIBDEF_INSTINCLUDE ;;
+    INSTLIB) echo $NETWIBDEF_INSTLIB ;;
+    INSTBIN) echo $NETWIBDEF_INSTBIN ;;
+    INSTMAN) echo $NETWIBDEF_INSTMAN ;;
+    INSTMAN3) echo $NETWIBDEF_INSTMAN3 ;;
+    SUPPORT_SNIFF) echo $NETWIBDEF_SUPPORT_SNIFF ;;
+    SUPPORT_SPOOF) echo $NETWIBDEF_SUPPORT_SPOOF ;;
+    SUPPORT_ENCODETYPE_PCAP) echo $NETWIBDEF_SUPPORT_ENCODETYPE_PCAP ;;
+    TYPE_INT8) echo $NETWIBDEF_TYPE_INT8 ;;
+    TYPE_UINT8) echo $NETWIBDEF_TYPE_UINT8 ;;
+    TYPE_INT16) echo $NETWIBDEF_TYPE_INT16 ;;
+    TYPE_UINT16) echo $NETWIBDEF_TYPE_UINT16 ;;
+    TYPE_INT32) echo $NETWIBDEF_TYPE_INT32 ;;
+    TYPE_UINT32) echo $NETWIBDEF_TYPE_UINT32 ;;
+    TYPE_INT64) echo $NETWIBDEF_TYPE_INT64 ;;
+    TYPE_UINT64) echo $NETWIBDEF_TYPE_UINT64 ;;
+    TYPE_INT64_FAKE) echo $NETWIBDEF_TYPE_INT64_FAKE ;;
+    HAVEINCL_PTHREAD) echo $NETWIBDEF_HAVEINCL_PTHREAD ;;
+    HAVEINCL_STROPTS) echo $NETWIBDEF_HAVEINCL_STROPTS ;;
+    HAVEINCL_SCHED) echo $NETWIBDEF_HAVEINCL_SCHED ;;
+    HAVEINCL_PTY) echo $NETWIBDEF_HAVEINCL_PTY ;;
+    HAVEINCL_SYS_POLL) echo $NETWIBDEF_HAVEINCL_SYS_POLL ;;
+    HAVEINCL_SYS_PARAM) echo $NETWIBDEF_HAVEINCL_SYS_PARAM ;;
+    HAVEINCL_SYS_SYSCTL) echo $NETWIBDEF_HAVEINCL_SYS_SYSCTL ;;
+    HAVEINCL_SYS_IOCTL) echo $NETWIBDEF_HAVEINCL_SYS_IOCTL ;;
+    HAVEINCL_SYS_SOCKIO) echo $NETWIBDEF_HAVEINCL_SYS_SOCKIO ;;
+    HAVEINCL_SYS_DLPI) echo $NETWIBDEF_HAVEINCL_SYS_DLPI ;;
+    HAVEINCL_SYS_BUFMOD) echo $NETWIBDEF_HAVEINCL_SYS_BUFMOD ;;
+    HAVEINCL_SYS_MMAN) echo $NETWIBDEF_HAVEINCL_SYS_MMAN ;;
+    HAVEINCL_NET_ETHERNET) echo $NETWIBDEF_HAVEINCL_NET_ETHERNET ;;
+    HAVEINCL_NET_IF_ARP) echo $NETWIBDEF_HAVEINCL_NET_IF_ARP ;;
+    HAVEINCL_NET_IF_TYPES) echo $NETWIBDEF_HAVEINCL_NET_IF_TYPES ;;
+    HAVEINCL_NET_IF_DL) echo $NETWIBDEF_HAVEINCL_NET_IF_DL ;;
+    HAVEINCL_NET_BPF) echo $NETWIBDEF_HAVEINCL_NET_BPF ;;
+    HAVEINCL_NETINET_IF_ETHER) echo $NETWIBDEF_HAVEINCL_NETINET_IF_ETHER ;;
+    HAVEINCL_NETINET_ETHER) echo $NETWIBDEF_HAVEINCL_NETINET_ETHER ;;
+    HAVEINCL_NETPACKET_PACKET) echo $NETWIBDEF_HAVEINCL_NETPACKET_PACKET ;;
+    HAVEINCL_ASM_PAGE) echo $NETWIBDEF_HAVEINCL_ASM_PAGE ;;
+    HAVEINCL_MACH_MACHINE_VMPARAM) echo $NETWIBDEF_HAVEINCL_MACH_MACHINE_VMPARAM ;;
+    HAVEINCL_MACHINE_PARAM) echo $NETWIBDEF_HAVEINCL_MACHINE_PARAM ;;
+    HAVETYPE_SIZE_T) echo $NETWIBDEF_HAVETYPE_SIZE_T ;;
+    HAVETYPE_SOCKLEN_T) echo $NETWIBDEF_HAVETYPE_SOCKLEN_T ;;
+    HAVETYPE_SIGHANDLER_T) echo $NETWIBDEF_HAVETYPE_SIGHANDLER_T ;;
+    HAVETYPE_SIG_T) echo $NETWIBDEF_HAVETYPE_SIG_T ;;
+    HAVETYPE_OFF_T) echo $NETWIBDEF_HAVETYPE_OFF_T ;;
+    HAVETYPE_PTHREAD_RWLOCK_T) echo $NETWIBDEF_HAVETYPE_PTHREAD_RWLOCK_T ;;
+    HAVETYPE_SOCKADDR_IN6) echo $NETWIBDEF_HAVETYPE_SOCKADDR_IN6 ;;
+    HAVEFIELD_TM_GMTOFF) echo $NETWIBDEF_HAVEFIELD_TM_GMTOFF;;
+    HAVEFIELD_SOCKADDR_SALEN) echo $NETWIBDEF_HAVEFIELD_SOCKADDR_SALEN ;;
+    HAVEFIELD_SOCKADDRIN_SINLEN) echo $NETWIBDEF_HAVEFIELD_SOCKADDRIN_SINLEN ;;
+    HAVEFIELD_SOCKADDRIN6_SIN6LEN) echo $NETWIBDEF_HAVEFIELD_SOCKADDRIN6_SIN6LEN ;;
+    HAVEFUNC_ETHER_NTOHOST) echo $NETWIBDEF_HAVEFUNC_ETHER_NTOHOST ;;
+    HAVEFUNC_ETHER_HOSTTON) echo $NETWIBDEF_HAVEFUNC_ETHER_HOSTTON ;;
+    HAVEFUNC_HSTRERROR) echo $NETWIBDEF_HAVEFUNC_HSTRERROR ;;
+    HAVEFUNC_SNPRINTF) echo $NETWIBDEF_HAVEFUNC_SNPRINTF ;;
+    HAVEFUNC_PCAP_FREECODE) echo $NETWIBDEF_HAVEFUNC_PCAP_FREECODE ;;
+    HAVEFUNC_PCAP_FREECODE2) echo $NETWIBDEF_HAVEFUNC_PCAP_FREECODE2 ;;
+    HAVEFUNC_PCAP_OPENDEAD) echo $NETWIBDEF_HAVEFUNC_PCAP_OPENDEAD ;;
+    HAVEFUNC_POLL) echo $NETWIBDEF_HAVEFUNC_POLL ;;
+    HAVEFUNC_DIRFD) echo $NETWIBDEF_HAVEFUNC_DIRFD ;;
+    HAVEFUNC_FPATHCONF) echo $NETWIBDEF_HAVEFUNC_FPATHCONF ;;
+    HAVEFUNC_PATHCONF) echo $NETWIBDEF_HAVEFUNC_PATHCONF ;;
+    HAVEFUNC_SYSCONF) echo $NETWIBDEF_HAVEFUNC_SYSCONF ;;
+    HAVEFUNC_GETPAGESIZE) echo $NETWIBDEF_HAVEFUNC_GETPAGESIZE ;;
+    HAVEFUNC_GETRLIMIT) echo $NETWIBDEF_HAVEFUNC_GETRLIMIT ;;
+    HAVEFUNC_NANOSLEEP) echo $NETWIBDEF_HAVEFUNC_NANOSLEEP ;;
+    HAVEFUNC_USLEEP) echo $NETWIBDEF_HAVEFUNC_USLEEP ;;
+    HAVEFUNC_GETTIMEOFDAY) echo $NETWIBDEF_HAVEFUNC_GETTIMEOFDAY ;;
+    HAVEFUNC_CLOCK_GETTIME) echo $NETWIBDEF_HAVEFUNC_CLOCK_GETTIME ;;
+    HAVEFUNC_PTHREAD_DELAY_NP) echo $NETWIBDEF_HAVEFUNC_PTHREAD_DELAY_NP ;;
+    HAVEFUNC_PTHREAD_MUTEX_TIMEDLOCK) echo $NETWIBDEF_HAVEFUNC_PTHREAD_MUTEX_TIMEDLOCK ;;
+    HAVEFUNC_PTHREAD_RWLOCK_TIMEDRDLOCK) echo $NETWIBDEF_HAVEFUNC_PTHREAD_RWLOCK_TIMEDRDLOCK ;;
+    HAVEFUNC_PTHREAD_RWLOCK_TIMEDWRLOCK) echo $NETWIBDEF_HAVEFUNC_PTHREAD_RWLOCK_TIMEDWRLOCK ;;
+    HAVEFUNC_PTHREAD_YIELD) echo $NETWIBDEF_HAVEFUNC_PTHREAD_YIELD ;;
+    HAVEFUNC_SCHED_YIELD) echo $NETWIBDEF_HAVEFUNC_SCHED_YIELD ;;
+    HAVEFUNC_GETPWNAM_R) echo $NETWIBDEF_HAVEFUNC_GETPWNAM_R ;;
+    HAVEFUNC_GETGRNAM_R) echo $NETWIBDEF_HAVEFUNC_GETGRNAM_R ;;
+    HAVEFUNC_GETGRGID_R) echo $NETWIBDEF_HAVEFUNC_GETGRGID_R ;;
+    HAVEFUNC_READDIR_R) echo $NETWIBDEF_HAVEFUNC_READDIR_R ;;
+    HAVEFUNC_GETHOSTBYNAME_R) echo $NETWIBDEF_HAVEFUNC_GETHOSTBYNAME_R ;;
+    HAVEFUNC_GETHOSTBYADDR_R) echo $NETWIBDEF_HAVEFUNC_GETHOSTBYADDR_R ;;
+    HAVEFUNC_GETNAMEINFO) echo $NETWIBDEF_HAVEFUNC_GETNAMEINFO ;;
+    HAVEFUNC_GETADDRINFO) echo $NETWIBDEF_HAVEFUNC_GETADDRINFO ;;
+    HAVEFUNC_GETIPNODEBYNAME) echo $NETWIBDEF_HAVEFUNC_GETIPNODEBYNAME ;;
+    HAVEFUNC_GETIPNODEBYADDR) echo $NETWIBDEF_HAVEFUNC_GETIPNODEBYADDR ;;
+    HAVEFUNC_LOCALTIME_R) echo $NETWIBDEF_HAVEFUNC_LOCALTIME_R ;;
+    HAVEVAR_HERRNO) echo $NETWIBDEF_HAVEVAR_HERRNO ;;
+    HAVEVAR_PATH_MAX) echo $NETWIBDEF_HAVEVAR_PATH_MAX ;;
+    HAVEVAR_NAME_MAX) echo $NETWIBDEF_HAVEVAR_NAME_MAX ;;
+    HAVEVAR_PAGE_SIZE) echo $NETWIBDEF_HAVEVAR_PAGE_SIZE ;;
+    HAVEVAR_PAGESIZE) echo $NETWIBDEF_HAVEVAR_PAGESIZE ;;
+    HAVEVAR_BIOCSHDRCMPLT) echo $NETWIBDEF_HAVEVAR_BIOCSHDRCMPLT;;
+    HAVEVAR_SIOCGLIFCONF) echo $NETWIBDEF_HAVEVAR_SIOCGLIFCONF;;
+    HAVEVAR_AF_INET6) echo $NETWIBDEF_HAVEVAR_AF_INET6;;
+    HAVEVAR_SC_GETPW_R_SIZE_MAX) echo $NETWIBDEF_HAVEVAR_SC_GETPW_R_SIZE_MAX;;
+    HAVEVAR_SC_GETGR_R_SIZE_MAX) echo $NETWIBDEF_HAVEVAR_SC_GETGR_R_SIZE_MAX;;
+  esac
+}
+
+# we need at least one parameter
+if test \$# -eq 0; then
+  usage \$0 1   1>&2
+fi
+
+# get all parameters
+while test \$# -gt 0; do
+  case \$1 in
+    -v | --version)
+      echo_v=yes
+      ;;
+    -c | --cflags)
+      echo_c=yes
+      ;;
+    -l | --libs)
+      echo_l=yes
+      ;;
+    -cl | -lc)
+      echo_c=yes
+      echo_l=yes
+      ;;
+    -d | --def | --define)
+      if test \$# -ne 2; then
+        usage \$0 3   1>&2
+      fi
+      adefine \$2
+      exit
+      ;;
+    *)
+      usage \$0 2   1>&2
+  esac
+  shift
+done
+
+# print version, and exit
+if test "\$echo_v" = "yes"; then
+  echo "$NETWIBDEF_VERSION"
+  exit 0
+fi
+
+EOF
+
+echo "#initialize printed variables" >> $netwibconfig
+
+add=1
+if [ "Z$NETWIBDEF_INSTINCLUDE" = "Z/usr/include" ] ; then
+  # do not add /usr/include
+  add=0
+fi
+if [ $add -eq 1 ] ; then
+  r=`echo "main(void){}" | $NETWIBDEF_PROGCC -v -E -I $NETWIBDEF_INSTINCLUDE - 2>&1 | $NETWIBDEF_PROGGREP 'changing search order for system directory "'$NETWIBDEF_INSTINCLUDE'"'`
+  if [ "Z$r" != "Z" ] ; then
+    add=0
+  fi
+fi
+if [ $add -eq 1 ] ; then
+  r=`echo "main(void){}" | $NETWIBDEF_PROGCC -v -E -I $NETWIBDEF_INSTINCLUDE - 2>&1 | $NETWIBDEF_PROGGREP 'ignoring duplicate directory "'$NETWIBDEF_INSTINCLUDE'"'`
+  if [ "Z$r" != "Z" ] ; then
+    add=0
+  fi
+fi
+
+if [ $add -eq 1 ] ; then
+  echo "echo_c_=\"-I$NETWIBDEF_INSTINCLUDE\"" >> $netwibconfig
+else
+  echo "echo_c=no" >> $netwibconfig
+fi
+
+commonv="-lnetwib $gccLib"
+if [ $add -eq 1 ] ; then
+  # suppose lib is also a gcc default directory
+  echo "echo_l_=\"-L$NETWIBDEF_INSTLIB $commonv\"" >> $netwibconfig
+else
+  echo "echo_l_=\"$commonv\"" >> $netwibconfig
+fi
+
+cat >> $netwibconfig <<EOF
+
+# choose what to display
+if test "\$echo_c" = "yes"; then
+  if test "\$echo_l" = "yes"; then
+    echo_c=no
+    echo_l=no
+    echo_cl=yes
+  fi
+fi
+
+# display include
+if test "\$echo_c" = "yes"; then
+  echo "\$echo_c_"
+fi
+
+# display library
+if test "\$echo_l" = "yes"; then
+  echo "\$echo_l_"
+fi
+
+# display include and library
+if test "\$echo_cl" = "yes"; then
+  echo "\$echo_c_ \$echo_l_"
+fi
+
+EOF
+
+chmod +x $netwibconfig
+
+
+#########
+echo " Creation of Makefile"
+
+case $NETWIBDEF_SYSNAME in
+ "AIX" )
+    txtldconf="You might need to add \$(INSTLIB) in the variable LD_LIBRARY_PATH."
+    ;;
+ "FreeBSD" )
+    txtldconf="You might need to add \$(INSTLIB) in the variable ldconfig_paths of /etc/rc.conf, or in the variable LD_LIBRARY_PATH, or run \"ldconfig -R \$(INSTLIB)\""
+    ;;
+ "Linux" )
+    txtldconf="You might need to add \$(INSTLIB) in /etc/ld.so.conf, and run ldconfig"
+    ;;
+ "MacOS" )
+    txtldconf="Check if dynamic libraries in directory \$(INSTLIB) are used"
+    ;;
+ "OpenBSD" )
+    txtldconf="You might need to add \$(INSTLIB) in the variable shlib_dirs of /etc/rc.conf, or in the variable LD_LIBRARY_PATH, or run \"ldconfig -R \$(INSTLIB)\""
+    ;;
+ "NetBSD" )
+    txtldconf="You might need to add \$(INSTLIB) in the variable shlib_dirs of /etc/rc.conf, or in the variable LD_LIBRARY_PATH, or run \"ldconfig -R \$(INSTLIB)\""
+    ;;
+ "Solaris" )
+    txtldconf="You might need to add \$(INSTLIB) in the variable LD_LIBRARY_PATH."
+    ;;
+ "HPUX" )
+    txtldconf="You might need to add \$(INSTLIB) in the variable LD_LIBRARY_PATH."
+    ;;
+ "Tru64UNIX" )
+    txtldconf="You might need to add \$(INSTLIB) in the variable LD_LIBRARY_PATH."
+    ;;
+ "Unsupported" )
+    txtldconf="Check if dynamic libraries in directory \$(INSTLIB) are used"
+    ;;
+ * )
+    echo "Error: unknown NETWIBDEF_SYSNAME";
+    exit 1
+    ;;
+esac
+
+txtinsta="OK - You can now install libnetwib.a with 'make install'"
+txtinstso="OK - You can now install libnetwib.so with 'make installso'"
+txtinstox="OK - You can now download and install netwox"
+txtldconf=$txtldconf
+
+if [ ${NETWIBDEF_PROGCCALIAS} = 1 ] ; then
+  gccOpt="$gccOpt -fno-strict-aliasing"
+fi
+
+gccwundef=""
+if [ ${NETWIBDEF_PROGCCWUNDEF} = 1 ] ; then
+  gccwundef="-Wundef"
+fi
+
+gccwsignc=""
+if [ ${NETWIBDEF_PROGCCWSIGNC} = 1 ] ; then
+  gccwsignc="-Wsign-compare"
+fi
+
+gccwextra=""
+if [ ${NETWIBDEF_PROGCCWEXTRA} = 1 ] ; then
+  gccwextra="-Wextra"
+fi
+
+
+cat > Makefile <<EOF
+#----------------------------------------------------------------------
+# This file was generated with ./genemake
+
+#----------------------------------------------------------------------
+# variables which can be modified
+DESTDIR=$NETWIBDEF_INSTDESTDIR
+CC=$NETWIBDEF_PROGCC
+AR=$NETWIBDEF_PROGAR
+RANLIB=$NETWIBDEF_PROGRANLIB
+INSTINCLUDE=\$(DESTDIR)$NETWIBDEF_INSTINCLUDE
+INSTLIB=\$(DESTDIR)$NETWIBDEF_INSTLIB
+INSTBIN=\$(DESTDIR)$NETWIBDEF_INSTBIN
+INSTMAN3=\$(DESTDIR)$NETWIBDEF_INSTMAN3
+
+EOF
+
+if [ $argone = "test" ] ; then
+cat >> Makefile <<EOF
+G=-g
+GCCOPTa=\$(G) -Wall -W -Werror -Wmissing-declarations
+GCCOPTb=-Wwrite-strings -Wcast-align -Wstrict-prototypes -Wcast-qual
+GCCOPTc=-Wshadow -Wpointer-arith -Wnested-externs -Wbad-function-cast
+GCCOPTd=-Wmissing-prototypes -Wextra $gccwundef $gccwsignc
+GCCOPTz=\$(GCCOPTa) \$(GCCOPTb) \$(GCCOPTc) \$(GCCOPTd)
+GCCOPT=$gccOpt \$(GCCOPTz)
+EOF
+else
+  echo "GCCOPT=$gccOpt" >> Makefile
+fi
+
+cat >> Makefile <<EOF
+GCCOPTPIC=$gccOptPic
+GCCOPTSO=$gccOptSo
+
+GCCINC=$gccInc
+
+GCCLIB=$gccLib
+
+
+#----------------------------------------------------------------------
+
+# we want ...
+all: libnetwib.a
+EOF
+
+#########
+echo "" >> Makefile
+echo "# dependence list" >> Makefile
+echo "NETWIBSRC=." >> Makefile
+cat compil/unix/filedep >> Makefile
+
+#########
+echo "" >> Makefile
+cat compil/unix/incmake >> Makefile
+
+#########
+
+cat >> Makefile <<EOF
+
+# creation of the library
+libnetwib.a: \$(INCMAKEOBJ)
+	\$(AR) -cr libnetwib.a \$(INCMAKEOBJ)
+	\$(RANLIB) libnetwib.a
+	@echo ""
+EOF
+if [ $argone != "test" ] ; then
+  echo "	@echo \"$txtinsta\"" >> Makefile
+fi
+cat >> Makefile <<EOF
+
+libnetwib.so: \$(INCMAKELOBJ)
+	\$(CC) -o libnetwib.so \$(GCCOPTSO) \$(INCMAKELOBJ) \$(GCCLIB)
+	@echo ""
+	@echo "$txtinstso"
+
+install.a: libnetwib.a
+	[ -d \$(INSTLIB) ] || mkdir -m 0755 -p \$(INSTLIB)
+	cp libnetwib.a \$(INSTLIB)/libnetwib$netwv.a
+	\$(RANLIB) \$(INSTLIB)/libnetwib$netwv.a
+	chmod 644 \$(INSTLIB)/libnetwib$netwv.a
+	rm -f \$(INSTLIB)/libnetwib.a
+	ln -s libnetwib$netwv.a \$(INSTLIB)/libnetwib.a
+	@echo ""
+
+install.so: libnetwib.so
+	[ -d \$(INSTLIB) ] || mkdir -m 0755 -p \$(INSTLIB)
+	cp libnetwib.so \$(INSTLIB)/libnetwib$netwv.so
+	chmod 644 \$(INSTLIB)/libnetwib$netwv.so
+	rm -f \$(INSTLIB)/libnetwib.so
+	ln -s libnetwib$netwv.so \$(INSTLIB)/libnetwib.so
+	@echo ""
+	@echo "$txtldconf"
+
+installnetwibconfig:
+	[ -d \$(INSTBIN) ] || mkdir -m 0755 -p \$(INSTBIN)
+	cp compil/unix/netwib-config \$(INSTBIN)/netwib$netwv-config
+	chmod 755 \$(INSTBIN)/netwib$netwv-config
+	rm -f \$(INSTBIN)/netwib-config
+	ln -s netwib$netwv-config \$(INSTBIN)/netwib-config
+
+incmakeinstallman:
+	[ -d \$(INSTMAN3) ] || mkdir -m 0755 -p \$(INSTMAN3)
+	cp ../doc/netwib.3 \$(INSTMAN3)/netwib$netwv.3
+	chmod 644 \$(INSTMAN3)/netwib$netwv.3
+	rm -f \$(INSTMAN3)/netwib.3
+	ln -s netwib$netwv.3 \$(INSTMAN3)/netwib.3
+	cp ../doc/netwib_dat.3 \$(INSTMAN3)/netwib${netwv}_dat.3
+	chmod 644 \$(INSTMAN3)/netwib${netwv}_dat.3
+	rm -f \$(INSTMAN3)/netwib_dat.3
+	ln -s netwib${netwv}_dat.3 \$(INSTMAN3)/netwib_dat.3
+	cp ../doc/netwib_sys.3 \$(INSTMAN3)/netwib${netwv}_sys.3
+	chmod 644 \$(INSTMAN3)/netwib${netwv}_sys.3
+	rm -f \$(INSTMAN3)/netwib_sys.3
+	ln -s netwib${netwv}_sys.3 \$(INSTMAN3)/netwib_sys.3
+	cp ../doc/netwib_net.3 \$(INSTMAN3)/netwib${netwv}_net.3
+	chmod 644 \$(INSTMAN3)/netwib${netwv}_net.3
+	rm -f \$(INSTMAN3)/netwib_net.3
+	ln -s netwib${netwv}_net.3 \$(INSTMAN3)/netwib_net.3
+	cp ../doc/netwib_pkt.3 \$(INSTMAN3)/netwib${netwv}_pkt.3
+	chmod 644 \$(INSTMAN3)/netwib${netwv}_pkt.3
+	rm -f \$(INSTMAN3)/netwib_pkt.3
+	ln -s netwib${netwv}_pkt.3 \$(INSTMAN3)/netwib_pkt.3
+	cp ../doc/netwib_shw.3 \$(INSTMAN3)/netwib${netwv}_shw.3
+	chmod 644 \$(INSTMAN3)/netwib${netwv}_shw.3
+	rm -f \$(INSTMAN3)/netwib_shw.3
+	ln -s netwib${netwv}_shw.3 \$(INSTMAN3)/netwib_shw.3
+	cp ../doc/netwib_err.3 \$(INSTMAN3)/netwib${netwv}_err.3
+	chmod 644 \$(INSTMAN3)/netwib${netwv}_err.3
+	rm -f \$(INSTMAN3)/netwib_err.3
+	ln -s netwib${netwv}_err.3 \$(INSTMAN3)/netwib_err.3
+
+installcommon: incmakeinstallinc incmakeinstallman installnetwibconfig
+
+# install : to do when everything is yes
+install: installcommon install.a
+	@echo ""
+	@echo "$txtinstox"
+
+installso: installcommon install.so
+	@echo ""
+	@echo "$txtinstox"
+
+installall: installcommon install.a install.so
+	@echo ""
+	@echo "$txtinstox"
+
+# uninstallation
+uninstall:
+	@echo "Several versions of netwib can be installed on the same system."
+	@echo "I left you remove exactly the version you want to remove :"
+	@echo "  \$(INSTLIB)/libnetwib*"
+	@echo "  \$(INSTINCLUDE)/netwib*"
+	@echo "  \$(INSTBIN)/netwib*-config"
+	@echo "  \$(INSTMAN3)/netwib*.3"
+	@echo "If you are SURE about what you do, you can for example enter :"
+	@echo "  rm -rf \$(INSTLIB)/libnetwib*"
+	@echo "  rm -rf \$(INSTINCLUDE)/netwib*"
+	@echo "  rm -rf \$(INSTBIN)/netwib*-config"
+	@echo "  rm -rf \$(INSTMAN3)/netwib*.3"
+
+# cleaning
+clean: incmakecleanobj incmakecleanlobj
+	rm -f libnetwib.a
+	rm -f libnetwib.so
+
+cleanall: clean
+	rm -f $deffile
+	rm -f Makefile
+	rm -f compil/unix/netwib-config
+
+EOF
+
+
+########################################################################
+########################################################################
+if [ $argone != "test" ] ; then
+echo ""
+echo "Summary:"
+echo "    NETWIBDEF_SYSNAME:          $NETWIBDEF_SYSNAME"
+echo "    NETWIBDEF_SYSARCH:          $NETWIBDEF_SYSARCH"
+if [ $NETWIBDEF_ARCH_ENDIAN -eq 0 ] ; then
+  echo "    NETWIBDEF_ARCH_ENDIAN:      small endian processor"
+else
+  echo "    NETWIBDEF_ARCH_ENDIAN:      big endian processor"
+fi
+echo "    NETWIBDEF_ARCH_BITS:        $NETWIBDEF_ARCH_BITS bits"
+if [ $NETWIBDEF_LIBPCAPINSTALLED -eq 1 ] ; then
+  echo "    NETWIBDEF_LIBPCAPINSTALLED: libpcap installed"
+else
+  echo "    NETWIBDEF_LIBPCAPINSTALLED: libpcap not installed"
+  echo "      Warning: without libpcap, it's not possible to sniff"
+fi
+if [ $NETWIBDEF_LIBNETINSTALLED -eq 1 ] ; then
+  echo "    NETWIBDEF_LIBNETINSTALLED:  libnet installed"
+else
+  echo "    NETWIBDEF_LIBNETINSTALLED:  libnet not installed"
+  echo "      Warning: without libnet, it's not possible to spoof"
+fi
+echo "End of genemake"
+echo ""
+echo "OK - You can now compile with 'make'"
+fi

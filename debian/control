@@ -1,0 +1,77 @@
+Source: netw-ib-ox-ag
+Section: net
+Priority: optional
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+XSBC-Original-Maintainer: Bartosz Fenski <fenio@debian.org>
+Build-Depends: debhelper (>= 4.0.0), libpcap-dev, libnet1-dev, tk8.5, sed (>= 4)
+Standards-Version: 3.9.4
+Homepage: http://ntwox.sourceforge.net/
+
+Package: netwox
+Section: net
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Recommends: netwag
+Suggests: netwox-doc
+Description: networking utilities
+ Toolbox netwox helps to find and solve network problems.
+ .
+ It provides more than 200 tools :
+  - sniff, spoof
+  - clients, servers
+  - DNS, FTP, HTTP, IRC, NNTP, SMTP, SNMP, SYSLOG, TELNET, TFTP
+  - scan, ping traceroute
+  - etc.
+ .
+ Those tools can be used to quickly spot a problem in a complex network.
+ They are oriented towards network administrators and security auditors.
+
+Package: netwag
+Section: net
+Architecture: all
+Depends: netwox (>= ${source:Version}), ${misc:Depends}, tk8.5, xterm | x-terminal-emulator
+Suggests: netwag-doc
+Description: graphical frontend for netwox
+ Netwag is a graphical front end for netwox which contains more than 200 tools.
+ Netwag permits one to easily:
+ .
+  - search amongst tools proposed in netwox
+  - construct command line
+  - run tools
+  - keep an history of commands
+
+Package: netwox-doc
+Section: doc
+Architecture: all
+Depends: ${misc:Depends}
+Suggests: netwox (= ${source:Version})
+Description: documentation for netwox toolbox
+ Toolbox netwox helps to find and solve network problems.
+ .
+ It provides more than 200 tools :
+  - sniff, spoof
+  - clients, servers
+  - DNS, FTP, HTTP, IRC, NNTP, SMTP, SNMP, SYSLOG, TELNET, TFTP
+  - scan, ping traceroute
+  - etc.
+ .
+ Those tools can be used to quickly spot a problem in a complex network.
+ They are oriented towards network administrators and security auditors.
+ .
+ This package contains documentation for netwox.
+
+Package: netwag-doc
+Section: doc
+Architecture: all
+Depends: ${misc:Depends}
+Suggests: netwag (= ${source:Version})
+Description: documentation for netwag frontend
+ Netwag is a graphical front end for netwox which contains more than 200 tools.
+ Netwag permits one to easily:
+ .
+  - search amongst tools proposed in netwox 
+  - construct command line 
+  - run tools 
+  - keep an history of commands 
+ . 
+ This package contains documentation for netwag.

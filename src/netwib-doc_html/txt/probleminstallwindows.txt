@@ -1,0 +1,191 @@
+                         Network library netwib
+
+              -------------------------------------------
+              |              KNOWN PROBLEMS             |
+              -------------------------------------------
+
+This file describes known problems (incompatibilities, unsupported
+features, errors, etc.).
+If you seek help (usage help, examples, etc.), it's better to read 
+netwib-5.39.0-doc_html.tgz.
+
+Problems described in this file are (if you encounter an unknown problem,
+thanks for contacting me, as explained in ./doc/problemreport.txt):
+
+WHILE COMPILING
+ 1: [Windows] Warning in Visual C++ 6: '_RPC_ASYNC_STATE': named type
+    definition in parentheses.
+ 2: [Windows] Warning in Visual C++ 6: nonstandard extension used: nameless
+    struct/union.
+
+
+
+-------------------------------------------------------------------------------
+Problem 1:
+  Problem synthesis:
+    Warning in Visual C++ 6: '_RPC_ASYNC_STATE': named type
+    definition in parentheses.
+  Environment affected by the problem:
+    Visual C++ 6
+  What's causing the problem:
+    Visual's own include files are not compliant when compiling with high
+    level of warnings.
+    
+    The warnings are:
+    rpcasync.h(45): C4115: '_RPC_ASYNC_STATE': named type definition in
+    parentheses
+    winioctl.h(2113): C4201: nonstandard extension used: nameless struct/union
+    winioctl.h(2114): C4201: nonstandard extension used: nameless struct/union
+    winioctl.h(2117): C4201: nonstandard extension used: nameless struct/union
+    in FD_SET(winsock2.h): warning C4018: '==': signed/unsigned mismatch
+    in FD_SET(winsock2.h): warning C4018: '==': signed/unsigned mismatch
+    in FD_SET(winsock2.h): warning C4018: '==': signed/unsigned mismatch
+    in FD_SET(winsock2.h): warning C4018: '==': signed/unsigned mismatch
+    in FD_SET(winsock2.h): warning C4018: '==': signed/unsigned mismatch
+  Solution 1:
+    You may want to modify the Visual include files to make them compliant:
+    
+    --- rpcasync.h
+    +++ rpcasynccorrected.h
+    @@ -40,6 +40,9 @@
+         RpcReceiveComplete
+         } RPC_ASYNC_EVENT;
+     
+    +#ifdef NETWIBDEF_SYSNAME_Windows
+    +struct _RPC_ASYNC_STATE;
+    +#endif
+     typedef void RPC_ENTRY
+     RPCNOTIFICATION_ROUTINE (
+                       struct _RPC_ASYNC_STATE *pAsync,
+    
+    --- winioctl.h
+    +++ winioctlcorrected.h
+    @@ -2110,10 +2110,22 @@
+                 union {
+                     NTFS_STATISTICS Ntfs;
+                     FAT_STATISTICS Fat;
+    -            };
+    +            }
+    +#ifdef NETWIBDEF_SYSNAME_Windows
+    + justafakename
+    +#endif
+    + ;
+    -        };
+    +        }
+    +#ifdef NETWIBDEF_SYSNAME_Windows
+    + justafakename
+    +#endif
+    + ;
+             DWORDLONG ForceSizeAndAlignment[32];  // pad to a multiple of 64 b
+    -    };
+    +    }
+    +#ifdef NETWIBDEF_SYSNAME_Windows
+    + justafakename
+    +#endif
+    + ;
+     
+     } FILESYSTEM_STATISTICS, *PFILESYSTEM_STATISTICS;
+    
+    --- winsock2.h
+    +++ winsock2corrected.h
+    @@ -121,7 +121,7 @@
+     #define FD_SET(fd, set) do { \
+         u_int __i; \
+         for (__i = 0; __i < ((fd_set FAR *)(set))->fd_count; __i++) { \
+    -        if (((fd_set FAR *)(set))->fd_array[__i] == (fd)) { \
+    +        if (((fd_set FAR *)(set))->fd_array[__i] == (ULONG)(fd)) { \
+                 break; \
+             } \
+         } \
+  Solution 2:
+    The other solution is to downgrade the error level, but you might miss
+    important errors if you write your own code:
+      Project
+      Settings
+      C/C++
+      Warning level / or uncheck warning as errors
+
+-------------------------------------------------------------------------------
+Problem 2:
+  Problem synthesis:
+    Warning in Visual C++ 6: nonstandard extension used: nameless
+    struct/union.
+  Environment affected by the problem:
+    Visual C++ 6
+  What's causing the problem:
+    Visual's own include files are not compliant when compiling with high
+    level of warnings.
+    
+    The warnings are:
+    rpcasync.h(45): C4115: '_RPC_ASYNC_STATE': named type definition in
+    parentheses
+    winioctl.h(2113): C4201: nonstandard extension used: nameless struct/union
+    winioctl.h(2114): C4201: nonstandard extension used: nameless struct/union
+    winioctl.h(2117): C4201: nonstandard extension used: nameless struct/union
+    in FD_SET(winsock2.h): warning C4018: '==': signed/unsigned mismatch
+    in FD_SET(winsock2.h): warning C4018: '==': signed/unsigned mismatch
+    in FD_SET(winsock2.h): warning C4018: '==': signed/unsigned mismatch
+    in FD_SET(winsock2.h): warning C4018: '==': signed/unsigned mismatch
+    in FD_SET(winsock2.h): warning C4018: '==': signed/unsigned mismatch
+  Solution 1:
+    You may want to modify the Visual include files to make them compliant:
+    
+    --- rpcasync.h
+    +++ rpcasynccorrected.h
+    @@ -40,6 +40,9 @@
+         RpcReceiveComplete
+         } RPC_ASYNC_EVENT;
+     
+    +#ifdef NETWIBDEF_SYSNAME_Windows
+    +struct _RPC_ASYNC_STATE;
+    +#endif
+     typedef void RPC_ENTRY
+     RPCNOTIFICATION_ROUTINE (
+                       struct _RPC_ASYNC_STATE *pAsync,
+    
+    --- winioctl.h
+    +++ winioctlcorrected.h
+    @@ -2110,10 +2110,22 @@
+                 union {
+                     NTFS_STATISTICS Ntfs;
+                     FAT_STATISTICS Fat;
+    -            };
+    +            }
+    +#ifdef NETWIBDEF_SYSNAME_Windows
+    + justafakename
+    +#endif
+    + ;
+    -        };
+    +        }
+    +#ifdef NETWIBDEF_SYSNAME_Windows
+    + justafakename
+    +#endif
+    + ;
+             DWORDLONG ForceSizeAndAlignment[32];  // pad to a multiple of 64 b
+    -    };
+    +    }
+    +#ifdef NETWIBDEF_SYSNAME_Windows
+    + justafakename
+    +#endif
+    + ;
+     
+     } FILESYSTEM_STATISTICS, *PFILESYSTEM_STATISTICS;
+    
+    --- winsock2.h
+    +++ winsock2corrected.h
+    @@ -121,7 +121,7 @@
+     #define FD_SET(fd, set) do { \
+         u_int __i; \
+         for (__i = 0; __i < ((fd_set FAR *)(set))->fd_count; __i++) { \
+    -        if (((fd_set FAR *)(set))->fd_array[__i] == (fd)) { \
+    +        if (((fd_set FAR *)(set))->fd_array[__i] == (ULONG)(fd)) { \
+                 break; \
+             } \
+         } \
+  Solution 2:
+    The other solution is to downgrade the error level, but you might miss
+    important errors if you write your own code:
+      Project
+      Settings
+      C/C++
+      Warning level / or uncheck warning as errors

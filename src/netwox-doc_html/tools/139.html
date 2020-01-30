@@ -1,0 +1,48 @@
+<HTML>
+ <HEAD>
+ <TITLE>Tool 139: Web spider on command line (fully recursive)</TITLE>
+ </HEAD>
+ <BODY BGCOLOR="#FFFFFF">
+  <CENTER>   <H3>Tool 139: Web spider on command line (fully recursive)</H3>
+  </CENTER>
+
+  <P><H3>Description:</H3>
+   <PRE>
+  This tool spiders a HTTP or FTP url. 'Spidering' an url means to
+  download the url, read the new urls it contains, download them, and so
+  on recursively.
+  It stops when all url have been downloaded. So it is not suitable for
+  web sites with outgoing web branches (use tool 210 or 138 instead).
+   </PRE>
+
+  <P><H3>Synonyms:</H3>
+  &nbsp;&nbsp;curl, wget<BR>
+
+  <P><H3>Usage:</H3>
+  &nbsp;&nbsp;netwox 139 -u uri [-r dir] [-v|+v]<BR>
+
+  <P><H3>Parameters:</H3>
+<TABLE BORDER=1 CELLPADDING=4>
+ <TR>
+  <TD ALIGN=middle><I>parameter</I></TD>
+  <TD ALIGN=middle><I>description</I></TD>
+  <TD ALIGN=middle><I>example</I></TD>
+ </TR>
+ <TR><TD><TT>-u|--url uri</TD>
+<TD>url to download</TD>
+<TD>http://www.example.com/</TD></TR>
+<TR><TD><TT>-r|--rootdir dir</TD>
+<TD>local root directory</TD>
+<TD>./spider</TD></TR>
+<TR><TD><TT>-v|--verbose|+v|--no-verbose</TD>
+<TD>be verbose</TD>
+<TD>&nbsp; </TD></TR>
+</TABLE>
+
+  <P><H3>Examples:</H3>
+  &nbsp;&nbsp;netwox 139 -u "http://www.example.com/"<BR>
+<BR>
+  &nbsp;&nbsp;netwox 139 --url "http://www.example.com/"<BR>
+<BR>
+ </BODY>
+ </HTML>

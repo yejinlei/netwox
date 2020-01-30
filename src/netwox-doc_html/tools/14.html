@@ -1,0 +1,73 @@
+<HTML>
+ <HEAD>
+ <TITLE>Tool 14: Spoof a record</TITLE>
+ </HEAD>
+ <BODY BGCOLOR="#FFFFFF">
+  <CENTER>   <H3>Tool 14: Spoof a record</H3>
+  </CENTER>
+
+  <P><H3>Description:</H3>
+   <PRE>
+  A record is a capture file. It contains several packets captured
+  during a sniff. It can also be created by hand. There are 7 formats
+  for records: pcap (tcpdump compatible), bin (binary, unreadable by
+  humans but fast) and mixed/mixed_wrap/dump/hexa/hexa_wrap (easy to
+  read and edit). A record also has an associated DLT (Data Link Type),
+  indicating at which level a packet start: raw (start at IP header) and
+  ether (start at Ethernet header) are the 2 most common DLT. Tool 13
+  displays DLT of each device.
+  
+  This tool reads packets stored in a record, and send them to the
+  network.
+  
+  Parameter --file indicates the record filename.
+  Parameter --dlt defines the DLT of packets in record (it depends on
+  how it was sniffed, generally 'ether' (for Ethernet) or 'raw' (if
+  packet starts at IP header)). Full list is available through netwag or
+  running tool 12.
+  If dlt is not raw, parameter --device indicates the device to use.
+  If dlt is raw, parameter --spoofip indicates how to send packets.
+  
+  This tool may need to be run with admin privilege in order to spoof.
+   </PRE>
+
+  <P><H3>Synonyms:</H3>
+  &nbsp;&nbsp;capture, frame, send<BR>
+
+  <P><H3>Usage:</H3>
+  &nbsp;&nbsp;netwox 14 -f file [-t dlt] [-s|+s] [-k|+k] [-d device] [-i spoofip]<BR>
+
+  <P><H3>Parameters:</H3>
+<TABLE BORDER=1 CELLPADDING=4>
+ <TR>
+  <TD ALIGN=middle><I>parameter</I></TD>
+  <TD ALIGN=middle><I>description</I></TD>
+  <TD ALIGN=middle><I>example</I></TD>
+ </TR>
+ <TR><TD><TT>-f|--file file</TD>
+<TD>read from record file</TD>
+<TD>srcfile.txt</TD></TR>
+<TR><TD><TT>-t|--dlt dlt</TD>
+<TD>dlt type of data stored in record</TD>
+<TD>ether</TD></TR>
+<TR><TD><TT>-s|--screen|+s|--no-screen</TD>
+<TD>display packets before sending them</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-k|--keypress|+k|--no-keypress</TD>
+<TD>press a key for each packet</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-d|--device device</TD>
+<TD>device for spoof (if dlt!=raw)</TD>
+<TD>Eth0</TD></TR>
+<TR><TD><TT>-i|--spoofip spoofip</TD>
+<TD>ip spoof type (if dlt==raw)</TD>
+<TD>best </TD></TR>
+</TABLE>
+
+  <P><H3>Examples:</H3>
+  &nbsp;&nbsp;netwox 14 -f "srcfile.txt"<BR>
+<BR>
+  &nbsp;&nbsp;netwox 14 --file "srcfile.txt"<BR>
+<BR>
+ </BODY>
+ </HTML>

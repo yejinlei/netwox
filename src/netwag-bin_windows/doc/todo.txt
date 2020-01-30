@@ -1,0 +1,8 @@
+                Laurent CONSTANTIN's network toolbox (netwag)
+
+                      --------------------------------
+                      |           TODO LIST          |
+                      --------------------------------
+
+
+Currently, I have no more ideas for netwag.

@@ -1,0 +1,120 @@
+<HTML><HEAD>
+<TITLE>netwib doc_html (version 5.39.0)</TITLE>
+</HEAD><BODY BGCOLOR="#FFFFFF" TEXT="#000000">
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../shw.html">section index</A></H2><HR><BR>
+<PRE>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_pkt_data_display
+   Description :
+     Print a buffer containing simple data.
+   Input parameter(s) :
+     *pkt : buffer to print
+     encodetype : <FONT COLOR="#000088">netwib_encodetype</FONT> to use
+   Input/output parameter(s) :
+   Output parameter(s) :
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_pkt_data_show</B>(<FONT COLOR="#000088">netwib_constbuf</FONT> *ppkt,
+                                <FONT COLOR="#000088">netwib_encodetype_context</FONT> *pctx,
+                                <FONT COLOR="#000088">netwib_encodetype</FONT> encodetype,
+                                <FONT COLOR="#000088">netwib_buf</FONT> *pbuf);
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_pkt_data_display</B>(<FONT COLOR="#000088">netwib_constbuf</FONT> *ppkt,
+                                   <FONT COLOR="#000088">netwib_encodetype_context</FONT> *pctx,
+                                   <FONT COLOR="#000088">netwib_encodetype</FONT> encodetype);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_pkt_link_display
+   Description :
+     Print a buffer containing an Link packet.
+   Input parameter(s) :
+     *pkt : buffer to print
+     hdrencodetype : <FONT COLOR="#000088">netwib_encodetype</FONT> to use for headers
+     dataencodetype : <FONT COLOR="#000088">netwib_encodetype</FONT> to use for data
+   Input/output parameter(s) :
+   Output parameter(s) :
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_pkt_link_show</B>(<FONT COLOR="#000088">netwib_device_dlttype</FONT> dlttype,
+                                <FONT COLOR="#000088">netwib_constbuf</FONT> *ppkt,
+                                <FONT COLOR="#000088">netwib_encodetype_context</FONT> *pctx,
+                                <FONT COLOR="#000088">netwib_encodetype</FONT> hdrencodetype,
+                                <FONT COLOR="#000088">netwib_encodetype</FONT> dataencodetype,
+                                <FONT COLOR="#000088">netwib_buf</FONT> *pbuf);
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_pkt_link_display</B>(<FONT COLOR="#000088">netwib_device_dlttype</FONT> dlttype,
+                                   <FONT COLOR="#000088">netwib_constbuf</FONT> *ppkt,
+                                   <FONT COLOR="#000088">netwib_encodetype_context</FONT> *pctx,
+                                   <FONT COLOR="#000088">netwib_encodetype</FONT> hdrencodetype,
+                                   <FONT COLOR="#000088">netwib_encodetype</FONT> dataencodetype);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Print a buffer containing an IP packet
+   Note: currently, IPv6 packets are not decoded, but are simply
+         dumped using dataencodetype.
+ */</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_pkt_ip_show</B>(<FONT COLOR="#000088">netwib_constbuf</FONT> *ppkt,
+                              <FONT COLOR="#000088">netwib_encodetype_context</FONT> *pctx,
+                              <FONT COLOR="#000088">netwib_encodetype</FONT> hdrencodetype,
+                              <FONT COLOR="#000088">netwib_encodetype</FONT> dataencodetype,
+                              <FONT COLOR="#000088">netwib_buf</FONT> *pbuf);
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_pkt_ip_display</B>(<FONT COLOR="#000088">netwib_constbuf</FONT> *ppkt,
+                                 <FONT COLOR="#000088">netwib_encodetype_context</FONT> *pctx,
+                                 <FONT COLOR="#000088">netwib_encodetype</FONT> hdrencodetype,
+                                 <FONT COLOR="#000088">netwib_encodetype</FONT> dataencodetype);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Print a buffer containing an UDP packet */</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_pkt_udp_show</B>(<FONT COLOR="#000088">netwib_constbuf</FONT> *ppkt,
+                               <FONT COLOR="#000088">netwib_encodetype_context</FONT> *pctx,
+                               <FONT COLOR="#000088">netwib_encodetype</FONT> hdrencodetype,
+                               <FONT COLOR="#000088">netwib_encodetype</FONT> dataencodetype,
+                               <FONT COLOR="#000088">netwib_buf</FONT> *pbuf);
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_pkt_udp_display</B>(<FONT COLOR="#000088">netwib_constbuf</FONT> *ppkt,
+                                  <FONT COLOR="#000088">netwib_encodetype_context</FONT> *pctx,
+                                  <FONT COLOR="#000088">netwib_encodetype</FONT> hdrencodetype,
+                                  <FONT COLOR="#000088">netwib_encodetype</FONT> dataencodetype);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Print a buffer containing a TCP packet */</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_pkt_tcp_show</B>(<FONT COLOR="#000088">netwib_constbuf</FONT> *ppkt,
+                               <FONT COLOR="#000088">netwib_encodetype_context</FONT> *pctx,
+                               <FONT COLOR="#000088">netwib_encodetype</FONT> hdrencodetype,
+                                     <FONT COLOR="#000088">netwib_encodetype</FONT> dataencodetype,
+                               <FONT COLOR="#000088">netwib_buf</FONT> *pbuf);
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_pkt_tcp_display</B>(<FONT COLOR="#000088">netwib_constbuf</FONT> *ppkt,
+                                  <FONT COLOR="#000088">netwib_encodetype_context</FONT> *pctx,
+                                  <FONT COLOR="#000088">netwib_encodetype</FONT> hdrencodetype,
+                                  <FONT COLOR="#000088">netwib_encodetype</FONT> dataencodetype);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Print a buffer containing an ICMP4 packet */</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_pkt_icmp4_show</B>(<FONT COLOR="#000088">netwib_constbuf</FONT> *ppkt,
+                                 <FONT COLOR="#000088">netwib_encodetype_context</FONT> *pctx,
+                                 <FONT COLOR="#000088">netwib_encodetype</FONT> hdrencodetype,
+                                 <FONT COLOR="#000088">netwib_encodetype</FONT> dataencodetype,
+                                 <FONT COLOR="#000088">netwib_buf</FONT> *pbuf);
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_pkt_icmp4_display</B>(<FONT COLOR="#000088">netwib_constbuf</FONT> *ppkt,
+                                    <FONT COLOR="#000088">netwib_encodetype_context</FONT> *pctx,
+                                    <FONT COLOR="#000088">netwib_encodetype</FONT> hdrencodetype,
+                                    <FONT COLOR="#000088">netwib_encodetype</FONT> dataencodetype);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Print a buffer containing an ICMP6 packet */</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_pkt_icmp6_show</B>(<FONT COLOR="#000088">netwib_constbuf</FONT> *ppkt,
+                                 <FONT COLOR="#000088">netwib_encodetype_context</FONT> *pctx,
+                                 <FONT COLOR="#000088">netwib_encodetype</FONT> hdrencodetype,
+                                 <FONT COLOR="#000088">netwib_encodetype</FONT> dataencodetype,
+                                 <FONT COLOR="#000088">netwib_buf</FONT> *pbuf);
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_pkt_icmp6_display</B>(<FONT COLOR="#000088">netwib_constbuf</FONT> *ppkt,
+                                    <FONT COLOR="#000088">netwib_encodetype_context</FONT> *pctx,
+                                    <FONT COLOR="#000088">netwib_encodetype</FONT> hdrencodetype,
+                                    <FONT COLOR="#000088">netwib_encodetype</FONT> dataencodetype);
+
+
+</PRE><BR><BR><HR><BR>
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../shw.html">section index</A></H2>
+</BODY></HTML>

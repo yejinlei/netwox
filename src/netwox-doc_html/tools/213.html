@@ -1,0 +1,45 @@
+<HTML>
+ <HEAD>
+ <TITLE>Tool 213: Display a list of IP addresses</TITLE>
+ </HEAD>
+ <BODY BGCOLOR="#FFFFFF">
+  <CENTER>   <H3>Tool 213: Display a list of IP addresses</H3>
+  </CENTER>
+
+  <P><H3>Description:</H3>
+   <PRE>
+  This tool displays a list of IP addresses. For example:
+    --ips 1.2.3.4-1.2.3.6 --separator ","
+  displays:
+    1.2.3.4,1.2.3.5,1.2.3.6
+  
+  This tool is useful to generate IP addresses lists for other tools.
+  
+  See also tool 24 for other IP address conversions.
+   </PRE>
+
+  <P><H3>Usage:</H3>
+  &nbsp;&nbsp;netwox 213 -i ips [-s data]<BR>
+
+  <P><H3>Parameters:</H3>
+<TABLE BORDER=1 CELLPADDING=4>
+ <TR>
+  <TD ALIGN=middle><I>parameter</I></TD>
+  <TD ALIGN=middle><I>description</I></TD>
+  <TD ALIGN=middle><I>example</I></TD>
+ </TR>
+ <TR><TD><TT>-i|--ips ips</TD>
+<TD>list of addresses to display</TD>
+<TD>all</TD></TR>
+<TR><TD><TT>-s|--separator data</TD>
+<TD>separator to use</TD>
+<TD>&nbsp; </TD></TR>
+</TABLE>
+
+  <P><H3>Examples:</H3>
+  &nbsp;&nbsp;netwox 213 -i "all"<BR>
+<BR>
+  &nbsp;&nbsp;netwox 213 --ips "all"<BR>
+<BR>
+ </BODY>
+ </HTML>

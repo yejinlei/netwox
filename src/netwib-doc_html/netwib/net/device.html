@@ -1,0 +1,153 @@
+<HTML><HEAD>
+<TITLE>netwib doc_html (version 5.39.0)</TITLE>
+</HEAD><BODY BGCOLOR="#FFFFFF" TEXT="#000000">
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../net.html">section index</A></H2><HR><BR>
+<PRE>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_device_init_kbd
+   Description :
+     Initialize a device by the keyboard
+   Input parameter(s) :
+     message : message to print before
+     defaultdevice : default device to use if user enters nothing
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pdevice : device set with user's string
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_device_init_kbd</B>(<FONT COLOR="#000088">netwib_constbuf</FONT> *pmessage,
+                                  <FONT COLOR="#000088">netwib_constbuf</FONT> *pdefaultdevice,
+                                  <FONT COLOR="#000088">netwib_buf</FONT> *pdevice);
+<FONT COLOR="#008800">#define <FONT COLOR="#000044">NETWIB_DEVICE_INIT_KBD_NODEF</FONT> NULL</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Hardware types */</FONT>
+typedef enum {
+  <FONT COLOR="#000044">NETWIB_DEVICE_HWTYPE_UNKNOWN</FONT> = 1,
+  <FONT COLOR="#000044">NETWIB_DEVICE_HWTYPE_ETHER</FONT>, <FONT COLOR="#880000">/* or Wifi (too late now to add a new type) */</FONT>
+  <FONT COLOR="#000044">NETWIB_DEVICE_HWTYPE_LOOPBACK</FONT>,
+  <FONT COLOR="#000044">NETWIB_DEVICE_HWTYPE_PPP</FONT>,
+  <FONT COLOR="#000044">NETWIB_DEVICE_HWTYPE_PLIP</FONT>, <FONT COLOR="#880000">/* Parallel - obsolete */</FONT>
+  <FONT COLOR="#000044">NETWIB_DEVICE_HWTYPE_SLIP</FONT> <FONT COLOR="#880000">/* Serial - obsolete */</FONT>
+} <FONT COLOR="#000088">netwib_device_hwtype</FONT>;
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_buf_append_device_hwtype
+   Description :
+     Obtains the buf string corresponding to a hwtype.
+   Input parameter(s) :
+     type : type
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pbuf : <FONT COLOR="#000088">netwib_buf</FONT> set with the buf string
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_buf_append_device_hwtype</B>(<FONT COLOR="#000088">netwib_device_hwtype</FONT> type,
+                                           <FONT COLOR="#000088">netwib_buf</FONT> *pbuf);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_device_hwtype_init_kbd
+   Description :
+     Initialize a <FONT COLOR="#000088">netwib_device_hwtype</FONT> with data entered
+     through keyboard.
+   Input parameter(s) :
+     *pmessage : message to print before
+     defaulthwtype : default hwtype to use if user enters
+                      nothing (if <FONT COLOR="#000044">NETWIB_DEVICE_HWTYPE_UNKNOWN</FONT>,
+                      means no default)
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *phwtype : <FONT COLOR="#000088">netwib_hwtype</FONT> initialized
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_device_hwtype_init_kbd</B>(<FONT COLOR="#000088">netwib_constbuf</FONT> *pmessage,
+                                         <FONT COLOR="#000088">netwib_device_hwtype</FONT> defaulthwtype,
+                                         <FONT COLOR="#000088">netwib_device_hwtype</FONT> *phwtype);
+<FONT COLOR="#008800">#define <FONT COLOR="#000044">NETWIB_DEVICE_HWTYPE_INIT_KBD_NODEF</FONT> <FONT COLOR="#000044">NETWIB_DEVICE_HWTYPE_UNKNOWN</FONT></FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000"><B>/***************************************************************
+ * Sniffed data is represented as specified by the DLT         *
+ * associated to packets.                                      *
+ * Spoofed data (at link level) also has to be represented as  *
+ * DLT expects.                                                *
+ ***************************************************************/</B></FONT>
+<FONT COLOR="#880000">/* Data-link level type codes (names from net/bpf.h). */</FONT>
+typedef enum {
+  <FONT COLOR="#000044">NETWIB_DEVICE_DLTTYPE_UNKNOWN</FONT> = 1, <FONT COLOR="#880000">/* not listed below */</FONT>
+  <FONT COLOR="#000044">NETWIB_DEVICE_DLTTYPE_NULL</FONT>,        <FONT COLOR="#880000">/* no link-layer encapsulation */</FONT>
+  <FONT COLOR="#000044">NETWIB_DEVICE_DLTTYPE_EN10MB</FONT>,      <FONT COLOR="#880000">/* Ethernet (10Mb) */</FONT>
+  <FONT COLOR="#000044">NETWIB_DEVICE_DLTTYPE_ETHER</FONT> = <FONT COLOR="#000044">NETWIB_DEVICE_DLTTYPE_EN10MB</FONT>,
+  <FONT COLOR="#000044">NETWIB_DEVICE_DLTTYPE_EN3MB</FONT>,       <FONT COLOR="#880000">/* Experimental Ethernet (3Mb) */</FONT>
+  <FONT COLOR="#000044">NETWIB_DEVICE_DLTTYPE_AX25</FONT>,        <FONT COLOR="#880000">/* Amateur Radio AX.25 */</FONT>
+  <FONT COLOR="#000044">NETWIB_DEVICE_DLTTYPE_PRONET</FONT>,      <FONT COLOR="#880000">/* Proteon ProNET Token Ring */</FONT>
+  <FONT COLOR="#000044">NETWIB_DEVICE_DLTTYPE_CHAOS</FONT>,       <FONT COLOR="#880000">/* Chaos */</FONT>
+  <FONT COLOR="#000044">NETWIB_DEVICE_DLTTYPE_IEEE802</FONT>,     <FONT COLOR="#880000">/* IEEE 802 Networks */</FONT>
+  <FONT COLOR="#000044">NETWIB_DEVICE_DLTTYPE_ARCNET</FONT>,      <FONT COLOR="#880000">/* ARCNET */</FONT>
+  <FONT COLOR="#000044">NETWIB_DEVICE_DLTTYPE_SLIP</FONT>,        <FONT COLOR="#880000">/* Serial Line IP */</FONT>
+  <FONT COLOR="#000044">NETWIB_DEVICE_DLTTYPE_PPP</FONT>,         <FONT COLOR="#880000">/* Point-to-point Protocol */</FONT>
+  <FONT COLOR="#000044">NETWIB_DEVICE_DLTTYPE_FDDI</FONT>,        <FONT COLOR="#880000">/* FDDI */</FONT>
+  <FONT COLOR="#000044">NETWIB_DEVICE_DLTTYPE_ATM_RFC1483</FONT>, <FONT COLOR="#880000">/* LLC/SNAP encapsulated atm */</FONT>
+  <FONT COLOR="#000044">NETWIB_DEVICE_DLTTYPE_RAW</FONT>,         <FONT COLOR="#880000">/* raw IPv4 or IPv6 */</FONT>
+  <FONT COLOR="#000044">NETWIB_DEVICE_DLTTYPE_RAW4</FONT>,        <FONT COLOR="#880000">/* raw IPv4 */</FONT>
+  <FONT COLOR="#000044">NETWIB_DEVICE_DLTTYPE_RAW6</FONT>,        <FONT COLOR="#880000">/* raw IPv6 */</FONT>
+  <FONT COLOR="#000044">NETWIB_DEVICE_DLTTYPE_SLIP_BSDOS</FONT>,  <FONT COLOR="#880000">/* BSD/OS Serial Line IP */</FONT>
+  <FONT COLOR="#000044">NETWIB_DEVICE_DLTTYPE_PPP_BSDOS</FONT>,   <FONT COLOR="#880000">/* BSD/OS Point-to-point Protocol */</FONT>
+  <FONT COLOR="#000044">NETWIB_DEVICE_DLTTYPE_ATM_CLIP</FONT>,    <FONT COLOR="#880000">/* Linux Classical-IP over ATM */</FONT>
+  <FONT COLOR="#000044">NETWIB_DEVICE_DLTTYPE_PPP_SERIAL</FONT>,  <FONT COLOR="#880000">/* PPP over serial with HDLC enc. */</FONT>
+  <FONT COLOR="#000044">NETWIB_DEVICE_DLTTYPE_PPP_ETHER</FONT>,   <FONT COLOR="#880000">/* PPP over Ethernet */</FONT>
+  <FONT COLOR="#000044">NETWIB_DEVICE_DLTTYPE_C_HDLC</FONT>,      <FONT COLOR="#880000">/* Cisco HDLC */</FONT>
+  <FONT COLOR="#000044">NETWIB_DEVICE_DLTTYPE_IEEE802_11</FONT>,  <FONT COLOR="#880000">/* IEEE 802.11 wireless */</FONT>
+  <FONT COLOR="#000044">NETWIB_DEVICE_DLTTYPE_LOOP</FONT>,
+  <FONT COLOR="#000044">NETWIB_DEVICE_DLTTYPE_LINUX_SLL</FONT>,
+  <FONT COLOR="#000044">NETWIB_DEVICE_DLTTYPE_LTALK</FONT>,
+  <FONT COLOR="#000044">NETWIB_DEVICE_DLTTYPE_ECONET</FONT>,
+  <FONT COLOR="#000044">NETWIB_DEVICE_DLTTYPE_PRISM_HEADER</FONT>,
+  <FONT COLOR="#000044">NETWIB_DEVICE_DLTTYPE_AIRONET_HEADER</FONT>,
+  <FONT COLOR="#000044">NETWIB_DEVICE_DLTTYPE_USER_BEGIN</FONT> = <FONT COLOR="#000044">NETWIB_ENUM_USER_BEGIN</FONT>
+} <FONT COLOR="#000088">netwib_device_dlttype</FONT>;
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_buf_append_device_dlttype
+   Description :
+     Obtains the buf string corresponding to a hwtype.
+   Input parameter(s) :
+     type : type
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pbuf : <FONT COLOR="#000088">netwib_buf</FONT> set with the buf string
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_buf_append_device_dlttype</B>(<FONT COLOR="#000088">netwib_device_dlttype</FONT> type,
+                                            <FONT COLOR="#000088">netwib_buf</FONT> *pbuf);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_device_dlttype_init_kbd
+   Description :
+     Initialize a <FONT COLOR="#000088">netwib_device_dlttype</FONT> with data entered
+     through keyboard.
+   Input parameter(s) :
+     *pmessage : message to print before
+     defaultdlttype : default dlttype to use if user enters
+                      nothing (if <FONT COLOR="#000044">NETWIB_DEVICE_DLTTYPE_UNKNOWN</FONT>,
+                      means no default)
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pdlttype : <FONT COLOR="#000088">netwib_dlttype</FONT> initialized
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_device_dlttype_init_kbd</B>(<FONT COLOR="#000088">netwib_constbuf</FONT> *pmessage,
+                                          <FONT COLOR="#000088">netwib_device_dlttype</FONT> defaultdlttype,
+                                          <FONT COLOR="#000088">netwib_device_dlttype</FONT> *pdlttype);
+<FONT COLOR="#008800">#define <FONT COLOR="#000044">NETWIB_DEVICE_DLTTYPE_INIT_KBD_NODEF</FONT> <FONT COLOR="#000044">NETWIB_DEVICE_DLTTYPE_UNKNOWN</FONT></FONT>
+</PRE><BR><BR><HR><BR>
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../net.html">section index</A></H2>
+</BODY></HTML>

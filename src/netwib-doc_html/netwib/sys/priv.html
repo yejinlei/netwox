@@ -1,0 +1,124 @@
+<HTML><HEAD>
+<TITLE>netwib doc_html (version 5.39.0)</TITLE>
+</HEAD><BODY BGCOLOR="#FFFFFF" TEXT="#000000">
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../sys.html">section index</A></H2><HR><BR>
+<PRE>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#008800">#include "priv/errmsg.h"</FONT>
+<FONT COLOR="#008800">#include "priv/program_exit.h"</FONT>
+<FONT COLOR="#008800">#include "priv/glovars.h"</FONT>
+<FONT COLOR="#008800">#include "priv/rand.h"</FONT>
+<FONT COLOR="#008800">#include "priv/fd.h"</FONT>
+<FONT COLOR="#008800">#include "priv/stream.h"</FONT>
+<FONT COLOR="#008800">#include "priv/err.h"</FONT>
+<FONT COLOR="#008800">#include "priv/notify.h"</FONT>
+<FONT COLOR="#008800">#include "priv/dir.h"</FONT>
+<FONT COLOR="#008800">#include "priv/io.h"</FONT>
+<FONT COLOR="#008800">#include "priv/cmdline.h"</FONT>
+<FONT COLOR="#008800">#include "priv/pause.h"</FONT>
+<FONT COLOR="#008800">#include "priv/kbd.h"</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#008800">#if ! defined NETWIBDEF_PRIV_DONT_WANT_SYS</FONT>
+<FONT COLOR="#008800"> #include "priv/mutex.h"</FONT>
+<FONT COLOR="#008800"> #include "priv/stat.h"</FONT>
+<FONT COLOR="#008800"> #include "priv/time.h"</FONT>
+<FONT COLOR="#008800">#endif</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#008800">#if defined NETWIBDEF_SYSNAME_Unix</FONT>
+<FONT COLOR="#008800"> #include "priv/right.h"</FONT>
+<FONT COLOR="#008800">#elif defined NETWIBDEF_SYSNAME_Windows</FONT>
+<FONT COLOR="#008800"> #include "priv/handle.h"</FONT>
+<FONT COLOR="#008800"> #include "priv/winsock.h"</FONT>
+<FONT COLOR="#008800"> #include "priv/dll.h"</FONT>
+<FONT COLOR="#008800"> #include "priv/dll_iphlpapi.h"</FONT>
+<FONT COLOR="#008800"> #include "priv/dll_winsock2.h"</FONT>
+<FONT COLOR="#008800"> #include "priv/dll_snmp.h"</FONT>
+<FONT COLOR="#008800"> #include "priv/dll_kernel32.h"</FONT>
+<FONT COLOR="#008800"> #include "priv/dll_packet.h"</FONT>
+<FONT COLOR="#008800"> #include "priv/dll_winpcap.h"</FONT>
+<FONT COLOR="#008800"> #include "priv/cs.h"</FONT>
+<FONT COLOR="#008800"> #if 0</FONT>
+  <FONT COLOR="#880000">/* currently unused */</FONT>
+<FONT COLOR="#008800">  #include "priv/dll_rasapi32.h"</FONT>
+<FONT COLOR="#008800">  #include "priv/winreg.h"</FONT>
+<FONT COLOR="#008800"> #endif</FONT>
+<FONT COLOR="#008800">#else</FONT>
+<FONT COLOR="#008800"> #error "Unknown value for NETWIBDEF_SYSNAME"</FONT>
+<FONT COLOR="#008800">#endif</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#008800">#if defined NETWIBDEF_SYSNAME_Solaris</FONT>
+<FONT COLOR="#008800"> #include "priv/dlpi.h"</FONT>
+<FONT COLOR="#008800">#endif</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#008800">#if defined NETWIBDEF_SYSNAME_Unix</FONT>
+<FONT COLOR="#008800"> #define <B>netwib_c_close</B>(a) close(a)</FONT>
+<FONT COLOR="#008800"> #define <B>netwib_c_closesocket</B>(a) close(a)</FONT>
+<FONT COLOR="#008800"> #define <B>netwib_c_fdopen</B>(a,b) fdopen(a,b)</FONT>
+<FONT COLOR="#008800"> #define <B>netwib_c_fileno</B>(a) fileno(a)</FONT>
+<FONT COLOR="#008800"> #define <B>netwib_c_lseek</B>(a,b,c) lseek(a,b,c)</FONT>
+<FONT COLOR="#008800"> #define <B>netwib_c_open</B>(a,b) open(a,b)</FONT>
+<FONT COLOR="#008800"> #define <B>netwib_c_open3</B>(a,b,c) open(a,b,c)</FONT>
+<FONT COLOR="#008800"> #define <B>netwib_c_read</B>(a,b,c) read(a,b,c)</FONT>
+<FONT COLOR="#008800"> #define <B>netwib_c_rmdir</B>(a) rmdir(a)</FONT>
+<FONT COLOR="#008800"> #define <B>netwib_c_unlink</B>(a) unlink(a)</FONT>
+<FONT COLOR="#008800"> #define <B>netwib_c_write</B>(a,b,c) write(a,b,c)</FONT>
+<FONT COLOR="#008800">#elif defined NETWIBDEF_SYSNAME_Windows</FONT>
+<FONT COLOR="#008800"> #define <B>netwib_c_close</B>(a) _close(a)</FONT>
+<FONT COLOR="#008800"> #define <B>netwib_c_closesocket</B>(a) closesocket(a)</FONT>
+<FONT COLOR="#008800"> #define <B>netwib_c_fdopen</B>(a,b) _fdopen(a,b)</FONT>
+<FONT COLOR="#008800"> #define <B>netwib_c_fileno</B>(a) _fileno(a)</FONT>
+<FONT COLOR="#008800"> #define <B>netwib_c_lseek</B>(a,b,c) _lseek(a,b,c)</FONT>
+<FONT COLOR="#008800"> #define <B>netwib_c_open</B>(a,b) _open(a,b)</FONT>
+<FONT COLOR="#008800"> #define <B>netwib_c_open3</B>(a,b,c) _open(a,b,c)</FONT>
+<FONT COLOR="#008800"> #define <B>netwib_c_read</B>(a,b,c) _read(a,b,c)</FONT>
+<FONT COLOR="#008800"> #define <B>netwib_c_rmdir</B>(a) _rmdir(a)</FONT>
+<FONT COLOR="#008800"> #define <B>netwib_c_unlink</B>(a) _unlink(a)</FONT>
+<FONT COLOR="#008800"> #define <B>netwib_c_write</B>(a,b,c) _write(a,b,c)</FONT>
+<FONT COLOR="#008800">#else</FONT>
+<FONT COLOR="#008800"> #error "Unknown value for NETWIBDEF_SYSTEM"</FONT>
+<FONT COLOR="#008800">#endif</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#008800">#if NETWIBDEF_HAVETYPE_SIZE_T==1</FONT>
+<FONT COLOR="#008800"> #define <FONT COLOR="#000088">netwib_c_sizet</FONT> size_t</FONT>
+<FONT COLOR="#008800">#else</FONT>
+<FONT COLOR="#008800"> #define <FONT COLOR="#000088">netwib_c_sizet</FONT> int</FONT>
+<FONT COLOR="#008800">#endif</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#008800">#if ! defined NETWIBDEF_PRIV_DONT_WANT_SYS</FONT>
+<FONT COLOR="#008800"> #if NETWIBDEF_HAVETYPE_SIGHANDLER_T==1</FONT>
+  typedef sighandler_t <FONT COLOR="#000088">netwib_c_sighandlert</FONT>;
+<FONT COLOR="#008800"> #elif NETWIBDEF_HAVETYPE_SIG_T==1</FONT>
+  typedef sig_t <FONT COLOR="#000088">netwib_c_sighandlert</FONT>;
+<FONT COLOR="#008800"> #else</FONT>
+  typedef void (*netwib_c_sighandlert)(int);
+<FONT COLOR="#008800"> #endif</FONT>
+<FONT COLOR="#008800">#endif</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#008800">#if defined NETWIBDEF_SYSNAME_Unix</FONT>
+<FONT COLOR="#008800"> #define <FONT COLOR="#000044">NETWIB_PRIV_MINMSGSIZE_READ</FONT>   0x1FFFF</FONT>
+<FONT COLOR="#008800">#elif defined NETWIBDEF_SYSNAME_Windows</FONT>
+ <FONT COLOR="#880000">/* with a bigger value, Windows doesn't have sufficient memory */</FONT>
+<FONT COLOR="#008800"> #define <FONT COLOR="#000044">NETWIB_PRIV_MINMSGSIZE_READ</FONT>    0x7000</FONT>
+<FONT COLOR="#008800">#else</FONT>
+<FONT COLOR="#008800"> #error "Unknown value for NETWIBDEF_SYSNAME"</FONT>
+<FONT COLOR="#008800">#endif</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#008800">#define <B>netwib_ir</B>(i,r) {if(i&lt;0)return(r);}</FONT>
+<FONT COLOR="#008800">#define <B>netwib_ig</B>(i,r) {if(i&lt;0)<B>netwib_goto</B>(r);}</FONT>
+<FONT COLOR="#008800">#define <B>netwib_br</B>(b,r) {if(!b)return(r);}</FONT>
+<FONT COLOR="#008800">#define <B>netwib_bg</B>(b,r) {if(!b)<B>netwib_goto</B>(r);}</FONT>
+
+</PRE><BR><BR><HR><BR>
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../sys.html">section index</A></H2>
+</BODY></HTML>

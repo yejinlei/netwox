@@ -1,0 +1,115 @@
+<HTML><HEAD>
+<TITLE>netwib doc_html (version 5.39.0)</TITLE>
+</HEAD><BODY BGCOLOR="#FFFFFF" TEXT="#000000">
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../dat.html">section index</A></H2><HR><BR>
+<PRE>
+<FONT COLOR="#880000">/* integer of 8 bits */</FONT>
+typedef NETWIBDEF_TYPE_INT8 <FONT COLOR="#000088">netwib_int8</FONT>;
+typedef NETWIBDEF_TYPE_UINT8 <FONT COLOR="#000088">netwib_uint8</FONT>;
+
+<FONT COLOR="#880000">/* integer of 16 bits */</FONT>
+typedef NETWIBDEF_TYPE_INT16 <FONT COLOR="#000088">netwib_int16</FONT>;
+typedef NETWIBDEF_TYPE_UINT16 <FONT COLOR="#000088">netwib_uint16</FONT>;
+
+<FONT COLOR="#880000">/* integer of 32 bits */</FONT>
+typedef NETWIBDEF_TYPE_INT32 <FONT COLOR="#000088">netwib_int32</FONT>;
+typedef NETWIBDEF_TYPE_UINT32 <FONT COLOR="#000088">netwib_uint32</FONT>;
+
+<FONT COLOR="#880000">/* integer of 64 bits */</FONT>
+<FONT COLOR="#008800">#if NETWIBDEF_TYPE_INT64_FAKE == 0</FONT>
+  <FONT COLOR="#880000">/* define the type */</FONT>
+  typedef NETWIBDEF_TYPE_INT64 <FONT COLOR="#000088">netwib_int64</FONT>;
+  typedef NETWIBDEF_TYPE_UINT64 <FONT COLOR="#000088">netwib_uint64</FONT>;
+<FONT COLOR="#008800">  #define <FONT COLOR="#000044">NETWIB_INT64_FAKE</FONT> 0</FONT>
+<FONT COLOR="#008800">#else</FONT>
+  <FONT COLOR="#880000">/* define a fake structure allowing easy storage, but unusable for math */</FONT>
+  typedef struct {
+    <FONT COLOR="#000088">netwib_uint32</FONT> high;
+    <FONT COLOR="#000088">netwib_uint32</FONT> low;
+  } <FONT COLOR="#000088">netwib_uint64</FONT>;
+  typedef <FONT COLOR="#000088">netwib_uint64</FONT> <FONT COLOR="#000088">netwib_int64</FONT>;
+<FONT COLOR="#008800">  #define <FONT COLOR="#000044">NETWIB_INT64_FAKE</FONT> 1</FONT>
+<FONT COLOR="#008800">#endif</FONT>
+
+<FONT COLOR="#880000">/* maximum size integer on the computer */</FONT>
+<FONT COLOR="#008800">#if <FONT COLOR="#000044">NETWIB_INT64_FAKE</FONT> == 0</FONT>
+  typedef <FONT COLOR="#000088">netwib_int64</FONT> <FONT COLOR="#000088">netwib_intmax</FONT>;
+  typedef <FONT COLOR="#000088">netwib_uint64</FONT> <FONT COLOR="#000088">netwib_uintmax</FONT>;
+<FONT COLOR="#008800">  #define <FONT COLOR="#000044">NETWIB_INTMAX_BITS</FONT> 64</FONT>
+<FONT COLOR="#008800">#else</FONT>
+  typedef <FONT COLOR="#000088">netwib_int32</FONT> <FONT COLOR="#000088">netwib_intmax</FONT>;
+  typedef <FONT COLOR="#000088">netwib_uint32</FONT> <FONT COLOR="#000088">netwib_uintmax</FONT>;
+<FONT COLOR="#008800">  #define <FONT COLOR="#000044">NETWIB_INTMAX_BITS</FONT> 32</FONT>
+<FONT COLOR="#008800">#endif</FONT>
+
+<FONT COLOR="#880000">/* size of pointers on the computer */</FONT>
+<FONT COLOR="#008800">#if NETWIBDEF_ARCH_BITS == 32</FONT>
+  typedef <FONT COLOR="#000088">netwib_int32</FONT> <FONT COLOR="#000088">netwib_intptr</FONT>;
+  typedef <FONT COLOR="#000088">netwib_uint32</FONT> <FONT COLOR="#000088">netwib_uintptr</FONT>;
+<FONT COLOR="#008800">  #define <FONT COLOR="#000044">NETWIB_INTPTR_BITS</FONT> 32</FONT>
+<FONT COLOR="#008800">#elif NETWIBDEF_ARCH_BITS == 64</FONT>
+  typedef <FONT COLOR="#000088">netwib_int64</FONT> <FONT COLOR="#000088">netwib_intptr</FONT>;
+  typedef <FONT COLOR="#000088">netwib_uint64</FONT> <FONT COLOR="#000088">netwib_uintptr</FONT>;
+<FONT COLOR="#008800">  #define <FONT COLOR="#000044">NETWIB_INTPTR_BITS</FONT> 64</FONT>
+<FONT COLOR="#008800">#else</FONT>
+<FONT COLOR="#008800">  #error "Unknown value for NETWIBDEF_ARCH_BITS"</FONT>
+<FONT COLOR="#008800">#endif</FONT>
+
+<FONT COLOR="#880000">/* char */</FONT>
+typedef char <FONT COLOR="#000088">netwib_char</FONT>;
+
+<FONT COLOR="#880000">/* byte */</FONT>
+typedef unsigned char <FONT COLOR="#000088">netwib_byte</FONT>;
+
+<FONT COLOR="#880000">/* pointer */</FONT>
+typedef void* <FONT COLOR="#000088">netwib_ptr</FONT>;
+typedef const void* <FONT COLOR="#000088">netwib_constptr</FONT>;
+
+<FONT COLOR="#880000">/* data */</FONT>
+typedef netwib_byte* <FONT COLOR="#000088">netwib_data</FONT>;
+typedef const netwib_byte* <FONT COLOR="#000088">netwib_constdata</FONT>;
+<FONT COLOR="#880000">/* string */</FONT>
+typedef netwib_char* <FONT COLOR="#000088">netwib_string</FONT>;
+typedef const netwib_char* <FONT COLOR="#000088">netwib_conststring</FONT>;
+
+<FONT COLOR="#880000">/* boolean */</FONT>
+typedef enum {
+  <FONT COLOR="#000044">NETWIB_FALSE</FONT> = 0,
+  <FONT COLOR="#000044">NETWIB_TRUE</FONT> = !<FONT COLOR="#000044">NETWIB_FALSE</FONT>
+} <FONT COLOR="#000088">netwib_bool</FONT>;
+
+<FONT COLOR="#880000">/* comparison */</FONT>
+typedef enum {
+  <FONT COLOR="#000044">NETWIB_CMP_LT</FONT> = -1,
+  <FONT COLOR="#000044">NETWIB_CMP_EQ</FONT> = 0,
+  <FONT COLOR="#000044">NETWIB_CMP_GT</FONT> = +1
+} <FONT COLOR="#000088">netwib_cmp</FONT>;
+
+<FONT COLOR="#880000">/* netwib contains several enum. User can define its own values
+   starting from 10000 */</FONT>
+<FONT COLOR="#008800">#define <FONT COLOR="#000044">NETWIB_ENUM_USER_BEGIN</FONT> 10000</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000"><B>/***************************************************************
+ * Note about return values :                                  *
+ * Every function returns a "netwib_err" which indicates :     *
+ *   - <FONT COLOR="#000044">NETWIB_ERR_OK</FONT>  : everything went fine                   *
+ *   - <FONT COLOR="#000044">NETWIB_ERR_</FONT>xyz : something strange occurred...          *
+ ***************************************************************/</B></FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000"><B>/***************************************************************
+ * Note about parameters :                                     *
+ * Some functions can accept NULL as parameter. This indicates *
+ * the corresponding parameter is not needed.                  *
+ * However this special case needs resources and specific      *
+ * instruction paths. So, this is not supported for parameters *
+ * such as netwib_ring, netwib_ips, etc. If you think we       *
+ * missed one function needing this features, please contact   *
+ * us.                                                         *
+ ***************************************************************/</B></FONT>
+</PRE><BR><BR><HR><BR>
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../dat.html">section index</A></H2>
+</BODY></HTML>

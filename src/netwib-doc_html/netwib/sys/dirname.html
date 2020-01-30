@@ -1,0 +1,112 @@
+<HTML><HEAD>
+<TITLE>netwib doc_html (version 5.39.0)</TITLE>
+</HEAD><BODY BGCOLOR="#FFFFFF" TEXT="#000000">
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../sys.html">section index</A></H2><HR><BR>
+<PRE>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000"><B>/***************************************************************
+ * NOTE ABOUT SECURITY UNDER UNIX                              *
+ * The only way to deal securely with a file/dir is to store   *
+ * it in a secure directory (every dir in the path should only *
+ * be writable by root or current user).                       *
+ * Otherwise a malicious user can create a symlink and force   *
+ * corruption/creation/removing of a file/dir.                 *
+ * So, to secure your program, you should force user to work   *
+ * only in secured directories. Function <FONT COLOR="#000088">netwib_dirname_secure</FONT> *
+ * permits to check if a directory is secure. Note that netwib *
+ * functions do not check for secure directories internally :  *
+ * you should do it yourself.                                  *
+ ***************************************************************/</B></FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_dirname_secure
+   Description :
+     Check if a directory is secure.
+   Input parameter(s) :
+     *pdirname : name of the directory
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pyes : true if directory is secure
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_dirname_secure</B>(<FONT COLOR="#000088">netwib_constbuf</FONT> *pdirname,
+                                 <FONT COLOR="#000088">netwib_bool</FONT> *pyes);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_dirname_cwd
+   Description :
+     Get current working directory.
+   Input parameter(s) :
+   Input/output parameter(s) :
+     *pdirname : name of the directory
+   Output parameter(s) :
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_dirname_cwd</B>(<FONT COLOR="#000088">netwib_buf</FONT> *pdirname);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_dirname_exists
+   Description :
+     Check if a directory exist.
+   Input parameter(s) :
+     *pdirname : name of the directory
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pyes : true if directory exists
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_dirname_exists</B>(<FONT COLOR="#000088">netwib_constbuf</FONT> *pdirname,
+                                 <FONT COLOR="#000088">netwib_bool</FONT> *pyes);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_dirname_create
+   Description :
+     Create a directory.
+     Warning : this function is not secured against
+               symlink races
+   Input parameter(s) :
+     *pdirname : name of the directory
+   Input/output parameter(s) :
+   Output parameter(s) :
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_dirname_create</B>(<FONT COLOR="#000088">netwib_constbuf</FONT> *pdirname);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_dirname_remove
+   Description :
+     Remove a directory.
+   Input parameter(s) :
+     *pdirname : name of the directory
+   Input/output parameter(s) :
+   Output parameter(s) :
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_dirname_remove</B>(<FONT COLOR="#000088">netwib_constbuf</FONT> *pdirname);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_dirname_rename
+   Description :
+     Rename a directory.
+   Input parameter(s) :
+     *polddirname : previous name of the directory
+     *pnewdirname : new name for the directory
+   Input/output parameter(s) :
+   Output parameter(s) :
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_dirname_rename</B>(<FONT COLOR="#000088">netwib_constbuf</FONT> *polddirname,
+                                 <FONT COLOR="#000088">netwib_constbuf</FONT> *pnewdirname);
+
+</PRE><BR><BR><HR><BR>
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../sys.html">section index</A></H2>
+</BODY></HTML>

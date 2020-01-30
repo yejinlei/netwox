@@ -1,0 +1,95 @@
+<HTML>
+ <HEAD>
+ <TITLE>Tool 94: TCP remote administration client (exec)</TITLE>
+ </HEAD>
+ <BODY BGCOLOR="#FFFFFF">
+  <CENTER>   <H3>Tool 94: TCP remote administration client (exec)</H3>
+  </CENTER>
+
+  <P><H3>Description:</H3>
+   <PRE>
+  This tool runs a command on server of tool 93.
+  
+  Parameter --command contains the command to run. This command must
+  have the full path. For example '/bin/sh -c ls', and not just 'ls'.
+  Parameter --dst-file defines the file containing the result of
+  command.
+  Parameter --password defines the password (same as server's password).
+  Parameter --cypher defines if data has to be encrypted. Please note
+  this is not very strong. If known text is used, this algorithm can be
+  cracked.
+  Parameter --dst-ip is the address of remote host/server.
+  Parameter --dst-port is the port number where to connect.
+  Optional parameter --src-ip defines the local IP address to use.
+  Optional parameter --src-port defines the local port number to use.
+  Optional parameter --ip4opts permits to add IP4 options encoded as
+  mixed.
+  Optional parameter --ip6exts permits to add IP6 options encoded as
+  mixed (first byte is the next header number).
+  Optional parameters --device, --src-eth and --dst-eth permits to
+  create a virtual client using fake addresses (in this case, tool have
+  to be run with admin privilege in order to sniff and spoof at
+  Ethernet level).
+   </PRE>
+
+  <P><H3>Usage:</H3>
+  &nbsp;&nbsp;netwox 94 -i ip -p port -c data [-F file] [-w password] [-d device] [-E eth] [-e eth] [-I ip] [-P port] [-o ip4opts] [-O ip6exts] [-x|+x] [-T uint32]<BR>
+
+  <P><H3>Parameters:</H3>
+<TABLE BORDER=1 CELLPADDING=4>
+ <TR>
+  <TD ALIGN=middle><I>parameter</I></TD>
+  <TD ALIGN=middle><I>description</I></TD>
+  <TD ALIGN=middle><I>example</I></TD>
+ </TR>
+ <TR><TD><TT>-i|--dst-ip ip</TD>
+<TD>destination IP address</TD>
+<TD>5.6.7.8</TD></TR>
+<TR><TD><TT>-p|--dst-port port</TD>
+<TD>destination port number</TD>
+<TD>80</TD></TR>
+<TR><TD><TT>-c|--command data</TD>
+<TD>command to execute</TD>
+<TD>/bin/sh -c ls</TD></TR>
+<TR><TD><TT>-F|--dst-file file</TD>
+<TD>destination filename</TD>
+<TD>dstfile.txt</TD></TR>
+<TR><TD><TT>-w|--password password</TD>
+<TD>password</TD>
+<TD>netwox</TD></TR>
+<TR><TD><TT>-d|--device device</TD>
+<TD>device name</TD>
+<TD>Eth0</TD></TR>
+<TR><TD><TT>-E|--src-eth eth</TD>
+<TD>source ethernet address</TD>
+<TD>0:2:3:4:5:6</TD></TR>
+<TR><TD><TT>-e|--dst-eth eth</TD>
+<TD>destination ethernet address</TD>
+<TD>0:8:9:a:b:c</TD></TR>
+<TR><TD><TT>-I|--src-ip ip</TD>
+<TD>source IP address</TD>
+<TD>192.168.100.200</TD></TR>
+<TR><TD><TT>-P|--src-port port</TD>
+<TD>source port number</TD>
+<TD>0</TD></TR>
+<TR><TD><TT>-o|--ip4opts ip4opts</TD>
+<TD>IPv4 options</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-O|--ip6exts ip6exts</TD>
+<TD>IPv6 extensions</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-x|--cypher|+x|--no-cypher</TD>
+<TD>if data is encrypted</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-T|--timeout uint32</TD>
+<TD>timeout in seconds</TD>
+<TD>100 </TD></TR>
+</TABLE>
+
+  <P><H3>Examples:</H3>
+  &nbsp;&nbsp;netwox 94 -i "5.6.7.8" -p "80" -c "/bin/sh -c ls"<BR>
+<BR>
+  &nbsp;&nbsp;netwox 94 --dst-ip "5.6.7.8" --dst-port "80" --command "/bin/sh -c ls"<BR>
+<BR>
+ </BODY>
+ </HTML>

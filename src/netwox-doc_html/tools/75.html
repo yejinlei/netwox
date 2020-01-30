@@ -1,0 +1,40 @@
+<HTML>
+ <HEAD>
+ <TITLE>Tool 75: Fill table of a switch using a flood of Ethernet packets</TITLE>
+ </HEAD>
+ <BODY BGCOLOR="#FFFFFF">
+  <CENTER>   <H3>Tool 75: Fill table of a switch using a flood of Ethernet packets</H3>
+  </CENTER>
+
+  <P><H3>Description:</H3>
+   <PRE>
+  This tool sends a lot of fake Ethernet packets. On some old switches,
+  their table becomes full, and the switch starts behaving like a hub.
+  It permits to sniff on those switched LAN.
+  
+  This tool may need to be run with admin privilege in order to spoof.
+   </PRE>
+
+  <P><H3>Synonyms:</H3>
+  &nbsp;&nbsp;frame, hub, mac<BR>
+
+  <P><H3>Usage:</H3>
+  &nbsp;&nbsp;netwox 75 [-d device]<BR>
+
+  <P><H3>Parameters:</H3>
+<TABLE BORDER=1 CELLPADDING=4>
+ <TR>
+  <TD ALIGN=middle><I>parameter</I></TD>
+  <TD ALIGN=middle><I>description</I></TD>
+  <TD ALIGN=middle><I>example</I></TD>
+ </TR>
+ <TR><TD><TT>-d|--device device</TD>
+<TD>device name</TD>
+<TD>Eth0 </TD></TR>
+</TABLE>
+
+  <P><H3>Example:</H3>
+  &nbsp;&nbsp;netwox 75<BR>
+<BR>
+ </BODY>
+ </HTML>

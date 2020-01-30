@@ -1,0 +1,75 @@
+<HTML>
+ <HEAD>
+ <TITLE>Tool 20: Search for strings in packets from a record</TITLE>
+ </HEAD>
+ <BODY BGCOLOR="#FFFFFF">
+  <CENTER>   <H3>Tool 20: Search for strings in packets from a record</H3>
+  </CENTER>
+
+  <P><H3>Description:</H3>
+   <PRE>
+  A record is a capture file. It contains several packets captured
+  during a sniff. It can also be created by hand. There are 7 formats
+  for records: pcap (tcpdump compatible), bin (binary, unreadable by
+  humans but fast) and mixed/mixed_wrap/dump/hexa/hexa_wrap (easy to
+  read and edit). A record also has an associated DLT (Data Link Type),
+  indicating at which level a packet start: raw (start at IP header) and
+  ether (start at Ethernet header) are the 2 most common DLT. Tool 13
+  displays DLT of each device.
+  
+  This tool searches a pattern in packets of a record, and saves
+  matching packets in another record. The pattern can be a string, a
+  mixed ('hello' 09 'bob'), or a regular expression.
+  
+  Parameter --src-file indicates the input record filename.
+  Parameter --dst-file indicates the output record filename.
+  Parameter --recordencode defines how to encode data in this record
+  (suggested values: bin, pcap and mixed_wrap).
+   </PRE>
+
+  <P><H3>Synonyms:</H3>
+  &nbsp;&nbsp;capture, find, match, ngrep, payload, text<BR>
+
+  <P><H3>Usage:</H3>
+  &nbsp;&nbsp;netwox 20 -f file -F file [-r recordencode] -p data [-c|+c] [-S|+S] [-M|+M] [-R|+R]<BR>
+
+  <P><H3>Parameters:</H3>
+<TABLE BORDER=1 CELLPADDING=4>
+ <TR>
+  <TD ALIGN=middle><I>parameter</I></TD>
+  <TD ALIGN=middle><I>description</I></TD>
+  <TD ALIGN=middle><I>example</I></TD>
+ </TR>
+ <TR><TD><TT>-f|--src-file file</TD>
+<TD>input record file</TD>
+<TD>srcfile.txt</TD></TR>
+<TR><TD><TT>-F|--dst-file file</TD>
+<TD>output record file</TD>
+<TD>dstfile.txt</TD></TR>
+<TR><TD><TT>-r|--recordencode recordencode</TD>
+<TD>encoding type for output record</TD>
+<TD>bin</TD></TR>
+<TR><TD><TT>-p|--pattern data</TD>
+<TD>searched pattern</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-c|--case|+c|--no-case</TD>
+<TD>case sensitive</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-S|--string|+S|--no-string</TD>
+<TD>search string</TD>
+<TD><I>This boolean is set.<BR>Use + or --no- to unset it.</I></TD></TR>
+<TR><TD><TT>-M|--mixed|+M|--no-mixed</TD>
+<TD>search mixed string</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-R|--regexp|+R|--no-regexp</TD>
+<TD>search regular expression</TD>
+<TD>&nbsp; </TD></TR>
+</TABLE>
+
+  <P><H3>Examples:</H3>
+  &nbsp;&nbsp;netwox 20 -f "srcfile.txt" -F "dstfile.txt" -p ""<BR>
+<BR>
+  &nbsp;&nbsp;netwox 20 --src-file "srcfile.txt" --dst-file "dstfile.txt" --pattern ""<BR>
+<BR>
+ </BODY>
+ </HTML>

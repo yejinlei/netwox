@@ -1,0 +1,49 @@
+<HTML><HEAD>
+<TITLE>netwib doc_html (version 5.39.0)</TITLE>
+</HEAD><BODY BGCOLOR="#FFFFFF" TEXT="#000000">
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../sys.html">section index</A></H2><HR><BR>
+<PRE>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000"><B>/***************************************************************
+ * Functions herein permit to change global configuration of   *
+ * netwib.                                                     *
+ ***************************************************************/</B></FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* See below for the meaning of those values */</FONT>
+typedef enum {
+  <FONT COLOR="#000044">NETWIB_GLOBAL_CTLTYPE_ERR_PURGE</FONT> = 1,
+  <FONT COLOR="#000044">NETWIB_GLOBAL_CTLTYPE_CONF_UPDATE</FONT>,
+  <FONT COLOR="#000044">NETWIB_GLOBAL_CTLTYPE_DEBUG_CTRLC_PRESSED</FONT>
+} <FONT COLOR="#000088">netwib_global_ctltype</FONT>;
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_global_ctl_set</B>(<FONT COLOR="#000088">netwib_global_ctltype</FONT> type,
+                                 <FONT COLOR="#000088">netwib_ptr</FONT> p,
+                                 <FONT COLOR="#000088">netwib_uint32</FONT> ui);
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_global_ctl_get</B>(<FONT COLOR="#000088">netwib_global_ctltype</FONT> type,
+                                 <FONT COLOR="#000088">netwib_ptr</FONT> p,
+                                 <FONT COLOR="#000088">netwib_uint32</FONT> *pui);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* purge last error */</FONT>
+<FONT COLOR="#880000">/* <FONT COLOR="#000088">netwib_err</FONT> f(void); */</FONT>
+<FONT COLOR="#008800">#define <B>netwib_global_ctl_set_err_purge</B>() <B>netwib_global_ctl_set</B>(<FONT COLOR="#000044">NETWIB_GLOBAL_CTLTYPE_ERR_PURGE</FONT>,NULL,0)</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* update configuration. Care must be taken to ensure nobody
+   is currently looping through current configuration
+   (lock/mutex). */</FONT>
+<FONT COLOR="#880000">/* <FONT COLOR="#000088">netwib_err</FONT> f(void); */</FONT>
+<FONT COLOR="#008800">#define <B>netwib_global_ctl_set_conf_update</B>() <B>netwib_global_ctl_set</B>(<FONT COLOR="#000044">NETWIB_GLOBAL_CTLTYPE_CONF_UPDATE</FONT>,NULL,0)</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* if Control-C was pressed (used only in Debug mode under Linux,
+   in order to detect memory leaks) */</FONT>
+<FONT COLOR="#880000">/* <FONT COLOR="#000088">netwib_err</FONT> f(<FONT COLOR="#000088">netwib_bool</FONT> *pbool); */</FONT>
+<FONT COLOR="#008800">#define <B>netwib_global_ctl_get_debug_ctrlc_pressed</B>(pbool) <B>netwib_global_ctl_get</B>(<FONT COLOR="#000044">NETWIB_GLOBAL_CTLTYPE_DEBUG_CTRLC_PRESSED</FONT>,NULL,(<FONT COLOR="#000088">netwib_uint32</FONT> *)pbool)</FONT>
+<FONT COLOR="#008800">#define <B>netwib__debug_ctrlc_pressed_break</B>() { <FONT COLOR="#000088">netwib_err</FONT> <FONT COLOR="#000088">netwib__debug_ctrlc_pressed_break_ret</FONT>; <FONT COLOR="#000088">netwib_bool</FONT> <FONT COLOR="#000088">netwib__debug_ctrlc_pressed_break_pressed</FONT>; <FONT COLOR="#000088">netwib__debug_ctrlc_pressed_break_ret</FONT> = <B>netwib_global_ctl_get_debug_ctrlc_pressed</B>(&amp;netwib__debug_ctrlc_pressed_break_pressed); if (<FONT COLOR="#000088">netwib__debug_ctrlc_pressed_break_ret</FONT> == <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> &amp;&amp; netwib__debug_ctrlc_pressed_break_pressed) break; }</FONT>
+</PRE><BR><BR><HR><BR>
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../sys.html">section index</A></H2>
+</BODY></HTML>

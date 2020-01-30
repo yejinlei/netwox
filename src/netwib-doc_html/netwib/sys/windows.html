@@ -1,0 +1,57 @@
+<HTML><HEAD>
+<TITLE>netwib doc_html (version 5.39.0)</TITLE>
+</HEAD><BODY BGCOLOR="#FFFFFF" TEXT="#000000">
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../sys.html">section index</A></H2><HR><BR>
+<PRE>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_io_init_handle
+   Description :
+     Open a Windows HANDLE. This function only exists
+     Windows.
+   Input parameter(s) :
+     h : HANDLE
+   Input/output parameter(s) :
+     closeatend : if HANDLE have to be closed when the io is
+                  closed
+   Output parameter(s) :
+     **ppio : io created
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_io_init_handle</B>(NETWIBHANDLE h,
+                                 <FONT COLOR="#000088">netwib_bool</FONT> closeatend,
+                                 <FONT COLOR="#000088">netwib_io</FONT> **ppio);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_windowstype_init
+   Description :
+     Get system version.
+   Input parameter(s) :
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *ptype : system type
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+typedef enum {
+  <FONT COLOR="#000044">NETWIB_WINDOWSTYPE_UNKNOWN</FONT> = 0, <FONT COLOR="#880000">/* Unknown system */</FONT>
+  <FONT COLOR="#000044">NETWIB_WINDOWSTYPE_31</FONT>,          <FONT COLOR="#880000">/* Windows 3.1 */</FONT>
+  <FONT COLOR="#000044">NETWIB_WINDOWSTYPE_95</FONT>,          <FONT COLOR="#880000">/* Windows 95 */</FONT>
+  <FONT COLOR="#000044">NETWIB_WINDOWSTYPE_98</FONT>,          <FONT COLOR="#880000">/* Windows 98 */</FONT>
+  <FONT COLOR="#000044">NETWIB_WINDOWSTYPE_ME</FONT>,          <FONT COLOR="#880000">/* Windows Me */</FONT>
+  <FONT COLOR="#000044">NETWIB_WINDOWSTYPE_NT350</FONT>,       <FONT COLOR="#880000">/* Windows NT 3.5.0 */</FONT>
+  <FONT COLOR="#000044">NETWIB_WINDOWSTYPE_NT351</FONT>,       <FONT COLOR="#880000">/* Windows NT 3.5.1 */</FONT>
+  <FONT COLOR="#000044">NETWIB_WINDOWSTYPE_NT4</FONT>,         <FONT COLOR="#880000">/* Windows NT 4 */</FONT>
+  <FONT COLOR="#000044">NETWIB_WINDOWSTYPE_2000</FONT>,        <FONT COLOR="#880000">/* Windows 2000 */</FONT>
+  <FONT COLOR="#000044">NETWIB_WINDOWSTYPE_XP</FONT>,          <FONT COLOR="#880000">/* Windows XP */</FONT>
+  <FONT COLOR="#000044">NETWIB_WINDOWSTYPE_2003</FONT>,        <FONT COLOR="#880000">/* Windows 2003 */</FONT>
+  <FONT COLOR="#000044">NETWIB_WINDOWSTYPE_2008</FONT>,        <FONT COLOR="#880000">/* Windows 2008 */</FONT>
+  <FONT COLOR="#000044">NETWIB_WINDOWSTYPE_7</FONT>            <FONT COLOR="#880000">/* Windows 7 */</FONT>
+} <FONT COLOR="#000088">netwib_windowstype</FONT>;
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_windowstype_init</B>(<FONT COLOR="#000088">netwib_windowstype</FONT> *ptype);
+</PRE><BR><BR><HR><BR>
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../sys.html">section index</A></H2>
+</BODY></HTML>

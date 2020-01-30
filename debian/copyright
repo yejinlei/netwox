@@ -1,0 +1,29 @@
+This package was debianized by Bartosz Fenski <fenio@debian.org> on
+Fri, 18 Jun 2004 15:45:56 +0200.
+
+It was downloaded from http://www.laurentconstantin.com/en/netw/
+
+Upstream Author: Laurent Constantin <laurent.constantin@aql.fr>
+
+Because of SONAME changes with every release, netwib library has been 
+integrated into the netwox package and is not available as an external 
+package. In addition netwox uses -rpath switch for gcc to hide library 
+into /usr/lib/netwib/ directory. This way there is no documentation 
+nor headers for library available. Only credits.txt file has been included.
+
+Copyright:
+
+Copyright 1999-2005 Laurent Constantin <laurent.constantin@aql.fr>
+See also /usr/share/doc/netwox/credits.txt 
+         /usr/share/doc/netwox/netwib_credits.txt
+      or /usr/share/doc/netwag/credits.txt accordingly.
+
+License:
+
+This program is free software; you can redistribute it and/or modify it
+under the terms of the GNU General Public License as published by the
+Free Software Foundation; either version 2, or (at your option) any
+later version.
+
+On Debian systems, the complete text of the GNU General Public License
+can be found in the file `/usr/share/common-licenses/GPL'.

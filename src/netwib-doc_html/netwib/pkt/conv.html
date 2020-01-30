@@ -1,0 +1,44 @@
+<HTML><HEAD>
+<TITLE>netwib doc_html (version 5.39.0)</TITLE>
+</HEAD><BODY BGCOLOR="#FFFFFF" TEXT="#000000">
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../pkt.html">section index</A></H2><HR><BR>
+<PRE>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+typedef enum {
+  <FONT COLOR="#000044">NETWIB_PKT_NEWFIELD_BLANK</FONT> = 1, <FONT COLOR="#880000">/* do not try to compute field */</FONT>
+  <FONT COLOR="#000044">NETWIB_PKT_NEWFIELD_FILL</FONT>,      <FONT COLOR="#880000">/* compute field */</FONT>
+  <FONT COLOR="#000044">NETWIB_PKT_NEWFIELD_FILLBLANK</FONT>, <FONT COLOR="#880000">/* if can't compute left blank */</FONT>
+  <FONT COLOR="#000044">NETWIB_PKT_NEWFIELD_BEST</FONT> = <FONT COLOR="#000044">NETWIB_PKT_NEWFIELD_FILLBLANK</FONT>
+} <FONT COLOR="#000088">netwib_pkt_newfield</FONT>;
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_pkt_convert
+   Description :
+     Convert a packet from one type to another
+   Input parameter(s) :
+     dlttype : DLT type of input packet
+     *ppktin : buffer containing physical input packet
+     newfieldopt : type to use for optional fields
+     newfieldreq : type to use for mandatory fields
+     dlttypeout : wanted outtype
+   Input/output parameter(s) :
+     *plinkhdrout : new link header
+     *ppktout : packet to put after the link header
+   Output parameter(s) :
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_pkt_convert</B>(<FONT COLOR="#000088">netwib_device_dlttype</FONT> dlttypein,
+                              <FONT COLOR="#000088">netwib_constbuf</FONT> *ppktin,
+                              <FONT COLOR="#000088">netwib_pkt_newfield</FONT> newfieldopt,
+                              <FONT COLOR="#000088">netwib_pkt_newfield</FONT> newfieldreq,
+                              <FONT COLOR="#000088">netwib_device_dlttype</FONT> dlttypeout,
+                              <FONT COLOR="#000088">netwib_linkhdr</FONT> *plinkhdrout,
+                              <FONT COLOR="#000088">netwib_bufext</FONT> *ppktout);
+
+</PRE><BR><BR><HR><BR>
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../pkt.html">section index</A></H2>
+</BODY></HTML>

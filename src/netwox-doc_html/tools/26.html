@@ -1,0 +1,48 @@
+<HTML>
+ <HEAD>
+ <TITLE>Tool 26: Dump a file</TITLE>
+ </HEAD>
+ <BODY BGCOLOR="#FFFFFF">
+  <CENTER>   <H3>Tool 26: Dump a file</H3>
+  </CENTER>
+
+  <P><H3>Description:</H3>
+   <PRE>
+  This tool dumps the content of a file.
+  
+  By using default encoding type (dump), its output has two main columns:
+   - on left, data represented as hexadecimal
+   - on right, data with unprintable characters converted to dots
+  
+  Other encoding types permit to obtain base64 (base64_wrap), mixed,
+  etc.
+   </PRE>
+
+  <P><H3>Synonyms:</H3>
+  &nbsp;&nbsp;hexadecimal, printable<BR>
+
+  <P><H3>Usage:</H3>
+  &nbsp;&nbsp;netwox 26 -f file [-e encode]<BR>
+
+  <P><H3>Parameters:</H3>
+<TABLE BORDER=1 CELLPADDING=4>
+ <TR>
+  <TD ALIGN=middle><I>parameter</I></TD>
+  <TD ALIGN=middle><I>description</I></TD>
+  <TD ALIGN=middle><I>example</I></TD>
+ </TR>
+ <TR><TD><TT>-f|--src-file file</TD>
+<TD>source filename</TD>
+<TD>srcfile.txt</TD></TR>
+<TR><TD><TT>-e|--encode encode</TD>
+<TD>encoding type</TD>
+<TD>dump </TD></TR>
+</TABLE>
+
+  <P><H3>Examples:</H3>
+  &nbsp;&nbsp;netwox 26 -f "srcfile.txt"<BR>
+<BR>
+  &nbsp;&nbsp;netwox 26 --src-file "srcfile.txt"<BR>
+<BR>
+ </BODY>
+ </HTML>

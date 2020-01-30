@@ -1,0 +1,52 @@
+<HTML><HEAD>
+<TITLE>netwib doc_html (version 5.39.0)</TITLE>
+</HEAD><BODY BGCOLOR="#FFFFFF" TEXT="#000000">
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../sys.html">section index</A></H2><HR><BR>
+<PRE>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_internal_version
+   Description :
+     Obtain netwib version.
+   Input parameter(s) :
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pversionmajor : major version
+     *pversionminor : minor version
+     *pversionmicro : micro version
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_internal_version</B>(<FONT COLOR="#000088">netwib_uint32</FONT> *pversionmajor,
+                                   <FONT COLOR="#000088">netwib_uint32</FONT> *pversionminor,
+                                   <FONT COLOR="#000088">netwib_uint32</FONT> *pversionmicro);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_buf_append_internal
+   Description :
+     Append a string representing all compilation parameters.
+   Input parameter(s) :
+   Input/output parameter(s) :
+     *pbuf : <FONT COLOR="#000088">netwib_buf</FONT> receiving data
+   Output parameter(s) :
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_buf_append_internal</B>(<FONT COLOR="#000088">netwib_buf</FONT> *buf);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_internal_display
+   Description :
+     Print all compilation parameters.
+   Input parameter(s) :
+   Input/output parameter(s) :
+   Output parameter(s) :
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_internal_display</B>(void);
+</PRE><BR><BR><HR><BR>
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../sys.html">section index</A></H2>
+</BODY></HTML>

@@ -1,0 +1,113 @@
+<HTML><HEAD>
+<TITLE>netwib doc_html (version 5.39.0)</TITLE>
+</HEAD><BODY BGCOLOR="#FFFFFF" TEXT="#000000">
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../pkt.html">section index</A></H2><HR><BR>
+<PRE>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000"><B>/***************************************************************
+ * Refer to RFC 2461 to obtain more information about ICMPv6   *
+ * Neighbor Discovery options.                                 *
+ ***************************************************************/</B></FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+typedef enum {
+  <FONT COLOR="#000044">NETWIB_ICMP6NDTYPE_SRCLINK</FONT> = 1, <FONT COLOR="#880000">/* src link layer address */</FONT>
+  <FONT COLOR="#000044">NETWIB_ICMP6NDTYPE_DSTLINK</FONT> = 2, <FONT COLOR="#880000">/* dst link layer address */</FONT>
+  <FONT COLOR="#000044">NETWIB_ICMP6NDTYPE_PREFIX</FONT> = 3,  <FONT COLOR="#880000">/* prefix information */</FONT>
+  <FONT COLOR="#000044">NETWIB_ICMP6NDTYPE_REDIR</FONT> = 4,   <FONT COLOR="#880000">/* redirected */</FONT>
+  <FONT COLOR="#000044">NETWIB_ICMP6NDTYPE_MTU</FONT> = 5      <FONT COLOR="#880000">/* mtu */</FONT>
+} <FONT COLOR="#000088">netwib_icmp6ndtype</FONT>;
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+typedef struct {
+  <FONT COLOR="#000088">netwib_eth</FONT> linkad;
+} <FONT COLOR="#000088">netwib_icmp6nd_link</FONT>;
+typedef const <FONT COLOR="#000088">netwib_icmp6nd_link</FONT> <FONT COLOR="#000088">netwib_consticmp6nd_link</FONT>;
+
+typedef struct {
+  <FONT COLOR="#000088">netwib_uint8</FONT> prefixlength;
+  <FONT COLOR="#000088">netwib_bool</FONT> onlink;
+  <FONT COLOR="#000088">netwib_bool</FONT> autonomous;
+  <FONT COLOR="#000088">netwib_uint8</FONT> reserved1;
+  <FONT COLOR="#000088">netwib_uint32</FONT> validlifetime;
+  <FONT COLOR="#000088">netwib_uint32</FONT> preferredlifetime;
+  <FONT COLOR="#000088">netwib_uint32</FONT> reserved2;
+  <FONT COLOR="#000088">netwib_ip</FONT> prefix;
+} <FONT COLOR="#000088">netwib_icmp6nd_prefix</FONT>;
+typedef const <FONT COLOR="#000088">netwib_icmp6nd_prefix</FONT> <FONT COLOR="#000088">netwib_consticmp6nd_prefix</FONT>;
+
+typedef struct {
+  <FONT COLOR="#000088">netwib_uint16</FONT> reserved1;
+  <FONT COLOR="#000088">netwib_uint32</FONT> reserved2;
+  <FONT COLOR="#000088">netwib_bufext</FONT> badippacket;
+} <FONT COLOR="#000088">netwib_icmp6nd_redir</FONT>;
+typedef const <FONT COLOR="#000088">netwib_icmp6nd_redir</FONT> <FONT COLOR="#000088">netwib_consticmp6nd_redir</FONT>;
+
+typedef struct {
+  <FONT COLOR="#000088">netwib_uint16</FONT> reserved;
+  <FONT COLOR="#000088">netwib_uint32</FONT> mtu;
+} <FONT COLOR="#000088">netwib_icmp6nd_mtu</FONT>;
+typedef const <FONT COLOR="#000088">netwib_icmp6nd_mtu</FONT> <FONT COLOR="#000088">netwib_consticmp6nd_mtu</FONT>;
+
+typedef struct {
+  <FONT COLOR="#000088">netwib_icmp6ndtype</FONT> type;
+  union {
+    <FONT COLOR="#000088">netwib_icmp6nd_link</FONT> link;
+    <FONT COLOR="#000088">netwib_icmp6nd_prefix</FONT> prefix;
+    <FONT COLOR="#000088">netwib_icmp6nd_redir</FONT> redir;
+    <FONT COLOR="#000088">netwib_icmp6nd_mtu</FONT> mtu;
+  } opt;
+} <FONT COLOR="#000088">netwib_icmp6nd</FONT>;
+typedef const <FONT COLOR="#000088">netwib_icmp6nd</FONT> <FONT COLOR="#000088">netwib_consticmp6nd</FONT>;
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_icmp6nd_initdefault
+   Description :
+     Initialize a <FONT COLOR="#000088">netwib_icmp6nd</FONT> with default values.
+   Input parameter(s) :
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *picmp6nd : <FONT COLOR="#000088">netwib_icmp6nd</FONT> to initialize
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_icmp6nd_initdefault</B>(<FONT COLOR="#000088">netwib_icmp6ndtype</FONT> icmp6ndtype,
+                                      <FONT COLOR="#000088">netwib_icmp6nd</FONT> *picmp6nd);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_pkt_append_icmp6nd
+   Description :
+     Initialize physical data from a netwib_icmp6nd.
+   Input parameter(s) :
+     icmp6nd : netwib_icmp6nd
+   Input/output parameter(s) :
+     *ppht : buffer to initialize
+   Output parameter(s) :
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_pkt_append_icmp6nd</B>(<FONT COLOR="#000088">netwib_consticmp6nd</FONT> *picmp6nd,
+                                     <FONT COLOR="#000088">netwib_buf</FONT> *ppkt);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_pkt_decode_icmp6nd
+   Description :
+     Decode a <FONT COLOR="#000088">netwib_icmp6nd</FONT> from data coming from wire.
+   Input parameter(s) :
+     *ppkt : buffer containing physical data
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *picmp6nd : <FONT COLOR="#000088">netwib_icmp6nd</FONT> to initialize
+     *pskipsize : size to skip this option
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_pkt_decode_icmp6nd</B>(<FONT COLOR="#000088">netwib_constbuf</FONT> *ppkt,
+                                     <FONT COLOR="#000088">netwib_icmp6nd</FONT> *picmp6nd,
+                                     <FONT COLOR="#000088">netwib_uint32</FONT> *pskipsize);
+</PRE><BR><BR><HR><BR>
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../pkt.html">section index</A></H2>
+</BODY></HTML>

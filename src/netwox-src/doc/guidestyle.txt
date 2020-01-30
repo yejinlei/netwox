@@ -1,0 +1,145 @@
+                                Style guide
+
+
+This file describes the C coding style to apply to netwib and
+netwox source code.
+
+--------------------------------- RULES ---------------------------------
+
+ * Indentations and alignments :
+     - spaces are used
+     - tabulations are not used
+     - code is indented by two spaces
+         ... {
+           a = 3;
+         }
+
+ * Comments :
+     - only C style comment (no C++ "//")
+     - starts with "/* "
+     - ends with " */"
+     - are located before the code
+     - comments on several lines do not start with '*'
+         /* blabla
+            blibli */
+
+ * Functions declarations :
+     - in ANSI C
+     - one parameter per line, aligned after the '('
+     - no space before '('
+     - opening brace is on next line
+         int netwib_xyz(netwib_int32 a,
+                       netwib_string s)
+         {
+           ...
+
+ * Blocks (except functions) :
+     - opening brace is on the same line as condition
+     - closing brace is alone on a line and aligned
+         if (var != 3) {
+           ...
+         }
+
+ * Functions calls :
+     - no space before comma
+     - one space after comma
+     - if line is over 78 chars, cut it in two and align after the '('
+         netwib_xxy(a, b,
+                   c);
+
+ * Operators and spaces :
+     - must be surrounded by spaces : == != < <= > >= && ||
+     - should be surrounded by spaces : + - * / % & | ^ << >>
+     - should be surrounded by spaces : = += -= *= /= %= &= |= ^= <<= >>=
+     - near the variable : -(negative) ++ -- ~
+     - left at developer's appreciation : !  ,  ?:
+         a = b + c - ~d + i++;
+
+ * Sizeof and return :
+     - must be used like a function
+         a = sizeof(int);
+         return(5); (note : gnu indent puts a space before '(')
+
+ * Statement if :
+     - no extra space after (
+     - no extra space before )
+         if (...) {
+           ...
+         } else if {
+           ...
+         } else {
+           ...
+         }
+
+ * Statement for :
+     - no extra space after (
+     - no extra space before )
+     - separates with "; "
+         for (i = 0; i < 3000; i++) ...
+
+ * Statement switch :
+     - case are indented by one space
+     - code is indented by two spaces
+         switch(v) {
+          case 'e':
+           ...
+           break;
+          default:
+           ...
+         }
+
+ * Conditions :
+     - contains no affectation ('=')
+     - if on several lines, cut before the operator
+         if (i < 34) ...
+         if (i < 34
+             || i > 43) ...
+         
+ * Cast :
+     - no space after ')'
+     - a space before '*'
+         (int)a
+         (void *)a
+
+ * Structures :
+     - opening brace is on the same line as condition
+     - closing brace is alone on a line and aligned
+         struct a {
+	   int i;
+         };
+
+
+--------------------------------- INDENT ---------------------------------
+
+Indent parameters, helping to respect rules, are :
+ -bad -bap -nsob -nfc1 -nfca -ncdb -nsc -br -ce -cli2 -cbi2 -ss -npcs
+ -ncs -nbs -di2 -nbc -npsl -brs -i2 -ci2 -lp -l78 -bbo -hnl
+ -nut -bfda
+
+--------------------------------- EMACS ---------------------------------
+
+Emacs configuration, helping to respect rules, is :
+     (c-basic-offset . 2)
+     (indent-tabs-mode . nil)
+     (c-comment-only-line-offset . (0 . 0))
+     (c-offsets-alist . (
+                         (arglist-intro . c-lineup-arglist-intro-after-paren)
+                         (arglist-close . c-lineup-arglist)
+                         (statement . c-lineup-runin-statements)
+                         (statement-cont . c-lineup-math)
+                         (inline-open . 0)
+                         (defun-open . 0)
+                         (substatement-open . 11)
+                         (substatement . +) 
+                         (defun-block-intro . +)
+                         (statement-block-intro . +)
+                         (statement-case-open . +)
+                         (statement-case-intro . +)
+                         (case-label . +)
+                         (label . 1)
+                         )) 
+     (c-special-indent-hook . c-gnu-impose-minimum)
+     (c-comment-continuation-stars . "")
+     (c-hanging-comment-ender-p . t)
+
+For example, this can be added in file cc-styles.el.

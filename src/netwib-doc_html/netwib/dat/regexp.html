@@ -1,0 +1,92 @@
+<HTML><HEAD>
+<TITLE>netwib doc_html (version 5.39.0)</TITLE>
+</HEAD><BODY BGCOLOR="#FFFFFF" TEXT="#000000">
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../dat.html">section index</A></H2><HR><BR>
+<PRE>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000"><B>/***************************************************************
+ * Do a "man regexp" if you don't know what is a "regular      *
+ * expression").                                               *
+ ***************************************************************/</B></FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_buf_search_re
+   Description :
+     Search a regular expression in a string.
+   Input parameter(s) :
+     *pbuf : buffer containing input data
+     regularexpression : searched regular expression.
+                         For example : "a.", "f[A-Z]", etc.
+     casesensitive : <FONT COLOR="#000044">NETWIB_TRUE</FONT> if the search has to be case
+                     sensitive
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pfound : buffer set with found data
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : the searched element was found
+     <FONT COLOR="#000044">NETWIB_ERR_NOTFOUND</FONT> : the searched element wasn't found
+   This function supports <FONT COLOR="#000044">NETWIB_BUF_FLAGS_SENSITIVE</FONT>.
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_buf_search_re</B>(<FONT COLOR="#000088">netwib_constbuf</FONT> *pbuf,
+                                <FONT COLOR="#000088">netwib_constbuf</FONT> *pregularexpression,
+                                <FONT COLOR="#000088">netwib_bool</FONT> casesensitive,
+                                <FONT COLOR="#000088">netwib_bufext</FONT> *pfound);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000"><B>/***************************************************************
+ * A <FONT COLOR="#000088">netwib_regexp</FONT> contains an array of found data during a    *
+ * a regular expression search.                                *
+ * The element at index 0 defines the location of the          *
+ * global expression.                                          *
+ * Elements at index 1, 2, etc. define the found string        *
+ * between '(' and ')'.                                        *
+ *                                                             *
+ * For example, if the data is "houses" and the regular        *
+ * expression is "o(.(s))", then :                             *
+ *   re.numset = 3                                             *
+ *   re.array[0] = "ous"                                       *
+ *   re.array[1] = "us"                                        *
+ *   re.array[2] = "s"                                         *
+ *   re.array[3..63] not initialized                           *
+ ***************************************************************/</B></FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* We cannot have more than 64 parenthesis. This should be
+   sufficient in all cases, but you may want to increase it,
+   and recompile netwib.
+ */</FONT>
+<FONT COLOR="#008800">#define <FONT COLOR="#000044">NETWIB_REGEXP_MAXLEN</FONT> 64</FONT>
+typedef struct {
+  <FONT COLOR="#000088">netwib_uint32</FONT> numset; <FONT COLOR="#880000">/* number of buffers set */</FONT>
+  <FONT COLOR="#000088">netwib_bufext</FONT> array[<FONT COLOR="#000044">NETWIB_REGEXP_MAXLEN</FONT>];
+} <FONT COLOR="#000088">netwib_regexp</FONT>;
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_buf_search_regexp
+   Description :
+     Search a regular expression in a string.
+   Input parameter(s) :
+     *pbuf : buffer containing input data
+     regularexpression : searched regular expression.
+                         For example : "a.", "f[A-Z]", etc.
+     casesensitive : <FONT COLOR="#000044">NETWIB_TRUE</FONT> if the search has to be case
+                     sensitive
+   Input/output parameter(s) :
+   Output parameter(s) :
+     *pfound : <FONT COLOR="#000088">netwib_regexp</FONT> containing the found data
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : the searched regular expression was found
+     <FONT COLOR="#000044">NETWIB_ERR_NOTFOUND</FONT> : the searched regexp wasn't found
+   This function supports <FONT COLOR="#000044">NETWIB_BUF_FLAGS_SENSITIVE</FONT>.
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_buf_search_regexp</B>(<FONT COLOR="#000088">netwib_constbuf</FONT> *pbuf,
+                                    <FONT COLOR="#000088">netwib_constbuf</FONT> *pregularexpression,
+                                    <FONT COLOR="#000088">netwib_bool</FONT> casesensitive,
+                                    <FONT COLOR="#000088">netwib_regexp</FONT> *pfound);
+
+</PRE><BR><BR><HR><BR>
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../dat.html">section index</A></H2>
+</BODY></HTML>

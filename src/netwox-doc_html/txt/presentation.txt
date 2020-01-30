@@ -1,0 +1,16 @@
+Toolbox netwox helps to find and solve network problems.
+
+It provides 223 tools :
+ - udp/tcp clients/servers
+ - spoofing
+ - sniffing
+ - address conversion
+ - etc.
+
+Netwox is mainly oriented towards network administrators and
+security auditors.
+
+Some tools are only a simplified implementation, while others are
+very sophisticated. Read ./unimplemented.txt for more information.
+
+Netwox is available under the GNU GPL license.

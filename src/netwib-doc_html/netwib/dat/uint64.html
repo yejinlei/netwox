@@ -1,0 +1,337 @@
+<HTML><HEAD>
+<TITLE>netwib doc_html (version 5.39.0)</TITLE>
+</HEAD><BODY BGCOLOR="#FFFFFF" TEXT="#000000">
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../dat.html">section index</A></H2><HR><BR>
+<PRE>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000"><B>/***************************************************************
+ * Type netwib_uint64, can be represented as:                  *
+ *  - a 64 bit integer                                         *
+ *  - a structure containing two 32 bit integers               *
+ * In the first case, math operations are supported by the     *
+ * compiler.                                                   *
+ * In the second case, following functions are needed.         *
+ ***************************************************************/</B></FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#008800">#if <FONT COLOR="#000044">NETWIB_INT64_FAKE</FONT> == 0</FONT>
+<FONT COLOR="#008800"> #define <B>netwib__uint64_init_8</B>(a,b,c,d,e,f,g,h,x) x = <B>netwib_c2_uint64_8</B>(a,b,c,d,e,f,g,h)</FONT>
+<FONT COLOR="#008800"> #define <B>netwib__uint64_init_32</B>(a,b,x) x = (((netwib_uint64)((netwib_uint32)(a))&lt;&lt;32)|(netwib_uint64)((netwib_uint32)(b)))</FONT>
+<FONT COLOR="#008800">#else</FONT>
+<FONT COLOR="#008800"> #define <B>netwib__uint64_init_8</B>(a,b,c,d,e,f,g,h,x) (x).high = <B>netwib_c2_uint32_4</B>(a,b,c,d); (x).low = <B>netwib_c2_uint32_4</B>(e,f,g,h)</FONT>
+<FONT COLOR="#008800"> #define <B>netwib__uint64_init_32</B>(a,b,x) {(x).high = (a); (x).low = (b);}</FONT>
+<FONT COLOR="#008800">#endif</FONT>
+
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#008800">#if <FONT COLOR="#000044">NETWIB_INT64_FAKE</FONT> == 0</FONT>
+<FONT COLOR="#008800"> #define <B>netwib__uint64_init_uint32</B>(a,x) x = ((netwib_uint64)(a))</FONT>
+<FONT COLOR="#008800">#else</FONT>
+<FONT COLOR="#008800"> #define <B>netwib__uint64_init_uint32</B>(a,x) <B>netwib__uint64_init_32</B>(0,a,x)</FONT>
+<FONT COLOR="#008800">#endif</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#008800">#if <FONT COLOR="#000044">NETWIB_INT64_FAKE</FONT> == 0</FONT>
+<FONT COLOR="#008800"> #define <B>netwib__uint64_init_uintmax</B>(a,x) x = ((netwib_uint64)(a))</FONT>
+<FONT COLOR="#008800">#else</FONT>
+<FONT COLOR="#008800"> #if <FONT COLOR="#000044">NETWIB_INTMAX_BITS</FONT> == 64</FONT>
+<FONT COLOR="#008800">  #define <B>netwib__uint64_init_uintmax</B>(a,x) <B>netwib__uint64_init_32</B>((netwib_uint32)((a)&gt;&gt;32),(netwib_uint32)((a)&amp;0xFFFFFFFFu),x)</FONT>
+<FONT COLOR="#008800"> #else</FONT>
+<FONT COLOR="#008800">  #define <B>netwib__uint64_init_uintmax</B>(a,x) <B>netwib__uint64_init_uint32</B>(a,x)</FONT>
+<FONT COLOR="#008800"> #endif</FONT>
+<FONT COLOR="#008800">#endif</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#008800">#if <FONT COLOR="#000044">NETWIB_INT64_FAKE</FONT> == 0</FONT>
+<FONT COLOR="#008800"> #define <B>netwib__uint64_init_uintptr</B>(a,x) x = ((netwib_uint64)(a))</FONT>
+<FONT COLOR="#008800">#else</FONT>
+<FONT COLOR="#008800"> #if <FONT COLOR="#000044">NETWIB_INTPTR_BITS</FONT> == 64</FONT>
+<FONT COLOR="#008800">  #define <B>netwib__uint64_init_uintptr</B>(a,x) <B>netwib__uint64_init_32</B>((netwib_uint32)((a)&gt;&gt;32),(netwib_uint32)((a)&amp;0xFFFFFFFFu),x)</FONT>
+<FONT COLOR="#008800"> #else</FONT>
+<FONT COLOR="#008800">  #define <B>netwib__uint64_init_uintptr</B>(a,x) <B>netwib__uint64_init_uint32</B>(a,x)</FONT>
+<FONT COLOR="#008800"> #endif</FONT>
+<FONT COLOR="#008800">#endif</FONT>
+
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#008800">#if <FONT COLOR="#000044">NETWIB_INT64_FAKE</FONT> == 0</FONT>
+<FONT COLOR="#008800"> #define <B>netwib__int64_init_int32</B>(a,x) x = ((netwib_int64)(netwib_int32)(a))</FONT>
+<FONT COLOR="#008800">#else</FONT>
+<FONT COLOR="#008800"> #define <B>netwib__int64_init_int32</B>(a,x) { if ((netwib_int32)(a) &gt;= 0) { (x).high = 0; (x).low = (netwib_uint32)(a); } else { (x).high = 0xFFFFFFFFu; (x).low = (netwib_uint32)(netwib_int32)(a); } }</FONT>
+<FONT COLOR="#008800">#endif</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#008800">#if <FONT COLOR="#000044">NETWIB_INT64_FAKE</FONT> == 0</FONT>
+<FONT COLOR="#008800"> #define <B>netwib__int64_init_intmax</B>(a,x) x = ((netwib_int64)(netwib_intmax)(a))</FONT>
+<FONT COLOR="#008800">#else</FONT>
+<FONT COLOR="#008800"> #if <FONT COLOR="#000044">NETWIB_INTMAX_BITS</FONT> == 64</FONT>
+<FONT COLOR="#008800">  #define <B>netwib__int64_init_intmax</B>(a,x) <B>netwib__uint64_init_32</B>((netwib_uint32)((a)&gt;&gt;32),(netwib_uint32)((a)&amp;0xFFFFFFFFu),x)</FONT>
+<FONT COLOR="#008800"> #else</FONT>
+<FONT COLOR="#008800">  #define <B>netwib__int64_init_intmax</B>(a,x) <B>netwib__int64_init_int32</B>(a,x)</FONT>
+<FONT COLOR="#008800"> #endif</FONT>
+<FONT COLOR="#008800">#endif</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#008800">#if <FONT COLOR="#000044">NETWIB_INT64_FAKE</FONT> == 0</FONT>
+<FONT COLOR="#008800"> #define <B>netwib__int64_init_intptr</B>(a,x) x = ((netwib_int64)(netwib_intptr)(a))</FONT>
+<FONT COLOR="#008800">#else</FONT>
+<FONT COLOR="#008800"> #if <FONT COLOR="#000044">NETWIB_INTPTR_BITS</FONT> == 64</FONT>
+<FONT COLOR="#008800">  #define <B>netwib__int64_init_intptr</B>(a,x) <B>netwib__uint64_init_32</B>((netwib_uint32)((a)&gt;&gt;32),(netwib_uint32)((a)&amp;0xFFFFFFFFu),x)</FONT>
+<FONT COLOR="#008800"> #else</FONT>
+<FONT COLOR="#008800">  #define <B>netwib__int64_init_intptr</B>(a,x) <B>netwib__int64_init_int32</B>(a,x)</FONT>
+<FONT COLOR="#008800"> #endif</FONT>
+<FONT COLOR="#008800">#endif</FONT>
+
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#008800">#if <FONT COLOR="#000044">NETWIB_INT64_FAKE</FONT> == 0</FONT>
+<FONT COLOR="#008800"> #define <B>netwib__uint32_init_uint64</B>(a,x) x = ((netwib_uint32)(a))</FONT>
+<FONT COLOR="#008800">#else</FONT>
+<FONT COLOR="#008800"> #define <B>netwib__uint32_init_uint64</B>(a,x) x = ((a).low)</FONT>
+<FONT COLOR="#008800">#endif</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#008800">#if <FONT COLOR="#000044">NETWIB_INT64_FAKE</FONT> == 0</FONT>
+<FONT COLOR="#008800"> #define <B>netwib__uintmax_init_uint64</B>(a,x) x = ((netwib_uintmax)(a))</FONT>
+<FONT COLOR="#008800">#else</FONT>
+<FONT COLOR="#008800"> #if <FONT COLOR="#000044">NETWIB_INTMAX_BITS</FONT> == 64</FONT>
+<FONT COLOR="#008800">  #define <B>netwib__uintmax_init_uint64</B>(a,x) x = (((netwib_uintmax)((netwib_uint32)((a).high))&lt;&lt;32)|(netwib_uint64)((netwib_uint32)((a).low)))</FONT>
+<FONT COLOR="#008800"> #else</FONT>
+<FONT COLOR="#008800">  #define <B>netwib__uintmax_init_uint64</B>(a,x) x = ((netwib_uintmax)(a).low)</FONT>
+<FONT COLOR="#008800"> #endif</FONT>
+<FONT COLOR="#008800">#endif</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#008800">#if <FONT COLOR="#000044">NETWIB_INT64_FAKE</FONT> == 0</FONT>
+<FONT COLOR="#008800"> #define <B>netwib__uintptr_init_uint64</B>(a,x) x = ((netwib_uintptr)(a))</FONT>
+<FONT COLOR="#008800">#else</FONT>
+<FONT COLOR="#008800"> #if <FONT COLOR="#000044">NETWIB_INTPTR_BITS</FONT> == 64</FONT>
+<FONT COLOR="#008800">  #define <B>netwib__uintptr_init_uint64</B>(a,x) x = (((netwib_uintptr)((netwib_uint32)((a).high))&lt;&lt;32)|(netwib_uintptr)((netwib_uint32)((a).low)))</FONT>
+<FONT COLOR="#008800"> #else</FONT>
+<FONT COLOR="#008800">  #define <B>netwib__uintptr_init_uint64</B>(a,x) x = ((netwib_uintptr)(a).low)</FONT>
+<FONT COLOR="#008800"> #endif</FONT>
+<FONT COLOR="#008800">#endif</FONT>
+
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#008800">#if <FONT COLOR="#000044">NETWIB_INT64_FAKE</FONT> == 0</FONT>
+<FONT COLOR="#008800"> #define <B>netwib__int32_init_int64</B>(a,x) x = ((netwib_int32)(a))</FONT>
+<FONT COLOR="#008800">#else</FONT>
+<FONT COLOR="#008800"> #define <B>netwib__int32_init_int64</B>(a,x) x = ((netwib_int32)(a).low)</FONT>
+<FONT COLOR="#008800">#endif</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#008800">#if <FONT COLOR="#000044">NETWIB_INT64_FAKE</FONT> == 0</FONT>
+<FONT COLOR="#008800"> #define <B>netwib__intmax_init_int64</B>(a,x) x = ((netwib_intmax)(a))</FONT>
+<FONT COLOR="#008800">#else</FONT>
+<FONT COLOR="#008800"> #if <FONT COLOR="#000044">NETWIB_INTMAX_BITS</FONT> == 64</FONT>
+<FONT COLOR="#008800">  #define <B>netwib__intmax_init_int64</B>(a,x) x = (((netwib_intmax)((netwib_uint32)((a).high))&lt;&lt;32)|(netwib_uintmax)((netwib_uint32)((a).low)))</FONT>
+<FONT COLOR="#008800"> #else</FONT>
+<FONT COLOR="#008800">  #define <B>netwib__intmax_init_int64</B>(a,x) x = ((netwib_intmax)(a).low)</FONT>
+<FONT COLOR="#008800"> #endif</FONT>
+<FONT COLOR="#008800">#endif</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#008800">#if <FONT COLOR="#000044">NETWIB_INT64_FAKE</FONT> == 0</FONT>
+<FONT COLOR="#008800"> #define <B>netwib__intptr_init_int64</B>(a,x) x = ((netwib_intptr)(a))</FONT>
+<FONT COLOR="#008800">#else</FONT>
+<FONT COLOR="#008800"> #if <FONT COLOR="#000044">NETWIB_INTPTR_BITS</FONT> == 64</FONT>
+<FONT COLOR="#008800">  #define <B>netwib__intptr_init_int64</B>(a,x) x = (((netwib_intptr)((netwib_uint32)((a).high))&lt;&lt;32)|(netwib_uintptr)((netwib_uint32)((a).low)))</FONT>
+<FONT COLOR="#008800"> #else</FONT>
+<FONT COLOR="#008800">  #define <B>netwib__intptr_init_int64</B>(a,x) x = ((netwib_intptr)(a).low)</FONT>
+<FONT COLOR="#008800"> #endif</FONT>
+<FONT COLOR="#008800">#endif</FONT>
+
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#008800">#if <FONT COLOR="#000044">NETWIB_INT64_FAKE</FONT> == 0</FONT>
+<FONT COLOR="#008800">  #define <B>netwib__uint64_add</B>(a,b,x) x = (netwib_uint64)(a) + (netwib_uint64)(b);</FONT>
+<FONT COLOR="#008800">#else</FONT>
+<FONT COLOR="#008800">  #define <B>netwib__uint64_add</B>(a,b,x) { <FONT COLOR="#000088">netwib_uint32</FONT> netwib__uint64_add_tmp, <FONT COLOR="#000088">netwib__uint64_add_carry</FONT>; <FONT COLOR="#000088">netwib__uint64_add_tmp</FONT> = (a).low + (b).low; <FONT COLOR="#000088">netwib__uint64_add_carry</FONT> = (<FONT COLOR="#000088">netwib__uint64_add_tmp</FONT> &lt; (a).low) ? 1 : 0; (x).low = <FONT COLOR="#000088">netwib__uint64_add_tmp</FONT>; (x).high = (a).high + (b).high + <FONT COLOR="#000088">netwib__uint64_add_carry</FONT>; }</FONT>
+<FONT COLOR="#008800">#endif</FONT>
+<FONT COLOR="#008800">#define <B>netwib__int64_add</B>(a,b,x) <B>netwib__uint64_add</B>(a,b,x)</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#008800">#if <FONT COLOR="#000044">NETWIB_INT64_FAKE</FONT> == 0</FONT>
+<FONT COLOR="#008800">  #define <B>netwib__uint64_sub</B>(a,b,x) x = (netwib_uint64)(a) - (netwib_uint64)(b);</FONT>
+<FONT COLOR="#008800">#else</FONT>
+<FONT COLOR="#008800">  #define <B>netwib__uint64_sub</B>(a,b,x) { <FONT COLOR="#000088">netwib_uint32</FONT> netwib__uint64_add_tmp, <FONT COLOR="#000088">netwib__uint64_add_carry</FONT>; <FONT COLOR="#000088">netwib__uint64_add_tmp</FONT> = (a).low - (b).low; <FONT COLOR="#000088">netwib__uint64_add_carry</FONT> = (<FONT COLOR="#000088">netwib__uint64_add_tmp</FONT> &gt; (a).low) ? 1 : 0; (x).low = <FONT COLOR="#000088">netwib__uint64_add_tmp</FONT>; (x).high = (a).high - (b).high - <FONT COLOR="#000088">netwib__uint64_add_carry</FONT>; }</FONT>
+<FONT COLOR="#008800">#endif</FONT>
+<FONT COLOR="#008800">#define <B>netwib__int64_sub</B>(a,b,x) <B>netwib__uint64_sub</B>(a,b,x)</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+void <B>netwib__uint64_mul_private</B>(<FONT COLOR="#000088">netwib_uint64</FONT> a,
+                                <FONT COLOR="#000088">netwib_uint64</FONT> b,
+                                <FONT COLOR="#000088">netwib_uint64</FONT> *px);
+<FONT COLOR="#008800">#if <FONT COLOR="#000044">NETWIB_INT64_FAKE</FONT> == 0</FONT>
+<FONT COLOR="#008800">  #define <B>netwib__uint64_mul</B>(a,b,px) *(px) = (netwib_uint64)(a) * (netwib_uint64)(b)</FONT>
+<FONT COLOR="#008800">#else</FONT>
+<FONT COLOR="#008800">  #define <B>netwib__uint64_mul</B>(a,b,px) <B>netwib__uint64_mul_private</B>(a,b,px)</FONT>
+<FONT COLOR="#008800">#endif</FONT>
+<FONT COLOR="#008800">#define <B>netwib__int64_mul</B>(a,b,px) <B>netwib__uint64_mul</B>(a,b,px)</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+void <B>netwib__uint64_div_private</B>(<FONT COLOR="#000088">netwib_uint64</FONT> a,
+                                <FONT COLOR="#000088">netwib_uint64</FONT> b,
+                                <FONT COLOR="#000088">netwib_uint64</FONT> *pq,
+                                <FONT COLOR="#000088">netwib_uint64</FONT> *pr);
+void <B>netwib__int64_div_private</B>(<FONT COLOR="#000088">netwib_int64</FONT> a,
+                               <FONT COLOR="#000088">netwib_int64</FONT> b,
+                               <FONT COLOR="#000088">netwib_int64</FONT> *pq,
+                               <FONT COLOR="#000088">netwib_int64</FONT> *pr);
+<FONT COLOR="#008800">#if <FONT COLOR="#000044">NETWIB_INT64_FAKE</FONT> == 0</FONT>
+<FONT COLOR="#008800">  #define <B>netwib__uint64_div</B>(a,b,pq,pr) { <FONT COLOR="#000088">netwib_uint64</FONT> <FONT COLOR="#000088">netwib__uint64_div_tmp</FONT>; <FONT COLOR="#000088">netwib__uint64_div_tmp</FONT> = (netwib_uint64)(a) / (netwib_uint64)(b); *(pr) = (netwib_uint64)(a) % (netwib_uint64)(b); *(pq) = <FONT COLOR="#000088">netwib__uint64_div_tmp</FONT>; }</FONT>
+<FONT COLOR="#008800">  #define <B>netwib__int64_div</B>(a,b,pq,pr) { <FONT COLOR="#000088">netwib_int64</FONT> <FONT COLOR="#000088">netwib__int64_div_tmp</FONT>; <FONT COLOR="#000088">netwib__int64_div_tmp</FONT> = (netwib_int64)(a) / (netwib_int64)(b); *(pr) = (netwib_int64)(a) % (netwib_int64)(b); *(pq) = <FONT COLOR="#000088">netwib__int64_div_tmp</FONT>; }</FONT>
+<FONT COLOR="#008800">#else</FONT>
+<FONT COLOR="#008800">  #define <B>netwib__uint64_div</B>(a,b,pq,pr) <B>netwib__uint64_div_private</B>(a,b,pq,pr)</FONT>
+<FONT COLOR="#008800">  #define <B>netwib__int64_div</B>(a,b,pq,pr) <B>netwib__int64_div_private</B>(a,b,pq,pr)</FONT>
+<FONT COLOR="#008800">#endif</FONT>
+
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#008800">#if <FONT COLOR="#000044">NETWIB_INT64_FAKE</FONT> == 0</FONT>
+<FONT COLOR="#008800">  #define <B>netwib__uint64_inc</B>(x) x = (netwib_uint64)(x) + 1;</FONT>
+<FONT COLOR="#008800">#else</FONT>
+<FONT COLOR="#008800">  #define <B>netwib__uint64_inc</B>(x) { if ((x).low == 0xFFFFFFFFu) { (x).high++; (x).low = 0; } else { (x).low++; } }</FONT>
+<FONT COLOR="#008800">#endif</FONT>
+<FONT COLOR="#008800">#define <B>netwib__int64_inc</B>(x) <B>netwib__uint64_inc</B>(x)</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#008800">#if <FONT COLOR="#000044">NETWIB_INT64_FAKE</FONT> == 0</FONT>
+<FONT COLOR="#008800">  #define <B>netwib__uint64_dec</B>(x) x = (netwib_uint64)(x) - 1;</FONT>
+<FONT COLOR="#008800">#else</FONT>
+<FONT COLOR="#008800">  #define <B>netwib__uint64_dec</B>(x) { if ((x).low == 0) { (x).high--; (x).low = 0xFFFFFFFFu; } else { (x).low--; } }</FONT>
+<FONT COLOR="#008800">#endif</FONT>
+<FONT COLOR="#008800">#define <B>netwib__int64_dec</B>(x) <B>netwib__uint64_dec</B>(x)</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#008800">#if <FONT COLOR="#000044">NETWIB_INT64_FAKE</FONT> == 0</FONT>
+<FONT COLOR="#008800">  #define <B>netwib__uint64_cmp_eq</B>(a,b) ((netwib_uint64)(a) == (netwib_uint64)(b))</FONT>
+<FONT COLOR="#008800">  #define <B>netwib__uint64_cmp_ne</B>(a,b) ((netwib_uint64)(a) != (netwib_uint64)(b))</FONT>
+<FONT COLOR="#008800">  #define <B>netwib__uint64_cmp_lt</B>(a,b) ((netwib_uint64)(a) &lt; (netwib_uint64)(b))</FONT>
+<FONT COLOR="#008800">  #define <B>netwib__uint64_cmp_le</B>(a,b) ((netwib_uint64)(a) &lt;= (netwib_uint64)(b))</FONT>
+<FONT COLOR="#008800">  #define <B>netwib__uint64_cmp_gt</B>(a,b) ((netwib_uint64)(a) &gt; (netwib_uint64)(b))</FONT>
+<FONT COLOR="#008800">  #define <B>netwib__uint64_cmp_ge</B>(a,b) ((netwib_uint64)(a) &gt;= (netwib_uint64)(b))</FONT>
+<FONT COLOR="#008800">  #define <B>netwib__int64_cmp_eq</B>(a,b) ((netwib_int64)(a) == (netwib_int64)(b))</FONT>
+<FONT COLOR="#008800">  #define <B>netwib__int64_cmp_ne</B>(a,b) ((netwib_int64)(a) != (netwib_int64)(b))</FONT>
+<FONT COLOR="#008800">  #define <B>netwib__int64_cmp_lt</B>(a,b) ((netwib_int64)(a) &lt; (netwib_int64)(b))</FONT>
+<FONT COLOR="#008800">  #define <B>netwib__int64_cmp_le</B>(a,b) ((netwib_int64)(a) &lt;= (netwib_int64)(b))</FONT>
+<FONT COLOR="#008800">  #define <B>netwib__int64_cmp_gt</B>(a,b) ((netwib_int64)(a) &gt; (netwib_int64)(b))</FONT>
+<FONT COLOR="#008800">  #define <B>netwib__int64_cmp_ge</B>(a,b) ((netwib_int64)(a) &gt;= (netwib_int64)(b))</FONT>
+<FONT COLOR="#008800">#else</FONT>
+<FONT COLOR="#008800">  #define <B>netwib__uint64_cmp_eq</B>(a,b) ( ((a).high == (b).high) &amp;&amp; ((a).low == (b).low) )</FONT>
+<FONT COLOR="#008800">  #define <B>netwib__uint64_cmp_ne</B>(a,b) ( ((a).high != (b).high) || ((a).low != (b).low) )</FONT>
+<FONT COLOR="#008800">  #define <B>netwib__uint64_cmp_lt</B>(a,b) ( ((a).high &lt; (b).high) || ( ((a).high == (b).high) &amp;&amp; ((a).low &lt; (b).low) ) )</FONT>
+<FONT COLOR="#008800">  #define <B>netwib__uint64_cmp_le</B>(a,b) ( ((a).high &lt; (b).high) || ( ((a).high == (b).high) &amp;&amp; ((a).low &lt;= (b).low) ) )</FONT>
+<FONT COLOR="#008800">  #define <B>netwib__uint64_cmp_gt</B>(a,b) ( ((a).high &gt; (b).high) || ( ((a).high == (b).high) &amp;&amp; ((a).low &gt; (b).low) ) )</FONT>
+<FONT COLOR="#008800">  #define <B>netwib__uint64_cmp_ge</B>(a,b) ( ((a).high &gt; (b).high) || ( ((a).high == (b).high) &amp;&amp; ((a).low &gt;= (b).low) ) )</FONT>
+<FONT COLOR="#008800">  #define <B>netwib__int64_cmp_eq</B>(a,b) ( ((a).high == (b).high) &amp;&amp; ((a).low == (b).low) )</FONT>
+<FONT COLOR="#008800">  #define <B>netwib__int64_cmp_ne</B>(a,b) ( ((a).high != (b).high) || ((a).low != (b).low) )</FONT>
+<FONT COLOR="#008800">  #define <B>netwib__int64_cmp_lt</B>(a,b) ( ((netwib_int32)(a).high &lt; (netwib_int32)(b).high) || ( ((netwib_int32)(a).high == (netwib_int32)(b).high) &amp;&amp; ((netwib_int32)(a).low &lt; (netwib_int32)(b).low) ) )</FONT>
+<FONT COLOR="#008800">  #define <B>netwib__int64_cmp_le</B>(a,b) ( ((netwib_int32)(a).high &lt; (netwib_int32)(b).high) || ( ((netwib_int32)(a).high == (netwib_int32)(b).high) &amp;&amp; ((netwib_int32)(a).low &lt;= (netwib_int32)(b).low) ) )</FONT>
+<FONT COLOR="#008800">  #define <B>netwib__int64_cmp_gt</B>(a,b) ( ((netwib_int32)(a).high &gt; (netwib_int32)(b).high) || ( ((netwib_int32)(a).high == (netwib_int32)(b).high) &amp;&amp; ((netwib_int32)(a).low &gt; (netwib_int32)(b).low) ) )</FONT>
+<FONT COLOR="#008800">  #define <B>netwib__int64_cmp_ge</B>(a,b) ( ((netwib_int32)(a).high &gt; (netwib_int32)(b).high) || ( ((netwib_int32)(a).high == (netwib_int32)(b).high) &amp;&amp; ((netwib_int32)(a).low &gt;= (netwib_int32)(b).low) ) )</FONT>
+<FONT COLOR="#008800">#endif</FONT>
+
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#008800">#if <FONT COLOR="#000044">NETWIB_INT64_FAKE</FONT> == 0</FONT>
+<FONT COLOR="#008800">  #define <B>netwib__int64_neg</B>(a,x) x = -(netwib_int64)(a);</FONT>
+<FONT COLOR="#008800">#else</FONT>
+<FONT COLOR="#008800">  #define <B>netwib__int64_neg</B>(a,x) { (x).high = ~(a).high; (x).low = ~(a).low; <B>netwib__uint64_inc</B>(x); }</FONT>
+<FONT COLOR="#008800">#endif</FONT>
+
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* For shl, shr, rol and rol, I encountered several problems with gcc
+   on 32 bit architectures:
+    - x &lt;&lt; 64 = zero with "gcc -O"
+    - x &lt;&lt; 64 = unchanged with "gcc -O2"
+   There are also problems under Solaris Sparc, with rol(0).
+   I decided to normalize to have a coherent behavior.
+*/</FONT>
+<FONT COLOR="#008800">#if <FONT COLOR="#000044">NETWIB_INT64_FAKE</FONT> == 0</FONT>
+<FONT COLOR="#008800">  #define <B>netwib__uint64_shl</B>(a,n,x) { <FONT COLOR="#000088">netwib_uint32</FONT> <FONT COLOR="#000088">netwib__uint64_shl_n</FONT> = (n); if (<FONT COLOR="#000088">netwib__uint64_shl_n</FONT> == 0) { (x) = (a); } else if (<FONT COLOR="#000088">netwib__uint64_shl_n</FONT> &gt;= 64) { (x) = 0; } else {(x) = (a) &lt;&lt; <FONT COLOR="#000088">netwib__uint64_shl_n</FONT>;} }</FONT>
+<FONT COLOR="#008800">#else</FONT>
+<FONT COLOR="#008800">  #define <B>netwib__uint64_shl</B>(a,n,x) { <FONT COLOR="#000088">netwib_uint32</FONT> netwib__uint64_shl_tmp, <FONT COLOR="#000088">netwib__uint64_shl_n</FONT> = n; if (<FONT COLOR="#000088">netwib__uint64_shl_n</FONT> == 0) { (x).high = (a).high; (x).low = (a).low; } else if (<FONT COLOR="#000088">netwib__uint64_shl_n</FONT> &gt;= 64) { (x).high = 0; (x).low = 0; } else if (<FONT COLOR="#000088">netwib__uint64_shl_n</FONT> &lt; 32) { <FONT COLOR="#000088">netwib__uint64_shl_tmp</FONT> = (a).high &lt;&lt; <FONT COLOR="#000088">netwib__uint64_shl_n</FONT> | ((a).low &gt;&gt; (32 - netwib__uint64_shl_n)); (x).low = (a).low &lt;&lt; <FONT COLOR="#000088">netwib__uint64_shl_n</FONT>; (x).high = <FONT COLOR="#000088">netwib__uint64_shl_tmp</FONT>; } else { <FONT COLOR="#000088">netwib__uint64_shl_n</FONT> -= 32; (x).high = (a).low &lt;&lt; <FONT COLOR="#000088">netwib__uint64_shl_n</FONT> ; (x).low = 0; } }</FONT>
+<FONT COLOR="#008800">#endif</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#008800">#if <FONT COLOR="#000044">NETWIB_INT64_FAKE</FONT> == 0</FONT>
+<FONT COLOR="#008800">  #define <B>netwib__uint64_shr</B>(a,n,x) { <FONT COLOR="#000088">netwib_uint32</FONT> <FONT COLOR="#000088">netwib__uint64_shr_n</FONT> = (n);  if (<FONT COLOR="#000088">netwib__uint64_shr_n</FONT> == 0) { (x) = (a); } else if (<FONT COLOR="#000088">netwib__uint64_shr_n</FONT> &gt;= 64) { (x) = 0; } else { x = (a) &gt;&gt; <FONT COLOR="#000088">netwib__uint64_shr_n</FONT>; } }</FONT>
+<FONT COLOR="#008800">#else</FONT>
+<FONT COLOR="#008800">  #define <B>netwib__uint64_shr</B>(a,n,x) { <FONT COLOR="#000088">netwib_uint32</FONT> netwib__uint64_shr_tmp, <FONT COLOR="#000088">netwib__uint64_shr_n</FONT> = n; if (<FONT COLOR="#000088">netwib__uint64_shr_n</FONT> == 0) { (x).high = (a).high; (x).low = (a).low; } else if (<FONT COLOR="#000088">netwib__uint64_shr_n</FONT> &gt;= 64) { (x).high = 0; (x).low = 0; } else if (<FONT COLOR="#000088">netwib__uint64_shr_n</FONT> &lt; 32) { <FONT COLOR="#000088">netwib__uint64_shr_tmp</FONT> = (a).low &gt;&gt; <FONT COLOR="#000088">netwib__uint64_shr_n</FONT> | ((a).high &lt;&lt; (32 - netwib__uint64_shr_n)); (x).high = (a).high &gt;&gt; <FONT COLOR="#000088">netwib__uint64_shr_n</FONT>; (x).low = <FONT COLOR="#000088">netwib__uint64_shr_tmp</FONT>; } else { <FONT COLOR="#000088">netwib__uint64_shr_n</FONT> -= 32; (x).low = (a).high &gt;&gt; <FONT COLOR="#000088">netwib__uint64_shr_n</FONT>; (x).high = 0; } }</FONT>
+<FONT COLOR="#008800">#endif</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#008800">#if <FONT COLOR="#000044">NETWIB_INT64_FAKE</FONT> == 0</FONT>
+<FONT COLOR="#008800">  #define <B>netwib__uint64_rol</B>(a,n,x) { <FONT COLOR="#000088">netwib_uint32</FONT> <FONT COLOR="#000088">netwib__uint64_rol_n</FONT> = (n)%64; if (<FONT COLOR="#000088">netwib__uint64_rol_n</FONT> == 0) { x = (a); } else { x = ((netwib_uint64)( (netwib_uint64)((a)&lt;&lt;netwib__uint64_rol_n) | (netwib_uint64)((a)&gt;&gt;(64-netwib__uint64_rol_n)) )); } }</FONT>
+<FONT COLOR="#008800">#else</FONT>
+<FONT COLOR="#008800">  #define <B>netwib__uint64_rol</B>(a,n,x) { <FONT COLOR="#000088">netwib_uint32</FONT> netwib__uint64_rol_tmp, <FONT COLOR="#000088">netwib__uint64_rol_n</FONT> = (n)%64; if (<FONT COLOR="#000088">netwib__uint64_rol_n</FONT> == 0) { (x).high = (a).high; (x).low = (a).low; } else if (<FONT COLOR="#000088">netwib__uint64_rol_n</FONT> &lt; 32) { <FONT COLOR="#000088">netwib__uint64_rol_tmp</FONT> = (a).high &lt;&lt; <FONT COLOR="#000088">netwib__uint64_rol_n</FONT> | ((a).low &gt;&gt; (32 - netwib__uint64_rol_n)); (x).low = (a).low &lt;&lt; <FONT COLOR="#000088">netwib__uint64_rol_n</FONT> | ((a).high &gt;&gt; (32 - netwib__uint64_rol_n)); (x).high = <FONT COLOR="#000088">netwib__uint64_rol_tmp</FONT>; } else { <FONT COLOR="#000088">netwib__uint64_rol_n</FONT> -= 32; <FONT COLOR="#000088">netwib__uint64_rol_tmp</FONT> = (a).low &lt;&lt; <FONT COLOR="#000088">netwib__uint64_rol_n</FONT> | ((a).high &gt;&gt; (32 - netwib__uint64_rol_n)); (x).low = (a).high &lt;&lt; <FONT COLOR="#000088">netwib__uint64_rol_n</FONT> | ((a).low &gt;&gt; (32 - netwib__uint64_rol_n)); (x).high = <FONT COLOR="#000088">netwib__uint64_rol_tmp</FONT>; } }</FONT>
+<FONT COLOR="#008800">#endif</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#008800">#if <FONT COLOR="#000044">NETWIB_INT64_FAKE</FONT> == 0</FONT>
+<FONT COLOR="#008800">  #define <B>netwib__uint64_ror</B>(a,n,x) { <FONT COLOR="#000088">netwib_uint32</FONT> <FONT COLOR="#000088">netwib__uint64_ror_n</FONT> = (n)%64; if (<FONT COLOR="#000088">netwib__uint64_ror_n</FONT> == 0) { x = (a); } else { x = ((netwib_uint64)( (netwib_uint64)((a)&gt;&gt;netwib__uint64_ror_n) | (netwib_uint64)((a)&lt;&lt;(64-netwib__uint64_ror_n)) )); } }</FONT>
+<FONT COLOR="#008800">#else</FONT>
+<FONT COLOR="#008800">  #define <B>netwib__uint64_ror</B>(a,n,x) { <FONT COLOR="#000088">netwib_uint32</FONT> netwib__uint64_ror_tmp, <FONT COLOR="#000088">netwib__uint64_ror_n</FONT> = (n)%64; if (<FONT COLOR="#000088">netwib__uint64_ror_n</FONT> == 0) { (x).high = (a).high; (x).low = (a).low; } else if (<FONT COLOR="#000088">netwib__uint64_ror_n</FONT> &lt; 32) { <FONT COLOR="#000088">netwib__uint64_ror_tmp</FONT> = (a).low &gt;&gt; <FONT COLOR="#000088">netwib__uint64_ror_n</FONT> | ((a).high &lt;&lt; (32 - netwib__uint64_ror_n)); (x).high = (a).high &gt;&gt; <FONT COLOR="#000088">netwib__uint64_ror_n</FONT> | ((a).low &lt;&lt; (32 - netwib__uint64_ror_n)); (x).low = <FONT COLOR="#000088">netwib__uint64_ror_tmp</FONT>; } else { <FONT COLOR="#000088">netwib__uint64_ror_n</FONT> -= 32; <FONT COLOR="#000088">netwib__uint64_ror_tmp</FONT> = (a).high &gt;&gt; <FONT COLOR="#000088">netwib__uint64_ror_n</FONT> | ((a).low &lt;&lt; (32 - netwib__uint64_ror_n)); (x).high = (a).low &gt;&gt; <FONT COLOR="#000088">netwib__uint64_ror_n</FONT> | ((a).high &lt;&lt; (32 - netwib__uint64_ror_n)); (x).low = <FONT COLOR="#000088">netwib__uint64_ror_tmp</FONT>;} }</FONT>
+<FONT COLOR="#008800">#endif</FONT>
+
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#008800">#if <FONT COLOR="#000044">NETWIB_INT64_FAKE</FONT> == 0</FONT>
+<FONT COLOR="#008800">  #define <B>netwib__uint64_and</B>(a,b,x) x = (netwib_uint64)(a) &amp; (netwib_uint64)(b);</FONT>
+<FONT COLOR="#008800">#else</FONT>
+<FONT COLOR="#008800">  #define <B>netwib__uint64_and</B>(a,b,x) { (x).high = (a).high &amp; (b).high; (x).low = (a).low &amp; (b).low; }</FONT>
+<FONT COLOR="#008800">#endif</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#008800">#if <FONT COLOR="#000044">NETWIB_INT64_FAKE</FONT> == 0</FONT>
+<FONT COLOR="#008800">  #define <B>netwib__uint64_or</B>(a,b,x) x = (netwib_uint64)(a) | (netwib_uint64)(b);</FONT>
+<FONT COLOR="#008800">#else</FONT>
+<FONT COLOR="#008800">  #define <B>netwib__uint64_or</B>(a,b,x) { (x).high = (a).high | (b).high; (x).low = (a).low | (b).low; }</FONT>
+<FONT COLOR="#008800">#endif</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#008800">#if <FONT COLOR="#000044">NETWIB_INT64_FAKE</FONT> == 0</FONT>
+<FONT COLOR="#008800">  #define <B>netwib__uint64_xor</B>(a,b,x) x = (netwib_uint64)(a) ^ (netwib_uint64)(b);</FONT>
+<FONT COLOR="#008800">#else</FONT>
+<FONT COLOR="#008800">  #define <B>netwib__uint64_xor</B>(a,b,x) { (x).high = (a).high ^ (b).high; (x).low = (a).low ^ (b).low; }</FONT>
+<FONT COLOR="#008800">#endif</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#008800">#if <FONT COLOR="#000044">NETWIB_INT64_FAKE</FONT> == 0</FONT>
+<FONT COLOR="#008800">  #define <B>netwib__uint64_not</B>(a,x) x = ~(netwib_uint64)(a);</FONT>
+<FONT COLOR="#008800">#else</FONT>
+<FONT COLOR="#008800">  #define <B>netwib__uint64_not</B>(a,x) { (x).high = ~(a).high; (x).low = ~(a).low; }</FONT>
+<FONT COLOR="#008800">#endif</FONT>
+
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* To represent values &gt; 0xFFFFFFFF :
+    - gcc/mingw needs 0xf....fLL
+    - Microsoft Visual 6 does not support LL
+ */</FONT>
+<FONT COLOR="#008800">#if defined NETWIBDEF_PROGCC_VISUALC</FONT>
+<FONT COLOR="#008800">  #define <FONT COLOR="#000044">NETWIB_UINT_LL</FONT>(x) (x)</FONT>
+<FONT COLOR="#008800">  #define <FONT COLOR="#000044">NETWIB_INT_LL</FONT>(x) (x)</FONT>
+<FONT COLOR="#008800">#else</FONT>
+<FONT COLOR="#008800">  #define <FONT COLOR="#000044">NETWIB_UINT_LL</FONT>(x) (x ## LLU)</FONT>
+<FONT COLOR="#008800">  #define <FONT COLOR="#000044">NETWIB_INT_LL</FONT>(x) (x ## LL)</FONT>
+<FONT COLOR="#008800">#endif</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* To initialize a static variable */</FONT>
+<FONT COLOR="#008800">#if <FONT COLOR="#000044">NETWIB_INT64_FAKE</FONT> == 0</FONT>
+<FONT COLOR="#008800">  #define <FONT COLOR="#000044">NETWIB_UINT_STATIC</FONT>(ahigh,alow) (((netwib_uint64)((netwib_uint32)(ahigh))&lt;&lt;32)|(netwib_uint64)((netwib_uint32)(alow)))</FONT>
+<FONT COLOR="#008800">  #define <FONT COLOR="#000044">NETWIB_INT_STATIC</FONT>(ahigh,alow) (((netwib_int64)((netwib_uint32)(ahigh))&lt;&lt;32)|(netwib_uint64)((netwib_uint32)(alow)))</FONT>
+<FONT COLOR="#008800">#else</FONT>
+<FONT COLOR="#008800">  #define <FONT COLOR="#000044">NETWIB_UINT_STATIC</FONT>(ahigh,alow) {(ahigh), (alow)}</FONT>
+<FONT COLOR="#008800">  #define <FONT COLOR="#000044">NETWIB_INT_STATIC</FONT>(ahigh,alow) {(ahigh), (alow)}</FONT>
+<FONT COLOR="#008800">#endif</FONT>
+</PRE><BR><BR><HR><BR>
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../dat.html">section index</A></H2>
+</BODY></HTML>

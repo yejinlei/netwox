@@ -1,0 +1,87 @@
+<HTML>
+ <HEAD>
+ <TITLE>Tool 69: Scan UDP</TITLE>
+ </HEAD>
+ <BODY BGCOLOR="#FFFFFF">
+  <CENTER>   <H3>Tool 69: Scan UDP</H3>
+  </CENTER>
+
+  <P><H3>Description:</H3>
+   <PRE>
+  This tool checks if several UDP ports are open on host.
+  This tool sends an UDP packet to a computer. If host permits UDP, it
+  will send back an ICMP error (if port is closed), or send back nothing
+  (if port is open). So, it's important to understand UDP port has to be
+  closed for computer to return something.
+  Parameter --spoofip indicates how to generate link layer for spoofing.
+  Values 'best', 'link' or 'raw' are common choices for --spoofip. Here
+  is the list of accepted values:
+   - 'raw' means to spoof at IP4/IP6 level (it uses system IP stack). If
+     a firewall is installed, or on some systems, this might not work.
+   - 'linkf' means to spoof at link level (currently, only Ethernet is
+     supported). The 'f' means to Fill source Ethernet address.
+     However, if source IP address is spoofed, it might be impossible
+     to Fill it. So, linkf will not work: use linkb or linkfb instead.
+   - 'linkb' means to spoof at link level. The 'b' means to left a Blank
+     source Ethernet address (0:0:0:0:0:0, do not try to Fill it).
+   - 'linkfb' means to spoof at link level. The 'f' means to try to Fill
+     source Ethernet address, but if it is not possible, it is left
+     Blank.
+   - 'rawlinkf' means to try 'raw', then try 'linkf'
+   - 'rawlinkb' means to try 'raw', then try 'linkb'
+   - 'rawlinkfb' means to try 'raw', then try 'linkfb'
+   - 'linkfraw' means to try 'linkf', then try 'raw'
+   - 'linkbraw' means to try 'linkb', then try 'raw'
+   - 'linkfbraw' means to try 'linkfb', then try 'raw'
+   - 'link' is an alias for 'linkfb'
+   - 'rawlink' is an alias for 'rawlinkfb'
+   - 'linkraw' is an alias for 'linkfbraw'
+   - 'best' is an alias for 'linkraw'. It should work in all cases.
+  
+  This tool may need to be run with admin privilege in order to sniff
+  and spoof.
+   </PRE>
+
+  <P><H3>Synonyms:</H3>
+  &nbsp;&nbsp;nmap<BR>
+
+  <P><H3>Usage:</H3>
+  &nbsp;&nbsp;netwox 69 -i ips -p ports [-s spoofip] [-m uint32] [-M uint32] [-u|+u] [-n uint32]<BR>
+
+  <P><H3>Parameters:</H3>
+<TABLE BORDER=1 CELLPADDING=4>
+ <TR>
+  <TD ALIGN=middle><I>parameter</I></TD>
+  <TD ALIGN=middle><I>description</I></TD>
+  <TD ALIGN=middle><I>example</I></TD>
+ </TR>
+ <TR><TD><TT>-i|--ips ips</TD>
+<TD>list/range of IP addresses</TD>
+<TD>1.2.3.4,5.6.7.8</TD></TR>
+<TR><TD><TT>-p|--ports ports</TD>
+<TD>list/range of port number</TD>
+<TD>all</TD></TR>
+<TR><TD><TT>-s|--spoofip spoofip</TD>
+<TD>IP spoof initialization type</TD>
+<TD>best</TD></TR>
+<TR><TD><TT>-m|--min-ms uint32</TD>
+<TD>min millisecond delay between packets</TD>
+<TD>0</TD></TR>
+<TR><TD><TT>-M|--max-ms uint32</TD>
+<TD>max millisecond wait for answers</TD>
+<TD>5000</TD></TR>
+<TR><TD><TT>-u|--disp-useful|+u|--no-disp-useful</TD>
+<TD>only display useful info</TD>
+<TD>&nbsp;</TD></TR>
+<TR><TD><TT>-n|--numtargets uint32</TD>
+<TD>number of simultaneous targets</TD>
+<TD>20 </TD></TR>
+</TABLE>
+
+  <P><H3>Examples:</H3>
+  &nbsp;&nbsp;netwox 69 -i "1.2.3.4,5.6.7.8" -p "all"<BR>
+<BR>
+  &nbsp;&nbsp;netwox 69 --ips "1.2.3.4,5.6.7.8" --ports "all"<BR>
+<BR>
+ </BODY>
+ </HTML>

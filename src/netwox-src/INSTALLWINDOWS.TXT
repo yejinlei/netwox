@@ -1,0 +1,72 @@
+                 -------------------------------
+                 |        INTRODUCTION         |
+                 -------------------------------
+
+This package permits to COMPILE netwox539.exe. If you seek a 
+pre-compiled version, download netwox-5.39.0-bin_windows.tgz.
+
+Note : if you encounter problems, read ./doc/probleminstallwindows.txt
+
+There are 2 steps :
+ - compile and install netwib [if not already installed]
+ - compile and install netwox
+
+
+                  ------------------------------
+                  |       STEP 1 : netwib      |
+                  ------------------------------
+
+If netwib isn't installed on your system, you have to do it :
+   http://ntwib.sourceforge.net/
+Installation procedure for netwib is explained in downloaded files.
+
+
+                  -----------------------------
+                  |      STEP 2 : netwox      |
+                  -----------------------------
+
+You need a compiler :
+ - Visual C++ (tested with version 6)
+ - Dev-C++/Mingw32 (tested with version 5 beta)
+
+Rename "src/def_windows.h" to "src/def.h".
+Rename "src/netwib_windows.h" to "src/netwib.h".
+
+Visual C++ procedure :
+ - Open the Workspace file "src/compil/windows/netwox/netwox.dsw".
+ - Select Release (instead of Debug) as "Active Configuration" under Build.
+ - Open the menu "Setup", "Settings...". Then, select "C/C++", select
+   category "Preprocessor". In the field "Additional include directories",
+   there is "..\..\..\..\..\netwib-bin_windows\include". Change this
+   value to "C:\netwib\include" (this is the directory's name where you
+   put netwib's includes during netwib's installation). Press "OK".
+ - Open the menu "Setup", "Settings...". Then, select "Link", select
+   category "Input". In the field "Additional library path",
+   there is "..\..\..\..\..\netwib-bin_windows\lib". Change this value
+   to "C:\netwib\lib" (this is the directory's name where you put
+   netwib's lib during netwib's installation). Press "OK".
+ - Press F7 key, to build everything.
+ - The following file should be generated :
+     src/compil/windows/netwox/Release/netwox539.exe
+ - So, we obtain netwox539.exe.
+
+Dev-C++ procedure :
+ - Open the project file "src/compil/devcpp/netwox.dev".
+ - Open the menu "Project", "Project options", "Parameters", "Directories".
+   In the field "Include Directories" there is "..\..\..\..\..\src\
+   netwib-bin_windows\include". Change this value to "C:\netwib\include"
+   (this is the directory's name where you put netwib's includes during
+   netwib's installation). Press "OK".
+ - Open the menu "Project", "Project options", "Parameters".
+   In the field "Linker" there is "../../../../netwib-bin_windows
+   /lib/libnetwib539.a". Change this value to "C:\netwib\lib\libnetwib539.a"
+   (this is the directory's name where you put netwib's lib during
+   netwib's installation, followed by the library file). Press "OK".
+ - Press Ctrl-F9 key, to build everything.
+ - The following files should be generated :
+     src/compil/devcpp/out/netwox539.exe
+ - So, we obtain netwox539.exe.
+
+Copy netwox539.exe in a directory of your path (for example,
+"%WINDIR%\Command\" or "%WINDIR%\System32\").
+

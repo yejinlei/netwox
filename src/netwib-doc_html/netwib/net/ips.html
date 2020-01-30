@@ -1,0 +1,274 @@
+<HTML><HEAD>
+<TITLE>netwib doc_html (version 5.39.0)</TITLE>
+</HEAD><BODY BGCOLOR="#FFFFFF" TEXT="#000000">
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../net.html">section index</A></H2><HR><BR>
+<PRE>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000"><B>/***************************************************************
+ * An IP range is of the form :                                *
+ *                                   ip4inf     ip4sup         *
+ *   1.2.3.4                  :     1.2.3.4     1.2.3.4        *
+ *   1.2.3.4-5.6.7.8          :     1.2.3.4     5.6.7.8        *
+ *   1.2.3.0/255.255.255.0    :     1.2.3.0   1.2.3.255        *
+ *   1.2.3.0/24               :     1.2.3.0   1.2.3.255        *
+ *   1.2.3/255.255.255.0      :     1.2.3.0   1.2.3.255        *
+ *   1.2.3/24                 :     1.2.3.0   1.2.3.255        *
+ *   1.2.3.0%255.255.255.O    :     1.2.3.1   1.2.3.254        *
+ *   1.2.3.0%24               :     1.2.3.1   1.2.3.254        *
+ *   1.2.3%255.255.255.O      :     1.2.3.1   1.2.3.254        *
+ *   1.2.3%24                 :     1.2.3.1   1.2.3.254        *
+ *   fec0:0:0:1::1            :  fec0:0:0:1::1 fec0:0:0:1::1   *
+ * Notes :                                                     *
+ *  - '%' has the same meaning as '/', except that the         *
+ *    broadcast addresses are excluded from range.             *
+ *  - It is possible to use a hostname range as input. In this *
+ *    case the separator is '=' (because '-' is a valid        *
+ *    hostname separator).                                     *
+ *                                                             *
+ * An <FONT COLOR="#000088">netwib_ips</FONT> is of the form :                              *
+ *   ip,ip,iprange,iprange                                     *
+ *   all,!ip,!iprange                                          *
+ *                                                             *
+ * Complete examples :                                         *
+ *   1.2.3.4                                                   *
+ *   1.2.3.4-1.2.3.5                                           *
+ *   1.2.3.4,5.6.7.8                                           *
+ *   1.2.3.4,1.2.3.56-1.2.3.58                                 *
+ *   all,!1.2.3.4,!1.2.4.4-1.2.4.6                             *
+ *   hostname                                                  *
+ *   host1=host2                                               *
+ *   host1,host2                                               *
+ ***************************************************************/</B></FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000"><B>/***************************************************************
+ * Those functions ignores following error cases :             *
+ *  - if we try to add a value already in the list             *
+ *  - if we try to remove a value not in the list              *
+ ***************************************************************/</B></FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+typedef struct <FONT COLOR="#000088">netwib_ips</FONT> <FONT COLOR="#000088">netwib_ips</FONT>;
+typedef const <FONT COLOR="#000088">netwib_ips</FONT> <FONT COLOR="#000088">netwib_constips</FONT>;
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_ips_init
+   Description :
+     Initialize a <FONT COLOR="#000088">netwib_ips</FONT> used to store IP list.
+   Input parameter(s) :
+     inittype : if future added items will be sorted and/or unique
+   Input/output parameter(s) :
+   Output parameter(s) :
+     **ppips : <FONT COLOR="#000088">netwib_ips</FONT> allocated and initialized
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+typedef enum {
+  <FONT COLOR="#000044">NETWIB_IPS_INITTYPE_SORTUNIQ</FONT> = 1, <FONT COLOR="#880000">/* sorted and unique */</FONT>
+  <FONT COLOR="#000044">NETWIB_IPS_INITTYPE_NOTSORTUNIQ</FONT> = 2, <FONT COLOR="#880000">/* not sorted and unique */</FONT>
+  <FONT COLOR="#000044">NETWIB_IPS_INITTYPE_NOTSORTNOTUNIQ</FONT> = 3 <FONT COLOR="#880000">/* not sorted and not
+                                            unique (duplicates
+                                            are not removed) */</FONT>
+} <FONT COLOR="#000088">netwib_ips_inittype</FONT>;
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_ips_init</B>(<FONT COLOR="#000088">netwib_ips_inittype</FONT> inittype,
+                           <FONT COLOR="#000088">netwib_ips</FONT> **ppips);
+<FONT COLOR="#008800">#define <B>netwib_ips_initdefault</B>(ppips) <B>netwib_ips_init</B>(<FONT COLOR="#000044">NETWIB_IPS_INITTYPE_SORTUNIQ</FONT>,ppips)</FONT>
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_ips_close
+   Description :
+     Close a netwib_ips.
+   Input parameter(s) :
+   Input/output parameter(s) :
+     **ppips : <FONT COLOR="#000088">netwib_ips</FONT> closed
+   Output parameter(s) :
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_ips_close</B>(<FONT COLOR="#000088">netwib_ips</FONT> **ppips);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_ips_add_ip
+   Description :
+     Add an address to the netwib_ips.
+   Input parameter(s) :
+     ip : address to add
+   Input/output parameter(s) :
+     *pips : <FONT COLOR="#000088">netwib_ips</FONT> where to work
+   Output parameter(s) :
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_ips_add_ip</B>(<FONT COLOR="#000088">netwib_ips</FONT> *pips,
+                             <FONT COLOR="#000088">netwib_constip</FONT> *pip);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_ips_add_iprange
+   Description :
+     Add a range of addresses to the netwib_ips.
+   Input parameter(s) :
+     infip : inferior ip
+     supip : superior ip
+   Input/output parameter(s) :
+     *pips : <FONT COLOR="#000088">netwib_ips</FONT> where to work
+   Output parameter(s) :
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_ips_add_iprange</B>(<FONT COLOR="#000088">netwib_ips</FONT> *pips,
+                                  <FONT COLOR="#000088">netwib_constip</FONT> *pinfip,
+                                  <FONT COLOR="#000088">netwib_constip</FONT> *psupip);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_ips_add_ips
+   Description :
+     Add a list of addresses to the netwib_ips.
+   Input parameter(s) :
+     *pipstoadd : <FONT COLOR="#000088">netwib_ips</FONT> to add
+   Input/output parameter(s) :
+     *pips : <FONT COLOR="#000088">netwib_ips</FONT> where to work
+   Output parameter(s) :
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_ips_add_ips</B>(<FONT COLOR="#000088">netwib_ips</FONT> *pips,
+                              <FONT COLOR="#000088">netwib_constips</FONT> *pipstoadd);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_ips_add_buf
+   Description :
+     Update a <FONT COLOR="#000088">netwib_ips</FONT> with a string like "1.2.3.4-1.2.3.5".
+   Input parameter(s) :
+     pbuf : buffer containing string
+   Input/output parameter(s) :
+     *pips : <FONT COLOR="#000088">netwib_ips</FONT> updated
+   Output parameter(s) :
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+   Note :
+     If an error occurs during insertion, result will only
+     contain partial data. It's developer's job to use a
+     temporary <FONT COLOR="#000088">netwib_ips</FONT> to deal with such errors.
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_ips_add_buf</B>(<FONT COLOR="#000088">netwib_ips</FONT> *pips,
+                              <FONT COLOR="#000088">netwib_constbuf</FONT> *pbuf);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_ips_add_kbd
+   Description :
+     Update a <FONT COLOR="#000088">netwib_ips</FONT> with data entered through keyboard.
+   Input parameter(s) :
+     *pmessage : message to print before
+     *pdefaultlist : default list to use if user enters nothing
+                     if NULL, there is no default
+   Input/output parameter(s) :
+     *pips : <FONT COLOR="#000088">netwib_ips</FONT> updated
+   Output parameter(s) :
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_ips_add_kbd</B>(<FONT COLOR="#000088">netwib_ips</FONT> *pips,
+                              <FONT COLOR="#000088">netwib_constbuf</FONT> *pmessage,
+                              <FONT COLOR="#000088">netwib_constbuf</FONT> *pdefaultlist);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_ips_del_ip
+   Description :
+     Del an address to the netwib_ips.
+   Input parameter(s) :
+     ip : address to delete
+   Input/output parameter(s) :
+     *pips : <FONT COLOR="#000088">netwib_ips</FONT> where to work
+   Output parameter(s) :
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_ips_del_ip</B>(<FONT COLOR="#000088">netwib_ips</FONT> *pips,
+                             <FONT COLOR="#000088">netwib_constip</FONT> *pip);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_ips_del_iprange
+   Description :
+     Del a range of addresses to the netwib_ips.
+   Input parameter(s) :
+     infip : inferior ip
+     supip : superior ip
+   Input/output parameter(s) :
+     *pips : <FONT COLOR="#000088">netwib_ips</FONT> where to work
+   Output parameter(s) :
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_ips_del_iprange</B>(<FONT COLOR="#000088">netwib_ips</FONT> *pips,
+                                  <FONT COLOR="#000088">netwib_constip</FONT> *pinfip,
+                                  <FONT COLOR="#000088">netwib_constip</FONT> *psupip);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_ips_del_ips
+   Description :
+     Remove a list of addresses to the netwib_ips.
+   Input parameter(s) :
+     *pipstodel : <FONT COLOR="#000088">netwib_ips</FONT> to remove
+   Input/output parameter(s) :
+     *pips : <FONT COLOR="#000088">netwib_ips</FONT> where to work
+   Output parameter(s) :
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_ips_del_ips</B>(<FONT COLOR="#000088">netwib_ips</FONT> *pips,
+                              <FONT COLOR="#000088">netwib_constips</FONT> *pipstodel);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_ips_contains_xyz
+   Description :
+     Check if a <FONT COLOR="#000088">netwib_ip</FONT> is in the list.
+   Input parameter(s) :
+     ip : <FONT COLOR="#000088">netwib_ip</FONT> to find
+   Input/output parameter(s) :
+     *pips : <FONT COLOR="#000088">netwib_ips</FONT> containing the list of addresses
+   Output parameter(s) :
+     *pyes : true if <FONT COLOR="#000088">netwib_ip</FONT> is found
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_ips_contains_ip</B>(<FONT COLOR="#000088">netwib_constips</FONT> *pips,
+                                  <FONT COLOR="#000088">netwib_constip</FONT> *pip,
+                                  <FONT COLOR="#000088">netwib_bool</FONT> *pyes);
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_ips_contains_iprange</B>(<FONT COLOR="#000088">netwib_constips</FONT> *pips,
+                                       <FONT COLOR="#000088">netwib_constip</FONT> *pinfip,
+                                       <FONT COLOR="#000088">netwib_constip</FONT> *psupip,
+                                       <FONT COLOR="#000088">netwib_bool</FONT> *pyes);
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+typedef enum {
+  <FONT COLOR="#000044">NETWIB_IPS_ENCODETYPE_HNRANGE</FONT> = 1,<FONT COLOR="#880000">/* "host1=host2,etc." */</FONT>
+  <FONT COLOR="#000044">NETWIB_IPS_ENCODETYPE_IPRANGE</FONT>,    <FONT COLOR="#880000">/* "1.2.3.4-1.2.3.5,etc." */</FONT>
+  <FONT COLOR="#000044">NETWIB_IPS_ENCODETYPE_IPNUMBER</FONT>,   <FONT COLOR="#880000">/* "1.1.1.0/24,etc." */</FONT>
+  <FONT COLOR="#000044">NETWIB_IPS_ENCODETYPE_IPMASK</FONT>,     <FONT COLOR="#880000">/* "1.1.1.0/255.255.255.255" */</FONT>
+  <FONT COLOR="#000044">NETWIB_IPS_ENCODETYPE_HNBEST</FONT> = <FONT COLOR="#000044">NETWIB_IPS_ENCODETYPE_HNRANGE</FONT>,
+  <FONT COLOR="#000044">NETWIB_IPS_ENCODETYPE_IPBEST</FONT> = <FONT COLOR="#000044">NETWIB_IPS_ENCODETYPE_IPRANGE</FONT>,
+  <FONT COLOR="#000044">NETWIB_IPS_ENCODETYPE_BEST</FONT> = <FONT COLOR="#000044">NETWIB_IPS_ENCODETYPE_IPBEST</FONT>
+} <FONT COLOR="#000088">netwib_ips_encodetype</FONT>;
+
+<FONT COLOR="#880000">/*-------------------------------------------------------------*/</FONT>
+<FONT COLOR="#880000">/* Name : netwib_buf_append_ips
+   Description :
+     Append a string representing a netwib_ips.
+   Input parameter(s) :
+     *pips : <FONT COLOR="#000088">netwib_ips</FONT> to append
+   Input/output parameter(s) :
+     pbuf : buffer updated
+   Output parameter(s) :
+   Normal return values :
+     <FONT COLOR="#000044">NETWIB_ERR_OK</FONT> : ok
+*/</FONT>
+<FONT COLOR="#000088">netwib_err</FONT> <B>netwib_buf_append_ips</B>(<FONT COLOR="#000088">netwib_constips</FONT> *pips,
+                                 <FONT COLOR="#000088">netwib_ips_encodetype</FONT> encodetype,
+                                 <FONT COLOR="#000088">netwib_buf</FONT> *pbuf);
+
+</PRE><BR><BR><HR><BR>
+<H2><A HREF="../../index.html">main index</A></H2>
+<H2><A HREF="../net.html">section index</A></H2>
+</BODY></HTML>
